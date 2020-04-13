@@ -1,26 +1,35 @@
 const webpack = require("webpack");
 const webpackConfig = require("../config/web-webpack.config");
+const basicConfig = require("../config/default.config")
+const path = require("path")
 /**
  * Creates webpackConfig according to page and passes to this(config)
- * @param {String} page path to page
+ * @param {String[]} pages array of path to page
  */
-module.exports = (page = "") => {
-    module.exports.fromConfig(webpackConfig(page))
+module.exports = (pages) => {
+    let pageConfigs = [];
+    pages.forEach((page) => {
+        pageConfigs.push(webpackConfig(path.join(basicConfig.src,"pages",page)));
+    })
+    console.log(pageConfigs.length)
+    return fromConfig(pageConfigs);
 }
 
 /**
  * compiles page using webpack according to config
- * @param {Object} config webpack configuration
+ * @param {Object[]} configs Array of webpack configuration
  */
-module.exports.fromConfig = (config = {}) => {
-    webpack(config, (err, stats) => {
+function fromConfig(configs) {
+    webpack(configs, (err, stats) => {
         if (process.argv[2] === "v")
-            console.log("Stats -> ", stats);
-        if (err || stats.hasErrors() ) {
-            console.error(stats);
-            throw {err, stats: stats};
+                console.log("Stat -> ", stats.toJson());
+        if (err || stats.hasErrors()) {
+            console.error({...stats});
+            throw {err}
         } else {
             console.log("Compiled Successfully");
         }
     });
 }
+
+module.exports.fromConfig = fromConfig;

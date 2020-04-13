@@ -3,7 +3,7 @@ import ReactDom from "react-dom"
 const App =  () => {
     return (
         <div>
-            <h1>This is Index Page</h1>
+            <h1>This is About Page</h1>
         </div>
     )
 }

@@ -23,19 +23,20 @@ const userConfig = (function getUserConfig() {
 })();
 
 /**
- * @param page
- * @returns {{mode: string, output: {path: string, filename: string}, entry: [string, string], plugins: [], module: {rules: []}, name: string, target: string}}
+ * @param page Absolute path of the page
+ * @returns {{mode: string, output: {path: string, filename: string}, entry: string, plugins: [], module: {rules: []}, name: string, target: string}}
  */
 module.exports = (page) => {
+    const parsedPagePath = path.parse(page);
     const mergedConfig = {
         ...userConfig,//first copy user config, then edit it
-        name: "web-" + globalDefaults.name,
+        name: parsedPagePath.name + globalDefaults.name,
         target: 'web',
         mode: 'development',
-        entry: ["@babel/polyfill", path.resolve(__dirname, "../front/web-front.js"),],
+        entry: ['@babel/polyfill',page],
         output: {
             path: globalDefaults.dist,
-            filename: "[name].[hash].bundle.js"
+            filename: `${parsedPagePath.name}.bundle.js`
         }
     };
     mergedConfig.module.rules.push({
@@ -50,10 +51,11 @@ module.exports = (page) => {
     });
     mergedConfig.plugins.push(
         new webpack.DefinePlugin({
-            //  PAGE_SOURCE : `\"${page}\"`//add double quotes to represent string
+            //  PAGE_SOURCE : `\"${pageAbsolutePath}\"`//add double quotes to represent string
             PAGE_SOURCE: `\"${page}\"`
         }),
         new HtmlWebpackPlugin({
+            filename:  parsedPagePath.name+".html",
             template: 'front/template.html'
         }));
     return mergedConfig;
