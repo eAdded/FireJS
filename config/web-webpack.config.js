@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path")
 const webpack = require("webpack")
 const globalDefaults = require("./global.config");
@@ -22,18 +23,19 @@ const userConfig = (function getUserConfig() {
 })();
 
 /**
- * @param {string} page path to page
- * @returns {{output: {path: (String|Promise<*>|string|Promise<void>|Promise<any>), filename: string}, entry: string, plugins: [], module: {rules: [{test: RegExp, use: {loader: string, options: {presets: [string, string]}}, exclude: string}]}, name: string, target: string}}
+ * @param page
+ * @returns {{mode: string, output: {path: string, filename: string}, entry: [string, string], plugins: [], module: {rules: []}, name: string, target: string}}
  */
 module.exports = (page) => {
     const mergedConfig = {
         ...userConfig,//first copy user config, then edit it
         name: "web-" + globalDefaults.name,
         target: 'web',
-        entry: path.resolve(__dirname,"../front/web-front.js"),
+        mode: 'development',
+        entry: ["@babel/polyfill", path.resolve(__dirname, "../front/web-front.js"),],
         output: {
             path: globalDefaults.dist,
-            filename: "bundle.js"
+            filename: "[name].[hash].bundle.js"
         }
     };
     mergedConfig.module.rules.push({
@@ -48,8 +50,11 @@ module.exports = (page) => {
     });
     mergedConfig.plugins.push(
         new webpack.DefinePlugin({
-            PAGE_SOURCE : `\"${page}\"`//add double quotes to represent string
-        })
-    );
-    return mergedConfig
+            //  PAGE_SOURCE : `\"${page}\"`//add double quotes to represent string
+            PAGE_SOURCE: `\"${page}\"`
+        }),
+        new HtmlWebpackPlugin({
+            template: 'front/template.html'
+        }));
+    return mergedConfig;
 };

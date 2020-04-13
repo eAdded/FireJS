@@ -1,5 +1,7 @@
 import ReactDom from "react-dom";
 import React from "react";
-const App = import(PAGE_SOURCE);
 
-ReactDom.render(<App/>, document.getElementById("root"));
+(async () => {
+    const App = (await import(/* webpackMode: "eager" */PAGE_SOURCE)).default();
+    ReactDom.render(App, document.getElementById("root"));
+})();
