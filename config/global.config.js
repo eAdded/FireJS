@@ -1,19 +1,19 @@
+const args = require("arg")({ //load args first to prevent dependency problem between cli and config
+    //Types
+    "--conf": String,
+    "--verbose": Boolean,
+    "--no-color": Boolean,
+    //Aliases
+    "-c": "--conf",
+    "-v": "--verbose",
+    "--nc": "--no-color"
+})
+module.exports = args;
 const path = require("path");
-const arg = require("arg");
 const fs = require("fs");
 const cli = require("../utils/cli-color");
+
 function getUserConfig(defaultFile) {
-    let args = arg({
-        //Types
-        "--conf": String,
-        "--verbose": Boolean,
-        "--no-color": Boolean,
-        //Aliases
-        "-c": "--conf",
-        "-v": "--verbose",
-        "--nc": "--no-color"
-    })
-    args._ = undefined; //declare undefined to prevent copying into config
     return ((args["--conf"] ? //undefined if !exists else empty object
         fs.existsSync(args["--conf"]) ?
             {}
@@ -39,7 +39,7 @@ module.exports = (() => {
     userConf.src = userConf.src ? userConf.src : path.join(userConf.root, "src");
     return {
         plugins: [],
-         ...userConf,
+        ...userConf,
         webpack: userConf.webpack ? userConf.webpack : (() => {
             const defaultPath = path.join(userConf.root, "webpack.config.js");
             if (fs.existsSync(defaultPath))
