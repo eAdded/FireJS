@@ -3,10 +3,12 @@ const path = require("path")
 const webpack = require("webpack")
 const globalDefaults = require("./global.config");
 const config = require("./default.config")
-
+const _ = require("lodash");
+//TODO: Multi page application
 const userConfig = (function getUserConfig() {
     // predefined object structure to prevent undefined error
     const sample = {
+        entry: {},
         module: {
             rules: []
         },
@@ -24,21 +26,22 @@ const userConfig = (function getUserConfig() {
 
 /**
  * @param page Absolute path of the page
- * @returns {{mode: string, output: {path: string, filename: string}, entry: string, plugins: [], module: {rules: []}, name: string, target: string}}
+ * @returns {{mode: string, output: {path: string, filename: string}, entry: [string, *], plugins: [], module: {rules: []}, name: string, target: string}}
  */
 module.exports = (page) => {
-    const parsedPagePath = path.parse(page);
-    const mergedConfig = {
-        ...userConfig,//first copy user config, then edit it
+    let parsedPagePath = path.parse(page);
+    let mergedConfig = {
+        ..._.cloneDeep(userConfig),//first copy user config, then edit it
         name: parsedPagePath.name + globalDefaults.name,
         target: 'web',
         mode: 'development',
-        entry: ['@babel/polyfill',page],
         output: {
+            publicPath: "/",
             path: globalDefaults.dist,
             filename: `${parsedPagePath.name}.bundle.js`
         }
     };
+    mergedConfig.entry[parsedPagePath.name] = ["@babel/polyfill", page];
     mergedConfig.module.rules.push({
         test: /\.js$/,
         exclude: "/node_modules/",
@@ -55,8 +58,9 @@ module.exports = (page) => {
             PAGE_SOURCE: `\"${page}\"`
         }),
         new HtmlWebpackPlugin({
-            filename:  parsedPagePath.name+".html",
-            template: 'front/template.html'
+            filename: parsedPagePath.name + ".html",
+            template: 'front/template.html',
+            chunks: [parsedPagePath.name]
         }));
     return mergedConfig;
 };
