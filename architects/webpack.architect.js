@@ -1,14 +1,19 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path")
-const webpack = require("webpack")
 const globalDefaults = require("../config/global.config");
 const config = require("../config/default.config")
 const _ = require("lodash");
 
+/**
+ * @return {{output: {}, entry: {shared: []}, plugins: [], module: {rules: []}}}
+ */
 const userConfig = (function getUserConfig() {
     // predefined object structure to prevent undefined error
     const sample = {
-        entry: {},
+        entry: {
+          //  shared : []
+        },
+        output: {},
         module: {
             rules: []
         },
@@ -25,25 +30,34 @@ const userConfig = (function getUserConfig() {
 })();
 
 /**
- * @param page Absolute path of the page
+ * @param pages array of absolute paths to the pages
  * @returns {{mode: string, output: {path: string, filename: string}, entry: [string, *], plugins: [], module: {rules: []}, name: string, target: string}}
  */
-module.exports = (page) => {
-    let relative = page.replace(config.pages+"/","");
-    let {dir,name,base} = path.parse(relative);
-    console.log(base,name,dir);
+module.exports = (pages) => {
     let mergedConfig = {
-        target: 'web',//placed on top to allow getting replaced by users config
+        //settings which can be changed by user
+        target: 'web',
         mode: 'development',
-        ..._.cloneDeep(userConfig),//first copy user config, then edit it
-        name: `${relative} ${globalDefaults.name}`,
-        entry: ["@babel/polyfill", page],
-        output: {
-            publicPath : "/"+dir,
-            path: path.join(globalDefaults.dist,dir),
-            filename: `${name}.bundle.js`
-        }
+        ..._.cloneDeep(userConfig),
+        //settings un-changeable by user
+        name: `web-${globalDefaults.name}`,
     };
+
+    if (!mergedConfig.output.path) mergedConfig.output.path = path.join(globalDefaults.dist)
+    if (!mergedConfig.output.filename) mergedConfig.output.filename = "[name].[hash].js"
+
+    //mergedConfig.entry.shared.push('react','react-dom');//shared imports
+    pages.forEach((page,index) => {
+        let relative = page.replace(config.pages+"/","");
+        let {dir,name,base} = path.parse(relative);
+        const entry = path.join(dir,name);
+        mergedConfig.entry[entry] = page;
+        mergedConfig.plugins.push(new HtmlWebpackPlugin({
+            filename: `${entry}.html`,
+            template: 'front/template.html',
+            chunks: [entry],
+        }));
+    });
     mergedConfig.module.rules.push({
         test: /\.js$/,
         exclude: "/node_modules/",
@@ -54,14 +68,11 @@ module.exports = (page) => {
             }
         }
     });
-    mergedConfig.plugins.push(
+    /*mergedConfig.plugins.push(
         new webpack.DefinePlugin({
             //  PAGE_SOURCE : `\"${pageAbsolutePath}\"`//add double quotes to represent string
             PAGE_SOURCE: `\"${page}\"`
-        }),
-        new HtmlWebpackPlugin({
-            filename: name + ".html",
-            template: 'front/template.html'
-        }));
+        }));*/
+    console.log(mergedConfig)
     return mergedConfig;
 };
