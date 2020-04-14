@@ -12,4 +12,5 @@ const App =  () => {
         </div>
     )
 }
+import("asndpasodnasnd")
 ReactDom.render(<App/>,document.getElementById("root"));
