@@ -1,12 +1,11 @@
 const config = require("./config/default.config");
-const pageBundeler = require("./bundelers/page.bundeler")
-const path = require("path")
-const fs = require("fs");
+const pageBundeler = require("./bundelers/page.bundeler");
+const webpackArchitect = require("./architects/webpack.architect");
+const readdir = require("recursive-dir-reader")
 
-fs.readdir(path.join(config.src,"pages"),(err,files)=>{
-    if(err)
-        console.error("error while reading pages");
-    else {
-        pageBundeler(files);
-    }
+let wp_configs = [];
+readdir.sync(config.pages, file => {
+    console.log(file.replace(config.pages+"/",""))
+    wp_configs.push(webpackArchitect(file));
 });
+pageBundeler.fromConfigs(wp_configs);

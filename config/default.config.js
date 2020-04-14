@@ -2,8 +2,10 @@ const path = require("path");
 const globalConfig = require("./global.config");
 const fs = require("fs");
 
+const src = path.join(globalConfig.root, "src");
 const defaults = {
-    src: path.join(globalConfig.root, "src"),
+    src,
+    pages : path.join(src,"pages"),
     plugins: [],
     template: "./template.html",
     webpack: (() => {
