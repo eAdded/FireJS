@@ -2,16 +2,18 @@ const path = require("path");
 const fs = require("fs");
 const name = "react-static-gen";
 /**
- * @type {{conf:String,verbose:Boolean,no_color:Boolean,no_output:Boolean}}
+ * @type {{production:Boolean,conf:String,verbose:Boolean,no_color:Boolean,no_output:Boolean}}
  */
 //load args first to prevent dependency problem between cli and config
 module.exports.args = require("arg")({
     //Types
+    "--production": Boolean,
     "--conf": String,
     "--verbose": Boolean,
     "--no_color": Boolean,
     "--no_output": Boolean,
     //Aliases
+    "-p": "--production",
     "-c": "--conf",
     "-v": "--verbose",
     "--nc": "--no_color",
@@ -22,17 +24,17 @@ const cli = require("../utils/cli-color");
 
 function getUserConfig() {
     const args = module.exports.args;
-    if (args.conf) {//tweak conf path
-        if (!path.isAbsolute(args.conf))
-            args.conf = path.resolve(process.cwd(), args.conf);//create absolute path
+    if (args["--conf"]) {//tweak conf path
+        if (!path.isAbsolute(args["--conf"]))
+            args["--conf"] = path.resolve(process.cwd(), args["--conf"]);//create absolute path
     } else
-        args.conf = path.resolve(process.cwd(), `${name}.config.js`);
+        args["--conf"] = path.resolve(process.cwd(), `${name}.config.js`);
 
-    return fs.existsSync(args.conf) ? (() => {///check if config file exists
-        cli.log(`Loading config from ${args.conf}`);
-        return require(args.conf)
+    return fs.existsSync(args["--conf"]) ? (() => {///check if config file exists
+        cli.log(`Loading config from ${args["--conf"]}`);
+        return require(args["--conf"])
     })() : (() => {//if config does not exists just return args
-        cli.warn(`Config not found at ${args.conf}. Loading defaults`);
+        cli.warn(`Config not found at ${args["--conf"]}. Loading defaults`);
         return {};
     })()
 }
@@ -49,6 +51,8 @@ function throwIfNotFound(name, pathTo) {
 module.exports.config = (() => {
     cli.log("Loading configs");
     const config = getUserConfig();
+    config.mode = module.exports.args["--production"] ? "production" : config.mode || "development";
+    cli.log("mode : "+config.mode)
     config.name = name;
     config.plugins = config.plugins || [];
     throwIfNotFound("root dir", config.root = config.root ? makeAbsolute(process.cwd(), config.root) : process.cwd());

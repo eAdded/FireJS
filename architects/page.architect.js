@@ -28,8 +28,7 @@ module.exports.fromConfigs = configs => {
             cli.error("Error while compiling : ", err);
         multiStats.stats.forEach(stat => {
             if (args["--verbose"]) {
-                cli.log("Stat");
-                console.log(stat);
+                cli.log("Stat",stat);
             }
             if (stat.hasErrors())
                 cli.error(`Error in config ${stat.compilation.name}`, ...stat.compilation.errors);

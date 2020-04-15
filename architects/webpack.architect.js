@@ -54,7 +54,7 @@ module.exports.withConfig = (pages, conf) => {
     let mergedConfig = {
         //settings which can be changed by user
         target: 'web',
-      //  mode: 'development',
+        mode: config.mode,
         ..._.cloneDeep(conf),
         //settings un-changeable by user
         name: `web-${config.name}`,

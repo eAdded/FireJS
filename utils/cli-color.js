@@ -6,7 +6,7 @@ if(args["--no_output"]){
     module.exports.error = (...messages)=>{};
     module.exports.warn = (...messages)=>{};
     module.exports.log = (...messages)=>{};
-}else if (args.no_color) {
+}else if (args["--no_color"]) {
     module.exports.ok = console.log;
     module.exports.error = console.error;
     module.exports.warn = console.warn;
