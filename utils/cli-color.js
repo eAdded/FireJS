@@ -1,16 +1,27 @@
 const c = require("ansi-colors");
 const {args} = require("../config/global.config");
 //tick ✓ log # warning ! error X
-if(args["--no_output"]){
-    module.exports.ok = (...messages)=>{};
-    module.exports.error = (...messages)=>{};
-    module.exports.warn = (...messages)=>{};
-    module.exports.log = (...messages)=>{};
-}else if (args["--no_color"]) {
+
+if (args["--no_output"]) {
+    module.exports.ok = (...messages) => {
+    };
+    module.exports.error = (...messages) => {
+    };
+    module.exports.warn = (...messages) => {
+    };
+    module.exports.log = (...messages) => {
+    };
+    module.exports.throwError = error => {
+        throw undefined
+    };
+} else if (args["--no_color"]) {
     module.exports.ok = console.log;
     module.exports.error = console.error;
     module.exports.warn = console.warn;
     module.exports.log = console.log;
+    module.exports.throwError = error => {
+        throw error
+    };
 } else {
     module.exports.log = (...messages) => {
         messages.forEach((message, index) => {
@@ -44,12 +55,7 @@ if(args["--no_output"]){
                 console.warn(c.yellow(`\t${message}`))
         })
     }
-}
-module.exports.throwError = (error = Error) => {
-    if (args["--no_output"])
-        throw undefined;
-    else if (args["--no_color"])
-        throw error;
-    else
-        throw c.red(error.toLocaleString());
+    module.exports.throwError = error => {
+        throw c.red(error.toLocaleString())
+    };
 }
