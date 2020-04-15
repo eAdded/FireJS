@@ -24,6 +24,7 @@ const cli = require("../utils/cli-color");
 
 function getUserConfig() {
     const args = module.exports.args;
+    const wasGiven = args["--conf"];//to store if user gave this arg so that log can be changed
     if (args["--conf"]) {//tweak conf path
         if (!path.isAbsolute(args["--conf"]))
             args["--conf"] = path.resolve(process.cwd(), args["--conf"]);//create absolute path
@@ -34,7 +35,8 @@ function getUserConfig() {
         cli.log(`Loading config from ${args["--conf"]}`);
         return require(args["--conf"])
     })() : (() => {//if config does not exists just return args
-        cli.warn(`Config not found at ${args["--conf"]}. Loading defaults`);
+        if (wasGiven)
+            cli.warn(`Config not found at ${args["--conf"]}. Loading defaults`);
         return {};
     })()
 }
@@ -52,7 +54,7 @@ module.exports.config = (() => {
     cli.log("Loading configs");
     const config = getUserConfig();
     config.mode = module.exports.args["--production"] ? "production" : config.mode || "development";
-    cli.log("mode : "+config.mode)
+    cli.log("mode : " + config.mode)
     config.name = name;
     config.plugins = config.plugins || [];
     throwIfNotFound("root dir", config.root = config.root ? makeAbsolute(process.cwd(), config.root) : process.cwd());

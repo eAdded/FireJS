@@ -1,7 +1,7 @@
 const webpack = require("webpack");
 const readdir = require("recursive-dir-reader");
 const webpackArchitect = require("../architects/webpack.architect");
-const {config,args} = require("../config/global.config");
+const {config, args} = require("../config/global.config");
 const cli = require("../utils/cli-color");
 /**
  *
@@ -23,17 +23,30 @@ module.exports.fromPages = (pages) => {
  */
 module.exports.fromConfigs = configs => {
     cli.log("Compiling")
-    webpack(configs, (err, multiStats) => {
-        if (err)
-            cli.error("Error while compiling : ", err);
-        multiStats.stats.forEach(stat => {
-            if (args["--verbose"]) {
-                cli.log("Stat",stat);
-            }
-            if (stat.hasErrors())
-                cli.error(`Error in config ${stat.compilation.name}`, ...stat.compilation.errors);
-            if (stat.hasWarnings())
-                cli.warn(`Warning in config ${stat.compilation.name}`, ...stat.compilation.warnings)
-        })
-    });
+    try {
+        webpack(configs, (err, multiStats) => {
+            if (err)
+                cli.throwError(new Error("Error while compiling : " + err));
+            let errorCount = 0;
+            let warningCount = 0;
+            multiStats.stats.forEach(stat => {
+                if (args["--verbose"])
+                    cli.log("Stat", stat);
+                if (stat.hasErrors()) {
+                    cli.error(`Error in config ${stat.compilation.name}`, ...stat.compilation.errors);
+                    errorCount++;
+                }
+                if (stat.hasWarnings()) {
+                    cli.warn(`Warning in config ${stat.compilation.name}`, ...stat.compilation.warnings)
+                    warningCount++;
+                }
+            })
+            if (errorCount > 0)
+                cli.error(`Compilation failed with ${errorCount} error(s) and ${warningCount} warnings(s)`)
+            else
+                cli.ok(`Compiled successfully with ${errorCount} error(s) and ${warningCount} warnings(s)`)
+        });
+    }catch (exception) {
+        cli.throwError(`Compilation failed with exception :\n${exception}`)
+    }
 }

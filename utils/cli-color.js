@@ -46,6 +46,10 @@ if(args["--no_output"]){
     }
 }
 module.exports.throwError = (error = Error) => {
-    module.exports.error(error);
-    throw error;
+    if (args["--no_output"])
+        throw undefined;
+    else if (args["--no_color"])
+        throw error;
+    else
+        throw c.red(error.toLocaleString());
 }
