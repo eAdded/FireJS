@@ -1,7 +1,7 @@
 const webpack = require("webpack");
 const readdir = require("recursive-dir-reader");
 const webpackArchitect = require("../architects/webpack.architect");
-const config = require("../config/global.config");
+const {config,args} = require("../config/global.config");
 const cli = require("../utils/cli-color");
 /**
  *
@@ -27,7 +27,7 @@ module.exports.fromConfigs = configs => {
         if (err)
             cli.error("Error while compiling : ", err);
         multiStats.stats.forEach(stat => {
-            if (config["--verbose"]) {
+            if (args["--verbose"]) {
                 cli.log("Stat");
                 console.log(stat);
             }

@@ -1,6 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path")
-const config = require("../config/global.config")
+const {config} = require("../config/global.config")
 const _ = require("lodash");
 const {throwError} = require("../utils/cli-color");
 

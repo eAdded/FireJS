@@ -1,54 +1,63 @@
-const args = require("arg")({ //load args first to prevent dependency problem between cli and config
+const path = require("path");
+const fs = require("fs");
+const name = "react-static-gen";
+/**
+ * @type {{conf:String,verbose:Boolean,no_color:Boolean,no_output:Boolean}}
+ */
+//load args first to prevent dependency problem between cli and config
+module.exports.args = require("arg")({
     //Types
     "--conf": String,
     "--verbose": Boolean,
-    "--no-color": Boolean,
+    "--no_color": Boolean,
+    "--no_output": Boolean,
     //Aliases
     "-c": "--conf",
     "-v": "--verbose",
-    "--nc": "--no-color"
-})
-module.exports = args;
-const path = require("path");
-const fs = require("fs");
+    "--nc": "--no_color",
+    "--no": "--no_output"
+});
+
 const cli = require("../utils/cli-color");
 
-function getUserConfig(defaultFile) {
-    return ((args["--conf"] ? //undefined if !exists else empty object
-        fs.existsSync(args["--conf"]) ?
-            {}
-            : (() => {
-                cli.warn(`Config not found at ${args["--conf"]}\n\tLoading from default location`);
-                return undefined
-            })()
-        : undefined) ? {...require(args["--conf"]), ...args}
-        : fs.existsSync(defaultFile) ? (() => {
-            cli.log("User configs found. Loading");
-            return {...require(defaultFile), ...args}
-        })() : (() => {
-            cli.warn("No user config found. Loading defaults");
-            return args;
-        })());
+function getUserConfig() {
+    const args = module.exports.args;
+    if (args.conf) {//tweak conf path
+        if (!path.isAbsolute(args.conf))
+            args.conf = path.resolve(process.cwd(), args.conf);//create absolute path
+    } else
+        args.conf = path.resolve(process.cwd(), `${name}.config.js`);
+
+    return fs.existsSync(args.conf) ? (() => {///check if config file exists
+        cli.log(`Loading config from ${args.conf}`);
+        return require(args.conf)
+    })() : (() => {//if config does not exists just return args
+        cli.warn(`Config not found at ${args.conf}. Loading defaults`);
+        return {};
+    })()
 }
 
-module.exports = (() => {
-    cli.log("Loading Configs");
-    const userConf = getUserConfig();
-    cli.ok("Configs loaded");
-    userConf.root = userConf.root ? userConf.root : process.cwd();
-    userConf.src = userConf.src ? userConf.src : path.join(userConf.root, "src");
-    return {
-        plugins: [],
-        ...userConf,
-        webpack: userConf.webpack ? userConf.webpack : (() => {
-            const defaultPath = path.join(userConf.root, "webpack.config.js");
-            if (fs.existsSync(defaultPath))
-                return defaultPath;
-            else
-                return undefined;
-        })(),
-        dist: userConf.dist ? userConf.dist : path.join(userConf.root, "dist"),
-        pages: userConf.pages ? userConf.pages : path.join(userConf.src, "pages"),
-        name: "react-static-gen"
-    };
+function makeAbsolute(root, pathTo) {
+    return path.isAbsolute(pathTo) ? pathTo : path.resolve(root, pathTo);
+}
+
+function throwIfNotFound(name, pathTo) {
+    if (!fs.existsSync(pathTo))
+        cli.throwError(new Error(`${name} not found`))
+}
+
+module.exports.config = (() => {
+    cli.log("Loading configs");
+    const config = getUserConfig();
+    config.name = name;
+    config.plugins = config.plugins || [];
+    throwIfNotFound("root dir", config.root = config.root ? makeAbsolute(process.cwd(), config.root) : process.cwd());
+    throwIfNotFound("src dir", config.src = config.src ? makeAbsolute(config.root, config.src) : path.join(config.root, "src"));
+    throwIfNotFound("pages dir", config.pages = config.pages ? makeAbsolute(config.src, config.pages) : path.join(config.src, "pages"));
+    config.dist = config.dist ? makeAbsolute(config.root, config.dist) : path.join(config.root, "dist");
+    if (config.webpack)
+        throwIfNotFound("webpack config")
+    else if (!fs.existsSync(config.webpack = path.join(config.root, "webpack.config.js")))
+        config.webpack = undefined;
+    return config;
 })()

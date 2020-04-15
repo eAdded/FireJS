@@ -1,8 +1,12 @@
 const c = require("ansi-colors");
-const config = require("../config/global.config");
+const {args} = require("../config/global.config");
 //tick ✓ log # warning ! error X
-console.log(config)
-if (config["--no-color"]) {
+if(args["--no_output"]){
+    module.exports.ok = (...messages)=>{};
+    module.exports.error = (...messages)=>{};
+    module.exports.warn = (...messages)=>{};
+    module.exports.log = (...messages)=>{};
+}else if (args.no_color) {
     module.exports.ok = console.log;
     module.exports.error = console.error;
     module.exports.warn = console.warn;
@@ -41,7 +45,7 @@ if (config["--no-color"]) {
         })
     }
 }
-module.exports.throwError = (message, others) => {
-    module.exports.error(message);
-    throw others;
+module.exports.throwError = (error = Error) => {
+    module.exports.error(error);
+    throw error;
 }
