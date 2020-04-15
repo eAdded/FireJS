@@ -39,13 +39,17 @@ function getUserConfig() {
 
 
 /**
- * @param pages array of absolute paths to the pages
- * @returns {{mode: string, output: {path: string, filename: string}, entry: [string, *], plugins: [], module: {rules: []}, name: string, target: string}}
+ * @param {String[]} pages array of pages
+ * @returns {{mode: string,name:String, output: {path: string, filename: string}, entry: [string, *], plugins: [], module: {rules: []}, name: string, target: string}}
  */
 module.exports = (pages) => {
     return module.exports.withConfig(pages, getUserConfig())
 };
-
+/**
+ * @param {String[]} pages array of pages
+ * @param {String} conf webpack config
+ * @return {{[p: string]: *}}
+ */
 module.exports.withConfig = (pages, conf) => {
     if (!Array.isArray(pages))
         throwError("Expected array of pages got " + typeof pages);
