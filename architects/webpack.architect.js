@@ -53,7 +53,7 @@ module.exports.withConfig = (pages, conf) => {
         throwError(":( expected object got " + typeof conf);
     let mergedConfig = {
         //settings which can be changed by user
-        target: 'weasdasdb',
+        target: 'web',
         mode: config.mode,
         ..._.cloneDeep(conf),
         //settings un-changeable by user
