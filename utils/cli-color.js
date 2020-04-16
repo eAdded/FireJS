@@ -1,4 +1,3 @@
-const c = require("ansi-colors");
 const {args} = require("../config/global.config");
 //tick ✓ log # warning ! error X
 
