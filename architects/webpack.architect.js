@@ -75,7 +75,7 @@ module.exports.withConfig = (pages, conf) => {
         mergedConfig.entry[entry] = page;
         mergedConfig.plugins.push(new HtmlWebpackPlugin({
             filename: `${entry}.html`,
-            template: 'front/template.html',
+            template: path.resolve(__dirname, '../front/template.html'),
             chunks: [entry],
         }));
     });
