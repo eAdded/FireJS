@@ -2,7 +2,10 @@ const c = require("ansi-colors");
 const {args} = require("../config/global.config");
 //tick ✓ log # warning ! error X
 
+module.exports.normal = console.log;
 if (args["--no_output"]) {
+    module.exports.normal = (...messages) => {
+    }
     module.exports.ok = (...messages) => {
     };
     module.exports.error = (...messages) => {
@@ -12,7 +15,7 @@ if (args["--no_output"]) {
     module.exports.log = (...messages) => {
     };
     module.exports.throwError = error => {
-        throw undefined
+        throw error
     };
 } else if (args["--no_color"]) {
     module.exports.ok = console.log;
@@ -23,39 +26,11 @@ if (args["--no_output"]) {
         throw error
     };
 } else {
-    module.exports.log = (...messages) => {
-        messages.forEach((message, index) => {
-            if (index === 0)
-                console.log(c.blue(`# ${message}`))
-            else
-                console.log(c.blue(`\t${message}`))
-        })
-    }
-    module.exports.ok = (...messages) => {
-        messages.forEach((message, index) => {
-            if (index === 0)
-                console.log(c.green(`✓ ${message}`))
-            else
-                console.log(c.green(`\t${message}`))
-        })
-    }
-    module.exports.error = (...messages) => {
-        messages.forEach((message, index) => {
-            if (index === 0)
-                console.error(c.red(`X ${message}`))
-            else
-                console.error(c.red(`\t${message}`))
-        })
-    }
-    module.exports.warn = (...messages) => {
-        messages.forEach((message, index) => {
-            if (index === 0)
-                console.warn(c.yellow(`! ${message}`))
-            else
-                console.warn(c.yellow(`\t${message}`))
-        })
-    }
-    module.exports.throwError = error => {
-        throw c.red(error.toLocaleString())
+    module.exports.log = (...messages) => console.error('\x1b[34m#', ...messages, '\x1b[0m');
+    module.exports.ok = (...messages) => console.error('\x1b[32m✓', ...messages, '\x1b[0m');
+    module.exports.error = (...messages) => console.error('\x1b[31mX', ...messages, '\x1b[0m');
+    module.exports.warn = (...messages) => console.error('\x1b[33m!', ...messages, '\x1b[0m');
+    module.exports.throwError = error = Error => {
+        throw `\x1b[31m${error.toString()}\x1b[0m`;
     };
 }

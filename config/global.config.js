@@ -50,20 +50,32 @@ function throwIfNotFound(name, pathTo) {
         cli.throwError(new Error(`${name} not found`))
 }
 
+function undefinedIfNotFound(config, property, pathRoot, name, msg) {
+    if (config[property]) {
+        throwIfNotFound(msg, config[property])
+        config[property] = makeAbsolute(pathRoot,config[property]);
+    }else if (!fs.existsSync(config[property] = path.join(pathRoot,name)))
+        config[property] = undefined;
+}
+
+function getPlugins(config) {
+
+}
+
 module.exports.config = (() => {
     cli.log("Loading configs");
     const config = getUserConfig();
     config.mode = module.exports.args["--production"] ? "production" : config.mode || "development";
     cli.log("mode : " + config.mode)
     config.name = name;
-    config.plugins = config.plugins || [];
     throwIfNotFound("root dir", config.root = config.root ? makeAbsolute(process.cwd(), config.root) : process.cwd());
     throwIfNotFound("src dir", config.src = config.src ? makeAbsolute(config.root, config.src) : path.join(config.root, "src"));
-    throwIfNotFound("pages dir", config.pages = config.pages ? makeAbsolute(config.src, config.pages) : path.join(config.src, "pages"));
+    throwIfNotFound("pages dir", config.pages = config.pages ? makeAbsolute(config.root, config.pages) : path.join(config.src, "pages"));
     config.dist = config.dist ? makeAbsolute(config.root, config.dist) : path.join(config.root, "dist");
-    if (config.webpack)
-        throwIfNotFound("webpack config")
-    else if (!fs.existsSync(config.webpack = path.join(config.root, "webpack.config.js")))
-        config.webpack = undefined;
+    undefinedIfNotFound(config, "pluginsDir", config.root, "plugins", "plugins dir");
+    undefinedIfNotFound(config, "webpack", config.root, "webpack.config.js", "webpack config");
+    getPlugins(config);
+
+
     return config;
 })()
