@@ -1,6 +1,6 @@
-require("s3-fetch")
-const {config} =require("./config/global.config");
-console.log(config);
+require("./architects/plugin.architect")
+/*const {config} =require("./config/global.config");
+console.log(config);*/
 /*
 const {pageArchitect} = require("./index");
 
