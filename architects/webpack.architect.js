@@ -49,7 +49,6 @@ function smartBuildLib() {
 
 function buildReactConfig() {
     return {
-        name: `react-web-${config.name}`,
         target: 'web',
         mode: config.mode,
         entry: {
@@ -85,14 +84,12 @@ module.exports.withConfig = (pages, conf) => {
     if (typeof conf !== "object")
         throwError(":( expected object got " + typeof conf);
 
-
     let mergedConfig = {
         //settings which can be changed by user
         target: 'web',
         mode: config.mode,
         ...conf,
         //settings un-touchable by user
-        name: `web-${config.name}`,
         optimization: {
             splitChunks: {
                 chunks: 'all',
@@ -101,43 +98,60 @@ module.exports.withConfig = (pages, conf) => {
             usedExports: true
         },
     };
-    /*mergedConfig.externals.React = "React";
-    mergedConfig.externals.ReactDOM = "ReactDOM";*/
-    if (!mergedConfig.output.path) mergedConfig.output.path = path.join(config.dist)
-    if (!mergedConfig.output.filename) mergedConfig.output.filename = "[name].[hash].js"
+
+    if (config.mode === "production") {
+        mergedConfig.watch = false;
+        mergedConfig.output.path = config.cache;
+    } else {
+        mergedConfig.watch = true;
+        mergedConfig.output.path = config.dist;
+        mergedConfig.externals.ReactDOM = "ReactDOM";
+    }
+    mergedConfig.output.filename = mergedConfig.output.filename || "[name].[hash].js"
+
+    mergedConfig.externals.React = "React";
 
     mergedConfig.module.rules.push({
         test: /\.js$/,
-        exclude: "/node_modules/",
         include: module.src,
         use: {
             loader: 'babel-loader',
             options: {
                 presets: ["@babel/preset-react"]
             }
-        }
+        },
     });
+
     const outs = [];
     pages.forEach((page, index) => {
-        outs.push(_.cloneDeep(mergedConfig));
         let relative = page.replace(config.pages + "/", "");
         let {dir, name} = path.parse(relative);
         const entry = path.join(dir, name);
-        outs[index].entry[entry] = path.resolve(__dirname, '../front/web-front.js');
-        outs[index].plugins.push(
-            new HtmlWebpackPlugin({
-                filename: `${entry}.html`,
-                template: path.resolve(__dirname, '../front/template.html'),
-            }),
-            new webpack.ProvidePlugin({
-                App: page,
-                /*React: "react",*/
-            })
-        );
+        if (mergedConfig.watch) {
+            outs.push(_.cloneDeep(mergedConfig));
+            outs[index].entry[entry] = path.resolve(__dirname, '../front/web-front.js');
+            outs[index].plugins.push(
+                new HtmlWebpackPlugin({
+                    filename: `${entry}.html`,
+                    template: path.resolve(__dirname, '../front/template.html'),
+                }),
+                new webpack.ProvidePlugin({
+                    App: "react",
+                })
+            );
+        } else {
+            mergedConfig.target = 'node';
+            mergedConfig.entry[entry] = page;//create in one config
+            //make file as library so it can be imported for static generation
+            mergedConfig.output.libraryTarget = "commonjs2"
+        }
     });
+    if (!mergedConfig.watch) {//if in production
+        outs.push(mergedConfig);
+    }
     const libs = smartBuildLib();
-    if(libs)
+    if (libs)
         outs.push(libs);
-
+    console.log(outs)
     return outs;
 }

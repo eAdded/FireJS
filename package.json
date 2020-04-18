@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node index.js",
     "test": "node test.js",
-    "test:pro": "node test.js -p"
+    "test:pro": "node --trace-uncaught test.js -p"
   },
   "dependencies": {
     "@babel/core": "^7.9.0",

@@ -1,16 +1,16 @@
 /*const {config} =require("./config/global.config");
 console.log(config);*/
-const {pageArchitect} = require("./index");
+/*const {pageArchitect} = require("./index");
 
-pageArchitect();
-require("./architects/plugin.architect")
+pageArchitect()*/
+//require("./architects/plugin.architect")
 /*
 const indexPage = require("./dist/index.0f1704b357e5e167e785");
 console.log((indexPage))
 */
-/*
-global.ReactDOM = require("react-dom");
+const {renderToString} = require("react-dom/server");
 global.React = require("react");
-global.document = {}
-const index = require("./dist/index.59d6aff984e7b73585d6");
+const App = require("./out/.cache/index.a51c2eae9d502d912e5e");
+console.log(renderToString(React.createElement(App.default,{},null)));
+/*const index = require("./dist/index.59d6aff984e7b73585d6");
 index.default();*/
