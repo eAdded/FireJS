@@ -85,6 +85,10 @@ function pluginExists(plugin, paths) {
     }
 }
 
+function makeDirIfNotFound(path){
+    if(!fs.existsSync(path))
+        fs.mkdirSync(path);
+}
 /**
  * @type {{}}
  */
@@ -97,7 +101,12 @@ module.exports.config = (() => {
     throwIfNotFound("root dir", config.root = config.root ? makeAbsolute(process.cwd(), config.root) : process.cwd());
     throwIfNotFound("src dir", config.src = config.src ? makeAbsolute(config.root, config.src) : path.join(config.root, "src"));
     throwIfNotFound("pages dir", config.pages = config.pages ? makeAbsolute(config.root, config.pages) : path.join(config.src, "pages"));
-    config.dist = config.dist ? makeAbsolute(config.root, config.dist) : path.join(config.root, "dist");
+    //out
+    makeDirIfNotFound(config.outDir = config.outDir ? makeAbsolute(config.root, config.outDir) : path.join(config.root, "out"));
+    makeDirIfNotFound(config.dist = config.dist ? makeAbsolute(config.outDir, config.dist) : path.join(config.outDir, "dist"));
+    makeDirIfNotFound(config.pageData = config.pageData ? makeAbsolute(config.outDir, config.pageData) : path.join(config.dist, "pageData"));
+    makeDirIfNotFound(config.cache = config.cache ? makeAbsolute(config.outDir, config.cache) : path.join(config.outDir, ".cache"));
+    //configs
     undefinedIfNotFound(config, "pluginsDir", config.src, "plugins", "plugins dir");
     undefinedIfNotFound(config, "webpack", config.root, "webpack.config.js", "webpack config");
     getPlugins(config);

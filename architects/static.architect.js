@@ -1,0 +1,1 @@
+const {config: {dist}} = require("../config/global.config");
