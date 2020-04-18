@@ -18,7 +18,10 @@ function getUserConfig() {
         module: {
             rules: []
         },
-        plugins: []
+        plugins: [],
+        externals: {
+
+        }
     }
     if (config.webpack) {
         const userWebpack = require(config.webpack);
@@ -67,12 +70,9 @@ module.exports.withConfig = (pages, conf) => {
         ...conf,
         //settings un-touchable by user
         name: `web-${config.name}`,
-        externals: {
-            React : "React",
-            ReactDOM : "ReactDOM"
-        }
     };
-
+    mergedConfig.externals.React = "React";
+    mergedConfig.externals.ReactDOM = "ReactDOM";
     if (!mergedConfig.output.path) mergedConfig.output.path = path.join(config.dist)
     if (!mergedConfig.output.filename) mergedConfig.output.filename = "[name].[hash].js"
 
