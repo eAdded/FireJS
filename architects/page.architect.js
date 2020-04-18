@@ -14,7 +14,7 @@ module.exports = () => {
  * @param {string[]} pages array of absolute path to pages
  */
 module.exports.fromPages = (pages) => {
-    return module.exports.fromConfigs([webpackArchitect(pages)]);
+    return module.exports.fromConfigs(webpackArchitect(pages));
 }
 
 /**

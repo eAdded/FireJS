@@ -40,26 +40,31 @@ function getUserConfig() {
 
 /**
  * @param {String[]} pages array of pages
- * @returns {{mode: string,name:String, output: {path: string, filename: string}, entry: [string, *], plugins: [], module: {rules: []}, name: string, target: string}}
+ * @returns {*[]}
  */
 module.exports = (pages) => {
     return module.exports.withConfig(pages, getUserConfig())
 };
+
 /**
+ *
  * @param {String[]} pages array of pages
+ * @param {{output: {}, entry: {}, plugins: *[], module: {rules: *[]}}} conf webpack config
  * @param {String} conf webpack config
- * @return {{[p: string]: *}}
+ * @return {[]}
  */
 module.exports.withConfig = (pages, conf) => {
     if (!Array.isArray(pages))
         throwError("Expected array of pages got " + typeof pages);
     if (typeof conf !== "object")
         throwError(":( expected object got " + typeof conf);
+
+
     let mergedConfig = {
         //settings which can be changed by user
         target: 'web',
         mode: config.mode,
-        ..._.cloneDeep(conf),
+        ...conf,
         //settings un-changeable by user
         name: `web-${config.name}`,
     };
@@ -67,18 +72,6 @@ module.exports.withConfig = (pages, conf) => {
     if (!mergedConfig.output.path) mergedConfig.output.path = path.join(config.dist)
     if (!mergedConfig.output.filename) mergedConfig.output.filename = "[name].[hash].js"
 
-    //mergedConfig.entry.shared.push('react','react-dom');//shared imports
-    pages.forEach(page => {
-        let relative = page.replace(config.pages + "/", "");
-        let {dir, name} = path.parse(relative);
-        const entry = path.join(dir, name);
-        mergedConfig.entry[entry] = page;
-        mergedConfig.plugins.push(new HtmlWebpackPlugin({
-            filename: `${entry}.html`,
-            template: path.resolve(__dirname, '../front/template.html'),
-            chunks: [entry],
-        }));
-    });
     mergedConfig.module.rules.push({
         test: /\.js$/,
         exclude: "/node_modules/",
@@ -89,5 +82,19 @@ module.exports.withConfig = (pages, conf) => {
             }
         }
     });
-    return mergedConfig;
+    //mergedConfig.entry.shared.push('react','react-dom');//shared imports
+    const outs = [];
+    pages.forEach((page, index) => {
+        outs.push(_.cloneDeep(mergedConfig));
+        let relative = page.replace(config.pages + "/", "");
+        let {dir, name} = path.parse(relative);
+        const entry = path.join(dir, name);
+        outs[index].entry[entry] = page;
+        outs[index].plugins.push(new HtmlWebpackPlugin({
+            filename: `${entry}.html`,
+            template: path.resolve(__dirname, '../front/template.html'),
+        }));
+    });
+
+    return outs;
 }

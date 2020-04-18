@@ -5,7 +5,7 @@ const fs = require("fs");
 const cli = require("../utils/cli-color");
 const pageDataDir = path.resolve(config.dist, ".pageData");
 if (!fs.existsSync(pageDataDir))
-    fs.mkdirSync(pageDataDir);
+    fs.mkdirSync(pageDataDir,{recursive:true});
 /* resolve structure
  * [
  *  {
