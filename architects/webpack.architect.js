@@ -38,7 +38,6 @@ function getUserConfig() {
     return sample;
 }
 
-
 /**
  * @param {String[]} pages array of pages
  * @returns {*[]}
@@ -66,8 +65,12 @@ module.exports.withConfig = (pages, conf) => {
         target: 'web',
         mode: config.mode,
         ...conf,
-        //settings un-changeable by user
+        //settings un-touchable by user
         name: `web-${config.name}`,
+        externals: {
+            React : "React",
+            ReactDOM : "ReactDOM"
+        }
     };
 
     if (!mergedConfig.output.path) mergedConfig.output.path = path.join(config.dist)
@@ -76,10 +79,11 @@ module.exports.withConfig = (pages, conf) => {
     mergedConfig.module.rules.push({
         test: /\.js$/,
         exclude: "/node_modules/",
+        include: module.src,
         use: {
             loader: 'babel-loader',
             options: {
-                presets: ["@babel/preset-env", "@babel/preset-react"]
+                presets: ["@babel/preset-react"]
             }
         }
     });
@@ -97,11 +101,11 @@ module.exports.withConfig = (pages, conf) => {
                 template: path.resolve(__dirname, '../front/template.html'),
             }),
             new webpack.ProvidePlugin({
-                App: page,
-                React : "react"
+                App: page
             })
         );
     });
+    outs.push()
 
     return outs;
 }
