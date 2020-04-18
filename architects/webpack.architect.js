@@ -51,7 +51,7 @@ function smartBuildLib() {
 function buildReactConfig() {
     return {
         target: 'web',
-        mode: config.mode,
+        mode: config.pro ? "production" : "development",
         entry: {
             "React": "react",
             "ReactDOM": "react-dom"
@@ -71,11 +71,11 @@ function buildReactConfig() {
 module.exports = (pages) => {
     return module.exports.withConfig(pages, getUserConfig())
 };
-module.exports.withConfig = (pages, config) => {
-    if (config.mode !== "production")
-        return module.exports.babel(pages, config);
+module.exports.withConfig = (pages, conf) => {
+    if (config.pro)
+        return module.exports.babel(pages, conf);
     else
-        return module.exports.direct(pages, config);
+        return module.exports.direct(pages, conf);
 };
 
 /**
@@ -87,7 +87,6 @@ module.exports.withConfig = (pages, config) => {
  */
 
 module.exports.babel = (pages, conf) => {
-    console.log("babel")
     if (!Array.isArray(pages))
         throwError("Expected array of pages got " + typeof pages);
     if (typeof conf !== "object")
@@ -96,7 +95,7 @@ module.exports.babel = (pages, conf) => {
     let mergedConfig = {
         //settings which can be changed by user
         target: 'web',
-        mode: config.mode,
+        mode: config.pro ? "production" : "development",
         ...conf,
         //settings un-touchable by user
     };
@@ -127,7 +126,6 @@ module.exports.babel = (pages, conf) => {
 }
 
 module.exports.direct = (pages, conf) => {
-    console.log("direct")
     if (!Array.isArray(pages))
         throwError("Expected array of pages got " + typeof pages);
     if (typeof conf !== "object")
@@ -136,8 +134,8 @@ module.exports.direct = (pages, conf) => {
     let mergedConfig = {
         //settings which can be changed by user
         target: 'web',
-        mode: config.mode,
-        watch: config.mode === "development",
+        mode: config.pro ? "production" : "development",
+        watch: !config.pro,
         ...conf,
         //settings un-touchable by user
         optimization: {

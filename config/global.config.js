@@ -85,18 +85,19 @@ function pluginExists(plugin, paths) {
     }
 }
 
-function makeDirIfNotFound(path){
-    if(!fs.existsSync(path))
+function makeDirIfNotFound(path) {
+    if (!fs.existsSync(path))
         fs.mkdirSync(path);
 }
+
 /**
  * @type {{}}
  */
 module.exports.config = (() => {
     cli.log("Loading configs");
     const config = getUserConfig();
-    config.mode = module.exports.args["--production"] ? "production" : config.mode || "development";
-    cli.log("mode : " + config.mode)
+    config.pro = module.exports.args["--production"] ? "production" : config.pro || false;
+    cli.log("mode : " + config.pro ? "production" : "development")
     config.name = name;
     throwIfNotFound("root dir", config.root = config.root ? makeAbsolute(process.cwd(), config.root) : process.cwd());
     throwIfNotFound("src dir", config.src = config.src ? makeAbsolute(config.root, config.src) : path.join(config.root, "src"));
