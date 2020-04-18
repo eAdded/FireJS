@@ -19,9 +19,7 @@ function getUserConfig() {
             rules: []
         },
         plugins: [],
-        externals: {
-
-        }
+        externals: {}
     }
     if (config.webpack) {
         const userWebpack = require(config.webpack);
@@ -39,6 +37,24 @@ function getUserConfig() {
             throwError("Expected webpack config object or array got " + typeof userWebpack);
     }
     return sample;
+}
+
+
+function buildReactConfig() {
+    return {
+        name: `react-web-${config.name}`,
+        target: 'web',
+        mode: config.mode,
+        entry: {
+            "React": "react",
+            "ReactDOM": "react-dom"
+        },
+        output: {
+            path: config.dist,
+            filename: "[name].[hash].js",
+            library: "[name]",
+        }
+    };
 }
 
 /**
@@ -105,7 +121,7 @@ module.exports.withConfig = (pages, conf) => {
             })
         );
     });
-    outs.push()
+    outs.push(buildReactConfig());
 
     return outs;
 }
