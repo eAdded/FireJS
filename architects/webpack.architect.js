@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path")
+const fs = require("fs");
 const {config} = require("../config/global.config")
 const _ = require("lodash");
 const {throwError} = require("../utils/cli-color");
@@ -39,6 +40,12 @@ function getUserConfig() {
     return sample;
 }
 
+function smartBuildLib() {
+    if (!fs.existsSync(path.join(config.dist, "React.js")) || !fs.existsSync(path.join(config.dist, "ReactDOM.js")))
+        return buildReactConfig();
+    else
+        return undefined;
+}
 
 function buildReactConfig() {
     return {
@@ -51,7 +58,7 @@ function buildReactConfig() {
         },
         output: {
             path: config.dist,
-            filename: "[name].[hash].js",
+            filename: "[name].js",
             library: "[name]",
         }
     };
@@ -86,9 +93,16 @@ module.exports.withConfig = (pages, conf) => {
         ...conf,
         //settings un-touchable by user
         name: `web-${config.name}`,
+        optimization: {
+            splitChunks: {
+                chunks: 'all',
+                minChunks: Infinity
+            },
+            usedExports: true
+        },
     };
-    mergedConfig.externals.React = "React";
-    mergedConfig.externals.ReactDOM = "ReactDOM";
+    /*mergedConfig.externals.React = "React";
+    mergedConfig.externals.ReactDOM = "ReactDOM";*/
     if (!mergedConfig.output.path) mergedConfig.output.path = path.join(config.dist)
     if (!mergedConfig.output.filename) mergedConfig.output.filename = "[name].[hash].js"
 
@@ -103,7 +117,6 @@ module.exports.withConfig = (pages, conf) => {
             }
         }
     });
-    //mergedConfig.entry.shared.push('react','react-dom');//shared imports
     const outs = [];
     pages.forEach((page, index) => {
         outs.push(_.cloneDeep(mergedConfig));
@@ -117,11 +130,14 @@ module.exports.withConfig = (pages, conf) => {
                 template: path.resolve(__dirname, '../front/template.html'),
             }),
             new webpack.ProvidePlugin({
-                App: page
+                App: page,
+                /*React: "react",*/
             })
         );
     });
-    outs.push(buildReactConfig());
+    const libs = smartBuildLib();
+    if(libs)
+        outs.push(libs);
 
     return outs;
 }
