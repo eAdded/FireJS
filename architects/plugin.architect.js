@@ -15,7 +15,7 @@ if (!fs.existsSync(pageDataDir))
  * ]
  */
 function createPageData(page){
-    fs.writeFile(path.join(page.filepath,"index.js"),JSON.stringify(page.data),err => {
+    fs.writeFile(path.join(page.filepath,"index.json"),JSON.stringify(page.data),err => {
        if(err)
            cli.error(`error writing page data to ${page.path}/index.json with err`,err);
        else{
