@@ -3,5 +3,7 @@
 /yarn-error.log
 /serve.json
 /temp/
-/out/
+/out
 /src/
+/out/dist/
+/out/.cache/
