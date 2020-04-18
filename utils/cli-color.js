@@ -30,6 +30,7 @@ if (args["--no_output"]) {
     module.exports.error = (...messages) => console.error('\x1b[31mX', ...messages, '\x1b[0m');
     module.exports.warn = (...messages) => console.error('\x1b[33m!', ...messages, '\x1b[0m');
     module.exports.throwError = error = Error => {
-        throw `\x1b[31m${error.toString()}\x1b[0m`;
+        module.exports.error(error.toString());
+        throw error;
     };
 }

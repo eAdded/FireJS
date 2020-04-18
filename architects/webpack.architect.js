@@ -69,7 +69,7 @@ function buildReactConfig() {
  * @returns {*[]}
  */
 module.exports = (pages) => {
-    return module.exports.withConfig(pages, getUserConfig())
+    return  module.exports.withConfig(pages, getUserConfig());
 };
 module.exports.withConfig = (pages, conf) => {
     if (config.pro)
@@ -96,11 +96,12 @@ module.exports.babel = (pages, conf) => {
         //settings which can be changed by user
         target: 'web',
         mode: config.pro ? "production" : "development",
-        ...conf,
+        ..._.cloneDeep(conf)
+        //settings un-touchable by user
         //settings un-touchable by user
     };
     mergedConfig.output.path = mergedConfig.output.path || config.cache;
-    mergedConfig.output.filename = mergedConfig.output.filename || "[name].[hash].js"
+    mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
     mergedConfig.externals.React = "React";
     mergedConfig.module.rules.push({
         test: /\.js$/,
@@ -121,8 +122,7 @@ module.exports.babel = (pages, conf) => {
         //make file as library so it can be imported for static generation
         mergedConfig.output.libraryTarget = "commonjs2"
     });
-
-    return [mergedConfig];
+    return [mergedConfig,...module.exports.direct(pages, conf)];
 }
 
 module.exports.direct = (pages, conf) => {
@@ -136,7 +136,7 @@ module.exports.direct = (pages, conf) => {
         target: 'web',
         mode: config.pro ? "production" : "development",
         watch: !config.pro,
-        ...conf,
+        ..._.cloneDeep(conf),
         //settings un-touchable by user
         optimization: {
             splitChunks: {
@@ -146,38 +146,40 @@ module.exports.direct = (pages, conf) => {
             usedExports: true
         },
     };
-
     mergedConfig.output.path = config.dist;
     mergedConfig.output.filename = mergedConfig.output.filename || "[name].[hash].js"
 
     mergedConfig.externals.React = "React";
     mergedConfig.externals.ReactDOM = "ReactDOM";
 
-    mergedConfig.module.rules.push({
-        test: /\.js$/,
-        include: module.src,
-        use: {
-            loader: 'babel-loader',
-            options: {
-                presets: ["@babel/preset-react"]
-            }
-        },
-    });
+    if (!config.pro)
+        mergedConfig.module.rules.push({
+            test: /\.js$/,
+            include: module.src,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: ["@babel/preset-react"]
+                }
+            },
+        });
 
     const outs = [];
+    const web_front_entry = path.resolve(__dirname, '../front/web-front.js')
+    const template = path.resolve(__dirname, '../front/template.html');
     pages.forEach((page, index) => {
         let relative = page.replace(config.pages + "/", "");
         let {dir, name} = path.parse(relative);
         const entry = path.join(dir, name);
         outs.push(_.cloneDeep(mergedConfig));
-        outs[index].entry[entry] = path.resolve(__dirname, '../front/web-front.js');
+        outs[index].entry[entry] = web_front_entry;
         outs[index].plugins.push(
             new HtmlWebpackPlugin({
                 filename: `${entry}.html`,
-                template: path.resolve(__dirname, '../front/template.html'),
+                template: template,
             }),
             new webpack.ProvidePlugin({
-                App: "react",
+                App: path.join(config.cache, relative)
             })
         );
     });
