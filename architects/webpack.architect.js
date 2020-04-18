@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require("webpack");
 const path = require("path")
 const {config} = require("../config/global.config")
 const _ = require("lodash");
@@ -89,11 +90,17 @@ module.exports.withConfig = (pages, conf) => {
         let relative = page.replace(config.pages + "/", "");
         let {dir, name} = path.parse(relative);
         const entry = path.join(dir, name);
-        outs[index].entry[entry] = page;
-        outs[index].plugins.push(new HtmlWebpackPlugin({
-            filename: `${entry}.html`,
-            template: path.resolve(__dirname, '../front/template.html'),
-        }));
+        outs[index].entry[entry] = path.resolve(__dirname, '../front/web-front.js');
+        outs[index].plugins.push(
+            new HtmlWebpackPlugin({
+                filename: `${entry}.html`,
+                template: path.resolve(__dirname, '../front/template.html'),
+            }),
+            new webpack.ProvidePlugin({
+                App: page,
+                React : "react"
+            })
+        );
     });
 
     return outs;
