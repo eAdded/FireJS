@@ -7,13 +7,13 @@ const name = "react-static-gen";
 //load args first to prevent dependency problem between cli and config
 module.exports.args = require("arg")({
     //Types
-    "--production": Boolean,
+    "--pro": Boolean,
     "--conf": String,
     "--verbose": Boolean,
     "--no_color": Boolean,
     "--no_output": Boolean,
     //Aliases
-    "-p": "--production",
+    "-p": "--pro",
     "-c": "--conf",
     "-v": "--verbose",
     "--nc": "--no_color",
@@ -60,14 +60,15 @@ function undefinedIfNotFound(config, property, pathRoot, name, msg) {
 
 function getPlugins(config) {
     config.plugins = config.plugins || [];
+    console.log(config.plugins)
     config.plugins.forEach((plugin, index) => {
-        if (!pluginExists(plugin, [config.root])) {
+        if (!pluginExists(plugin, [config.paths.root])) {
             config.plugins.splice(index, 1);
             cli.warn(`Plugin ${plugin} is not a valid plugin. Removing...`);
         }
     })
-    fs.readdirSync(config.pluginsDir).forEach(plugin => {
-        const pPath = path.join(config.pluginsDir, plugin);
+    fs.readdirSync(config.paths.plugins).forEach(plugin => {
+        const pPath = path.join(config.paths.plugins, plugin);
         if (pluginExists(pPath))
             config.plugins.push(pPath);
         else
@@ -96,20 +97,22 @@ function makeDirIfNotFound(path) {
 module.exports.config = (() => {
     cli.log("Loading configs");
     const config = getUserConfig();
-    config.pro = module.exports.args["--production"] ? "production" : config.pro || false;
+    config.pro = module.exports.args["--pro"] ? "production" : config.pro || false;
+    module.exports.args["--pro"] = undefined;
     cli.log("mode : " + config.pro ? "production" : "development")
     config.name = name;
-    throwIfNotFound("root dir", config.root = config.root ? makeAbsolute(process.cwd(), config.root) : process.cwd());
-    throwIfNotFound("src dir", config.src = config.src ? makeAbsolute(config.root, config.src) : path.join(config.root, "src"));
-    throwIfNotFound("pages dir", config.pages = config.pages ? makeAbsolute(config.root, config.pages) : path.join(config.src, "pages"));
+    config.paths = {};
+    throwIfNotFound("root dir", config.paths.root = config.paths.root ? makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
+    throwIfNotFound("src dir", config.paths.src = config.paths.src ? makeAbsolute(config.paths.root, config.paths.src) : path.join(config.paths.root, "src"));
+    throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? makeAbsolute(config.paths.root, config.paths.pages) : path.join(config.paths.src, "pages"));
     //out
-    makeDirIfNotFound(config.outDir = config.outDir ? makeAbsolute(config.root, config.outDir) : path.join(config.root, "out"));
-    makeDirIfNotFound(config.dist = config.dist ? makeAbsolute(config.outDir, config.dist) : path.join(config.outDir, "dist"));
-    makeDirIfNotFound(config.pageData = config.pageData ? makeAbsolute(config.outDir, config.pageData) : path.join(config.dist, "pageData"));
-    makeDirIfNotFound(config.cache = config.cache ? makeAbsolute(config.outDir, config.cache) : path.join(config.outDir, ".cache"));
+    makeDirIfNotFound(config.paths.out = config.paths.out ? makeAbsolute(config.paths.root, config.paths.out) : path.join(config.paths.root, "out"));
+    makeDirIfNotFound(config.paths.dist = config.paths.dist ? makeAbsolute(config.paths.out, config.paths.dist) : path.join(config.paths.out, "dist"));
+    makeDirIfNotFound(config.paths.pageData = config.paths.pageData ? makeAbsolute(config.paths.out, config.paths.pageData) : path.join(config.paths.dist, "pageData"));
+    makeDirIfNotFound(config.paths.cache = config.paths.cache ? makeAbsolute(config.paths.out, config.paths.cache) : path.join(config.paths.out, ".cache"));
     //configs
-    undefinedIfNotFound(config, "pluginsDir", config.src, "plugins", "plugins dir");
-    undefinedIfNotFound(config, "webpack", config.root, "webpack.config.js", "webpack config");
+    undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
+    undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
     getPlugins(config);
     return config;
 })()

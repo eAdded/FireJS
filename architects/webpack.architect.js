@@ -2,15 +2,41 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path")
 const fs = require("fs");
-const {config} = require("../config/global.config")
+const {config} = require("../config/global.config");
+const {paths} = config;
 const _ = require("lodash");
 const {throwError} = require("../utils/cli-color");
-const readdir = require("recursive-dir-reader");
 
 /**
- * @return {{output: {}, entry: {}, plugins: [], module: {rules: []}}}
+ * @return {{mode: string, output: {path: string, filename: string, library: string}, entry: {ReactDOM: string, React: string}, target: string}|undefined}
  */
-function getUserConfig() {
+function smartBuildLib() {
+    if (!fs.existsSync(path.join(paths.dist, "React.js")) || !fs.existsSync(path.join(paths.dist, "ReactDOM.js")))
+        return buildReactConfig();
+    else
+        return undefined;
+}
+
+/**
+ * @return {{mode: string, output: {path: string, filename: string, library: string}, entry: {ReactDOM: string, React: string}, target: string}}
+ */
+function buildReactConfig() {
+    return {
+        target: 'web',
+        mode: config.pro ? "production" : "development",
+        entry: {
+            "React": "react",
+            "ReactDOM": "react-dom"
+        },
+        output: {
+            path: paths.dist,
+            filename: "[name].js",
+            library: "[name]",
+        }
+    };
+}
+
+const getUserConfig = () => {
     // predefined object structure to prevent undefined error
     const sample = {
         entry: {
@@ -23,8 +49,8 @@ function getUserConfig() {
         plugins: [],
         externals: {}
     }
-    if (config.webpack) {
-        const userWebpack = require(config.webpack);
+    if (paths.webpack) {
+        const userWebpack = require(paths.webpack);
         if (Array.isArray(userWebpack))
             userWebpack.forEach((prop) => {
                 if (prop.name === ("web-" + config.name))
@@ -40,44 +66,7 @@ function getUserConfig() {
     }
     return sample;
 }
-
-function smartBuildLib() {
-    if (!fs.existsSync(path.join(config.dist, "React.js")) || !fs.existsSync(path.join(config.dist, "ReactDOM.js")))
-        return buildReactConfig();
-    else
-        return undefined;
-}
-
-function buildReactConfig() {
-    return {
-        target: 'web',
-        mode: config.pro ? "production" : "development",
-        entry: {
-            "React": "react",
-            "ReactDOM": "react-dom"
-        },
-        output: {
-            path: config.dist,
-            filename: "[name].js",
-            library: "[name]",
-        }
-    };
-}
-
-/**
- * @param {String[]} pages array of pages
- * @returns {*[]}
- */
-module.exports = (pages) => {
-    return  module.exports.withConfig(pages, getUserConfig());
-};
-module.exports.withConfig = (pages, conf) => {
-    if (config.pro)
-        return module.exports.babel(pages, conf);
-    else
-        return module.exports.direct(pages, conf);
-};
-
+module.exports.getUserConfig = getUserConfig;
 /**
  *
  * @param {String[]} pages array of pages
@@ -85,7 +74,6 @@ module.exports.withConfig = (pages, conf) => {
  * @param {String} conf webpack config
  * @return {[]}
  */
-
 module.exports.babel = (pages, conf) => {
     if (!Array.isArray(pages))
         throwError("Expected array of pages got " + typeof pages);
@@ -100,7 +88,7 @@ module.exports.babel = (pages, conf) => {
         //settings un-touchable by user
         //settings un-touchable by user
     };
-    mergedConfig.output.path = mergedConfig.output.path || config.cache;
+    mergedConfig.output.path = mergedConfig.output.path || paths.cache;
     mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
     mergedConfig.externals.React = "React";
     mergedConfig.module.rules.push({
@@ -114,7 +102,7 @@ module.exports.babel = (pages, conf) => {
         },
     });
     pages.forEach(page => {
-        let relative = page.replace(config.pages + "/", "");
+        let relative = page.replace(paths.pages + "/", "");
         let {dir, name} = path.parse(relative);
         const entry = path.join(dir, name);
         mergedConfig.target = 'node';
@@ -122,7 +110,7 @@ module.exports.babel = (pages, conf) => {
         //make file as library so it can be imported for static generation
         mergedConfig.output.libraryTarget = "commonjs2"
     });
-    return [mergedConfig,...module.exports.direct(pages, conf)];
+    return [mergedConfig];
 }
 
 module.exports.direct = (pages, conf) => {
@@ -146,7 +134,7 @@ module.exports.direct = (pages, conf) => {
             usedExports: true
         },
     };
-    mergedConfig.output.path = config.dist;
+    mergedConfig.output.path = paths.dist;
     mergedConfig.output.filename = mergedConfig.output.filename || "[name].[hash].js"
 
     mergedConfig.externals.React = "React";
@@ -165,10 +153,10 @@ module.exports.direct = (pages, conf) => {
         });
 
     const outs = [];
-    const web_front_entry = path.resolve(__dirname, '../front/web-front.js')
-    const template = path.resolve(__dirname, '../front/template.html');
+    const web_front_entry = path.resolve(__dirname, '../web/index.js')
+    const template = path.resolve(__dirname, '../web/template.html');
     pages.forEach((page, index) => {
-        let relative = page.replace(config.pages + "/", "");
+        let relative = page.replace(paths.pages + "/", "");
         let {dir, name} = path.parse(relative);
         const entry = path.join(dir, name);
         outs.push(_.cloneDeep(mergedConfig));
@@ -179,7 +167,7 @@ module.exports.direct = (pages, conf) => {
                 template: template,
             }),
             new webpack.ProvidePlugin({
-                App: path.join(config.cache, relative)
+                App: path.join(config.pro ? paths.cache : paths.pages, relative)
             })
         );
     });
