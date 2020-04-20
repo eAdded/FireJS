@@ -27,7 +27,7 @@ module.exports = class {
                 "ReactDOM": "react-dom"
             },
             output: {
-                path: this.#$.config.paths.dist,
+                path: this.#$.config.paths.lib,
                 filename: "[name].js",
                 library: "[name]",
             }
