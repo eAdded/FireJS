@@ -3,7 +3,6 @@ const webpack = require("webpack");
 const path = require("path")
 const fs = require("fs");
 const _ = require("lodash");
-
 module.exports = class {
     #$;
 
@@ -131,14 +130,16 @@ module.exports = class {
 
         const outs = [];
         const web_front_entry = path.resolve(__dirname, '../web/index.js')
-        const template = path.resolve(__dirname, '../web/template.html');
+        const lib_relative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist,"");
+        const template = fs.readFileSync(path.resolve(__dirname, '../web/template.html')).toString().replace("</head>",
+            `<script src="${lib_relative}/React.js"></script><script src="${lib_relative}/ReactDOM.js"></script></head>`);
         Object.keys(this.#$.map).forEach(page => {
             const out = _.cloneDeep(mergedConfig);
             out.entry[page] = web_front_entry;
             out.plugins.push(
                 new HtmlWebpackPlugin({
                     filename: `../${page.substr(0, page.lastIndexOf('.'))}.html`,
-                    template: template,
+                    templateContent: template
                 }),
                 new webpack.ProvidePlugin({
                     App: path.join(this.#$.config.pro ? this.#$.config.paths.cache : this.#$.config.paths.pages, page)
