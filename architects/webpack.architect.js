@@ -138,7 +138,7 @@ module.exports = class {
             out.entry[page] = web_front_entry;
             out.plugins.push(
                 new HtmlWebpackPlugin({
-                    filename: `${page}.html`,
+                    filename: `${page.substr(0, page.lastIndexOf('.'))}.html`,
                     template: template,
                 }),
                 new webpack.ProvidePlugin({
