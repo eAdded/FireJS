@@ -131,8 +131,8 @@ module.exports = class {
         const outs = [];
         const web_front_entry = path.resolve(__dirname, '../web/index.js')
         const lib_relative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist,"");
-        const template = fs.readFileSync(path.resolve(__dirname, '../web/template.html')).toString().replace("</head>",
-            `<script src="${lib_relative}/React.js"></script><script src="${lib_relative}/ReactDOM.js"></script></head>`);
+        const template = fs.readFileSync(path.resolve(__dirname, '../web/template.html')).toString().replace("</body>",
+            `<script src="${lib_relative}/React.js"></script><script src="${lib_relative}/ReactDOM.js"></script></body>`);
         Object.keys(this.#$.map).forEach(page => {
             const out = _.cloneDeep(mergedConfig);
             out.entry[page] = web_front_entry;
