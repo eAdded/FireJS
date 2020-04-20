@@ -1,24 +1,26 @@
-const globalConfig = require("./config/global.config");
+const GlobalConfig = require("./config/global.config");
+const Mapper = require("./mappers/path.mapper")
 const _ = require("lodash");
 const pageArchitect = require("./architects/page.architect");
 const webpackArchitect = require("./architects/webpack.architect");
-const globalData = require("./store/global.data");
+const Cli = require("./utils/cli-color");
 module.exports = class {
-    #$ = new globalData();
+    #$ = {
+        args: {},
+        config: {},
+        map: {},
+        cli: {}
+    };
 
     constructor({userConfig, config, args, map}) {
-        this.#$.args = args || globalConfig.getArgs();
+        const globalConfig = new GlobalConfig(this.#$);
+        this.#$.args = args || GlobalConfig.getArgs();
+        this.#$.cli = new Cli(this.#$.args);
         this.#$.config = config || globalConfig.getConfig(_.cloneDeep(userConfig));
-        this.#$.map = map || require("./mappers/path.mapper").getMap();
+        this.#$.map = map || new Mapper(this.#$).getMap();
     }
 
-    pageArchitect: new pageArchitect(this);
-    webpackArchitect: new webpackArchitect(this);
+    pageArchitect = new pageArchitect(this.#$);
+    webpackArchitect = new webpackArchitect(this.#$);
 
-}
-module.exports.init = () => {
-
-    return {
-
-    };
 }

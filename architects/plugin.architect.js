@@ -1,14 +1,13 @@
 const {config: {pageData, plugins}} = require("../store/global.data");
 const path = require("path");
 const fs = require("fs");
-const cli = require("../utils/cli-color");
 
 function createPageData(page) {
     fs.writeFile(path.join(page.filepath, "pageData.json"), JSON.stringify(page.data), err => {
         if (err)
-            cli.error(`error writing page data to ${page.path}/index.json with err`, err);
+            this.#$.cli.error(`error writing page data to ${page.path}/index.json with err`, err);
         else {
-            cli.ok(`Successfully wrote data for page ${page.path}`);
+            this.#$.cli.ok(`Successfully wrote data for page ${page.path}`);
         }
     });
 }
@@ -21,7 +20,7 @@ plugins.forEach(plugin => {
                 if (!exists)
                     fs.mkdir(page.filepath, {recursive: true}, err => {
                         if (err)
-                            cli.error(`error creating dir ${page.filepath}`);
+                            this.#$.cli.error(`error creating dir ${page.filepath}`);
                         else
                             createPageData(page);
                     });

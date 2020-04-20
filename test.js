@@ -17,4 +17,5 @@ console.log(renderToString(React.createElement(App.default,{},null)));*/
 /*const index = require("./dist/index.59d6aff984e7b73585d6");
 index.default();*/
 const rsg = require("./index");
-rsg.init({}).pageArchitect();
+const rsg1 = new rsg({});
+rsg1.pageArchitect.build();

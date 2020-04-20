@@ -1,10 +1,16 @@
-const {config: {paths: {pages}}} = require("../store/global.data");
 const readdir = require("recursive-dir-reader");
 
-module.exports.getMap = () => {
-    const map = {};
-    readdir.sync(pages, (pagePaths) => {
-        map[pagePaths.replace(pages+"/", "")] = undefined;
-    })
-    return map;
-};
+module.exports = class {
+    #$;
+    constructor(globalData) {
+        this.#$ = globalData;
+    }
+    getMap = () => {
+        const map = {};
+        readdir.sync(this.#$.config.paths.pages, (pagePaths) => {
+            map[pagePaths.replace(this.#$.config.paths.pages + "/", "")] = undefined;
+        })
+        return map;
+    };
+
+}
