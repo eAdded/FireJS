@@ -76,7 +76,7 @@ module.exports = class {
             //settings un-touchable by user
         };
         mergedConfig.output.path = mergedConfig.output.path || this.#$.config.paths.cache;
-        mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
+        mergedConfig.output.filename = mergedConfig.output.filename || "[name]"
         mergedConfig.externals.React = "React";
         mergedConfig.module.rules.push({
             test: /\.js$/,

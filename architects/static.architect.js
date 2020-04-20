@@ -1,1 +1,7 @@
-const {config: {dist}} = require("./global.config");
+module.exports = class  {
+    #$;
+    constructor(globalData) {
+        this.#$ = globalData;
+    }
+    
+}
