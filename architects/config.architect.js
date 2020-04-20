@@ -30,13 +30,13 @@ module.exports = class {
         const wasGiven = this.#$.args["--conf"];//to store if user gave this arg so that log can be changed
         if (this.#$.args["--conf"]) {//tweak conf path
             if (!path.isAbsolute(this.#$.args["--conf"]))
-                args["--conf"] = path.resolve(process.cwd(), this.#$.args["--conf"]);//create absolute path
+                this.#$.args["--conf"] = path.resolve(process.cwd(), this.#$.args["--conf"]);//create absolute path
         } else
             this.#$.args["--conf"] = path.resolve(process.cwd(), `${name}.config.js`);
 
         return fs.existsSync(this.#$.args["--conf"]) ? (() => {///check if config file exists
             this.#$.cli.log(`Loading config from ${this.#$.args["--conf"]}`);
-            return require(args["--conf"])
+            return require(this.#$.args["--conf"])
         })() : (() => {//if config does not exists just return args
             if (wasGiven)
                 this.#$.cli.warn(`Config not found at ${this.#$.args["--conf"]}. Loading defaults`);
@@ -99,9 +99,9 @@ module.exports = class {
         const config = userConfig || this.getUserConfig();
         config.pro = this.#$.args["--pro"] ? true : config.pro || false;
         this.#$.args["--pro"] = undefined;
-        this.#$.cli.log("mode : " + config.pro ? "production" : "development")
+        this.#$.cli.log("mode : " + (config.pro ? "production" : "development"))
         config.name = name;
-        config.paths = {};
+        config.paths = config.paths || {};
         this.#throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.#makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
         this.#throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.#makeAbsolute(config.paths.root, config.paths.src) : path.join(config.paths.root, "src"));
         this.#throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.#makeAbsolute(config.paths.root, config.paths.pages) : path.join(config.paths.src, "pages"));

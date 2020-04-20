@@ -17,14 +17,19 @@ module.exports = class {
         const configArchitect = new ConfigArchitect(this.#$);
         this.#$.args = args || ConfigArchitect.getArgs();
         this.#$.cli = new Cli(this.#$.args);
-        this.#$.config = config || configArchitect.getConfig(_.cloneDeep(userConfig));
+        this.#$.config = config || userConfig ? configArchitect.getConfig(_.cloneDeep(userConfig)) : configArchitect.getConfig();
         this.#$.map = map || new Mapper(this.#$).getMap();
     }
 
     newPageArchitect() {
         return new PageArchitect(this.#$);
     }
+
     newWebpackArchitect() {
         return new WebpackArchitect(this.#$);
+    }
+
+    newConfigArchitect() {
+        return new ConfigArchitect(this.#$);
     }
 }
