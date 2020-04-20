@@ -1,16 +1,8 @@
-const {config: {pageData, plugins}} = require("../config/global.config");
+const {config: {pageData, plugins}} = require("../store/global.data");
 const path = require("path");
 const fs = require("fs");
 const cli = require("../utils/cli-color");
 
-/* resolve structure
- * [
- *  {
- *    page = "/", path to page
- *    data = {}  serializable data
- *  }
- * ]
- */
 function createPageData(page) {
     fs.writeFile(path.join(page.filepath, "pageData.json"), JSON.stringify(page.data), err => {
         if (err)
@@ -39,3 +31,11 @@ plugins.forEach(plugin => {
         });
     })
 });
+
+module.exports = () => {
+    plugins.forEach(plugin => {
+        Object.keys(require(plugin)()).forEach(key => {
+
+        });
+    })
+}

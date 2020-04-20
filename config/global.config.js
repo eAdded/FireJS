@@ -5,25 +5,27 @@ const name = "react-static-gen";
  * @type {*|arg.Result<{"--nc": string, "--production": BooleanConstructor, "-p": string, "--no": string, "--conf": StringConstructor, "-c": string, "--no_output": BooleanConstructor, "-v": string, "--verbose": BooleanConstructor, "--no_color": BooleanConstructor}>}
  */
 //load args first to prevent dependency problem between cli and config
-module.exports.args = require("arg")({
-    //Types
-    "--pro": Boolean,
-    "--conf": String,
-    "--verbose": Boolean,
-    "--no_color": Boolean,
-    "--no_output": Boolean,
-    //Aliases
-    "-p": "--pro",
-    "-c": "--conf",
-    "-v": "--verbose",
-    "--nc": "--no_color",
-    "--no": "--no_output"
-});
+module.exports.getArgs = () => {
+    return require("arg")({
+        //Types
+        "--pro": Boolean,
+        "--conf": String,
+        "--verbose": Boolean,
+        "--no_color": Boolean,
+        "--no_output": Boolean,
+        //Aliases
+        "-p": "--pro",
+        "-c": "--conf",
+        "-v": "--verbose",
+        "--nc": "--no_color",
+        "--no": "--no_output"
+    })
+};
 
 const cli = require("../utils/cli-color");
 
 function getUserConfig() {
-    const args = module.exports.args;
+    const {args} = require("../store/global.data");
     const wasGiven = args["--conf"];//to store if user gave this arg so that log can be changed
     if (args["--conf"]) {//tweak conf path
         if (!path.isAbsolute(args["--conf"]))
@@ -60,7 +62,6 @@ function undefinedIfNotFound(config, property, pathRoot, name, msg) {
 
 function getPlugins(config) {
     config.plugins = config.plugins || [];
-    console.log(config.plugins)
     config.plugins.forEach((plugin, index) => {
         if (!pluginExists(plugin, [config.paths.root])) {
             config.plugins.splice(index, 1);
@@ -94,11 +95,11 @@ function makeDirIfNotFound(path) {
 /**
  * @type {{}}
  */
-module.exports.config = (() => {
+module.exports.getConfig = (userConfig) => {
     cli.log("Loading configs");
-    const config = getUserConfig();
-    config.pro = module.exports.args["--pro"] ? "production" : config.pro || false;
-    module.exports.args["--pro"] = undefined;
+    const config = userConfig || getUserConfig();
+    config.pro = args["--pro"] ? true : config.pro || false;
+    args["--pro"] = undefined;
     cli.log("mode : " + config.pro ? "production" : "development")
     config.name = name;
     config.paths = {};
@@ -115,4 +116,4 @@ module.exports.config = (() => {
     undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
     getPlugins(config);
     return config;
-})()
+}

@@ -2,10 +2,13 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path")
 const fs = require("fs");
-const {config} = require("../config/global.config");
-const {paths} = config;
 const _ = require("lodash");
-const {throwError} = require("../utils/cli-color");
+const cli = require("../utils/cli-color");
+
+module.exports = class {
+    module.exports
+}
+
 
 /**
  * @return {{mode: string, output: {path: string, filename: string, library: string}, entry: {ReactDOM: string, React: string}, target: string}|undefined}
@@ -38,6 +41,7 @@ function buildReactConfig() {
 
 const getUserConfig = () => {
     // predefined object structure to prevent undefined error
+    console.log(require("../store/global.data"))
     const sample = {
         entry: {
             //  shared : []
@@ -61,25 +65,21 @@ const getUserConfig = () => {
                 ...sample,
                 ...userWebpack
             }
-        else
-            throwError("Expected webpack config object or array got " + typeof userWebpack);
+        else{
+            cli.error("Expected webpack config object or array got "+typeof userWebpack)
+            throw new Error();
+        }
     }
     return sample;
 }
 module.exports.getUserConfig = getUserConfig;
 /**
  *
- * @param {String[]} pages array of pages
  * @param {{output: {}, entry: {}, plugins: *[], module: {rules: *[]}}} conf webpack config
  * @param {String} conf webpack config
  * @return {[]}
  */
-module.exports.babel = (pages, conf) => {
-    if (!Array.isArray(pages))
-        throwError("Expected array of pages got " + typeof pages);
-    if (typeof conf !== "object")
-        throwError(":( expected object got " + typeof conf);
-
+module.exports.babel = (conf) => {
     let mergedConfig = {
         //settings which can be changed by user
         target: 'web',
@@ -101,24 +101,17 @@ module.exports.babel = (pages, conf) => {
             }
         },
     });
-    pages.forEach(page => {
-        let relative = page.replace(paths.pages + "/", "");
-        let {dir, name} = path.parse(relative);
-        const entry = path.join(dir, name);
+    Object.keys(map).forEach(page => {
         mergedConfig.target = 'node';
-        mergedConfig.entry[entry] = page;//create in one config
+        mergedConfig.entry[page] = path.join(paths.pages, page);//create in one config
         //make file as library so it can be imported for static generation
         mergedConfig.output.libraryTarget = "commonjs2"
     });
+    console.log("babel",mergedConfig);
     return [mergedConfig];
 }
 
-module.exports.direct = (pages, conf) => {
-    if (!Array.isArray(pages))
-        throwError("Expected array of pages got " + typeof pages);
-    if (typeof conf !== "object")
-        throwError(":( expected object got " + typeof conf);
-
+module.exports.direct = (conf) => {
     let mergedConfig = {
         //settings which can be changed by user
         target: 'web',
@@ -155,21 +148,19 @@ module.exports.direct = (pages, conf) => {
     const outs = [];
     const web_front_entry = path.resolve(__dirname, '../web/index.js')
     const template = path.resolve(__dirname, '../web/template.html');
-    pages.forEach((page, index) => {
-        let relative = page.replace(paths.pages + "/", "");
-        let {dir, name} = path.parse(relative);
-        const entry = path.join(dir, name);
-        outs.push(_.cloneDeep(mergedConfig));
-        outs[index].entry[entry] = web_front_entry;
-        outs[index].plugins.push(
+    Object.keys(map).forEach(page => {
+        const out = _.cloneDeep(mergedConfig);
+        out.entry[page] = web_front_entry;
+        out.plugins.push(
             new HtmlWebpackPlugin({
-                filename: `${entry}.html`,
+                filename: `${page}.html`,
                 template: template,
             }),
             new webpack.ProvidePlugin({
-                App: path.join(config.pro ? paths.cache : paths.pages, relative)
+                App: path.join(config.pro ? paths.cache : paths.pages, page)
             })
         );
+        outs.push(out);
     });
     const libs = smartBuildLib();
     if (libs)

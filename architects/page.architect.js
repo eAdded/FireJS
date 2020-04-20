@@ -1,29 +1,25 @@
 const webpack = require("webpack");
-const readdir = require("recursive-dir-reader");
 const webpackArchitect = require("../architects/webpack.architect");
-const {config, args} = require("../config/global.config");
-const {paths} = config;
 const cli = require("../utils/cli-color");
-/**
- *
- */
-module.exports = () => {
-    return module.exports.fromPages(readdir.sync(paths.pages));
-}
-/**
- * Creates webpackConfig according to page and passes to this(config)
- * @param {string[]} pages array of absolute path to pages
- */
-module.exports.fromPages = (pages) => {
-    const userWebpack = webpackArchitect.getUserConfig();
-    if (config.pro) {
-        cli.log("-----babel------")
-        module.exports.fromConfigs(webpackArchitect.babel(pages, userWebpack), () => {
-            cli.log("-----dist------")
-            module.exports.fromConfigs(webpackArchitect.direct(pages, userWebpack), undefined);
-        })
-    } else
-        module.exports.fromConfigs(webpackArchitect(pages, userWebpack));
+
+module.exports = class {
+    #$;
+
+    constructor(globalData) {
+        this.#$ = globalData;
+    }
+
+    build() {
+        const userWebpack = webpackArchitect.getUserConfig();
+        if (this.#$.config.pro) {
+            cli.log("-----babel------")
+            module.exports.fromConfigs(webpackArchitect.babel(userWebpack), () => {
+                cli.log("-----dist------")
+                module.exports.fromConfigs(webpackArchitect.direct(userWebpack), undefined);
+            })
+        } else
+            module.exports.fromConfigs(webpackArchitect.direct(userWebpack));
+    }
 }
 
 /**
@@ -38,8 +34,10 @@ module.exports.fromConfigs = (configs, callback = undefined, log = true) => {
             cli.log("Compiling")
         webpack(configs, (err, multiStats) => {
             if (log) {
-                if (err)
-                    cli.throwError(new Error("Error while compiling : " + err));
+                if (err) {
+                    cli.error("Error while compiling")
+                    throw err;
+                }
                 let errorCount = 0;
                 let warningCount = 0;
                 multiStats.stats.forEach(stat => {
@@ -74,6 +72,9 @@ module.exports.fromConfigs = (configs, callback = undefined, log = true) => {
     } catch (exception) {
         if (callback)
             callback(exception, null);
-        cli.throwError(`Compilation failed with exception :\n${exception}`)
+        else {
+            cli.error("Compilation failed with exception");
+            throw exception;
+        }
     }
 }
