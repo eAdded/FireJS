@@ -1,9 +1,10 @@
-const GlobalConfig = require("./config/global.config");
-const Mapper = require("./mappers/path.mapper")
 const _ = require("lodash");
-const pageArchitect = require("./architects/page.architect");
-const webpackArchitect = require("./architects/webpack.architect");
+const ConfigArchitect = require("./architects/config.architect");
+const Mapper = require("./mappers/path.mapper")
+const PageArchitect = require("./architects/page.architect");
+const WebpackArchitect = require("./architects/webpack.architect");
 const Cli = require("./utils/cli-color");
+
 module.exports = class {
     #$ = {
         args: {},
@@ -13,18 +14,17 @@ module.exports = class {
     };
 
     constructor({userConfig, config, args, map}) {
-        const globalConfig = new GlobalConfig(this.#$);
-        this.#$.args = args || GlobalConfig.getArgs();
+        const configArchitect = new ConfigArchitect(this.#$);
+        this.#$.args = args || ConfigArchitect.getArgs();
         this.#$.cli = new Cli(this.#$.args);
-        this.#$.config = config || globalConfig.getConfig(_.cloneDeep(userConfig));
+        this.#$.config = config || configArchitect.getConfig(_.cloneDeep(userConfig));
         this.#$.map = map || new Mapper(this.#$).getMap();
     }
 
     newPageArchitect() {
-        return new pageArchitect(this.#$);
+        return new PageArchitect(this.#$);
     }
     newWebpackArchitect() {
-        return new webpackArchitect(this.#$);
+        return new WebpackArchitect(this.#$);
     }
-
 }

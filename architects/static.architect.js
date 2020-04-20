@@ -1,1 +1,1 @@
-const {config: {dist}} = require("../config/global.config");
+const {config: {dist}} = require("./global.config");

@@ -1,3 +1,3 @@
 const ReactStaticGen = require("./index");
-const {pageArchitect} = new ReactStaticGen({});
-pageArchitect.build();
+const rsg = new ReactStaticGen({});
+rsg.newPageArchitect().build();
