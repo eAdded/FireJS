@@ -20,7 +20,11 @@ module.exports = class {
         this.#$.map = map || new Mapper(this.#$).getMap();
     }
 
-    pageArchitect = new pageArchitect(this.#$);
-    webpackArchitect = new webpackArchitect(this.#$);
+    newPageArchitect() {
+        return new pageArchitect(this.#$);
+    }
+    newWebpackArchitect() {
+        return new webpackArchitect(this.#$);
+    }
 
 }
