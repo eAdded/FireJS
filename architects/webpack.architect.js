@@ -74,7 +74,6 @@ module.exports = class {
             mode: this.#$.config.pro ? "production" : "development",
             ..._.cloneDeep(conf)
             //settings un-touchable by user
-            //settings un-touchable by user
         };
         mergedConfig.output.path = mergedConfig.output.path || this.#$.config.paths.cache;
         mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
