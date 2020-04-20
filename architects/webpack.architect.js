@@ -112,7 +112,7 @@ module.exports = class {
                 usedExports: true
             },
         };
-        mergedConfig.output.path = this.#$.config.paths.dist;
+        mergedConfig.output.path = this.#$.config.paths.lib;
         mergedConfig.output.filename = mergedConfig.output.filename || "[name].[hash].js"
 
         mergedConfig.externals.React = "React";
@@ -137,7 +137,7 @@ module.exports = class {
             out.entry[page] = web_front_entry;
             out.plugins.push(
                 new HtmlWebpackPlugin({
-                    filename: `${page.substr(0, page.lastIndexOf('.'))}.html`,
+                    filename: `../${page.substr(0, page.lastIndexOf('.'))}.html`,
                     template: template,
                 }),
                 new webpack.ProvidePlugin({
