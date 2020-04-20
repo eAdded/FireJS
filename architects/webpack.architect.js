@@ -67,7 +67,7 @@ module.exports = class {
         return sample;
     }
 
-    babel = (conf) => {
+    babel(conf) {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
@@ -81,7 +81,6 @@ module.exports = class {
         mergedConfig.externals.React = "React";
         mergedConfig.module.rules.push({
             test: /\.js$/,
-            include: this.#$.config.paths.src,
             use: {
                 loader: 'babel-loader',
                 options: {
@@ -95,11 +94,10 @@ module.exports = class {
             //make file as library so it can be imported for static generation
             mergedConfig.output.libraryTarget = "commonjs2"
         });
-        console.log("babel", mergedConfig);
         return [mergedConfig];
     }
 
-    direct = (conf) => {
+    direct(conf) {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
@@ -124,7 +122,6 @@ module.exports = class {
         if (!this.#$.config.pro)
             mergedConfig.module.rules.push({
                 test: /\.js$/,
-                include: this.#$.config.paths.src,
                 use: {
                     loader: 'babel-loader',
                     options: {
