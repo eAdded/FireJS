@@ -109,6 +109,8 @@ module.exports = class {
         this.#makeDirIfNotFound(config.paths.out = config.paths.out ? this.#makeAbsolute(config.paths.root, config.paths.out) : path.join(config.paths.root, "out"));
         this.#makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.#makeAbsolute(config.paths.out, config.paths.dist) : path.join(config.paths.out, "dist"));
         this.#makeDirIfNotFound(config.paths.cache = config.paths.cache ? this.#makeAbsolute(config.paths.out, config.paths.cache) : path.join(config.paths.out, ".cache"));
+        this.#makeDirIfNotFound(config.paths.babel = path.join(config.paths.cache, "babel"));
+        this.#makeDirIfNotFound(config.paths.html = path.join(config.paths.cache, "html"));
         this.#makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.#makeAbsolute(config.paths.dist, config.paths.lib) : path.join(config.paths.dist, "lib"));
         this.#makeDirIfNotFound(config.paths.pageData = config.paths.pageData ? this.#makeAbsolute(config.paths.lib, config.paths.pageData) : path.join(config.paths.lib, "pageData"));
         //configs

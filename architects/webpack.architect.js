@@ -74,7 +74,7 @@ module.exports = class {
             ..._.cloneDeep(conf)
             //settings un-touchable by user
         };
-        mergedConfig.output.path = mergedConfig.output.path || this.#$.config.paths.cache;
+        mergedConfig.output.path = mergedConfig.output.path || this.#$.config.paths.babel;
         mergedConfig.output.filename = mergedConfig.output.filename || "[name]"
         mergedConfig.externals.React = "React";
         mergedConfig.module.rules.push({
@@ -130,7 +130,7 @@ module.exports = class {
 
         const outs = [];
         const web_front_entry = path.resolve(__dirname, '../web/index.js')
-        const lib_relative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist,"");
+        const lib_relative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist, "");
         const template = fs.readFileSync(path.resolve(__dirname, '../web/template.html')).toString().replace("</body>",
             `<script src="${lib_relative}/React.js"></script><script src="${lib_relative}/ReactDOM.js"></script></body>`);
         Object.keys(this.#$.map).forEach(page => {
@@ -138,11 +138,11 @@ module.exports = class {
             out.entry[page] = web_front_entry;
             out.plugins.push(
                 new HtmlWebpackPlugin({
-                    filename: `../${page.substr(0, page.lastIndexOf('.'))}.html`,
-                    templateContent: template
-                }),
+                    filename: path.join(this.#$.config.paths.html, `${page.substr(0, page.lastIndexOf('.'))}.html`),
+                    templateContent: template,
+                })k,
                 new webpack.ProvidePlugin({
-                    App: path.join(this.#$.config.pro ? this.#$.config.paths.cache : this.#$.config.paths.pages, page)
+                    App: path.join(this.#$.config.pro ? this.#$.config.paths.babel : this.#$.config.paths.pages, page)
                 })
             );
             outs.push(out);

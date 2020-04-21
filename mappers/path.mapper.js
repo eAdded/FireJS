@@ -8,7 +8,7 @@ module.exports = class {
     getMap = () => {
         const map = {};
         readdir.sync(this.#$.config.paths.pages, (pagePaths) => {
-            map[pagePaths.replace(this.#$.config.paths.pages + "/", "")] = undefined;
+            map[pagePaths.replace(this.#$.config.paths.pages + "/", "")] = {};
         })
         return map;
     };
