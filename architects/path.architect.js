@@ -1,3 +1,6 @@
+const StaticArchitect = require("../architects/static.architect");
+const _path = require("path");
+
 module.exports = class {
     #$;
 
@@ -5,18 +8,15 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    build(page, paths) {
+    build(page, paths, template) {
         if (this.#$.map[page] === undefined) {//check if this page already exists
             console.error(`page ${page} either does not exists or is not mapped. Hint : Make sure to add ${page} in map.`);
             throw new Error();
         } else {
             try {
-                paths.forEach(page => {
-                    if (typeof page === "string") {
-
-                        //        const lib_relative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist, "");
-                        //const template = fs.readFileSync(path.resolve(__dirname, '../web/template.html')).toString().replace("</body>",
-                        //             `<script src="${lib_relative}/React.js"></script><script src="${lib_relative}/ReactDOM.js"></script></body>`);
+                paths.forEach(path => {
+                    if (typeof path === "string") {
+                        console.log(StaticArchitect.createStatic(_path.join(this.#$.config.paths.babel,page), {}, template));
                     }
                 });
             } catch (e) {
