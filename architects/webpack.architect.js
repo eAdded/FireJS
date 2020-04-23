@@ -1,4 +1,3 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path")
 const fs = require("fs");
@@ -33,7 +32,7 @@ module.exports = class {
         };
     }
 
-    readUserConfig(){
+    readUserConfig() {
         // predefined object structure to prevent undefined error
         const sample = {
             entry: {
@@ -130,17 +129,10 @@ module.exports = class {
 
         const outs = [];
         const web_front_entry = path.resolve(__dirname, '../web/index.js')
-        const lib_relative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist, "");
-        const template = fs.readFileSync(path.resolve(__dirname, '../web/template.html')).toString().replace("</body>",
-            `<script src="${lib_relative}/React.js"></script><script src="${lib_relative}/ReactDOM.js"></script></body>`);
         Object.keys(this.#$.map).forEach(page => {
             const out = _.cloneDeep(mergedConfig);
             out.entry[page] = web_front_entry;
             out.plugins.push(
-                new HtmlWebpackPlugin({
-                    filename: path.join(this.#$.config.paths.html, `${page.substr(0, page.lastIndexOf('.'))}.html`),
-                    templateContent: template,
-                }),
                 new webpack.ProvidePlugin({
                     App: path.join(this.#$.config.pro ? this.#$.config.paths.babel : this.#$.config.paths.pages, page)
                 })
