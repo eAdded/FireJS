@@ -26,7 +26,7 @@ module.exports = class {
         })
     };
 
-    getUserConfig = () => {
+    getUserConfig() {
         const wasGiven = this.#$.args["--conf"];//to store if user gave this arg so that log can be changed
         if (this.#$.args["--conf"]) {//tweak conf path
             if (!path.isAbsolute(this.#$.args["--conf"]))

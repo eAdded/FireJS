@@ -33,7 +33,7 @@ module.exports = class {
         };
     }
 
-    getUserConfig = () => {
+    readUserConfig(){
         // predefined object structure to prevent undefined error
         const sample = {
             entry: {
@@ -140,7 +140,7 @@ module.exports = class {
                 new HtmlWebpackPlugin({
                     filename: path.join(this.#$.config.paths.html, `${page.substr(0, page.lastIndexOf('.'))}.html`),
                     templateContent: template,
-                })k,
+                }),
                 new webpack.ProvidePlugin({
                     App: path.join(this.#$.config.pro ? this.#$.config.paths.babel : this.#$.config.paths.pages, page)
                 })

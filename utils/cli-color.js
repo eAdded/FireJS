@@ -19,11 +19,12 @@ module.exports = class {
             this.log = () => {
             };
         } else if (args["--no_color"]) {
-            this.ok = console.log;
+            this.normal = this.ok = console.log;
             this.error = console.error;
             this.warn = console.warn;
             this.log = console.log;
         } else {
+            this.normal =  console.log;
             this.log = (...messages) => console.error('\x1b[34m#', ...messages, '\x1b[0m');
             this.ok = (...messages) => console.error('\x1b[32m✓', ...messages, '\x1b[0m');
             this.error = (...messages) => console.error('\x1b[31mX', ...messages, '\x1b[0m');

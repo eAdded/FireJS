@@ -8,20 +8,26 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    autoBuild(userWebpack) {
+    autoBuild() {
         const webpackArchitect = new WebpackArchitect(this.#$);
-        userWebpack = userWebpack || webpackArchitect.getUserConfig();
+        const forEachCallback = stat => {
+            stat.compilation.chunks.forEach(chunk => {
+                const map_page = this.#$.map[chunk.name];
+                if(map_page !== undefined)//prevent React and ReactDOM chunk
+                    map_page.chunks = chunk.files;
+            });
+        }
         if (this.#$.config.pro) {
             this.#$.cli.log("-----babel------")
-            this.build(webpackArchitect.babel(userWebpack), () => {
+            this.build(webpackArchitect.babel(this.#$.webpackConfig), () => {
                 this.#$.cli.log("-----dist------")
-                this.buildFromConfig(webpackArchitect.direct(userWebpack), undefined);
-            })
+                this.build(webpackArchitect.direct(this.#$.webpackConfig), undefined, true, forEachCallback);
+            });
         } else
-            this.build(webpackArchitect.direct(userWebpack));
+            this.build(webpackArchitect.direct(this.#$.webpackConfig), undefined, true, forEachCallback);
     }
 
-    build(config, callback = undefined, log = true) {
+    build(config, callback = undefined, log = true, forEachCallback) {
         try {
             if (log)
                 this.#$.cli.log("Compiling")
@@ -34,6 +40,8 @@ module.exports = class {
                     let errorCount = 0;
                     let warningCount = 0;
                     multiStats.stats.forEach(stat => {
+                        if (forEachCallback)
+                            forEachCallback(stat);
                         if (this.#$.args["--verbose"]) {
                             this.#$.cli.log("Stat");
                             this.#$.cli.normal(stat);
@@ -58,7 +66,8 @@ module.exports = class {
                         this.#$.cli.error(`Compilation failed with ${errorCount} error(s) and ${warningCount} warnings(s)`)
                     } else
                         this.#$.cli.ok(`Compiled successfully with ${errorCount} error(s) and ${warningCount} warnings(s)`)
-                }
+                } else if (forEachCallback)
+                    multiStats.forEach(forEachCallback);
                 if (callback)
                     callback(err, multiStats);
             });
