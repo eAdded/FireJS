@@ -13,6 +13,7 @@ module.exports = class {
             try {
                 paths.forEach(page => {
                     if (typeof page === "string") {
+
                         //        const lib_relative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist, "");
                         //const template = fs.readFileSync(path.resolve(__dirname, '../web/template.html')).toString().replace("</body>",
                         //             `<script src="${lib_relative}/React.js"></script><script src="${lib_relative}/ReactDOM.js"></script></body>`);
