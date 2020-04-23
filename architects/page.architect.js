@@ -8,20 +8,20 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    build() {
+    autoBuild(userWebpack) {
         const webpackArchitect = new WebpackArchitect(this.#$);
-        const userWebpack = webpackArchitect.getUserConfig();
+        userWebpack = userWebpack || webpackArchitect.getUserConfig();
         if (this.#$.config.pro) {
             this.#$.cli.log("-----babel------")
-            this.buildFromConfig(webpackArchitect.babel(userWebpack), () => {
+            this.build(webpackArchitect.babel(userWebpack), () => {
                 this.#$.cli.log("-----dist------")
                 this.buildFromConfig(webpackArchitect.direct(userWebpack), undefined);
             })
         } else
-            this.buildFromConfig(webpackArchitect.direct(userWebpack));
+            this.build(webpackArchitect.direct(userWebpack));
     }
 
-    buildFromConfig(config, callback = undefined, log = true) {
+    build(config, callback = undefined, log = true) {
         try {
             if (log)
                 this.#$.cli.log("Compiling")
