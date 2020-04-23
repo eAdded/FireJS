@@ -8,7 +8,7 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    autoBuild() {
+    autoBuild(callback) {
         const webpackArchitect = new WebpackArchitect(this.#$);
         const forEachCallback = stat => {
             stat.compilation.chunks.forEach(chunk => {
@@ -21,10 +21,10 @@ module.exports = class {
             this.#$.cli.log("-----babel------")
             this.build(webpackArchitect.babel(this.#$.webpackConfig), () => {
                 this.#$.cli.log("-----dist------")
-                this.build(webpackArchitect.direct(this.#$.webpackConfig), undefined, true, forEachCallback);
+                this.build(webpackArchitect.direct(this.#$.webpackConfig), callback, true, forEachCallback);
             });
         } else
-            this.build(webpackArchitect.direct(this.#$.webpackConfig), undefined, true, forEachCallback);
+            this.build(webpackArchitect.direct(this.#$.webpackConfig), callback, true, forEachCallback);
     }
 
     build(config, callback = undefined, log = true, forEachCallback) {

@@ -16,7 +16,7 @@ module.exports = class {
             try {
                 paths.forEach(path => {
                     if (typeof path === "string") {
-                        console.log(StaticArchitect.createStatic(_path.join(this.#$.config.paths.babel,page), {}, template));
+                        console.log(StaticArchitect.createStatic(_path.join(this.#$.config.paths.babel, page), {name: "Aniket"}, template));
                     }
                 });
             } catch (e) {

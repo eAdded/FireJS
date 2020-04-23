@@ -33,8 +33,9 @@ module.exports = class {
     }
 
     build() {
-        this.newPageArchitect().autoBuild();
-        new PluginDataMapper(this.#$).mapAndBuild();
+        this.newPageArchitect().autoBuild(()=>{
+            new PluginDataMapper(this.#$).mapAndBuild();
+        });
     }
 
     addPlugin(page,data){
