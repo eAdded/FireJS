@@ -20,7 +20,7 @@ module.exports = class {
         this.#$.args = args || ConfigMapper.getArgs();
         this.#$.cli = new Cli(this.#$.args);
         this.#$.config = config || userConfig ? this.newConfigMapper().getConfig(_.cloneDeep(userConfig)) : this.newConfigMapper().getConfig();
-        this.#$.map = map || new PathMapper(this.#$).map();
+        this.#$.map = map ? new PathMapper().convertToMap(map) : new PathMapper(this.#$).map();
         this.#$.webpackConfig = webpackConfig || this.newWebpackArchitect().readUserConfig();
     }
 

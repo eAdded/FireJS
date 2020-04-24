@@ -14,5 +14,11 @@ module.exports = class {
         })
         return map;
     };
-
+    convertToMap(array){
+        const map = {};
+        array.forEach(item => {
+            map[item] = {};
+        })
+        return map;
+    }
 }
