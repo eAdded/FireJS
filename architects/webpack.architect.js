@@ -128,7 +128,7 @@ module.exports = class {
             });
 
         const outs = [];
-        const web_front_entry = path.resolve(__dirname, '../web/index.js')
+        const web_front_entry = path.resolve(__dirname,this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
         Object.keys(this.#$.map).forEach(page => {
             const out = _.cloneDeep(mergedConfig);
             out.entry[page] = web_front_entry;

@@ -1,4 +1,4 @@
-const webpack = require("webpack");
+const _webpack = require("webpack");
 const WebpackArchitect = require("../architects/webpack.architect");
 
 module.exports = class {
@@ -10,17 +10,21 @@ module.exports = class {
 
     autoBuild(callback) {
         const webpackArchitect = new WebpackArchitect(this.#$);
-        this.#$.cli.log("-----babel------")
-        this.build(webpackArchitect.babel(this.#$.webpackConfig), () => {
-            this.#$.cli.log("-----dist------")
-            this.build(webpackArchitect.direct(this.#$.webpackConfig), callback, true, stat => {
-                stat.compilation.chunks.forEach(chunk => {
-                    const map_page = this.#$.map[chunk.name];
-                    if (map_page !== undefined)//prevent React and ReactDOM chunk
-                        map_page.chunks = chunk.files;
-                });
+        const forEachCallback = stat => {
+            stat.compilation.chunks.forEach(chunk => {
+                const map_page = this.#$.map[chunk.name];
+                if (map_page !== undefined)//prevent React and ReactDOM chunk
+                    map_page.chunks = chunk.files;
             });
-        });
+        }
+        if (this.#$.config.pro) {
+            this.#$.cli.log("-----babel------")
+            this.build(webpackArchitect.babel(this.#$.webpackConfig), () => {
+                this.#$.cli.log("-----dist------")
+                this.build(webpackArchitect.direct(this.#$.webpackConfig), callback, true, forEachCallback);
+            });
+        } else
+            this.build(webpackArchitect.direct(this.#$.webpackConfig), callback, true, forEachCallback);
 
     }
 
@@ -28,7 +32,8 @@ module.exports = class {
         try {
             if (log)
                 this.#$.cli.log("Compiling")
-            webpack(config, (err, multiStats) => {
+            const webpack = _webpack(config);
+            webpack.run((err, multiStats) => {
                 if (log) {
                     if (err) {
                         this.#$.cli.error("Error while compiling")
@@ -68,6 +73,9 @@ module.exports = class {
                 if (callback)
                     callback(err, multiStats);
             });
+            webpack.watch({}, (err, stat) => {
+                console.log(stat);
+            })
         } catch (exception) {
             if (callback)
                 callback(exception, null);
