@@ -33,7 +33,7 @@ module.exports = class {
     }
 
     buildBase(callback) {
-        this.newPageArchitect().autoBuild(callback);
+        new PageArchitect(this.#$).autoBuild(callback);
     }
 
     build(callback) {
@@ -45,13 +45,12 @@ module.exports = class {
                     throw err;
                 }
                 if (!this.#$.config.noPlugin)
-                    new PluginDataMapper(this.#$).mapAndBuild(template,pathArchitect);
+                    new PluginDataMapper(this.#$).mapAndBuild(template, pathArchitect);
                 //render those pages which were not told by user
                 pathArchitect.buildRest(template);
                 if (callback)
                     callback();
             })
-
         });
     }
 
@@ -61,10 +60,6 @@ module.exports = class {
 
     newPathArchitect() {
         return new PathArchitect(this.#$);
-    }
-
-    newPageArchitect() {
-        return new PageArchitect(this.#$);
     }
 
     newWebpackArchitect() {
