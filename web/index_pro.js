@@ -1,1 +1,1 @@
-ReactDOM.hydrate(App.default(), document.getElementById("root"));
+ReactDOM.hydrate(App.default(window.__PAGE_DATA__), document.getElementById("root"));

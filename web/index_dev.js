@@ -1,1 +1,1 @@
-ReactDOM.render(App.default(), document.getElementById("root"));
+ReactDOM.render(App.default(window.__PAGE_DATA__), document.getElementById("root"));

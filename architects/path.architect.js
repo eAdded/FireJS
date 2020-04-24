@@ -41,6 +41,8 @@ module.exports = class {
     }
 
     build(page, path, content, template) {
+        if (content !== {})
+            template = template.replace("</body>", `<script src="${this.#$.config.paths.pageData.replace(this.#$.config.paths.dist, "").concat("/").concat(path)}.js"></script></body>`)
         const absPath = _path.join(this.#$.config.paths.dist, path + ".html");
         const {dir} = _path.parse(absPath);
         fs.mkdir(dir, {recursive: true}, err => {
