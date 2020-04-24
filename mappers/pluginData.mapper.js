@@ -1,3 +1,5 @@
+const _path = require("path");
+const fs = require("fs");
 module.exports = class {
     #$;
 
@@ -23,14 +25,17 @@ module.exports = class {
             if (Array.isArray(paths)) {
                 paths.forEach(path => {
                     if (typeof path === "string") {
+                        this.writePageData(path, {});
                         pathArchitect.build(page, path, {}, template);
                     } else if (path.constructor.name === "AsyncFunction") {
                         path().then(value => {
                             checkValidObject(value)
+                            this.writePageData(value.path, value.content);
                             pathArchitect.build(page, value.path, value.content, template)
                         });
                     } else if (typeof path === "object") {
                         checkValidObject(path);
+                        this.writePageData(path.path, path.content);
                         pathArchitect.build(page, path.path, path.content, template)
                     }
                 });
@@ -39,6 +44,22 @@ module.exports = class {
                 throw new Error();
             }
         }
+    }
+
+    writePageData(path, content) {
+        fs.mkdir(_path.join(this.#$.config.paths.pageData, path.substr(0, path.lastIndexOf("/"))), {recursive: true}, err => {
+            if (err) {
+                this.#$.cli.error(`Error creating dir(s) to path ${path}`);
+                throw err;
+            }
+            this.#$.cli.log(`writing page data for path ${path}`);
+            fs.writeFile(_path.join(this.#$.config.paths.pageData, path.concat(".js")), "window.__PAGE_DATA__ =".concat(JSON.stringify(content)), (err) => {
+                if (err) {
+                    this.#$.cli.error(`Error writing page data to path ${path}`);
+                    throw err;
+                }
+            })
+        })
     }
 }
 
