@@ -10,21 +10,18 @@ module.exports = class {
 
     autoBuild(callback) {
         const webpackArchitect = new WebpackArchitect(this.#$);
-        const forEachCallback = stat => {
-            stat.compilation.chunks.forEach(chunk => {
-                const map_page = this.#$.map[chunk.name];
-                if(map_page !== undefined)//prevent React and ReactDOM chunk
-                    map_page.chunks = chunk.files;
+        this.#$.cli.log("-----babel------")
+        this.build(webpackArchitect.babel(this.#$.webpackConfig), () => {
+            this.#$.cli.log("-----dist------")
+            this.build(webpackArchitect.direct(this.#$.webpackConfig), callback, true, stat => {
+                stat.compilation.chunks.forEach(chunk => {
+                    const map_page = this.#$.map[chunk.name];
+                    if (map_page !== undefined)//prevent React and ReactDOM chunk
+                        map_page.chunks = chunk.files;
+                });
             });
-        }
-        if (this.#$.config.pro) {
-            this.#$.cli.log("-----babel------")
-            this.build(webpackArchitect.babel(this.#$.webpackConfig), () => {
-                this.#$.cli.log("-----dist------")
-                this.build(webpackArchitect.direct(this.#$.webpackConfig), callback, true, forEachCallback);
-            });
-        } else
-            this.build(webpackArchitect.direct(this.#$.webpackConfig), callback, true, forEachCallback);
+        });
+
     }
 
     build(config, callback = undefined, log = true, forEachCallback) {
