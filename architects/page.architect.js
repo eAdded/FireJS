@@ -34,18 +34,30 @@ module.exports = class {
                     callback();
             })
         }
+        const watchCallback = (err, multiStats) => {
+            if (err) {
+                this.#$.cli.error("Error while watching", err)
+                return;
+            }
+            multiStats.stats.forEach(stat => {
+                stat.compilation.chunks.forEach(chunk => {
+                    this.#$.cli.log("Building", chunk.name);
+
+                });
+            })
+        }
         if (this.#$.config.pro) {
             this.#$.cli.log("-----babel------")
             this.build(webpackArchitect.babel(this.#$.webpackConfig), () => {
                 this.#$.cli.log("-----dist------")
-                this.build(webpackArchitect.direct(this.#$.webpackConfig), buildPaths, forEachCallback);
+                this.build(webpackArchitect.direct(this.#$.webpackConfig), buildPaths, undefined, forEachCallback);
             });
         } else
-            this.build(webpackArchitect.direct(this.#$.webpackConfig), buildPaths, forEachCallback);
+            this.build(webpackArchitect.direct(this.#$.webpackConfig), buildPaths, watchCallback, forEachCallback);
 
     }
 
-    build(config = [], callback = undefined, forEachCallback) {
+    build(config = [], callback, watchCallback, forEachCallback) {
         try {
             this.#$.cli.log("Compiling")
             const webpack = _webpack(config);
@@ -87,13 +99,14 @@ module.exports = class {
                 if (callback)
                     callback();
                 let first = false;
-                if (!this.#$.config.pro) //watch in development mode
-                    webpack.watch({}, (err, stat) => {
+                this.#$.cli.log("Watching");
+                if (watchCallback) //watch in development mode
+                    webpack.watch({}, (err, _multiStats) => {
                         if (!first) {
                             first = true
                             return;
                         }
-                        console.log(stat);
+                        watchCallback(err, _multiStats);
                     })
             });
 
