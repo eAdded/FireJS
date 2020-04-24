@@ -19,27 +19,33 @@ module.exports = class {
     constructor({userConfig, config, args, map, webpackConfig}) {
         this.#$.args = args || ConfigMapper.getArgs();
         this.#$.cli = new Cli(this.#$.args);
-        this.#$.config = config || userConfig ? this.newConfigMapper().getArgs(_.cloneDeep(userConfig)) : this.newConfigMapper().getConfig();
+        this.#$.config = config || userConfig ? this.newConfigMapper().getConfig(_.cloneDeep(userConfig)) : this.newConfigMapper().getConfig();
         this.#$.map = map || new PathMapper(this.#$).map();
         this.#$.webpackConfig = webpackConfig || this.newWebpackArchitect().readUserConfig();
     }
 
-    getConfig(){
+    getConfig() {
         return this.#$.config;
     }
 
-    getWebpackConfig(){
+    getWebpackConfig() {
         return this.#$.webpackConfig;
     }
 
-    build() {
-        this.newPageArchitect().autoBuild(()=>{
-            new PluginDataMapper(this.#$).mapAndBuild();
+    build(callback) {
+        this.newPageArchitect().autoBuild(() => {
+            if (!this.#$.config.noPlugin)
+                new PluginDataMapper(this.#$).mapAndBuild();
+            callback();
         });
     }
 
-    applyPlugin(page,paths,template){
-        new PluginDataMapper(this.#$).applyPlugin(page,paths,template,new PathArchitect(this.#$));
+    getTemplate() {
+        return new PathArchitect(this.#$).readTemplate();
+    }
+
+    applyPlugin(page, paths, template) {
+        new PluginDataMapper(this.#$).applyPlugin(page, paths, template, new PathArchitect(this.#$));
     }
 
     newPageArchitect() {

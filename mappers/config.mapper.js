@@ -110,13 +110,15 @@ module.exports = class {
         this.#makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.#makeAbsolute(config.paths.out, config.paths.dist) : path.join(config.paths.out, "dist"));
         this.#makeDirIfNotFound(config.paths.cache = config.paths.cache ? this.#makeAbsolute(config.paths.out, config.paths.cache) : path.join(config.paths.out, ".cache"));
         this.#makeDirIfNotFound(config.paths.babel = path.join(config.paths.cache, "babel"));
-        config.paths.template = config.paths.template ? this.#makeAbsolute(config.paths.root, config.paths.template) : path.resolve(config.paths.root,"web/template.html")
+        config.paths.template = config.paths.template ? this.#makeAbsolute(config.paths.root, config.paths.template) : path.resolve(config.paths.root, "web/template.html")
         this.#makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.#makeAbsolute(config.paths.dist, config.paths.lib) : path.join(config.paths.dist, "lib"));
         this.#makeDirIfNotFound(config.paths.pageData = config.paths.pageData ? this.#makeAbsolute(config.paths.lib, config.paths.pageData) : path.join(config.paths.lib, "pageData"));
         //configs
-        this.#undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
         this.#undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
-        this.#getPlugins(config);
+        if (!config.noPlugin) {
+            this.#undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
+            this.#getPlugins(config);
+        }
         return config;
     }
 }
