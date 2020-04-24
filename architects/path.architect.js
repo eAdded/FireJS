@@ -16,7 +16,19 @@ module.exports = class {
     }
 
     render(page, content, template) {
-        return StaticArchitect.createStatic(_path.join(this.#$.config.paths.babel, page), content, template);
+        return  StaticArchitect.createStatic(
+            _path.join(this.#$.config.paths.babel, page),
+            content,
+            template
+        ).replace("</body>",(()=>{
+            let scripts = "";
+            const libRelative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist,"");
+            this.#$.map[page].chunks.forEach(chunk=>{
+                scripts = scripts.concat(`<script src="${libRelative}/${chunk}"></script>`);
+            })
+            scripts = scripts.concat("</body>")
+            return scripts;
+        })());
     }
 
     buildRest(template) {
