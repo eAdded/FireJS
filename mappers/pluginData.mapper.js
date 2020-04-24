@@ -1,5 +1,3 @@
-const PathArchitect = require("../architects/path.architect");
-
 module.exports = class {
     #$;
 
@@ -7,21 +5,12 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    mapAndBuild() {
-        const pathArchitect = new PathArchitect(this.#$);
-        pathArchitect.readTemplate((err, template) => {
-            if (err) {
-                this.#$.cli.error("Error reading default template");
-                throw err;
-            }
-            this.#$.config.plugins.forEach(plugin => {
-                const plugData = require(plugin)();
-                Object.keys(plugData).forEach(page => {
-                    this.applyPlugin(page, plugData[page], template, pathArchitect);
-                });
+    mapAndBuild(template, pathArchitect) {
+        this.#$.config.plugins.forEach(plugin => {
+            const plugData = require(plugin)();
+            Object.keys(plugData).forEach(page => {
+                this.applyPlugin(page, plugData[page], template, pathArchitect);
             });
-            //render those pages which were not told by user
-            pathArchitect.buildRest(template);
         });
     }
 

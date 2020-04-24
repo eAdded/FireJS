@@ -32,23 +32,26 @@ module.exports = class {
         return this.#$.webpackConfig;
     }
 
+    buildBase(callback) {
+        this.newPageArchitect().autoBuild(callback);
+    }
+
     build(callback) {
-        this.newPageArchitect().autoBuild(() => {
-            if (!this.#$.config.noPlugin) {
-                new PluginDataMapper(this.#$).mapAndBuild();
-                callback();
-            }else {
+        this.buildBase(_ => {
+            const pathArchitect = this.newPathArchitect();
+            pathArchitect.readTemplate((err, template) => {
+                if (err) {
+                    this.#$.cli.error("Error reading default template");
+                    throw err;
+                }
+                if (!this.#$.config.noPlugin)
+                    new PluginDataMapper(this.#$).mapAndBuild(template,pathArchitect);
                 //render those pages which were not told by user
-                const pathArchitect = this.newPathArchitect();
-                pathArchitect.readTemplate((err,template)=>{
-                    if (err) {
-                        this.#$.cli.error("Error reading default template");
-                        throw err;
-                    }
-                    pathArchitect.buildRest(template);
+                pathArchitect.buildRest(template);
+                if (callback)
                     callback();
-                })
-            }
+            })
+
         });
     }
 
