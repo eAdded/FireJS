@@ -25,18 +25,31 @@ module.exports = class {
             if (Array.isArray(paths)) {
                 paths.forEach(path => {
                     if (typeof path === "string") {
-                        this.writePageData(path, {});
                         pathArchitect.build(page, path, {}, template);
                     } else if (path.constructor.name === "AsyncFunction") {
                         path().then(value => {
-                            checkValidObject(value)
-                            this.writePageData(value.path, value.content);
-                            pathArchitect.build(page, value.path, value.content, template)
+                            if (Array.isArray(value)) {
+                                value.forEach(val => {
+                                    checkValidObject(val)
+                                    this.writePageData(val.path, val.content);
+                                    pathArchitect.build(page, val.path, val.content, template)
+                                })
+                            } else if (typeof value === "object") {
+                                checkValidObject(value);
+                                this.writePageData(value.path, value.content);
+                                pathArchitect.build(page, value.path, value.content, template)
+                            } else {
+                                this.#$.cli.error(`Expected Array got ${typeof path} in plugin async for path ${path}`)
+                                throw new Error();
+                            }
                         });
                     } else if (typeof path === "object") {
                         checkValidObject(path);
                         this.writePageData(path.path, path.content);
                         pathArchitect.build(page, path.path, path.content, template)
+                    } else {
+                        this.#$.cli.error(`Expected String | Object | Array got ${typeof path} in plugin for path ${path}`)
+                        throw new Error();
                     }
                 });
             } else {
