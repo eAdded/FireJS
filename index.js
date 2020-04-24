@@ -38,8 +38,8 @@ module.exports = class {
         });
     }
 
-    addPlugin(page,data){
-        new PathArchitect(this.#$).build(page,data);
+    applyPlugin(page,paths,template){
+        new PluginDataMapper(this.#$).applyPlugin(page,paths,template,new PathArchitect(this.#$));
     }
 
     newPageArchitect() {
