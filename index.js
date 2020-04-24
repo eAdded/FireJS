@@ -44,7 +44,7 @@ module.exports = class {
         return new PathArchitect(this.#$).readTemplate();
     }
 
-    applyPlugin(page, paths, template) {
+    buildPage(page, paths, template) {
         new PluginDataMapper(this.#$).applyPlugin(page, paths, template, new PathArchitect(this.#$));
     }
 
