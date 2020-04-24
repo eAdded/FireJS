@@ -1,5 +1,7 @@
 const _webpack = require("webpack");
 const WebpackArchitect = require("../architects/webpack.architect");
+const PathArchitect = require("./path.architect");
+const PluginDataMapper = require("../mappers/pluginData.mapper");
 
 module.exports = class {
     #$;
@@ -10,18 +12,40 @@ module.exports = class {
 
     autoBuild(callback) {
         const webpackArchitect = new WebpackArchitect(this.#$);
+        const forEachCallback = (stat) => {
+            stat.compilation.chunks.forEach(chunk => {
+                const map_page = this.#$.map[chunk.name];
+                if (map_page !== undefined)//prevent React and ReactDOM chunk
+                    map_page.chunks = chunk.files;
+            });
+        }
+        const buildPaths = () => {
+            const pathArchitect = new PathArchitect(this.#$);
+            pathArchitect.readTemplate((err, template) => {
+                if (err) {
+                    this.#$.cli.error("Error reading default template");
+                    throw err;
+                }
+                if (!this.#$.config.noPlugin)
+                    new PluginDataMapper(this.#$).mapAndBuild(template, pathArchitect);
+                //render those pages which were not told by user
+                pathArchitect.buildRest(template);
+                if (callback)
+                    callback();
+            })
+        }
         if (this.#$.config.pro) {
             this.#$.cli.log("-----babel------")
             this.build(webpackArchitect.babel(this.#$.webpackConfig), () => {
                 this.#$.cli.log("-----dist------")
-                this.build(webpackArchitect.direct(this.#$.webpackConfig), callback);
+                this.build(webpackArchitect.direct(this.#$.webpackConfig), buildPaths, forEachCallback);
             });
         } else
-            this.build(webpackArchitect.direct(this.#$.webpackConfig), callback);
+            this.build(webpackArchitect.direct(this.#$.webpackConfig), buildPaths, forEachCallback);
 
     }
 
-    build(config = [], callback = undefined) {
+    build(config = [], callback = undefined, forEachCallback) {
         try {
             this.#$.cli.log("Compiling")
             const webpack = _webpack(config);
@@ -33,11 +57,8 @@ module.exports = class {
                 let errorCount = 0;
                 let warningCount = 0;
                 multiStats.stats.forEach(stat => {
-                    stat.compilation.chunks.forEach(chunk => {
-                        const map_page = this.#$.map[chunk.name];
-                        if (map_page !== undefined)//prevent React and ReactDOM chunk
-                            map_page.chunks = chunk.files;
-                    });
+                    if (forEachCallback)
+                        forEachCallback(stat);
                     if (this.#$.args["--verbose"]) {
                         this.#$.cli.log("Stat");
                         this.#$.cli.normal(stat);
@@ -65,8 +86,13 @@ module.exports = class {
 
                 if (callback)
                     callback();
+                let first = false;
                 if (!this.#$.config.pro) //watch in development mode
                     webpack.watch({}, (err, stat) => {
+                        if (!first) {
+                            first = true
+                            return;
+                        }
                         console.log(stat);
                     })
             });

@@ -32,26 +32,8 @@ module.exports = class {
         return this.#$.webpackConfig;
     }
 
-    buildBase(callback) {
-        new PageArchitect(this.#$).autoBuild(callback);
-    }
-
     build(callback) {
-        this.buildBase(_ => {
-            const pathArchitect = this.newPathArchitect();
-            pathArchitect.readTemplate((err, template) => {
-                if (err) {
-                    this.#$.cli.error("Error reading default template");
-                    throw err;
-                }
-                if (!this.#$.config.noPlugin)
-                    new PluginDataMapper(this.#$).mapAndBuild(template, pathArchitect);
-                //render those pages which were not told by user
-                pathArchitect.buildRest(template);
-                if (callback)
-                    callback();
-            })
-        });
+        new PageArchitect(this.#$).autoBuild(callback);
     }
 
     applyPlugin(page, paths, template) {
