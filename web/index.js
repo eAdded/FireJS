@@ -1,1 +1,1 @@
-ReactDOM.render(App.default(), document.getElementById("root"));
+ReactDOM.hydrate(App.default(), document.getElementById("root"));
