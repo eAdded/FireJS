@@ -21,7 +21,7 @@ module.exports = class {
 
     }
 
-    build(config, callback = undefined) {
+    build(config = [], callback = undefined) {
         try {
             this.#$.cli.log("Compiling")
             const webpack = _webpack(config);
@@ -65,12 +65,14 @@ module.exports = class {
 
                 if (callback)
                     callback();
+                if (!this.#$.config.pro) //watch in development mode
+                    webpack.watch({}, (err, stat) => {
+                        console.log(stat);
+                    })
             });
-            webpack.watch({}, (err, stat) => {
-                console.log(stat);
-            })
+
         } catch (exception) {
-                this.#$.cli.error("Compilation failed with exception");
+            this.#$.cli.error("Compilation failed with exception");
             throw exception;
         }
     }

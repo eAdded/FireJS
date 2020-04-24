@@ -85,13 +85,15 @@ module.exports = class {
                 }
             },
         });
+        const outs = [];
         Object.keys(this.#$.map).forEach(page => {
             mergedConfig.target = 'node';
             mergedConfig.entry[page] = path.join(this.#$.config.paths.pages, page);//create in one config
             //make file as library so it can be imported for static generation
             mergedConfig.output.libraryTarget = "commonjs2"
+            outs.push(_.cloneDeep(mergedConfig));
         });
-        return [mergedConfig];
+        return outs;
     }
 
     direct(conf) {
@@ -128,7 +130,7 @@ module.exports = class {
             });
 
         const outs = [];
-        const web_front_entry = path.resolve(__dirname,this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
+        const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
         Object.keys(this.#$.map).forEach(page => {
             const out = _.cloneDeep(mergedConfig);
             out.entry[page] = web_front_entry;
