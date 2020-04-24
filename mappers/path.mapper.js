@@ -10,14 +10,14 @@ module.exports = class {
     map() {
         const map = {};
         readdir.sync(this.#$.config.paths.pages, (pagePaths) => {
-            map[pagePaths.replace(this.#$.config.paths.pages + "/", "")] = {};
+            map[pagePaths.replace(this.#$.config.paths.pages + "/", "")] = {didRender : false};
         })
         return map;
     };
     convertToMap(array){
         const map = {};
         array.forEach(item => {
-            map[item] = {};
+            map[item] = {didRender : false};
         })
         return map;
     }

@@ -9,23 +9,23 @@ module.exports = class {
 
     mapAndBuild() {
         const pathArchitect = new PathArchitect(this.#$);
-        const template = pathArchitect.readTemplate();
-        this.#$.config.plugins.forEach(plugin => {
-            const plugData = require(plugin)();
-            Object.keys(plugData).forEach(page => {
-                this.applyPlugin(page,plugData[page],template,pathArchitect);
-            });
-        });
-        //render those pages which were not told by user
-        Object.keys(this.#$.map).forEach(page => {
-            if (!page.didRender) {
-                this.#$.map[page].didRender = true;
-                pathArchitect.build(page, page.substr(0,page.lastIndexOf(".")), {}, template);
+        pathArchitect.readTemplate((err, template) => {
+            if (err) {
+                this.#$.cli.error("Error reading default template");
+                throw err;
             }
-        })
+            this.#$.config.plugins.forEach(plugin => {
+                const plugData = require(plugin)();
+                Object.keys(plugData).forEach(page => {
+                    this.applyPlugin(page, plugData[page], template, pathArchitect);
+                });
+            });
+            //render those pages which were not told by user
+            pathArchitect.buildRest(template);
+        });
     }
 
-    applyPlugin(page,paths,template,pathArchitect){
+    applyPlugin(page, paths, template, pathArchitect) {
         if (this.#$.map[page] === undefined) {//check if this page already exists
             console.error(`page ${page} either does not exists or is not mapped. Hint : Make sure to add ${page} in map.`);
             throw new Error();

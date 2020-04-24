@@ -34,18 +34,30 @@ module.exports = class {
 
     build(callback) {
         this.newPageArchitect().autoBuild(() => {
-            if (!this.#$.config.noPlugin)
+            if (!this.#$.config.noPlugin) {
                 new PluginDataMapper(this.#$).mapAndBuild();
-            callback();
+                callback();
+            }else {
+                //render those pages which were not told by user
+                const pathArchitect = this.newPathArchitect();
+                pathArchitect.readTemplate((err,template)=>{
+                    if (err) {
+                        this.#$.cli.error("Error reading default template");
+                        throw err;
+                    }
+                    pathArchitect.buildRest(template);
+                    callback();
+                })
+            }
         });
     }
 
-    getTemplate() {
-        return new PathArchitect(this.#$).readTemplate();
+    applyPlugin(page, paths, template) {
+        new PluginDataMapper(this.#$).applyPlugin(page, paths, template, new PathArchitect(this.#$));
     }
 
-    buildPage(page, paths, template) {
-        new PluginDataMapper(this.#$).applyPlugin(page, paths, template, new PathArchitect(this.#$));
+    newPathArchitect() {
+        return new PathArchitect(this.#$);
     }
 
     newPageArchitect() {
