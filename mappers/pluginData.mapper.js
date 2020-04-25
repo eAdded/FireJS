@@ -25,7 +25,7 @@ module.exports = class {
             if (Array.isArray(paths)) {
                 paths.forEach(path => {
                     if (typeof path === "string") {
-                        pathArchitect.build(page, path, {}, template);
+                        pathArchitect.build(page, path, undefined, template);
                     } else if (path.constructor.name === "AsyncFunction") {
                         path().then(value => {
                             if (Array.isArray(value)) {

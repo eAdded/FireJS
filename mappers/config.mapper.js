@@ -1,6 +1,5 @@
 const path = require("path");
 const fs = require("fs");
-const name = "react-static-gen";
 
 module.exports = class {
     #$;
@@ -32,7 +31,7 @@ module.exports = class {
             if (!path.isAbsolute(this.#$.args["--conf"]))
                 this.#$.args["--conf"] = path.resolve(process.cwd(), this.#$.args["--conf"]);//create absolute path
         } else
-            this.#$.args["--conf"] = path.resolve(process.cwd(), `${name}.config.js`);
+            this.#$.args["--conf"] = path.resolve(process.cwd(), `fire-js.config.js`);
 
         return fs.existsSync(this.#$.args["--conf"]) ? (() => {///check if config file exists
             this.#$.cli.log(`Loading config from ${this.#$.args["--conf"]}`);
@@ -100,8 +99,9 @@ module.exports = class {
         config.pro = this.#$.args["--pro"] ? true : config.pro || false;
         this.#$.args["--pro"] = undefined;
         this.#$.cli.log("mode : " + (config.pro ? "production" : "development"))
-        config.name = name;
+        config.name = "fire-js";
         config.paths = config.paths || {};
+        config.plugins = config.plugins || [];
         this.#throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.#makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
         this.#throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.#makeAbsolute(config.paths.root, config.paths.src) : path.join(config.paths.root, "src"));
         this.#throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.#makeAbsolute(config.paths.root, config.paths.pages) : path.join(config.paths.src, "pages"));
@@ -117,7 +117,8 @@ module.exports = class {
         this.#undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
         if (!config.noPlugin) {
             this.#undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            this.#getPlugins(config);
+            if (config.paths.plugins)//Only getPlugins when dir exists
+                this.#getPlugins(config);
         }
         return config;
     }
