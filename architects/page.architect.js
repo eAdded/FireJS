@@ -48,7 +48,7 @@ module.exports = class {
         }
         if (this.#$.config.pro) {
             this.#$.cli.log("-----babel------")
-            this.build(webpackArchitect.babel({}), () => {
+            this.build(webpackArchitect.babel(undefined), () => {
                 this.#$.cli.log("-----dist------")
                 this.build(webpackArchitect.direct(this.#$.webpackConfig), buildPaths, undefined, forEachCallback);
             });

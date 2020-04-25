@@ -32,9 +32,8 @@ module.exports = class {
         };
     }
 
-    readUserConfig() {
-        // predefined object structure to prevent undefined error
-        const sample = {
+    getConfigBase() {
+        return {
             entry: {
                 //  shared : []
             },
@@ -45,6 +44,11 @@ module.exports = class {
             plugins: [],
             externals: {}
         }
+    }
+
+    readUserConfig() {
+        // predefined object structure to prevent undefined error
+        const sample = this.getConfigBase();
         if (this.#$.config.paths.webpack) {
             const userWebpack = require(this.#$.config.paths.webpack);
             if (Array.isArray(userWebpack))
@@ -70,7 +74,7 @@ module.exports = class {
             //settings which can be changed by user
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
-            ..._.cloneDeep(conf)
+            ..._.cloneDeep(conf || this.getConfigBase()),
             //settings un-touchable by user
         };
         mergedConfig.output.path = mergedConfig.output.path || this.#$.config.paths.babel;
@@ -102,7 +106,7 @@ module.exports = class {
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
             watch: !this.#$.config.pro,
-            ..._.cloneDeep(conf),
+            ..._.cloneDeep(conf || this.getConfigBase()),
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
