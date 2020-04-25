@@ -1,9 +1,3 @@
 /node_modules/
 /yarn.lock
 /yarn-error.log
-/serve.json
-/temp/
-/out
-/src/
-/out/dist/
-/out/.cache/

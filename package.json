@@ -1,30 +1,22 @@
 {
-  "name": "react-static-gen",
-  "version": "v0.1.0-aplha",
+  "name": "fire-js",
+  "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
-  "scripts": {
-    "dev": "node index",
-    "test": "node index",
-    "test:pro": "node index -p"
-  },
+  "devDependencies": {},
+  "description": "Highly customizable no config react static site generator",
+  "repository": "https://github.com/eADDED/fire-js.git",
+  "author": "Aniket Prajapati <prajapati.ani306@gmail.com>",
+  "private": false,
   "dependencies": {
     "@babel/core": "^7.9.0",
-    "@babel/polyfill": "^7.8.7",
-    "@babel/preset-env": "^7.9.5",
     "@babel/preset-react": "^7.9.4",
     "arg": "^4.1.3",
     "babel-loader": "^8.1.0",
-    "html-webpack-plugin": "^4.2.0",
     "lodash": "^4.17.15",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "recursive-dir-reader": "^1.3.4",
-    "webpack": "^4.42.1"
-  },
-  "devDependencies": {},
-  "description": "Highly customizable no config react static site generator",
-  "repository": "https://github.com/eADDED/react-static-gen.git",
-  "author": "Aniket Prajapati <prajapati.ani306@gmail.com>",
-  "private": false
+    "webpack": "^4.43.0"
+  }
 }
