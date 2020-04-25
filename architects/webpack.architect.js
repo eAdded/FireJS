@@ -118,7 +118,7 @@ module.exports = class {
             },
         };
         mergedConfig.output.path = this.#$.config.paths.lib;
-        mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
+        mergedConfig.output.filename = mergedConfig.output.filename || "[name]"
 
         mergedConfig.externals.React = "React";
         mergedConfig.externals.ReactDOM = "ReactDOM";
