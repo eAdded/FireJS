@@ -110,7 +110,7 @@ module.exports = class {
                     minChunks: Infinity
                 },
                 usedExports: true,
-                minimize : true
+                minimize: true
             },
         };
         mergedConfig.output.path = this.#$.config.paths.lib;
