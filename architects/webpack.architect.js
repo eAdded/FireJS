@@ -109,7 +109,8 @@ module.exports = class {
                     chunks: 'all',
                     minChunks: Infinity
                 },
-                usedExports: true
+                usedExports: true,
+                minimize : true
             },
         };
         mergedConfig.output.path = this.#$.config.paths.lib;
@@ -137,7 +138,7 @@ module.exports = class {
             out.plugins.push(
                 new webpack.ProvidePlugin({
                     App: path.join(this.#$.config.pro ? this.#$.config.paths.babel : this.#$.config.paths.pages, page)
-                })
+                }),
             );
             outs.push(out);
         });

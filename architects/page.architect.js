@@ -98,16 +98,18 @@ module.exports = class {
 
                 if (callback)
                     callback();
-                let first = false;
-                this.#$.cli.log("Watching");
-                if (watchCallback) //watch in development mode
+                if (watchCallback) { //watch in development mode
+                    let first = false;
+                    this.#$.cli.log("Starting watching");
                     webpack.watch({}, (err, _multiStats) => {
                         if (!first) {
                             first = true
+                            this.#$.cli.ok("----------Watching-----------");
                             return;
                         }
                         watchCallback(err, _multiStats);
                     })
+                }
             });
 
         } catch (exception) {
