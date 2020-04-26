@@ -8,11 +8,15 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    async autoBuild() {
+    autoBuild() {
         const webpackArchitect = new WebpackArchitect(this.#$);
         return new Promise((resolve, reject) => {
-            const markBuilt = (page) => {
-                this.#$.map[page].markBuilt();
+            const markBuilt = (stat) => {
+                stat.compilation.chunks.forEach(chunk => {
+                    const map_page = this.#$.map[chunk.name];
+                    if (map_page !== undefined)//prevent React and ReactDOM chunk
+                        this.#$.map[chunk.name].markBuilt();
+                });
             }
             const registerChunksForStat = (stat) => {
                 stat.compilation.chunks.forEach(chunk => {
@@ -27,7 +31,7 @@ module.exports = class {
                 this.build(webpackArchitect.babel(this.#$.webpackConfig)).then(multiStats => {
                     this.logMultiStat(multiStats,(stat)=>{
                         registerChunksForStat(stat);
-                        markBuilt(stat.name);
+                        markBuilt(stat);
                     });
                     this.#$.cli.log("-----dist------");
                     this.build(webpackArchitect.direct(undefined)).then((multiStats) => {
@@ -41,7 +45,7 @@ module.exports = class {
                     this.logMultiStat(multiStats, (stat) => {
                         registerChunksForStat(stat);
                         if (firstBuild)//marking built is only significant for the first cycle
-                            markBuilt(stat.name);
+                            markBuilt(stat);
                     });
                     if (firstBuild) {//prevents resolve multiple times while watching
                         resolve();//resolve for first build

@@ -1,5 +1,6 @@
 const _path = require("path");
 const fs = require("fs");
+const PathArchitect = require("../architects/path.architect");
 module.exports = class {
     #$;
 
@@ -7,15 +8,46 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    async map() {
-        this.#$.config.plugins.forEach(plugin => {
-            const plugData = require(plugin)();
-            Object.keys(plugData).forEach(page => {
-                this.mapPlugin(page, plugData[page]).then((path, content) => {
-                    console.log(path,content)
-                }).catch((reason => {
-                    this.#$.cli.error(new Error(`Error in plugin ${plugin}`), reason);
-                }));
+    map() {
+        const pathArchitect = new PathArchitect(this.#$);
+        pathArchitect.readTemplate((err,template) => {
+            if(err){
+                this.#$.cli.error("Error while reading template");
+                throw err;
+            }
+            this.#$.config.plugins.forEach(plugin => {
+                const plugData = require(plugin)();
+                Object.keys(plugData).forEach(page => {
+                    const mapComponent = this.#$.map[page];
+                    mapComponent.markCustom();
+                    this.mapPlugin(page, plugData[page]).then((path, content) => {
+                        if (mapComponent.isBuilt()) {
+                            pathArchitect.build(page, path, content, template)
+                        } else {
+                            mapComponent.resolveWhenBuilt(() => {
+                                pathArchitect.build(page, path, content, template)
+                            })
+                        }
+                    }).catch((reason => {
+                        this.#$.cli.error(new Error(`Error in plugin ${plugin}`), reason);
+                    }));
+                });
+            });
+            console.log("loading map keys")
+            Object.keys(this.#$.map).forEach(page => {
+                const mapComponent = this.#$.map[page];
+                console.log(page, mapComponent.isCustom());
+                if (!mapComponent.isCustom()) {
+                    console.log(page, mapComponent.isBuilt());
+                    if (mapComponent.isBuilt()) {
+                        pathArchitect.build(page, page, undefined, template);
+                    } else {
+                        mapComponent.resolveWhenBuilt(() => {
+                            console.log(page, "I was called");
+                            pathArchitect.build(page, page, undefined, template);
+                        })
+                    }
+                }
             });
         });
     }

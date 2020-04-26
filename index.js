@@ -33,12 +33,13 @@ module.exports = class {
     }
 
     build() {
-        return new PageArchitect(this.#$).autoBuild();
+        new PageArchitect(this.#$).autoBuild().then(r => this.#$.cli.log("done building"));
+        new PluginDataMapper(this.#$).map();
     }
 
-    applyPlugin(page, paths, template) {
-        new PluginDataMapper(this.#$).applyPlugin(page, paths, template, new PathArchitect(this.#$));
-    }
+    /*applyPlugin(page, paths, template) {
+        new PluginDataMapper(this.#$).(page, paths, template, new PathArchitect(this.#$));
+    }*/
 
     newPathArchitect() {
         return new PathArchitect(this.#$);

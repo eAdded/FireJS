@@ -26,23 +26,27 @@ module.exports = class {
 }
 
 class MapComponent {
-    page;
+    #page;
+    #isCustom = false;
     #isBuilt = false;
     #toBeResolved = [];
-
+    chunks = [];
     constructor(_page) {
-        this.page = _page;
+        this.#page = _page;
     }
 
     markBuilt() {
-        if(!this.#isBuilt) {
+        console.log("Built:",this.#isBuilt);
+        if (!this.#isBuilt) {
             this.#isBuilt = true;
+            console.log("To be resolved",this.#toBeResolved);
             this.#toBeResolved.forEach(func => {
+                console.log("Calling functions:",this.#isBuilt);
                 func();
             });
             this.#toBeResolved = undefined;
-        }else
-            throw new Error(`Page ${this.page} is already built`)
+        } else
+            throw new Error(`Page ${this.#page} is already built`)
     }
 
     isBuilt() {
@@ -50,8 +54,17 @@ class MapComponent {
     }
 
     resolveWhenBuilt(func) {
-        if (this.#toBeResolved === undefined)
-            throw new Error(`Can't resolve function. Page ${this.page} is already built`);
+        if (!this.#toBeResolved)
+            throw new Error(`Can't resolve function. Page ${this.#page} is already built`);
+        console.log("will resolve");
         this.#toBeResolved.push(func);
+    }
+
+    isCustom() {
+        return this.#isCustom;
+    }
+
+    markCustom() {
+        this.#isCustom = true;
     }
 }
