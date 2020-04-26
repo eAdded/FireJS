@@ -31,15 +31,6 @@ module.exports = class {
         })());
     }
 
-    buildRest(template) {
-        Object.keys(this.#$.map).forEach(page => {
-            if (!page.didRender) {
-                this.#$.map[page].didRender = true;
-                this.build(page, page.substr(0, page.lastIndexOf(".")), {}, template);
-            }
-        })
-    }
-
     build(page, path, content, template) {
         if (!content)
             template = template.replace("</body>", `<script src="${this.#$.config.paths.pageData.replace(this.#$.config.paths.dist, "").concat("/").concat(path)}.js"></script></body>`)

@@ -32,8 +32,8 @@ module.exports = class {
         return this.#$.webpackConfig;
     }
 
-    build(callback) {
-        new PageArchitect(this.#$).autoBuild(callback);
+    build() {
+        return new PageArchitect(this.#$).autoBuild();
     }
 
     applyPlugin(page, paths, template) {
