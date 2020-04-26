@@ -33,7 +33,12 @@ module.exports = class {
     }
 
     build() {
-        new PageArchitect(this.#$).autoBuild().then(r => this.#$.cli.log("done building"));
+        new PageArchitect(this.#$).autoBuild()
+            .then(r => this.#$.cli.ok("Completed initial build cycle"))
+            .catch(reason => {
+            this.#$.cli.error("Error during first build cycle");
+            throw reason
+        });
         new PluginDataMapper(this.#$).map();
     }
 
