@@ -33,17 +33,13 @@ module.exports = class {
                     }));
                 });
             });
-            console.log("loading map keys")
             Object.keys(this.#$.map).forEach(page => {
                 const mapComponent = this.#$.map[page];
-                console.log(page, mapComponent.isCustom());
                 if (!mapComponent.isCustom()) {
-                    console.log(page, mapComponent.isBuilt());
                     if (mapComponent.isBuilt()) {
                         pathArchitect.build(page, page, undefined, template);
                     } else {
                         mapComponent.resolveWhenBuilt(() => {
-                            console.log(page, "I was called");
                             pathArchitect.build(page, page, undefined, template);
                         })
                     }
