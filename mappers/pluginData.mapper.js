@@ -37,10 +37,10 @@ module.exports = class {
                 const mapComponent = this.#$.map[page];
                 if (!mapComponent.isCustom()) {
                     if (mapComponent.isBuilt()) {
-                        pathArchitect.build(page, page, undefined, template);
+                        pathArchitect.build(page, page.substr(0,page.lastIndexOf('.')), undefined, template);
                     } else {
                         mapComponent.resolveWhenBuilt(() => {
-                            pathArchitect.build(page, page, undefined, template);
+                            pathArchitect.build(page, page.substr(0,page.lastIndexOf('.')), undefined, template);
                         })
                     }
                 }
