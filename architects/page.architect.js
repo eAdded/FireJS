@@ -11,8 +11,8 @@ module.exports = class {
     async autoBuild() {
         const webpackArchitect = new WebpackArchitect(this.#$);
         return new Promise((resolve, reject) => {
-            const markBuilt = (stat) => {
-                this.#$.map[stat.name].isBuilt = true;
+            const markBuilt = (page) => {
+                this.#$.map[page].markBuilt();
             }
             const registerChunksForStat = (stat) => {
                 stat.compilation.chunks.forEach(chunk => {
@@ -25,10 +25,13 @@ module.exports = class {
             if (this.#$.config.pro) {
                 this.#$.cli.log("-----babel------")
                 this.build(webpackArchitect.babel(this.#$.webpackConfig)).then(multiStats => {
-                    this.logMultiStat(multiStats, registerChunksForStat);
+                    this.logMultiStat(multiStats,(stat)=>{
+                        registerChunksForStat(stat);
+                        markBuilt(stat.name);
+                    });
                     this.#$.cli.log("-----dist------");
                     this.build(webpackArchitect.direct(undefined)).then((multiStats) => {
-                        this.logMultiStat(multiStats, markBuilt);
+                        this.logMultiStat(multiStats);
                         resolve();//resolve in production mode
                     }).catch(reject);
                 }).catch(reject);
@@ -38,7 +41,7 @@ module.exports = class {
                     this.logMultiStat(multiStats, (stat) => {
                         registerChunksForStat(stat);
                         if (firstBuild)//marking built is only significant for the first cycle
-                            markBuilt(stat);
+                            markBuilt(stat.name);
                     });
                     if (firstBuild) {//prevents resolve multiple times while watching
                         resolve();//resolve for first build
