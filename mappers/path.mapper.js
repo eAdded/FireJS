@@ -1,5 +1,5 @@
 const readdir = require("recursive-dir-reader");
-
+const $path = require("path");
 module.exports = class {
     #$;
 
@@ -10,7 +10,8 @@ module.exports = class {
     map() {
         const map = {};
         readdir.sync(this.#$.config.paths.pages, (page) => {
-            map[page.replace(this.#$.config.paths.pages + "/", "")] = new MapComponent(page);
+            const rel_page = page.replace(this.#$.config.paths.pages + "/", "")
+            map[rel_page.substr(0, rel_page.lastIndexOf('.'))] = new MapComponent(page, rel_page);
         })
         return map;
     };
@@ -18,7 +19,7 @@ module.exports = class {
     convertToMap(array) {
         const map = {};
         array.forEach(item => {
-            map[item] = new MapComponent(item);
+            map[item.substr(0, item.lastIndexOf('.'))] = new MapComponent($path.join(this.#$.config.paths.pages, item), item);
         })
         return map;
     }
@@ -26,13 +27,24 @@ module.exports = class {
 }
 
 class MapComponent {
-    #page;
+    #rel_path;
+    #abs_path
     #isCustom = false;
     #isBuilt = false;
     #toBeResolved = [];
     chunks = [];
-    constructor(_page) {
-        this.#page = _page;
+
+    constructor(abs_path, rel_path) {
+        this.#abs_path = abs_path;
+        this.#rel_path = rel_path;
+    }
+
+    getAbsolutePath() {
+        return this.#abs_path;
+    }
+
+    getRelativePath() {
+        return this.#rel_path;
     }
 
     markBuilt() {
@@ -43,7 +55,7 @@ class MapComponent {
             });
             this.#toBeResolved = undefined;
         } else
-            throw new Error(`Page ${this.#page} is already built`)
+            throw new Error(`Page ${this.#rel_path} is already built`)
     }
 
     isBuilt() {
@@ -52,7 +64,7 @@ class MapComponent {
 
     resolveWhenBuilt(func) {
         if (!this.#toBeResolved)
-            throw new Error(`Can't resolve function. Page ${this.#page} is already built`);
+            throw new Error(`Can't resolve function. Page ${this.#rel_path} is already built`);
         this.#toBeResolved.push(func);
     }
 

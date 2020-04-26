@@ -3,7 +3,6 @@ global.React = require("react");
 
 module.exports = class {
     static createStatic(page, data, template) {
-        console.log()
         return template.replace("<div id='root'></div>",`<div id='root'>${renderToString(require(page).default(data))}</div>`);
     }
 }

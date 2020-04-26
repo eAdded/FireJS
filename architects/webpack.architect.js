@@ -2,6 +2,8 @@ const webpack = require("webpack");
 const path = require("path")
 const fs = require("fs");
 const _ = require("lodash");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = class {
     #$;
 
@@ -78,21 +80,26 @@ module.exports = class {
             //settings un-touchable by user
         };
         mergedConfig.output.path = mergedConfig.output.path || this.#$.config.paths.babel;
-        mergedConfig.output.filename = mergedConfig.output.filename || "[name]"
+        mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
         mergedConfig.externals.React = "React";
         mergedConfig.module.rules.push({
-            test: /\.js$/,
-            use: {
-                loader: 'babel-loader',
-                options: {
-                    presets: ["@babel/preset-react"]
-                }
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ["@babel/preset-react"]
+                    }
+                },
             },
-        });
+            {
+                test: /\.css$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
+            });
+        mergedConfig.plugins.push(new MiniCssExtractPlugin());
         const outs = [];
         Object.keys(this.#$.map).forEach(page => {
             mergedConfig.target = 'node';
-            mergedConfig.entry[page] = path.join(this.#$.config.paths.pages, page);//create in one config
+            mergedConfig.entry[page] = this.#$.map[page].getAbsolutePath();//create in one config
             //make file as library so it can be imported for static generation
             mergedConfig.output.libraryTarget = "commonjs2"
             outs.push(_.cloneDeep(mergedConfig));
@@ -118,21 +125,27 @@ module.exports = class {
             },
         };
         mergedConfig.output.path = this.#$.config.paths.lib;
-        mergedConfig.output.filename = mergedConfig.output.filename || "[name]"
+        mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
 
         mergedConfig.externals.React = "React";
         mergedConfig.externals.ReactDOM = "ReactDOM";
 
-        if (!this.#$.config.pro)
+        if (!this.#$.config.pro) {
             mergedConfig.module.rules.push({
-                test: /\.js$/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ["@babel/preset-react"]
-                    }
+                    test: /\.js$/,
+                    use: {
+                        loader: 'babel-loader',
+                        options: {
+                            presets: ["@babel/preset-react"]
+                        }
+                    },
                 },
-            });
+                {
+                    test: /\.css$/i,
+                    use: [MiniCssExtractPlugin.loader, 'css-loader'],
+                });
+            mergedConfig.plugins.push(new MiniCssExtractPlugin());
+        }
 
         const outs = [];
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
@@ -141,7 +154,7 @@ module.exports = class {
             out.entry[page] = web_front_entry;
             out.plugins.push(
                 new webpack.ProvidePlugin({
-                    App: path.join(this.#$.config.pro ? this.#$.config.paths.babel : this.#$.config.paths.pages, page)
+                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, this.#$.map[page].getRelativePath()) : this.#$.map[page].getAbsolutePath()
                 }),
             );
             outs.push(out);

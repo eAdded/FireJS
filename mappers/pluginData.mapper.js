@@ -10,8 +10,8 @@ module.exports = class {
 
     map() {
         const pathArchitect = new PathArchitect(this.#$);
-        pathArchitect.readTemplate((err,template) => {
-            if(err){
+        pathArchitect.readTemplate((err, template) => {
+            if (err) {
                 this.#$.cli.error("Error while reading template");
                 throw err;
             }
@@ -37,10 +37,10 @@ module.exports = class {
                 const mapComponent = this.#$.map[page];
                 if (!mapComponent.isCustom()) {
                     if (mapComponent.isBuilt()) {
-                        pathArchitect.build(page, page.substr(0,page.lastIndexOf('.')), undefined, template);
+                        pathArchitect.build(page, page, undefined, template);
                     } else {
                         mapComponent.resolveWhenBuilt(() => {
-                            pathArchitect.build(page, page.substr(0,page.lastIndexOf('.')), undefined, template);
+                            pathArchitect.build(page, page, undefined, template);
                         })
                     }
                 }
