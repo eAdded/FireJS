@@ -14,34 +14,35 @@ module.exports = class {
             const markBuilt = (stat) => {
                 stat.compilation.chunks.forEach(chunk => {
                     const map_page = this.#$.map[chunk.name];
-                    if (map_page !== undefined)//prevent React and ReactDOM chunk
+                    if (map_page)//prevent React and ReactDOM chunk
                         this.#$.map[chunk.name].markBuilt();
                 });
             }
             const registerChunksForStat = (stat) => {
                 stat.compilation.chunks.forEach(chunk => {
                     const map_page = this.#$.map[chunk.name];
-                    if (map_page !== undefined)//prevent React and ReactDOM chunk
+                    if (map_page)//prevent React and ReactDOM chunk
                         map_page.chunks = chunk.files;
                 });
             }
 
             if (this.#$.config.pro) {
                 this.#$.cli.log("-----babel------")
-                this.build(webpackArchitect.babel(this.#$.webpackConfig)).then(multiStats => {
-                    this.logMultiStat(multiStats,(stat)=>{
+                this.build(webpackArchitect.babel(this.#$.webpackConfig), multiStats => {
+                    this.logMultiStat(multiStats, (stat) => {
                         registerChunksForStat(stat);
                         markBuilt(stat);
                     });
                     this.#$.cli.log("-----dist------");
-                    this.build(webpackArchitect.direct(undefined)).then((multiStats) => {
+                    this.build(webpackArchitect.direct(undefined), (multiStats) => {
                         this.logMultiStat(multiStats);
                         resolve();//resolve in production mode
-                    }).catch(reject);
-                }).catch(reject);
+                    }, reject);
+                }, reject);
             } else {
+                this.#$.cli.log("Watching");
                 let firstBuild = true;
-                this.build(webpackArchitect.direct(this.#$.webpackConfig)).then(multiStats => {
+                this.build(webpackArchitect.direct(this.#$.webpackConfig), multiStats => {
                     this.logMultiStat(multiStats, (stat) => {
                         registerChunksForStat(stat);
                         if (firstBuild)//marking built is only significant for the first cycle
@@ -51,39 +52,28 @@ module.exports = class {
                         resolve();//resolve for first build
                         firstBuild = false;
                     }
-                }).catch(reject);
+                }, reject);
             }
         })
     }
 
-    async build(configs) {
-        return new Promise((resolve, reject) => {
-            this.#$.cli.log("Compiling")
-            const instance = webpack(configs);
-            if (this.#$.config.pro) { //watch in development mode
-                instance.run((err, multiStats) => {
-                    if (err)
-                        reject(err);
-                    else
-                        resolve(multiStats);
-                });
-            } else {
-                this.#$.cli.log("-----------Watching-----------");
-                instance.watch({}, (err, multiStats) => {
-                    if (err)
-                        reject(err);
-                    else
-                        resolve(multiStats);
-                });
-            }
-        })
-        //this.#$.cli.error("Compilation failed with exception");
+    build(configs, resolve, reject) {
+        webpack(configs, (err, multiStats) => {
+            if (err)
+                reject(err);
+            else
+                resolve(multiStats);
+        });
     }
 
+    //this.#$.cli.error("Compilation failed with exception");
     logMultiStat(multiStats, forEachCallback) {
         let errorCount = 0;
         let warningCount = 0;
         multiStats.stats.forEach(stat => {
+            stat.compilation.chunks.forEach(chunk => {
+                this.#$.cli.log(`Building Chunk ${chunk.name}`)
+            });
             if (forEachCallback)
                 forEachCallback(stat);
             if (this.#$.args["--verbose"]) {
