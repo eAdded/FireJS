@@ -3,6 +3,7 @@ const path = require("path")
 const fs = require("fs");
 const _ = require("lodash");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = class {
     #$;
@@ -74,6 +75,7 @@ module.exports = class {
     babel(conf) {
         let mergedConfig = {
             //settings which can be changed by user
+            name: "babel",
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
             ..._.cloneDeep(conf || this.getConfigBase()),
@@ -93,9 +95,24 @@ module.exports = class {
             },
             {
                 test: /\.css$/i,
-                use: [MiniCssExtractPlugin.loader, 'css-loader'],
-            });
-        mergedConfig.plugins.push(new MiniCssExtractPlugin());
+                use: [MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: {
+                                hashPrefix: 'hash',
+                            },
+                        },
+                    }
+                ],
+            }
+        );
+        mergedConfig.plugins.push(
+            new MiniCssExtractPlugin({
+                filename: path.relative(this.#$.config.paths.babel, this.#$.config.paths.lib) + "/[name].css",
+            }),
+        );
+
         const outs = [];
         Object.keys(this.#$.map).forEach(page => {
             mergedConfig.target = 'node';
@@ -110,6 +127,7 @@ module.exports = class {
     direct(conf) {
         let mergedConfig = {
             //settings which can be changed by user
+            name: "direct",
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
             watch: !this.#$.config.pro,
@@ -132,17 +150,18 @@ module.exports = class {
 
         if (!this.#$.config.pro) {
             mergedConfig.module.rules.push({
-                    test: /\.js$/,
-                    use: {
-                        loader: 'babel-loader',
-                        options: {
-                            presets: ["@babel/preset-react"]
-                        }
-                    },
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ["@babel/preset-react"]
+                    }
                 },
+            });
+            mergedConfig.module.rules.push(
                 {
                     test: /\.css$/i,
-                    use: [MiniCssExtractPlugin.loader, {
+                    use: ['style-loader',{
                         loader: 'css-loader',
                         options: {
                             modules: {
@@ -150,10 +169,9 @@ module.exports = class {
                             },
                         },
                     }],
-                });
-            mergedConfig.plugins.push(new MiniCssExtractPlugin());
+                }
+            );
         }
-
         const outs = [];
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
         Object.keys(this.#$.map).forEach(page => {

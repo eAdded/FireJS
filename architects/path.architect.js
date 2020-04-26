@@ -26,9 +26,9 @@ module.exports = class {
             this.#$.map[page].chunks.forEach(chunk => {
                 if (chunk.endsWith(".js"))
                     scripts = scripts.concat(`<script src="${libRelative}/${chunk}"></script>`);
-                else if (chunk.endsWith(".css"))
-                    scripts = scripts.concat(`<link rel="stylesheet" href="${libRelative}/${chunk}"/>`);
-                else
+                else if (chunk.endsWith(".css")) {
+                    scripts = scripts.concat(`<link rel="stylesheet" href="${libRelative}/${chunk.replace(_path.relative(this.#$.config.paths.babel,this.#$.config.paths.lib)+"/","")}"/>`);
+                }else
                     this.#$.cli.warn(`Unknown chunk type ${chunk}. Not adding to html`)
             });
             scripts = scripts.concat(`</body>`);
