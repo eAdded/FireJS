@@ -142,7 +142,14 @@ module.exports = class {
                 },
                 {
                     test: /\.css$/i,
-                    use: [MiniCssExtractPlugin.loader, 'css-loader'],
+                    use: [MiniCssExtractPlugin.loader, {
+                        loader: 'css-loader',
+                        options: {
+                            modules: {
+                                hashPrefix: 'hash',
+                            },
+                        },
+                    }],
                 });
             mergedConfig.plugins.push(new MiniCssExtractPlugin());
         }

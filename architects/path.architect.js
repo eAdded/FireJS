@@ -24,7 +24,12 @@ module.exports = class {
             const libRelative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist, "");
             let scripts = `<script src="${libRelative}/React.js"></script><script src="${libRelative}/ReactDOM.js"></script>`;
             this.#$.map[page].chunks.forEach(chunk => {
-                scripts = scripts.concat(`<script src="${libRelative}/${chunk}"></script>`);
+                if (chunk.endsWith(".js"))
+                    scripts = scripts.concat(`<script src="${libRelative}/${chunk}"></script>`);
+                else if (chunk.endsWith(".css"))
+                    scripts = scripts.concat(`<link rel="stylesheet" href="${libRelative}/${chunk}"/>`);
+                else
+                    this.#$.cli.warn(`Unknown chunk type ${chunk}. Not adding to html`)
             });
             scripts = scripts.concat(`</body>`);
             return scripts;
