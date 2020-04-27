@@ -120,11 +120,10 @@ module.exports = class {
         for (const entry of this.#$.map.entries()) {
             const out = _.cloneDeep(mergedConfig)
             out.name = entry[0];
-            out.entry[entry[1].getParsedPath().name] = entry[1].getAbsolutePath();
-            out.output.path = path.join(this.#$.config.paths.babel, entry[1].getRelativePath());
+            out.entry[entry[1].getName()] = entry[1].getAbsolutePath();
+            out.output.path = path.join(this.#$.config.paths.babel, entry[1].getDir());
             outs.push(out);
         }
-        console.log(outs);
         return outs;
     }
 
@@ -146,7 +145,8 @@ module.exports = class {
             },
         };
         mergedConfig.output.path = this.#$.config.paths.lib;
-        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist,this.#$.config.paths.lib)}/`;
+        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
+        mergedConfig.output.filename = `[name][hash].js`;
 
         mergedConfig.externals.React = "React";
         mergedConfig.externals.ReactDOM = "ReactDOM";
@@ -181,11 +181,10 @@ module.exports = class {
         for (const entry of this.#$.map.entries()) {
             const out = _.cloneDeep(mergedConfig);
             out.name = entry[0];
-            out.entry = web_front_entry;
-            out.entry[entry[1].getParsedPath().name] = `${entry[0]}[contentHash].js`;
+            out.entry[entry[1].getName()] = web_front_entry;
             out.plugins.push(
                 new webpack.ProvidePlugin({
-                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, entry[1].getRelativePath()) : entry[1].getAbsolutePath()
+                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, entry[0]) : entry[1].getAbsolutePath()
                 }),
             );
             outs.push(out);
@@ -193,7 +192,6 @@ module.exports = class {
         const libs = this.#smartBuildLib();
         if (libs)
             outs.push(libs);
-        console.log(outs);
         return outs;
     }
 }

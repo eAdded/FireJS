@@ -11,7 +11,7 @@ module.exports = class {
         const map = new Map();
         readdir.sync(this.#$.config.paths.pages, (page) => {
             const rel_page = page.replace(this.#$.config.paths.pages + "/", "")
-            map.set(rel_page.substr(0, rel_page.lastIndexOf('.')), new MapComponent(page, rel_page));
+            map.set(rel_page, new MapComponent(page, rel_page));
         })
         return map;
     };
@@ -19,7 +19,7 @@ module.exports = class {
     convertToMap(array) {
         const map = new Map();
         array.forEach(item =>
-            map.set(item.substr(0, item.lastIndexOf('.')), new MapComponent($path.join(this.#$.config.paths.pages, item), item)))
+            map.set(item, new MapComponent($path.join(this.#$.config.paths.pages, item), item)))
         return map;
     }
 
@@ -39,9 +39,12 @@ class MapComponent {
 
     constructor(abs_path, page) {
         this.#page = page;
-        this.#abs_path = abs_path;
-        this.#parsedPath = $path.parse(abs_path);
-        this.#fullName = page.substr(page.lastIndexOf("/"));
+        this.#absPath = abs_path;
+        this.#dir = page.substr(0, page.lastIndexOf("/"));
+        this.#fullName = page.substr((() => {
+            const index = page.lastIndexOf("/");
+            return index === -1 ? 0 : index;
+        })());
         this.#name = this.#fullName.substr(0, this.#fullName.lastIndexOf("."));
         this.#ext = this.#fullName.substr(this.#fullName.lastIndexOf("."));
     }
