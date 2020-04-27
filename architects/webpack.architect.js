@@ -81,6 +81,7 @@ module.exports = class {
             //settings un-touchable by user
         };
         mergedConfig.output.filename = "[name][hash].js";
+        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         mergedConfig.output.globalObject = "this";
         mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
         mergedConfig.externals.React = "React";
@@ -143,8 +144,8 @@ module.exports = class {
             },
         };
         mergedConfig.output.path = this.#$.config.paths.lib;
-        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         mergedConfig.output.filename = `[name][hash].js`;
+        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
 
         mergedConfig.externals.React = "React";
         mergedConfig.externals.ReactDOM = "ReactDOM";
