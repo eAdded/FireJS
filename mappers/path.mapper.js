@@ -26,7 +26,6 @@ module.exports = class {
 }
 
 class MapComponent {
-    #page;
     #dir;
     #absPath
     #fullName;
@@ -38,7 +37,6 @@ class MapComponent {
     chunks = [];
 
     constructor(abs_path, page) {
-        this.#page = page;
         this.#absPath = abs_path;
         this.#dir = page.substr(0, page.lastIndexOf("/"));
         this.#fullName = page.substr((() => {
@@ -77,7 +75,7 @@ class MapComponent {
             });
             this.#toBeResolved = undefined;
         } else
-            throw new Error(`Page ${this.#page} is already built`)
+            throw new Error(`Page ${this.#dir}/${this.#fullName} is already built`)
     }
 
     isBuilt() {
@@ -86,7 +84,7 @@ class MapComponent {
 
     resolveWhenBuilt(func) {
         if (!this.#toBeResolved)
-            throw new Error(`Can't resolve function. Page ${this.#page} is already built`);
+            throw new Error(`Can't resolve function. Page ${this.#dir}/${this.#fullName} is already built`);
         this.#toBeResolved.push(func);
     }
 

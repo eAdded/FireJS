@@ -22,10 +22,10 @@ module.exports = class {
                     mapComponent.markCustom();
                     this.mapPlugin(page, plugData[page]).then((path, content) => {
                         if (mapComponent.isBuilt()) {
-                            pathArchitect.build(page, path, content, template)
+                            pathArchitect.build(mapComponent, path, content, template)
                         } else {
                             mapComponent.resolveWhenBuilt(() => {
-                                pathArchitect.build(page, path, content, template)
+                                pathArchitect.build(mapComponent, path, content, template)
                             })
                         }
                     }).catch((reason => {
@@ -34,11 +34,12 @@ module.exports = class {
                 });
             });
             for (const entry of this.#$.map.entries()) {
-                if (!entry[1].isCustom()) {
-                    if (entry[1].isBuilt()) {
+                const mapComponent = entry[1];
+                if (!mapComponent.isCustom()) {
+                    if (mapComponent.isBuilt()) {
                         pathArchitect.build(entry[0], entry[0], undefined, template);
                     } else {
-                        entry[1].resolveWhenBuilt(() => {
+                        mapComponent.resolveWhenBuilt(() => {
                             pathArchitect.build(entry[0], entry[0], undefined, template);
                         })
                     }
