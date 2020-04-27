@@ -19,9 +19,10 @@ module.exports = class {
                 const mapComponent = this.#$.map.get(page);
                 mapComponent.markCustom();
                 this.mapPlugin(page, plugData[page], (path, content) => {
-                    mapComponent.resolveOnFirstBuild(() => {
-                        staticArchitect.createStatic(mapComponent, content);
-                    });
+                    if (this.#$.config.pro) //static rendering only required when pro
+                        mapComponent.resolveOnFirstBuild(() => {
+                            staticArchitect.createStatic(mapComponent, content);
+                        });
                     mapComponent.resolveOnBuild(() => {
                         pathArchitect.writePath(mapComponent, path);
                     })
@@ -33,9 +34,10 @@ module.exports = class {
         });
         for (const mapComponent of this.#$.map.values()) {
             if (!mapComponent.isCustom()) {
-                mapComponent.resolveOnFirstBuild(() => {
-                    staticArchitect.createStatic(mapComponent);
-                });
+                if (this.#$.config.pro) //static rendering only required when pro
+                    mapComponent.resolveOnFirstBuild(() => {
+                        staticArchitect.createStatic(mapComponent);
+                    });
                 mapComponent.resolveOnBuild(() => {
                     pathArchitect.writePath(mapComponent);
                 })

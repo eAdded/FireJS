@@ -10,9 +10,11 @@ module.exports = class {
     }
 
     autoRegister() {
-        const libRelative = _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib);
-        for (const mapComponent of this.#$.map.values())
-            this.registerComponentForSemiBuild(mapComponent, libRelative);
+        if (this.#$.config.pro) {
+            const libRelative = _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib);
+            for (const mapComponent of this.#$.map.values())
+                this.registerComponentForSemiBuild(mapComponent, libRelative);
+        }
     }
 
     registerComponentForSemiBuild(mapComponent, libRelative) {

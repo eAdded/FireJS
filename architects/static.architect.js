@@ -1,10 +1,6 @@
 const {renderToString} = require("react-dom/server");
 const _path = require("path");
 //set globals for ssr
-global.window = {};
-global.document = {};
-global.__SSR__ = true;
-global.React = require("react");
 
 module.exports = class {
     #$;
@@ -14,11 +10,15 @@ module.exports = class {
     }
 
     createStatic(mapComponent, content) {
+        global.window = {};
+        global.document = {};
+        global.__SSR__ = true;
+        global.React = require("react");
         mapComponent.template = mapComponent.template.replace(
             this.#$.config.templateTags.static,
             "<div id='root'>".concat(
                 renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, content, undefined))
-            ,"</div>")
+                , "</div>")
         );
     }
 
@@ -31,10 +31,13 @@ module.exports = class {
             this.#$.cli.warn(`Unknown chunk type of ${chunk}. Adding as link.`)
             mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.script, `<link href="${chunk}">${this.#$.config.templateTags.style}`);
         }
-        //  return template.concat(() =>)
     }
 
     finalize(mapComponent) {
+        if (!this.#$.config.pro) {//div root added in development mode
+            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.static, "<div id='root'></div>");
+        }
+
         Object.keys(this.#$.config.templateTags).forEach(tag => {
             mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags[tag], "");
         })
