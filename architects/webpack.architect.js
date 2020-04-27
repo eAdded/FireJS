@@ -176,13 +176,13 @@ module.exports = class {
         const outs = [];
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
 
-        for (const entry of this.#$.map.entries()) {
+        for (const mapComponent of this.#$.map.values()) {
             const out = _.cloneDeep(mergedConfig);
-            out.name = entry[0];
-            out.entry[entry[1].getName()] = web_front_entry;
+            out.name = mapComponent.getPage();
+            out.entry[mapComponent.getName()] = web_front_entry;
             out.plugins.push(
                 new webpack.ProvidePlugin({
-                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, entry[0]) : entry[1].getAbsolutePath()
+                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel,mapComponent.getDir(), mapComponent.babelChunk) : mapComponent.getAbsolutePath()
                 }),
             );
             outs.push(out);

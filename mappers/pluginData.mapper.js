@@ -2,6 +2,7 @@ const _path = require("path");
 const fs = require("fs");
 const PathArchitect = require("../architects/path.architect");
 const StaticArchitect = require("../architects/static.architect");
+
 module.exports = class {
     #$;
 
@@ -11,14 +12,16 @@ module.exports = class {
 
     async map() {
         const pathArchitect = new PathArchitect(this.#$);
+        const staticArchitect = new StaticArchitect(this.#$);
         this.#$.config.plugins.forEach(plugin => {
             const plugData = require(plugin)();
             Object.keys(plugData).forEach(page => {
                 const mapComponent = this.#$.map.get(page);
                 mapComponent.markCustom();
                 this.mapPlugin(page, plugData[page], (path, content) => {
-                    mapComponent.resolveWhenBuilt(() => {
-                        pathArchitect.build(mapComponent, path, content, template)
+                    mapComponent.resolveOnFirstBuild(() => {
+                        staticArchitect.createStatic(mapComponent, content);
+                        pathArchitect.writePath(mapComponent, path);
                     });
                 }, reason => {
                     this.#$.cli.error(new Error(`Error in plugin ${plugin}`));
@@ -30,10 +33,10 @@ module.exports = class {
             const mapComponent = entry[1];
             if (!mapComponent.isCustom()) {
                 if (mapComponent.isBuilt()) {
-                    pathArchitect.build(entry[0], entry[0], undefined, template);
+                    pathArchitect.build(mapComponent);
                 } else {
                     mapComponent.resolveWhenBuilt(() => {
-                        pathArchitect.build(entry[0], entry[0], undefined, template);
+                        pathArchitect.build(mapComponent);
                     })
                 }
             }

@@ -8,6 +8,7 @@ const PluginDataMapper = require("./mappers/pluginData.mapper");
 const PathArchitect = require("./architects/path.architect");
 const BuildRegistrar = require("./registrars/build.registrar");
 const $path = require("path");
+
 module.exports = class {
 
     #$ = {
@@ -38,13 +39,13 @@ module.exports = class {
 
     build() {
         new BuildRegistrar(this.#$).autoRegister();//register for copy chunks
+        new PluginDataMapper(this.#$).map();
         new PageArchitect(this.#$).autoBuild()
             .then(r => this.#$.cli.ok("Completed initial build cycle"))
             .catch(reason => {
                 this.#$.cli.error("Error during first build cycle");
                 throw reason
             });
-        new PluginDataMapper(this.#$).map();
     }
 
     /*applyPlugin(page, paths, template) {
