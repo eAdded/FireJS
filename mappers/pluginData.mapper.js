@@ -18,7 +18,7 @@ module.exports = class {
             this.#$.config.plugins.forEach(plugin => {
                 const plugData = require(plugin)();
                 Object.keys(plugData).forEach(page => {
-                    const mapComponent = this.#$.map[page];
+                    const mapComponent = this.#$.map.get(page);
                     mapComponent.markCustom();
                     this.mapPlugin(page, plugData[page]).then((path, content) => {
                         if (mapComponent.isBuilt()) {
@@ -33,24 +33,23 @@ module.exports = class {
                     }));
                 });
             });
-            Object.keys(this.#$.map).forEach(page => {
-                const mapComponent = this.#$.map[page];
-                if (!mapComponent.isCustom()) {
-                    if (mapComponent.isBuilt()) {
-                        pathArchitect.build(page, page, undefined, template);
+            for (const entry of this.#$.map.entries()) {
+                if (!entry[1].isCustom()) {
+                    if (entry[1].isBuilt()) {
+                        pathArchitect.build(entry[0], entry[0], undefined, template);
                     } else {
-                        mapComponent.resolveWhenBuilt(() => {
-                            pathArchitect.build(page, page, undefined, template);
+                        entry[1].resolveWhenBuilt(() => {
+                            pathArchitect.build(entry[0], entry[0], undefined, template);
                         })
                     }
                 }
-            });
+            }
         });
     }
 
     mapPlugin(page, paths) {
         return new Promise((resolve, reject) => {
-            if (this.#$.map[page] === undefined) //check if this page already exists
+            if (this.#$.map.has(page)) //check if this page already exists
                 reject(new TypeError(`page ${page} either does not exists or is not mapped. Hint : Make sure to add ${page} in map.`));
             else {
                 if (Array.isArray(paths)) {

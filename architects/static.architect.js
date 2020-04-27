@@ -1,5 +1,6 @@
 const {renderToString} = require("react-dom/server");
-global.React = require("react");
+if (!global.React)
+    global.React = require("react");
 
 module.exports = class {
     static createStatic(page, data, template) {

@@ -8,19 +8,18 @@ module.exports = class {
     }
 
     map() {
-        const map = {};
+        const map = new Map();
         readdir.sync(this.#$.config.paths.pages, (page) => {
             const rel_page = page.replace(this.#$.config.paths.pages + "/", "")
-            map[rel_page.substr(0, rel_page.lastIndexOf('.'))] = new MapComponent(page, rel_page);
+            map.set(rel_page.substr(0, rel_page.lastIndexOf('.')), new MapComponent(page, rel_page));
         })
         return map;
     };
 
     convertToMap(array) {
-        const map = {};
-        array.forEach(item => {
-            map[item.substr(0, item.lastIndexOf('.'))] = new MapComponent($path.join(this.#$.config.paths.pages, item), item);
-        })
+        const map = new Map();
+        array.forEach(item =>
+            map.set(item.substr(0, item.lastIndexOf('.')), new MapComponent($path.join(this.#$.config.paths.pages, item), item)))
         return map;
     }
 

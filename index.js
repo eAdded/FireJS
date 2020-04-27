@@ -11,7 +11,7 @@ module.exports = class {
     #$ = {
         args: {},
         config: {},
-        map: {},
+        map: new Map(),
         cli: {},
         webpackConfig: {}
     };

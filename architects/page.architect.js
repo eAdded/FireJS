@@ -8,20 +8,18 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-            /*stat.compilation.assets.forEach(asset => {
-            })*/
     autoBuild() {
         const webpackArchitect = new WebpackArchitect(this.#$);
         return new Promise((resolve, reject) => {
             const markBuilt = (stat) => {
-                const map_page = this.#$.map[stat.compilation.name];
+                const map_page = this.#$.map.get(stat.compilation.name);
                 if (map_page)//prevent React and ReactDOM chunk
-                    this.#$.map[stat.compilation.name].markBuilt();
+                    map_page.markBuilt();
             }
 
             const registerChunksForStat = (stat) => {
                 stat.compilation.chunks.forEach(chunk => {
-                    const map_page = this.#$.map[stat.compilation.name];
+                    const map_page = this.#$.map.get(stat.compilation.name);
                     if (map_page)//prevent React and ReactDOM chunk
                         map_page.chunks.push(...chunk.files);
                 });
@@ -30,13 +28,13 @@ module.exports = class {
             if (this.#$.config.pro) {
                 this.#$.cli.log("-----babel------")
                 this.build(webpackArchitect.babel(this.#$.webpackConfig), multiStats => {
-                    this.logMultiStat(multiStats, (stat) => {
-                        registerChunksForStat(stat);
-                        markBuilt(stat);
-                    });
+                    this.logMultiStat(multiStats)
                     this.#$.cli.log("-----dist------");
                     this.build(webpackArchitect.direct(undefined), (multiStats) => {
-                        this.logMultiStat(multiStats);
+                        this.logMultiStat(multiStats, (stat) => {
+                            registerChunksForStat(stat);
+                            markBuilt(stat);
+                        });
                         resolve();//resolve in production mode
                     }, reject);
                 }, reject);

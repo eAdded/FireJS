@@ -116,13 +116,14 @@ module.exports = class {
             }),
         );
         const outs = [];
-        Object.keys(this.#$.map).forEach(page => {
+
+        for(const entry of this.#$.map.entries()){
             const out = _.cloneDeep(mergedConfig)
-            out.name = page;
-            out.entry = this.#$.map[page].getAbsolutePath()
-            out.output.filename = `${page}.js`;
+            out.name = entry[0];
+            out.entry = entry[1].getAbsolutePath()
+            out.output.filename = `${entry[0]}.js`;
             outs.push(out);
-        });
+        }
         return outs;
     }
 
@@ -175,18 +176,19 @@ module.exports = class {
         }
         const outs = [];
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
-        Object.keys(this.#$.map).forEach(page => {
+
+        for(const entry of this.#$.map.entries()){
             const out = _.cloneDeep(mergedConfig);
-            out.name = page;
+            out.name = entry[0];
             out.entry = web_front_entry;
-            out.output.filename = `${page}[contentHash].js`;
+            out.output.filename = `${entry[0]}[contentHash].js`;
             out.plugins.push(
                 new webpack.ProvidePlugin({
-                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, this.#$.map[page].getRelativePath()) : this.#$.map[page].getAbsolutePath()
+                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, entry[1].getRelativePath()) : entry[1].getAbsolutePath()
                 }),
             );
             outs.push(out);
-        });
+        }
         const libs = this.#smartBuildLib();
         if (libs)
             outs.push(libs);
