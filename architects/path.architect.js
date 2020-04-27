@@ -24,7 +24,6 @@ module.exports = class {
             const libRelative = _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib);
             let scripts = `<script src="${libRelative}/React.js"></script><script src="${libRelative}/ReactDOM.js"></script>`;
             this.#$.map.get(page).chunks.forEach(chunk => {
-                console.log(chunk);
                 if (chunk.endsWith(".js"))
                     scripts = scripts.concat(`<script src="${libRelative}/${chunk}"></script>`);
                 else if (chunk.endsWith(".css")) {
