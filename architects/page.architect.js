@@ -20,14 +20,20 @@ module.exports = class {
             const registerChunksForStat = (stat) => {
                 const mapComponent = this.#$.map.get(stat.compilation.name);
                 if (mapComponent) {
-                    if (!mapComponent.babelChunk)//this function is called 2 times during production
-                        mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
-                    stat.compilation.chunks.forEach(chunk => {
-                        chunk.files.forEach(file => {
-                            if (file !== mapComponent.babelChunk)//don't add babel main
-                                mapComponent.chunks.push(file);
-                        })
-                    });
+                    if (this.#$.config.pro) {
+                        if (!mapComponent.babelChunk)//this function is called 2 times during production
+                            mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
+                        stat.compilation.chunks.forEach(chunk => {
+                            chunk.files.forEach(file => {
+                                if (file !== mapComponent.babelChunk)//don't add babel main
+                                    mapComponent.chunks.push(file);
+                            })
+                        });
+                    } else {
+                        stat.compilation.chunks.forEach(chunk => {
+                            mapComponent.chunks.push(...chunk.files);
+                        });
+                    }
                 }
             }
 
