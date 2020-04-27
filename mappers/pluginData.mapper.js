@@ -32,11 +32,10 @@ module.exports = class {
             });
         });
         for (const mapComponent of this.#$.map.values()) {
-            if (!mapComponent.isCustom()) {
+            if (!mapComponent.isCustom())
                 mapComponent.resolveOnBuild(() => {
                     pathArchitect.writePath(mapComponent);
                 })
-            }
         }
     }
 

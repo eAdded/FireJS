@@ -36,7 +36,7 @@ module.exports = class {
 
     finalize(mapComponent) {
         Object.keys(this.#$.config.templateTags).forEach(tag => {
-            mapComponent.template = mapComponent.template.replace(tag, "");
+            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags[tag], "");
         })
     }
 

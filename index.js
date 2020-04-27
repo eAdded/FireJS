@@ -24,8 +24,8 @@ module.exports = class {
         this.#$.args = args || ConfigMapper.getArgs();
         this.#$.cli = new Cli(this.#$.args);
         this.#$.config = config || userConfig ? this.newConfigMapper().getConfig(_.cloneDeep(userConfig)) : this.newConfigMapper().getConfig();
+        this.#$.template = template || fs.readFileSync(_path.join(__dirname, 'web/template.html')).toString();
         this.#$.map = map ? new PathMapper().convertToMap(map) : new PathMapper(this.#$).map();
-        this.#$.template = template || fs.readFileSync(_path.join(__dirname, 'web/template.html'));
         this.#$.webpackConfig = webpackConfig || this.newWebpackArchitect().readUserConfig();
     }
 
@@ -39,7 +39,7 @@ module.exports = class {
 
     build() {
         new BuildRegistrar(this.#$).autoRegister();//register for copy chunks on semi build
-        new PluginDataMapper(this.#$).map().then(r => {}).catch(e=>throw e);
+        new PluginDataMapper(this.#$).map().then(r => {}).catch(e=>{throw e});
         new PageArchitect(this.#$).autoBuild()
             .then(r => this.#$.cli.ok("Completed initial build cycle"))
             .catch(reason => {
