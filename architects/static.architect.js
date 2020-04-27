@@ -17,8 +17,8 @@ module.exports = class {
         mapComponent.template = mapComponent.template.replace(
             this.#$.config.templateTags.static,
             "<div id='root'>".concat(
-                renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, content, undefined)))
-            , "</div>"
+                renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, content, undefined))
+            ,"</div>")
         );
     }
 
