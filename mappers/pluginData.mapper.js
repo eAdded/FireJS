@@ -32,10 +32,14 @@ module.exports = class {
             });
         });
         for (const mapComponent of this.#$.map.values()) {
-            if (!mapComponent.isCustom())
+            if (!mapComponent.isCustom()) {
+                mapComponent.resolveOnFirstBuild(() => {
+                    staticArchitect.createStatic(mapComponent);
+                });
                 mapComponent.resolveOnBuild(() => {
                     pathArchitect.writePath(mapComponent);
                 })
+            }
         }
     }
 
