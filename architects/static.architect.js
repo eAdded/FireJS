@@ -22,9 +22,9 @@ module.exports = class {
         );
     }
 
-    addChunk(template, chunk) {
+    addChunk(mapComponent, chunk) {
         if (chunk.endsWith(".js")) {
-            return template.replace(this.#$.config.templateTags.script, `<script src=${chunk}></script>`)
+            mapComponent.template.replace(this.#$.config.templateTags.script, `<script src=${chunk}></script>`)
         }
         //  return template.concat(() =>)
     }

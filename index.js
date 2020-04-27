@@ -7,8 +7,8 @@ const Cli = require("./utils/cli-color");
 const PluginDataMapper = require("./mappers/pluginData.mapper");
 const PathArchitect = require("./architects/path.architect");
 const BuildRegistrar = require("./registrars/build.registrar");
-const $path = require("path");
-
+const _path = require("path");
+const fs = require("fs");
 module.exports = class {
 
     #$ = {
@@ -25,7 +25,7 @@ module.exports = class {
         this.#$.cli = new Cli(this.#$.args);
         this.#$.config = config || userConfig ? this.newConfigMapper().getConfig(_.cloneDeep(userConfig)) : this.newConfigMapper().getConfig();
         this.#$.map = map ? new PathMapper().convertToMap(map) : new PathMapper(this.#$).map();
-        this.#$.template = template || fs.readFileSync($path.join(__dirname, 'web/template.html'));
+        this.#$.template = template || fs.readFileSync(_path.join(__dirname, 'web/template.html'));
         this.#$.webpackConfig = webpackConfig || this.newWebpackArchitect().readUserConfig();
     }
 

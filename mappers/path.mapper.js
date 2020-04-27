@@ -32,9 +32,9 @@ class MapComponent {
     #fullName;
     #ext;
     #name;
-    #isCustom = false;
-    #isBuild = false;
-    #isSemiBuild = false;
+    #custom = false;
+    #built = false;
+    #semiBuilt = false;
     #toBeResolved = {
         full: [],
         semi: []
@@ -85,9 +85,9 @@ class MapComponent {
         return this.#dir;
     }
 
-    markBuild() {
-        if (!this.#isBuild) {
-            this.#isBuild = true;
+    markBuilt() {
+        if (!this.isBuilt()) {
+            this.#built = true;
             this.#toBeResolved.full.forEach(func => {
                 func();
             });
@@ -96,9 +96,9 @@ class MapComponent {
             throw new Error(`Page ${this.#page} is already Build`)
     }
 
-    markSemiBuild() {
-        if (!this.#isSemiBuild) {
-            this.#isSemiBuild = true;
+    markSemiBuilt() {
+        if (!this.isSemiBuilt()) {
+            this.#semiBuilt = true;
             this.#toBeResolved.semi.forEach(func => {
                 func();
             });
@@ -107,33 +107,33 @@ class MapComponent {
             throw new Error(`Page ${this.#page} is already Build`)
     }
 
-    isBuild() {
-        return this.#isBuild;
+    isBuilt() {
+        return this.#built;
     }
 
-    isSemiBuild() {
-        return this.#isSemiBuild;
+    isSemiBuilt() {
+        return this.#semiBuilt;
     }
 
     resolveOnBuild(func) {
-        if (this.#isBuild)
+        if (this.isBuilt())
             func();
         else
             this.#toBeResolved.full.push(func);
     }
 
     resolveOnSemiBuild(func) {
-        if (this.#isSemiBuild)
+        if (this.isSemiBuilt())
             func();
         else
             this.#toBeResolved.full.push(func);
     }
 
     isCustom() {
-        return this.#isCustom;
+        return this.#custom;
     }
 
     markCustom() {
-        this.#isCustom = true;
+        this.#custom = true;
     }
 }

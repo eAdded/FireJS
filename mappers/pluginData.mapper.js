@@ -32,13 +32,9 @@ module.exports = class {
         for (const entry of this.#$.map.entries()) {
             const mapComponent = entry[1];
             if (!mapComponent.isCustom()) {
-                if (mapComponent.isBuilt()) {
-                    pathArchitect.build(mapComponent);
-                } else {
-                    mapComponent.resolveWhenBuilt(() => {
-                        pathArchitect.build(mapComponent);
-                    })
-                }
+                mapComponent.resolveOnFirstBuild(() => {
+                    pathArchitect.writePath(mapComponent);
+                });
             }
         }
     }
