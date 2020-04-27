@@ -26,24 +26,44 @@ module.exports = class {
 }
 
 class MapComponent {
-    #rel_path;
-    #abs_path
+    #page;
+    #dir;
+    #absPath
+    #fullName;
+    #ext;
+    #name;
     #isCustom = false;
     #isBuilt = false;
     #toBeResolved = [];
     chunks = [];
 
-    constructor(abs_path, rel_path) {
+    constructor(abs_path, page) {
+        this.#page = page;
         this.#abs_path = abs_path;
-        this.#rel_path = rel_path;
+        this.#parsedPath = $path.parse(abs_path);
+        this.#fullName = page.substr(page.lastIndexOf("/"));
+        this.#name = this.#fullName.substr(0, this.#fullName.lastIndexOf("."));
+        this.#ext = this.#fullName.substr(this.#fullName.lastIndexOf("."));
+    }
+
+    getFullName() {
+        return this.#fullName;
+    }
+
+    getExt() {
+        return this.#ext;
+    }
+
+    getName() {
+        return this.#name;
     }
 
     getAbsolutePath() {
-        return this.#abs_path;
+        return this.#absPath;
     }
 
-    getRelativePath() {
-        return this.#rel_path;
+    getDir() {
+        return this.#dir;
     }
 
     markBuilt() {
@@ -54,7 +74,7 @@ class MapComponent {
             });
             this.#toBeResolved = undefined;
         } else
-            throw new Error(`Page ${this.#rel_path} is already built`)
+            throw new Error(`Page ${this.#page} is already built`)
     }
 
     isBuilt() {
@@ -63,7 +83,7 @@ class MapComponent {
 
     resolveWhenBuilt(func) {
         if (!this.#toBeResolved)
-            throw new Error(`Can't resolve function. Page ${this.#rel_path} is already built`);
+            throw new Error(`Can't resolve function. Page ${this.#page} is already built`);
         this.#toBeResolved.push(func);
     }
 

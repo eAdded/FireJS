@@ -78,12 +78,12 @@ module.exports = class {
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
             output: {
+                filename: `[name].js`,
                 globalObject: 'this',
             },
             ..._.cloneDeep(conf || this.getConfigBase()),
             //settings un-touchable by user
         };
-        mergedConfig.output.path = this.#$.config.paths.babel;
         mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
         mergedConfig.externals.React = "React";
         mergedConfig.externals.ReactDOM = "ReactDOM";
@@ -112,18 +112,19 @@ module.exports = class {
         );
         mergedConfig.plugins.push(
             new MiniCssExtractPlugin({
-                filename: path.relative(this.#$.config.paths.babel, this.#$.config.paths.lib) + "/[hash].css",
+                filename: "[name][hash].css",
             }),
         );
         const outs = [];
 
-        for(const entry of this.#$.map.entries()){
+        for (const entry of this.#$.map.entries()) {
             const out = _.cloneDeep(mergedConfig)
             out.name = entry[0];
-            out.entry = entry[1].getAbsolutePath()
-            out.output.filename = `${entry[0]}.js`;
+            out.entry[entry[1].getParsedPath().name] = entry[1].getAbsolutePath();
+            out.output.path = path.join(this.#$.config.paths.babel, entry[1].getRelativePath());
             outs.push(out);
         }
+        console.log(outs);
         return outs;
     }
 
@@ -145,7 +146,7 @@ module.exports = class {
             },
         };
         mergedConfig.output.path = this.#$.config.paths.lib;
-        mergedConfig.output.publicPath = "/lib/";
+        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist,this.#$.config.paths.lib)}/`;
 
         mergedConfig.externals.React = "React";
         mergedConfig.externals.ReactDOM = "ReactDOM";
@@ -177,11 +178,11 @@ module.exports = class {
         const outs = [];
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
 
-        for(const entry of this.#$.map.entries()){
+        for (const entry of this.#$.map.entries()) {
             const out = _.cloneDeep(mergedConfig);
             out.name = entry[0];
             out.entry = web_front_entry;
-            out.output.filename = `${entry[0]}[contentHash].js`;
+            out.entry[entry[1].getParsedPath().name] = `${entry[0]}[contentHash].js`;
             out.plugins.push(
                 new webpack.ProvidePlugin({
                     App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, entry[1].getRelativePath()) : entry[1].getAbsolutePath()
@@ -192,6 +193,7 @@ module.exports = class {
         const libs = this.#smartBuildLib();
         if (libs)
             outs.push(libs);
+        console.log(outs);
         return outs;
     }
 }
