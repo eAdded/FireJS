@@ -9,11 +9,6 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    readTemplate(callback) {
-        fs.readFile($path.resolve(__dirname, '../web/template.html'), {}, (err, data) => {
-            callback(err, data.toString());
-        })
-    }
 
     render(page, content, template) {
         return (this.#$.config.pro ? StaticArchitect.createStatic(
@@ -54,7 +49,7 @@ module.exports = class {
                 this.#$.cli.ok(`Path ${path} for page ${page} successfully written`);
             });
         })
-
     }
+
 
 }

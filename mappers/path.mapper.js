@@ -11,7 +11,7 @@ module.exports = class {
         const map = new Map();
         readdir.sync(this.#$.config.paths.pages, (page) => {
             const rel_page = page.replace(this.#$.config.paths.pages + "/", "")
-            map.set(rel_page, new MapComponent(page, rel_page));
+            map.set(rel_page, new MapComponent(page, rel_page, this.#$.template));
         })
         return map;
     };
@@ -19,7 +19,7 @@ module.exports = class {
     convertToMap(array) {
         const map = new Map();
         array.forEach(item =>
-            map.set(item, new MapComponent($path.join(this.#$.config.paths.pages, item), item)))
+            map.set(item, new MapComponent($path.join(this.#$.config.paths.pages, item), item, this.#$.template)));
         return map;
     }
 
@@ -33,11 +33,17 @@ class MapComponent {
     #name;
     #isCustom = false;
     #isBuilt = false;
-    #toBeResolved = [];
+    #isSemiBuilt = false;
+    #toBeResolved = {
+        full: [],
+        semi: []
+    };
     chunks = [];
-    mainChunk = "";
+    babelChunk = "";
+    template = "";
 
-    constructor(abs_path, page) {
+    constructor(abs_path, page, template) {
+        this.template = template;
         this.#absPath = abs_path;
         this.#dir = page.substr(0, page.lastIndexOf("/"));
         this.#fullName = page.substr((() => {
@@ -71,22 +77,46 @@ class MapComponent {
     markBuilt() {
         if (!this.#isBuilt) {
             this.#isBuilt = true;
-            this.#toBeResolved.forEach(func => {
+            this.#toBeResolved.full.forEach(func => {
                 func();
             });
-            this.#toBeResolved = undefined;
+            this.#toBeResolved = undefined;//mark object undefined because semi can't happen after full
         } else
             throw new Error(`Page ${this.#dir}/${this.#fullName} is already built`)
     }
+
+    markSemiBuilt() {
+        if (!this.#isSemiBuilt) {
+            this.#isSemiBuilt = true;
+            this.#toBeResolved.semi.forEach(func => {
+                func();
+            });
+            this.#toBeResolved.semi = undefined;
+        } else
+            throw new Error(`Page ${this.#dir}/${this.#fullName} is already built`)
+    }
+
 
     isBuilt() {
         return this.#isBuilt;
     }
 
+    isSemiBuilt() {
+        return this.#isSemiBuilt;
+    }
+
     resolveWhenBuilt(func) {
-        if (!this.#toBeResolved)
-            throw new Error(`Can't resolve function. Page ${this.#dir}/${this.#fullName} is already built`);
-        this.#toBeResolved.push(func);
+        if (this.#isBuilt)
+            func();
+        else
+            this.#toBeResolved.full.push(func);
+    }
+
+    resolveWhenSemiBuilt(func) {
+        if (this.#isSemiBuilt)
+            func();
+        else
+            this.#toBeResolved.full.push(func);
     }
 
     isCustom() {

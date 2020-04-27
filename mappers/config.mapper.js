@@ -115,11 +115,18 @@ module.exports = class {
         this.#makeDirIfNotFound(config.paths.pageData = config.paths.pageData ? this.#makeAbsolute(config.paths.lib, config.paths.pageData) : path.join(config.paths.lib, "pageData"));
         //configs
         this.#undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
+        //plugins
         if (!config.noPlugin) {
             this.#undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
             if (config.paths.plugins)//Only getPlugins when dir exists
                 this.#getPlugins(config);
         }
+        //html template tags
+        config.templateTags = config.templateTags || {};
+        config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
+        config.templateTags.static = config.templateTags.static || "<%=STATIC=%>";
+        config.templateTags.head = config.templateTags.head || "<%=HEAD=%>";
+        config.templateTags.style = config.templateTags.style || "<%=STYLE=%>";
         return config;
     }
 }

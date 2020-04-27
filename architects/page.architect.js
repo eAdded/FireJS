@@ -18,25 +18,27 @@ module.exports = class {
             }
 
             const registerChunksForStat = (stat) => {
-                stat.compilation.chunks.forEach(chunk => {
-                    console.log(chunk.hash);
-                    const map_page = this.#$.map.get(stat.compilation.name);
-                    if (map_page) {//prevent React and ReactDOM chunk
-                        chunk.files.forEach(file=>{
-                            console.log(file)
+                const mapComponent = this.#$.map.get(stat.compilation.name);
+                if (mapComponent) {
+                    mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
+                    stat.compilation.chunks.forEach(chunk => {
+                        chunk.files.forEach(file => {
+                            if(file !== mapComponent.babelChunk)//don't add babel main
+                                mapComponent.chunks.push(...chunk.files);
                         })
-                        map_page.chunks.push(...chunk.files);
-
-                    }
-                });
+                    });
+                }
             }
 
             if (this.#$.config.pro) {
                 this.#$.cli.log("-----babel------")
                 this.build(webpackArchitect.babel(this.#$.webpackConfig), multiStats => {
-                    this.logMultiStat(multiStats,registerChunksForStat)
+                    this.logMultiStat(multiStats, stat => {
+                        registerChunksForStat(stat);
+                        this.#$.map.get(stat.compilation.name).markSemiBuilt();
+                    });
                     this.#$.cli.log("-----dist------");
-                    this.build(webpackArchitect.direct(undefined), (multiStats) => {
+                    this.build(webpackArchitect.direct(undefined), multiStats => {
                         this.logMultiStat(multiStats, (stat) => {
                             registerChunksForStat(stat);
                             markBuilt(stat);

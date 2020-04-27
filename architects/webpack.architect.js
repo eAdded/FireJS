@@ -77,13 +77,11 @@ module.exports = class {
             //settings which can be changed by user
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
-            output: {
-                filename: `[name][hash].js`,
-                globalObject: 'this',
-            },
-            ..._.cloneDeep(conf || this.getConfigBase()),
+            ..._.cloneDeep(conf || this.getConfigBase())
             //settings un-touchable by user
         };
+        mergedConfig.output.filename = "[name][hash].js";
+        mergedConfig.output.globalObject = "this";
         mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
         mergedConfig.externals.React = "React";
         mergedConfig.externals.ReactDOM = "ReactDOM";
