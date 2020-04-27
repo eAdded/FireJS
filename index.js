@@ -38,8 +38,8 @@ module.exports = class {
     }
 
     build() {
-        new BuildRegistrar(this.#$).autoRegister();//register for copy chunks
-        new PluginDataMapper(this.#$).map();
+        new BuildRegistrar(this.#$).autoRegister();//register for copy chunks on semi build
+        new PluginDataMapper(this.#$).map().then(r => {}).catch(e=>throw e);
         new PageArchitect(this.#$).autoBuild()
             .then(r => this.#$.cli.ok("Completed initial build cycle"))
             .catch(reason => {
