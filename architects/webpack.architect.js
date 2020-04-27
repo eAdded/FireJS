@@ -78,7 +78,7 @@ module.exports = class {
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
             output: {
-                filename: `[name].js`,
+                filename: `[name][hash].js`,
                 globalObject: 'this',
             },
             ..._.cloneDeep(conf || this.getConfigBase()),

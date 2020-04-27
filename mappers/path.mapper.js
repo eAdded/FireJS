@@ -35,6 +35,7 @@ class MapComponent {
     #isBuilt = false;
     #toBeResolved = [];
     chunks = [];
+    mainChunk = "";
 
     constructor(abs_path, page) {
         this.#absPath = abs_path;

@@ -27,7 +27,7 @@ module.exports = class {
                 if (chunk.endsWith(".js"))
                     scripts = scripts.concat(`<script src="${libRelative}/${chunk}"></script>`);
                 else if (chunk.endsWith(".css")) {
-                    scripts = scripts.concat(`<link rel="stylesheet" href="${libRelative}/${chunk.replace($path.relative(this.#$.config.paths.babel, this.#$.config.paths.lib) + "/", "")}"/>`);
+                    scripts = scripts.concat(`<link rel="stylesheet" href="${libRelative}/${chunk})}"/>`);
                 } else
                     this.#$.cli.warn(`Unknown chunk type ${chunk}. Not adding to html`)
             });
@@ -40,13 +40,13 @@ module.exports = class {
         if (content)
             template = template.replace("</body>", `<script src="${this.#$.config.paths.pageData.replace(this.#$.config.paths.dist, "").concat("/").concat(path)}.js"></script></body>`)
         const mapComponent = this.#$.map.get(page);
-        const dir = $path.join(this.#$.config.paths.dist,mapComponent.getDir());
+        const dir = $path.join(this.#$.config.paths.dist, mapComponent.getDir());
         fs.mkdir(dir, {recursive: true}, err => {
             if (err) {
                 this.#$.cli.error(`Error creating dir(s) of path ${path} for page ${page}`);
                 throw new Error();
             }
-            fs.writeFile($path.join(dir,mapComponent.getName()+".html"), this.render(page, content, template), err => {
+            fs.writeFile($path.join(dir, mapComponent.getName() + ".html"), this.render(page, content, template), err => {
                 if (err) {
                     this.#$.cli.error(`Error writing path ${path} for page ${page}`);
                     throw new Error();
