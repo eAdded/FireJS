@@ -6,9 +6,7 @@ module.exports = class {
         return template.replace("<div id='root'></div>",
             "<div id='root'>"
                 .concat((() => {
-                    const req = require(page).default;
-                    console.log(req.constructor.name, req.name, typeof req)
-                    return renderToString(React.createElement(req,data,undefined));
+                    return renderToString(React.createElement(require(page).default, data, undefined));
                 })())
                 .concat("</div>"));
     }

@@ -21,14 +21,14 @@ module.exports = class {
             content,
             template
         ) : template).replace("</body>", (() => {
-            const libRelative = this.#$.config.paths.lib.replace(this.#$.config.paths.dist, "");
+            const libRelative = _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib);
             let scripts = `<script src="${libRelative}/React.js"></script><script src="${libRelative}/ReactDOM.js"></script>`;
             this.#$.map[page].chunks.forEach(chunk => {
                 if (chunk.endsWith(".js"))
                     scripts = scripts.concat(`<script src="${libRelative}/${chunk}"></script>`);
                 else if (chunk.endsWith(".css")) {
-                    scripts = scripts.concat(`<link rel="stylesheet" href="${libRelative}/${chunk.replace(_path.relative(this.#$.config.paths.babel,this.#$.config.paths.lib)+"/","")}"/>`);
-                }else
+                    scripts = scripts.concat(`<link rel="stylesheet" href="${libRelative}/${chunk.replace(_path.relative(this.#$.config.paths.babel, this.#$.config.paths.lib) + "/", "")}"/>`);
+                } else
                     this.#$.cli.warn(`Unknown chunk type ${chunk}. Not adding to html`)
             });
             scripts = scripts.concat(`</body>`);

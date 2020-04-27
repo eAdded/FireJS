@@ -8,21 +8,22 @@ module.exports = class {
         this.#$ = globalData;
     }
 
+            /*stat.compilation.assets.forEach(asset => {
+            })*/
     autoBuild() {
         const webpackArchitect = new WebpackArchitect(this.#$);
         return new Promise((resolve, reject) => {
             const markBuilt = (stat) => {
-                stat.compilation.chunks.forEach(chunk => {
-                    const map_page = this.#$.map[chunk.name];
-                    if (map_page)//prevent React and ReactDOM chunk
-                        this.#$.map[chunk.name].markBuilt();
-                });
+                const map_page = this.#$.map[stat.compilation.name];
+                if (map_page)//prevent React and ReactDOM chunk
+                    this.#$.map[stat.compilation.name].markBuilt();
             }
+
             const registerChunksForStat = (stat) => {
                 stat.compilation.chunks.forEach(chunk => {
-                    const map_page = this.#$.map[chunk.name];
+                    const map_page = this.#$.map[stat.compilation.name];
                     if (map_page)//prevent React and ReactDOM chunk
-                        map_page.chunks = chunk.files;
+                        map_page.chunks.push(...chunk.files);
                 });
             }
 
@@ -71,9 +72,7 @@ module.exports = class {
         let errorCount = 0;
         let warningCount = 0;
         multiStats.stats.forEach(stat => {
-            stat.compilation.chunks.forEach(chunk => {
-                this.#$.cli.log(`Building Chunk ${chunk.name}`)
-            });
+            this.#$.cli.log(`Building Page ${stat.compilation.name}`)
             if (forEachCallback)
                 forEachCallback(stat);
             if (this.#$.args["--verbose"]) {

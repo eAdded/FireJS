@@ -3,7 +3,6 @@ const path = require("path")
 const fs = require("fs");
 const _ = require("lodash");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = class {
     #$;
@@ -30,7 +29,8 @@ module.exports = class {
             output: {
                 path: this.#$.config.paths.lib,
                 filename: "[name].js",
-                library: "[name]",
+                //  libraryTarget = "commonjs2,
+                library: "[name]",//make file as library so it can be imported for static generation
             }
         };
     }
@@ -75,15 +75,18 @@ module.exports = class {
     babel(conf) {
         let mergedConfig = {
             //settings which can be changed by user
-            name: "babel",
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
+            output: {
+                globalObject: 'this',
+            },
             ..._.cloneDeep(conf || this.getConfigBase()),
             //settings un-touchable by user
         };
-        mergedConfig.output.path = mergedConfig.output.path || this.#$.config.paths.babel;
-        mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
+        mergedConfig.output.path = this.#$.config.paths.babel;
+        mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
         mergedConfig.externals.React = "React";
+        mergedConfig.externals.ReactDOM = "ReactDOM";
         mergedConfig.module.rules.push({
                 test: /\.js$/,
                 use: {
@@ -109,17 +112,16 @@ module.exports = class {
         );
         mergedConfig.plugins.push(
             new MiniCssExtractPlugin({
-                filename: path.relative(this.#$.config.paths.babel, this.#$.config.paths.lib) + "/[name].css",
+                filename: path.relative(this.#$.config.paths.babel, this.#$.config.paths.lib) + "/[hash].css",
             }),
         );
-
         const outs = [];
         Object.keys(this.#$.map).forEach(page => {
-            mergedConfig.target = 'node';
-            mergedConfig.entry[page] = this.#$.map[page].getAbsolutePath();//create in one config
-            //make file as library so it can be imported for static generation
-            mergedConfig.output.libraryTarget = "commonjs2"
-            outs.push(_.cloneDeep(mergedConfig));
+            const out = _.cloneDeep(mergedConfig)
+            out.name = page;
+            out.entry = this.#$.map[page].getAbsolutePath()
+            out.output.filename = `${page}.js`;
+            outs.push(out);
         });
         return outs;
     }
@@ -127,7 +129,6 @@ module.exports = class {
     direct(conf) {
         let mergedConfig = {
             //settings which can be changed by user
-            name: "direct",
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
             watch: !this.#$.config.pro,
@@ -143,7 +144,6 @@ module.exports = class {
             },
         };
         mergedConfig.output.path = this.#$.config.paths.lib;
-        mergedConfig.output.filename = mergedConfig.output.filename || "[name].js"
         mergedConfig.output.publicPath = "/lib/";
 
         mergedConfig.externals.React = "React";
@@ -162,7 +162,7 @@ module.exports = class {
             mergedConfig.module.rules.push(
                 {
                     test: /\.css$/i,
-                    use: ['style-loader',{
+                    use: ['style-loader', {
                         loader: 'css-loader',
                         options: {
                             modules: {
@@ -177,7 +177,9 @@ module.exports = class {
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
         Object.keys(this.#$.map).forEach(page => {
             const out = _.cloneDeep(mergedConfig);
-            out.entry[page] = web_front_entry;
+            out.name = page;
+            out.entry = web_front_entry;
+            out.output.filename = `${page}[contentHash].js`;
             out.plugins.push(
                 new webpack.ProvidePlugin({
                     App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, this.#$.map[page].getRelativePath()) : this.#$.map[page].getAbsolutePath()
