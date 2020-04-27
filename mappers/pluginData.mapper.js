@@ -21,20 +21,21 @@ module.exports = class {
                 this.mapPlugin(page, plugData[page], (path, content) => {
                     mapComponent.resolveOnFirstBuild(() => {
                         staticArchitect.createStatic(mapComponent, content);
-                        pathArchitect.writePath(mapComponent, path);
                     });
+                    mapComponent.resolveOnBuild(() => {
+                        pathArchitect.writePath(mapComponent, path);
+                    })
                 }, reason => {
                     this.#$.cli.error(new Error(`Error in plugin ${plugin}`));
                     throw reason;
                 });
             });
         });
-        for (const entry of this.#$.map.entries()) {
-            const mapComponent = entry[1];
+        for (const mapComponent of this.#$.map.values()) {
             if (!mapComponent.isCustom()) {
-                mapComponent.resolveOnFirstBuild(() => {
+                mapComponent.resolveOnBuild(() => {
                     pathArchitect.writePath(mapComponent);
-                });
+                })
             }
         }
     }

@@ -1,6 +1,6 @@
 const _path = require("path");
 const fs = require("fs");
-
+const StaticArchitect = require("./static.architect");
 module.exports = class {
     #$;
 
@@ -16,6 +16,7 @@ module.exports = class {
                 this.#$.cli.error(`Error creating dir ${dir} of path ${path} for page ${mapComponent.page}`);
                 throw new Error();
             }
+            new StaticArchitect(this.#$).finalize(mapComponent)
             fs.writeFile(_path.join(dir, name + ".html"), mapComponent.template, err => {
                 if (err) {
                     this.#$.cli.error(`Error writing path ${path} for page ${mapComponent.page}`);

@@ -24,8 +24,20 @@ module.exports = class {
 
     addChunk(mapComponent, chunk) {
         if (chunk.endsWith(".js")) {
-            mapComponent.template.replace(this.#$.config.templateTags.script, `<script src=${chunk}></script>`)
+            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.script, `<script src="${chunk}"></script>${this.#$.config.templateTags.script}`);
+        } else if (chunk.endsWith(".css"))
+            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.style, `<link rel="stylesheet" href="${chunk}">${this.#$.config.templateTags.style}`);
+        else {
+            this.#$.cli.warn(`Unknown chunk type of ${chunk}. Adding as link.`)
+            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.script, `<link href="${chunk}">${this.#$.config.templateTags.style}`);
         }
         //  return template.concat(() =>)
     }
+
+    finalize(mapComponent) {
+        Object.keys(this.#$.config.templateTags).forEach(tag => {
+            mapComponent.template = mapComponent.template.replace(tag, "");
+        })
+    }
+
 }
