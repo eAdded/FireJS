@@ -135,7 +135,6 @@ module.exports = class {
                 minimize: true
             },
         };
-        mergedConfig.output.path = this.#$.config.paths.lib;
         mergedConfig.output.filename = `[name][hash].js`;
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
 
@@ -172,6 +171,7 @@ module.exports = class {
         for (const mapComponent of this.#$.map.values()) {
             const out = _.cloneDeep(mergedConfig);
             out.name = mapComponent.getPage();
+            out.output.path = path.join(this.#$.config.paths.lib,mapComponent.getDir());
             out.entry[mapComponent.getName()] = web_front_entry;
             out.plugins.push(
                 new webpack.ProvidePlugin({

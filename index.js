@@ -29,11 +29,29 @@ module.exports = class {
         this.#$.webpackConfig = webpackConfig || this.newWebpackArchitect().readUserConfig();
     }
 
-    geCli(){
+    middleware(req, res, next) {
+
+    }
+
+    build() {
+        new BuildRegistrar(this.#$).autoRegister();//register for copy chunks on semi build
+        new PluginDataMapper(this.#$).map().then(r => {
+        }).catch(e => {
+            throw e
+        });
+        new PageArchitect(this.#$).autoBuild()
+            .then(r => this.#$.cli.ok("Completed initial build cycle"))
+            .catch(reason => {
+                this.#$.cli.error("Error during first build cycle");
+                throw reason
+            });
+    }
+
+    geCli() {
         return this.#$.cli;
     }
 
-    getMap(){
+    getMap() {
         return this.#$.map;
     }
 
@@ -43,17 +61,6 @@ module.exports = class {
 
     getWebpackConfig() {
         return this.#$.webpackConfig;
-    }
-
-    build() {
-        new BuildRegistrar(this.#$).autoRegister();//register for copy chunks on semi build
-        new PluginDataMapper(this.#$).map().then(r => {}).catch(e=>{throw e});
-        new PageArchitect(this.#$).autoBuild()
-            .then(r => this.#$.cli.ok("Completed initial build cycle"))
-            .catch(reason => {
-                this.#$.cli.error("Error during first build cycle");
-                throw reason
-            });
     }
 
     /*applyPlugin(page, paths, template) {
@@ -71,4 +78,5 @@ module.exports = class {
     newConfigMapper() {
         return new ConfigMapper(this.#$);
     }
+
 }
