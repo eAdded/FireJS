@@ -18,7 +18,7 @@ module.exports = class {
                     const pagePath = new PagePath(path, content, this.#$);
                     FsUtil.writeFileRecursively(//write content
                         _path.join(this.#$.config.paths.dist, pagePath.getContentPath()),
-                        "window.__PAGE_DATA__ =".concat(JSON.stringify(content))
+                        "window.___PAGE_CONTENT___=".concat(JSON.stringify(content))
                     );
                     mapComponent.getPaths().set(path, pagePath);
                 }, reason => {
