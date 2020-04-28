@@ -12,29 +12,28 @@ module.exports = class {
         return new Promise((resolve, reject) => {
             const webpackArchitect = new WebpackArchitect(this.#$);
             const markBuilt = (stat) => {
-               this.#$.map.get(stat.compilation.name).markBuilt();
+                this.#$.map.get(stat.compilation.name).markBuilt();
             }
 
             const registerChunksForStat = (stat) => {
                 const mapComponent = this.#$.map.get(stat.compilation.name);
-                if (mapComponent) {
-                    if (this.#$.config.pro) {
-                        if (!mapComponent.babelChunk)//this function is called 2 times during production
-                            mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
-                        stat.compilation.chunks.forEach(chunk => {
-                            chunk.files.forEach(file => {
-                                if (file !== mapComponent.babelChunk)//don't add babel main
-                                    mapComponent.chunks.push(file);
-                            })
-                        });
-                    } else {
-                        const chunks = [];
-                        stat.compilation.chunks.forEach(chunk => {
-                            chunks.push(...chunk.files);
-                        });
-                        mapComponent.chunks = chunks;
-                    }
+                if (this.#$.config.pro) {
+                    if (!mapComponent.babelChunk)//this function is called 2 times during production
+                        mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
+                    stat.compilation.chunks.forEach(chunk => {
+                        chunk.files.forEach(file => {
+                            if (file !== mapComponent.babelChunk)//don't add babel main
+                                mapComponent.chunks.push(file);
+                        })
+                    });
+                } else {
+                    const chunks = [];
+                    stat.compilation.chunks.forEach(chunk => {
+                        chunks.push(...chunk.files);
+                    });
+                    mapComponent.chunks = chunks;
                 }
+
             }
 
             this.build(webpackArchitect.externals(), stat => {
@@ -43,11 +42,11 @@ module.exports = class {
                     externals.push(...chunk.files);
                 })
                 const staticArchitect = new StaticArchitect(this.#$);
-                for (const mapComponent of this.#$.map.values()) {
-                    externals.forEach(external => {
-                        staticArchitect.addChunk(mapComponent, external);
+                for (const mapComponent of this.#$.map.values())
+                    externals.forEach(external => {//externals are same for all paths
+                        this.#$.template = staticArchitect.addChunk(this.#$.template, external);
                     })
-                }
+
                 if (this.#$.config.pro) {
                     this.#$.cli.log("-----babel------")
                     this.build(webpackArchitect.babel(this.#$.webpackConfig), multiStats => {

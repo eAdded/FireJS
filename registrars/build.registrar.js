@@ -42,7 +42,13 @@ module.exports = class {
             const pathArchitect = new PathArchitect(this.#$);
             for (const mapComponent of this.#$.map.values()) {
                 mapComponent.resolveOnBuild(() => {
-                    pathArchitect.writePath(mapComponent);
+                    for(const pagePath of mapComponent.getPaths())
+                        pathArchitect.writePath(mapComponent,pagePath)
+                            .then(_=>{
+                                this.#$.cli.ok(`Path ${pagePath.getPath()} written`)
+                            }).catch(e=>{
+                                this.#$.cli.error(`Error writing path ${pagePath.getPath()}`)
+                        });
                 })
             }
         }
