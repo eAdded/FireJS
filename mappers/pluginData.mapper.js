@@ -67,7 +67,7 @@ module.exports = class {
                             return;
                         }
                         callback(path.path, path.content);
-                        this.writePageData(path.path, path.content).then(() => {
+                        this.writePageContent(path.path, path.content).then(() => {
                             this.#$.cli.log(`Successfully wrote page data for path ${path.path}`);
                         }).catch((ex) => {
                             this.#$.cli.error(`Error writing page data for path ${path.path}`);
@@ -83,7 +83,7 @@ module.exports = class {
     }
 
     //TODO:Insert this as chunk
-    writePageData(path, content) {
+    writePageContent(path, content) {
         return new Promise((resolve, reject) => {
             fs.mkdir(_path.join(this.#$.config.paths.pageData, path.substr(0, path.lastIndexOf("/"))), {recursive: true}, err => {
                 if (err)
