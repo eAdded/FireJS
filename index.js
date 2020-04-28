@@ -25,8 +25,16 @@ module.exports = class {
         this.#$.cli = new Cli(this.#$.args);
         this.#$.config = config || userConfig ? this.newConfigMapper().getConfig(_.cloneDeep(userConfig)) : this.newConfigMapper().getConfig();
         this.#$.template = template || fs.readFileSync(_path.join(__dirname, 'web/template.html')).toString();
-        this.#$.map = map ? new PathMapper().convertToMap(map) : new PathMapper(this.#$).map();
+        this.#$.map = map ? new PathMapper(this.#$).convertToMap(map) : new PathMapper(this.#$).map();
         this.#$.webpackConfig = webpackConfig || this.newWebpackArchitect().readUserConfig();
+    }
+
+    geCli(){
+        return this.#$.cli;
+    }
+
+    getMap(){
+        return this.#$.map;
     }
 
     getConfig() {

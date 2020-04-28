@@ -14,7 +14,7 @@ module.exports = class {
         const pathArchitect = new PathArchitect(this.#$);
         const staticArchitect = new StaticArchitect(this.#$);
         this.#$.config.plugins.forEach(plugin => {
-            const plugData = require(plugin)();
+            const plugData = require(plugin);
             Object.keys(plugData).forEach(page => {
                 const mapComponent = this.#$.map.get(page);
                 mapComponent.markCustom();
@@ -46,7 +46,7 @@ module.exports = class {
     }
 
     mapPlugin(page, paths, callback, reject) {
-        if (this.#$.map.has(page)) //check if this page already exists
+        if (!this.#$.map.has(page)) //check if this page already exists
             reject(new TypeError(`page ${page} either does not exists or is not mapped. Hint : Make sure to add ${page} in map.`));
         else {
             if (Array.isArray(paths)) {
@@ -59,11 +59,11 @@ module.exports = class {
                         });
                     } else if (typeof path === "object") {
                         if (typeof path.path !== "string") {
-                            reject(new TypeError(`Expected path:string got ${typeof value.path}`));
+                            reject(new TypeError(`Expected path:string got ${typeof path.path}`));
                             return;
                         }
                         if (typeof path.content !== "object") {
-                            reject(new TypeError(`Expected content:object got ${typeof value.path}`));
+                            reject(new TypeError(`Expected content:object got ${typeof path.path}`));
                             return;
                         }
                         callback(path.path, path.content);
