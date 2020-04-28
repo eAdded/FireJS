@@ -34,10 +34,15 @@ module.exports = class {
     }
 
     build() {
-        const buildRegistrar = new BuildRegistrar(this.#$);
-        buildRegistrar.registerForSemiBuild();//register for copy chunks on semi build
-        new PluginDataMapper(this.#$).map();
-        return new PageArchitect(this.#$).autoBuild();
+        return new Promise((resolve, reject) => {
+            const buildRegistrar = new BuildRegistrar(this.#$);
+            buildRegistrar.registerForSemiBuild();//register for copy chunks on semi build
+            new PluginDataMapper(this.#$).map();
+            new PageArchitect(this.#$).autoBuild().then(() => {
+                buildRegistrar.registerComponentForBuild();
+                resolve();
+            }).catch(reject);
+        })
     }
 
     geCli() {

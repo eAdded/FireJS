@@ -1,4 +1,4 @@
-export default class {
+module.exports =  class {
     #page;
     #dir;
     #absPath
