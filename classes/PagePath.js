@@ -8,7 +8,7 @@ module.exports = class {
         this.#path = path;
         if (content) {
             this.#content = content;
-            this.#contentPath = _path.relative($.config.paths.dist, $.config.paths.pageData).concat(path, ".js");
+            this.#contentPath = _path.join(_path.relative($.config.paths.dist, $.config.paths.pageData),path.concat(".js"));
         }
     }
 
