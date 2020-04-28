@@ -1,8 +1,7 @@
 const _path = require("path");
 const FsUtil = require("../utils/fs-util");
-const PathArchitect = require("../architects/path.architect");
 const StaticArchitect = require("../architects/static.architect");
-
+const PagePath = require("../classes/PagePath");
 module.exports = class {
     #$;
 
@@ -10,8 +9,7 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    async map() {
-        const pathArchitect = new PathArchitect(this.#$);
+    map() {
         const staticArchitect = new StaticArchitect(this.#$);
         this.#$.config.plugins.forEach(plugin => {
             const plugData = require(plugin);
@@ -19,13 +17,11 @@ module.exports = class {
                 const mapComponent = this.#$.map.get(page);
                 mapComponent.markCustom();
                 this.mapPlugin(page, plugData[page], (path, content) => {
+                    mapComponent.getPaths().push(new PagePath(path, content));
                     if (this.#$.config.pro) //static rendering only required when pro
-                        mapComponent.resolveOnFirstBuild(() => {
+                        mapComponent.resolveOnSemiBuild(() => {
                             staticArchitect.createStatic(mapComponent, content);
                         });
-                    mapComponent.resolveOnBuild(() => {
-                        pathArchitect.writePath(mapComponent, path);
-                    })
                 }, reason => {
                     this.#$.cli.error(new Error(`Error in plugin ${plugin}`));
                     throw reason;
@@ -34,13 +30,11 @@ module.exports = class {
         });
         for (const mapComponent of this.#$.map.values()) {
             if (!mapComponent.isCustom()) {
+                mapComponent.getPaths().push(new PagePath(mapComponent.getPage()));
                 if (this.#$.config.pro) //static rendering only required when pro
-                    mapComponent.resolveOnFirstBuild(() => {
+                    mapComponent.resolveOnSemiBuild(() => {
                         staticArchitect.createStatic(mapComponent);
                     });
-                mapComponent.resolveOnBuild(() => {
-                    pathArchitect.writePath(mapComponent);
-                })
             }
         }
     }
@@ -67,21 +61,6 @@ module.exports = class {
                             return;
                         }
                         callback(path.path, path.content);
-                        FsUtil.writeFileRecursively(
-                            _path.join(this.#$.config.paths.pageData, path.path + ".js"),
-                            "window.___PAGE_CONTENT___=".concat(JSON.stringify(path.content)))
-                            .then(_ => {
-                                new StaticArchitect(this.#$)
-                                    .addChunk(this.#$.map.get(page),
-                                        path.path.concat(".js"),
-                                        _path.join(
-                                            _path.relative(this.#$.config.paths.dist, this.#$.config.paths.pageData),
-                                        ));
-                                this.#$.cli.log(`Successfully wrote page data for path ${path.path}`);
-                            }).catch(ex => {
-                            this.#$.cli.error(`Error writing page data for path ${path.path}`);
-                            reject(ex);
-                        });
                     } else
                         reject(new TypeError(`Expected String | Object | Array got ${typeof path} in plugin for path ${path}`))
                 });

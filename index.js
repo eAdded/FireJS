@@ -34,17 +34,10 @@ module.exports = class {
     }
 
     build() {
-        new BuildRegistrar(this.#$).autoRegister();//register for copy chunks on semi build
-        new PluginDataMapper(this.#$).map().then(r => {
-        }).catch(e => {
-            throw e
-        });
-        new PageArchitect(this.#$).autoBuild()
-            .then(r => this.#$.cli.ok("Completed initial build cycle"))
-            .catch(reason => {
-                this.#$.cli.error("Error during first build cycle");
-                throw reason
-            });
+        const buildRegistrar = new BuildRegistrar(this.#$);
+        buildRegistrar.registerForSemiBuild();//register for copy chunks on semi build
+        new PluginDataMapper(this.#$).map();
+        return new PageArchitect(this.#$).autoBuild();
     }
 
     geCli() {

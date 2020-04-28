@@ -9,12 +9,10 @@ module.exports = class {
     }
 
     autoBuild() {
-        const webpackArchitect = new WebpackArchitect(this.#$);
         return new Promise((resolve, reject) => {
+            const webpackArchitect = new WebpackArchitect(this.#$);
             const markBuilt = (stat) => {
-                const map_page = this.#$.map.get(stat.compilation.name);
-                if (map_page)//prevent React and ReactDOM chunk
-                    map_page.markBuilt();
+               this.#$.map.get(stat.compilation.name).markBuilt();
             }
 
             const registerChunksForStat = (stat) => {
@@ -30,22 +28,24 @@ module.exports = class {
                             })
                         });
                     } else {
+                        const chunks = [];
                         stat.compilation.chunks.forEach(chunk => {
-                            mapComponent.chunks.push(...chunk.files);
+                            chunks.push(...chunk.files);
                         });
+                        mapComponent.chunks = chunks;
                     }
                 }
             }
 
-            this.build(webpackArchitect.externals(),stat=>{
+            this.build(webpackArchitect.externals(), stat => {
                 const externals = [];
-                stat.compilation.chunks.forEach(chunk=>{
+                stat.compilation.chunks.forEach(chunk => {
                     externals.push(...chunk.files);
                 })
                 const staticArchitect = new StaticArchitect(this.#$);
-                for(const mapComponent of this.#$.map.values()){
-                    externals.forEach(external=>{
-                        staticArchitect.addChunk(mapComponent,external);
+                for (const mapComponent of this.#$.map.values()) {
+                    externals.forEach(external => {
+                        staticArchitect.addChunk(mapComponent, external);
                     })
                 }
                 if (this.#$.config.pro) {
@@ -70,8 +70,7 @@ module.exports = class {
                     this.build(webpackArchitect.direct(this.#$.webpackConfig), multiStats => {
                         this.logMultiStat(multiStats, (stat) => {
                             registerChunksForStat(stat);
-                            if (firstBuild)//marking built is only significant for the first cycle
-                                markBuilt(stat);
+                            markBuilt(stat);
                         });
                         if (firstBuild) {//prevents resolve multiple times while watching
                             resolve();//resolve for first build

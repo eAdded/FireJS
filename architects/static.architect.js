@@ -9,38 +9,45 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    createStatic(mapComponent, content) {
-        global.window = {};
-        global.document = {};
-        global.__SSR__ = true;
-        global.React = require("react");
-        mapComponent.template = mapComponent.template.replace(
+    render(mapComponent, pagePath) {
+        let template = this.#$.template
+        if(pagePath.content){//if page has content then add it
+            template = this.addChunk(template,pagePath.getPath().concat(".js"),_path.relative(this.#$.config.paths.dist, this.#$.config.paths.pageData))
+        }
+        mapComponent.chunks.forEach(chunk => {
+            template = this.addChunk(template, chunk);
+        });
+        return template.replace(
             this.#$.config.templateTags.static,
             "<div id='root'>".concat(
-                renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, content, undefined))
-                , "</div>")
-        );
+                (() => {
+                    if (this.#$.config.pro) {
+                        global.window = {};
+                        global.document = {};
+                        global.__SSR__ = true;
+                        global.React = require("react");
+                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, pagePath.content, undefined))
+                    } else
+                        return "";
+                })())
+            , "</div>");
     }
 
-    addChunk(mapComponent, chunk, root) {
+    addChunk(template, chunk, root) {
         root = root || _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)
         const templateTags = this.#$.config.templateTags;
-        const href = _path.join(root,chunk);
+        const href = _path.join(root, chunk);
         if (chunk.endsWith(".js"))
-            mapComponent.template = mapComponent.template.replace(templateTags.script, `<script src="/${href}"></script>${templateTags.script}`);
+            return template.replace(templateTags.script, `<script src="/${href}"></script>${templateTags.script}`);
         else if (chunk.endsWith(".css"))
-            mapComponent.template = mapComponent.template.replace(templateTags.style, `<link rel="stylesheet" href="/${href}">${templateTags.style}`);
+            return template.replace(templateTags.style, `<link rel="stylesheet" href="/${href}">${templateTags.style}`);
         else
-            mapComponent.template = mapComponent.template.replace(templateTags.unknown, `<link href="/${href}">${templateTags.unknown}`);
+            return template.replace(templateTags.unknown, `<link href="/${href}">${templateTags.unknown}`);
     }
 
-    finalize(mapComponent) {
-        if (!this.#$.config.pro) {//div root added in development mode
-            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.static, "<div id='root'></div>");
-        }
-
+    finalize(template) {
         Object.keys(this.#$.config.templateTags).forEach(tag => {
-            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags[tag], "");
+            template = template.replace(this.#$.config.templateTags[tag], "");
         })
     }
 }
