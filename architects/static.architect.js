@@ -11,9 +11,8 @@ module.exports = class {
 
     render(mapComponent, pagePath) {
         let template = this.#$.template
-        if(pagePath.content){//if page has content then add it
-            template = this.addChunk(template,pagePath.getPath().concat(".js"),_path.relative(this.#$.config.paths.dist, this.#$.config.paths.pageData))
-        }
+        if (pagePath.hasContent())//if page has content then add it
+            template = this.addChunk(template, pagePath.getContentPath())
         mapComponent.chunks.forEach(chunk => {
             template = this.addChunk(template, chunk);
         });
@@ -26,7 +25,7 @@ module.exports = class {
                         global.document = {};
                         global.__SSR__ = true;
                         global.React = require("react");
-                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, pagePath.content, undefined))
+                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, pagePath.getContent(), undefined))
                     } else
                         return "";
                 })())

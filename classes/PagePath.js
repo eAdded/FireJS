@@ -1,13 +1,30 @@
+const _path = require("path");
 module.exports = class {
     #path;
-    content;
+    #content;
+    #contentPath;
 
-    constructor(path,content) {
+    constructor(path, content, $) {
         this.#path = path;
-        this.content = content;
+        if (content) {
+            this.#content = content;
+            this.#contentPath = _path.relative($.config.paths.dist, $.config.paths.pageData).concat(path, ".js");
+        }
     }
 
-    getPath(){
+    hasContent() {
+        return !!this.#content;
+    }
+
+    getContent() {
+        return this.#content;
+    }
+
+    getContentPath() {
+        return this.#contentPath;
+    }
+
+    getPath() {
         return this.#path;
     }
 }

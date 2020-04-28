@@ -1,6 +1,5 @@
 const _path = require("path");
 const FsUtil = require("../utils/fs-util");
-const StaticArchitect = require("../architects/static.architect");
 const PagePath = require("../classes/PagePath");
 module.exports = class {
     #$;
@@ -10,18 +9,18 @@ module.exports = class {
     }
 
     map() {
-        const staticArchitect = new StaticArchitect(this.#$);
         this.#$.config.plugins.forEach(plugin => {
             const plugData = require(plugin);
             Object.keys(plugData).forEach(page => {
                 const mapComponent = this.#$.map.get(page);
                 mapComponent.markCustom();
                 this.mapPlugin(page, plugData[page], (path, content) => {
-                    mapComponent.getPaths().push(new PagePath(path, content));
-                    if (this.#$.config.pro) //static rendering only required when pro
-                        mapComponent.resolveOnSemiBuild(() => {
-                            staticArchitect.createStatic(mapComponent, content);
-                        });
+                    const pagePath = new PagePath(path, content, this.#$);
+                    FsUtil.writeFileRecursively(//write content
+                        _path.join(this.#$.config.paths.dist, pagePath.getContentPath()),
+                        "window.__PAGE_DATA__ =".concat(JSON.stringify(content))
+                    );
+                    mapComponent.getPaths().push(pagePath);
                 }, reason => {
                     this.#$.cli.error(new Error(`Error in plugin ${plugin}`));
                     throw reason;
@@ -29,13 +28,8 @@ module.exports = class {
             });
         });
         for (const mapComponent of this.#$.map.values()) {
-            if (!mapComponent.isCustom()) {
-                mapComponent.getPaths().push(new PagePath(mapComponent.getPage()));
-                if (this.#$.config.pro) //static rendering only required when pro
-                    mapComponent.resolveOnSemiBuild(() => {
-                        staticArchitect.createStatic(mapComponent);
-                    });
-            }
+            if (!mapComponent.isCustom())
+                mapComponent.getPaths().push(new PagePath(mapComponent.getPage(), undefined, this.#$));
         }
     }
 
