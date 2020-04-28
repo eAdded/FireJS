@@ -20,7 +20,7 @@ module.exports = class {
                         _path.join(this.#$.config.paths.dist, pagePath.getContentPath()),
                         "window.__PAGE_DATA__ =".concat(JSON.stringify(content))
                     );
-                    mapComponent.getPaths().push(pagePath);
+                    mapComponent.getPaths().set(path, pagePath);
                 }, reason => {
                     this.#$.cli.error(new Error(`Error in plugin ${plugin}`));
                     throw reason;
@@ -29,7 +29,7 @@ module.exports = class {
         });
         for (const mapComponent of this.#$.map.values()) {
             if (!mapComponent.isCustom())
-                mapComponent.getPaths().push(new PagePath(mapComponent.getPage(), undefined, this.#$));
+                mapComponent.getPaths().set(mapComponent.getPage(),new PagePath(mapComponent.getPage(), undefined, this.#$));
         }
     }
 
