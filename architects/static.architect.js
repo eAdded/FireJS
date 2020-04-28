@@ -12,7 +12,7 @@ module.exports = class {
     render(mapComponent, pagePath) {
         let template = this.#$.template
         if (pagePath.hasContent())//if page has content then add it
-            template = this.addChunk(template, pagePath.getContentPath())
+            template = this.addChunk(template, pagePath.getContentPath(),"")
         mapComponent.chunks.forEach(chunk => {
             template = this.addChunk(template, chunk);
         });
@@ -25,11 +25,11 @@ module.exports = class {
                         global.document = {};
                         global.__SSR__ = true;
                         global.React = require("react");
-                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, pagePath.getContent(), undefined))
+                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel,mapComponent.getDir(), mapComponent.babelChunk)).default, pagePath.getContent(), undefined))
                     } else
                         return "";
-                })())
-            , "</div>");
+                })()
+            , "</div>"));
     }
 
     addChunk(template, chunk, root) {
@@ -48,5 +48,6 @@ module.exports = class {
         Object.keys(this.#$.config.templateTags).forEach(tag => {
             template = template.replace(this.#$.config.templateTags[tag], "");
         })
+        return template;
     }
 }

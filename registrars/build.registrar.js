@@ -36,12 +36,13 @@ module.exports = class {
             const pathArchitect = new PathArchitect(this.#$);
             for (const mapComponent of this.#$.map.values()) {
                 mapComponent.resolveOnBuild(() => {
-                    for (const pagePath of mapComponent.getPaths())
+                    for (const pagePath of mapComponent.getPaths().values())
                         pathArchitect.writePath(mapComponent, pagePath)
                             .then(_ => {
                                 this.#$.cli.ok(`Path ${pagePath.getPath()} written`)
                             }).catch(e => {
                             this.#$.cli.error(`Error writing path ${pagePath.getPath()}`)
+                            throw e;
                         });
                 })
             }

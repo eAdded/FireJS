@@ -38,8 +38,8 @@ module.exports = class {
             const buildRegistrar = new BuildRegistrar(this.#$);
             buildRegistrar.registerForSemiBuild();//register for copy chunks on semi build
             new PluginDataMapper(this.#$).map();
+            buildRegistrar.registerComponentForBuild();
             new PageArchitect(this.#$).autoBuild().then(() => {
-                buildRegistrar.registerComponentForBuild();
                 resolve();
             }).catch(reject);
         })

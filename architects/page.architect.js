@@ -42,11 +42,9 @@ module.exports = class {
                     externals.push(...chunk.files);
                 })
                 const staticArchitect = new StaticArchitect(this.#$);
-                for (const mapComponent of this.#$.map.values())
-                    externals.forEach(external => {//externals are same for all paths
-                        this.#$.template = staticArchitect.addChunk(this.#$.template, external);
-                    })
-
+                externals.forEach(external => {//externals are same for all paths
+                    this.#$.template = staticArchitect.addChunk(this.#$.template, external);
+                })
                 if (this.#$.config.pro) {
                     this.#$.cli.log("-----babel------")
                     this.build(webpackArchitect.babel(this.#$.webpackConfig), multiStats => {
