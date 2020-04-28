@@ -1,6 +1,6 @@
 const webpack = require("webpack");
 const WebpackArchitect = require("../architects/webpack.architect");
-
+const StaticArchitect = require("../architects/static.architect");
 module.exports = class {
     #$;
 
@@ -37,37 +37,49 @@ module.exports = class {
                 }
             }
 
-            if (this.#$.config.pro) {
-                this.#$.cli.log("-----babel------")
-                this.build(webpackArchitect.babel(this.#$.webpackConfig), multiStats => {
-                    this.logMultiStat(multiStats, stat => {
-                        registerChunksForStat(stat);
-                        this.#$.map.get(stat.compilation.name).markSemiBuilt();
-                    });
-                    this.#$.cli.log("-----dist------");
-                    this.build(webpackArchitect.direct(undefined), multiStats => {
+            this.build(webpackArchitect.externals(),stat=>{
+                const externals = [];
+                stat.compilation.chunks.forEach(chunk=>{
+                    externals.push(...chunk.files);
+                })
+                const staticArchitect = new StaticArchitect(this.#$);
+                for(const mapComponent of this.#$.map.values()){
+                    externals.forEach(external=>{
+                        staticArchitect.addChunk(mapComponent,external);
+                    })
+                }
+                if (this.#$.config.pro) {
+                    this.#$.cli.log("-----babel------")
+                    this.build(webpackArchitect.babel(this.#$.webpackConfig), multiStats => {
+                        this.logMultiStat(multiStats, stat => {
+                            registerChunksForStat(stat);
+                            this.#$.map.get(stat.compilation.name).markSemiBuilt();
+                        });
+                        this.#$.cli.log("-----dist------");
+                        this.build(webpackArchitect.direct(undefined), multiStats => {
+                            this.logMultiStat(multiStats, (stat) => {
+                                registerChunksForStat(stat);
+                                markBuilt(stat);
+                            });
+                            resolve();//resolve in production mode
+                        }, reject);
+                    }, reject);
+                } else {
+                    this.#$.cli.log("Watching");
+                    let firstBuild = true;
+                    this.build(webpackArchitect.direct(this.#$.webpackConfig), multiStats => {
                         this.logMultiStat(multiStats, (stat) => {
                             registerChunksForStat(stat);
-                            markBuilt(stat);
+                            if (firstBuild)//marking built is only significant for the first cycle
+                                markBuilt(stat);
                         });
-                        resolve();//resolve in production mode
+                        if (firstBuild) {//prevents resolve multiple times while watching
+                            resolve();//resolve for first build
+                            firstBuild = false;
+                        }
                     }, reject);
-                }, reject);
-            } else {
-                this.#$.cli.log("Watching");
-                let firstBuild = true;
-                this.build(webpackArchitect.direct(this.#$.webpackConfig), multiStats => {
-                    this.logMultiStat(multiStats, (stat) => {
-                        registerChunksForStat(stat);
-                        if (firstBuild)//marking built is only significant for the first cycle
-                            markBuilt(stat);
-                    });
-                    if (firstBuild) {//prevents resolve multiple times while watching
-                        resolve();//resolve for first build
-                        firstBuild = false;
-                    }
-                }, reject);
-            }
+                }
+            })
         })
     }
 
@@ -85,7 +97,7 @@ module.exports = class {
         let errorCount = 0;
         let warningCount = 0;
         multiStats.stats.forEach(stat => {
-            this.#$.cli.log(`Building Page ${stat.compilation.name}`)
+            this.#$.cli.log(`Built chunk ${stat.compilation.name}`)
             if (forEachCallback)
                 forEachCallback(stat);
             if (this.#$.args["--verbose"]) {

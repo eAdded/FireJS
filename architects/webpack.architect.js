@@ -11,14 +11,7 @@ module.exports = class {
         this.#$ = globalData;
     }
 
-    #smartBuildLib = () => {
-        if (!fs.existsSync(path.join(this.#$.config.paths.dist, "React.js")) || !fs.existsSync(path.join(this.#$.config.paths.dist, "ReactDOM.js")))
-            return this.#buildReactConfig();
-        else
-            return undefined;
-    }
-
-    #buildReactConfig = () => {
+    externals = () => {
         return {
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
@@ -28,8 +21,7 @@ module.exports = class {
             },
             output: {
                 path: this.#$.config.paths.lib,
-                filename: "[name].js",
-                //  libraryTarget = "commonjs2,
+                filename: "[name][contentHash].js",
                 library: "[name]",//make file as library so it can be imported for static generation
             }
         };
@@ -183,14 +175,11 @@ module.exports = class {
             out.entry[mapComponent.getName()] = web_front_entry;
             out.plugins.push(
                 new webpack.ProvidePlugin({
-                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel,mapComponent.getDir(), mapComponent.babelChunk) : mapComponent.getAbsolutePath()
+                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.getDir(), mapComponent.babelChunk) : mapComponent.getAbsolutePath()
                 }),
             );
             outs.push(out);
         }
-        const libs = this.#smartBuildLib();
-        if (libs)
-            outs.push(libs);
         return outs;
     }
 }

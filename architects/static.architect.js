@@ -22,15 +22,16 @@ module.exports = class {
         );
     }
 
-    addChunk(mapComponent, chunk) {
-        if (chunk.endsWith(".js")) {
-            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.script, `<script src="${chunk}"></script>${this.#$.config.templateTags.script}`);
-        } else if (chunk.endsWith(".css"))
-            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.style, `<link rel="stylesheet" href="${chunk}">${this.#$.config.templateTags.style}`);
-        else {
-            this.#$.cli.warn(`Unknown chunk type of ${chunk}. Adding as link.`)
-            mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags.script, `<link href="${chunk}">${this.#$.config.templateTags.style}`);
-        }
+    addChunk(mapComponent, chunk, root) {
+        root = root || _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)
+        const templateTags = this.#$.config.templateTags;
+        const href = _path.join(root,chunk);
+        if (chunk.endsWith(".js"))
+            mapComponent.template = mapComponent.template.replace(templateTags.script, `<script src="/${href}"></script>${templateTags.script}`);
+        else if (chunk.endsWith(".css"))
+            mapComponent.template = mapComponent.template.replace(templateTags.style, `<link rel="stylesheet" href="/${href}">${templateTags.style}`);
+        else
+            mapComponent.template = mapComponent.template.replace(templateTags.unknown, `<link href="/${href}">${templateTags.unknown}`);
     }
 
     finalize(mapComponent) {
@@ -42,5 +43,4 @@ module.exports = class {
             mapComponent.template = mapComponent.template.replace(this.#$.config.templateTags[tag], "");
         })
     }
-
 }

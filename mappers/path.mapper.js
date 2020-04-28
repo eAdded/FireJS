@@ -40,7 +40,6 @@ class MapComponent {
         semi: []
     };
     chunks = [];
-
     babelChunk;
     template;
     resolveOnFirstBuild;

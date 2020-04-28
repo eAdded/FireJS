@@ -19,7 +19,7 @@ module.exports = class {
         const staticArchitect = new StaticArchitect(this.#$);
         mapComponent.resolveOnSemiBuild(() => {
             mapComponent.chunks.forEach(chunk => {//copy chunks to lib
-                staticArchitect.addChunk(mapComponent, `/${libRelative}/${chunk}`);
+                staticArchitect.addChunk(mapComponent, chunk,libRelative);
                 if (this.#$.config.pro) {//only copy in production mode
                     const absDir = _path.join(this.#$.config.paths.lib, mapComponent.getDir());
                     fs.mkdir(absDir, {recursive: true}, err => {

@@ -1,7 +1,7 @@
 const fs = require("fs");
 module.exports = class {
     static writeFileRecursively(path, data) {
-        new Promise((resolve, reject) => {
+        return  new Promise((resolve, reject) => {
             const dir = path.substr(0, path.lastIndexOf("/"));
             fs.mkdir(dir, {recursive: true}, err => {
                 if (err)

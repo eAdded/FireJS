@@ -1,5 +1,5 @@
 const _path = require("path");
-const fs = require("fs");
+const FsUtil = require("../utils/fs-util");
 const PathArchitect = require("../architects/path.architect");
 const StaticArchitect = require("../architects/static.architect");
 
@@ -67,9 +67,18 @@ module.exports = class {
                             return;
                         }
                         callback(path.path, path.content);
-                        this.writePageContent(path.path, path.content).then(() => {
-                            this.#$.cli.log(`Successfully wrote page data for path ${path.path}`);
-                        }).catch((ex) => {
+                        FsUtil.writeFileRecursively(
+                            _path.join(this.#$.config.paths.pageData, path.path + ".js"),
+                            "window.___PAGE_CONTENT___=".concat(JSON.stringify(path.content)))
+                            .then(_ => {
+                                new StaticArchitect(this.#$)
+                                    .addChunk(this.#$.map.get(page),
+                                        path.path.concat(".js"),
+                                        _path.join(
+                                            _path.relative(this.#$.config.paths.dist, this.#$.config.paths.pageData),
+                                        ));
+                                this.#$.cli.log(`Successfully wrote page data for path ${path.path}`);
+                            }).catch(ex => {
                             this.#$.cli.error(`Error writing page data for path ${path.path}`);
                             reject(ex);
                         });
@@ -80,24 +89,5 @@ module.exports = class {
                 reject(new TypeError(`Expected array got ${typeof paths}`));
             }
         }
-    }
-
-    //TODO:Insert this as chunk
-    writePageContent(path, content) {
-        return new Promise((resolve, reject) => {
-            fs.mkdir(_path.join(this.#$.config.paths.pageData, path.substr(0, path.lastIndexOf("/"))), {recursive: true}, err => {
-                if (err)
-                    reject(err);
-                else {
-                    this.#$.cli.log(`writing page data for path ${path}`);
-                    fs.writeFile(_path.join(this.#$.config.paths.pageData, path.concat(".js")), "window.__PAGE_DATA__ =".concat(JSON.stringify(content)), (err) => {
-                        if (err)
-                            reject(err);
-                        else
-                            resolve();
-                    })
-                }
-            })
-        });
     }
 }

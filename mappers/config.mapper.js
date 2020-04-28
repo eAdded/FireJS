@@ -127,6 +127,7 @@ module.exports = class {
         config.templateTags.static = config.templateTags.static || "<%=STATIC=%>";
         config.templateTags.head = config.templateTags.head || "<%=HEAD=%>";
         config.templateTags.style = config.templateTags.style || "<%=STYLE=%>";
+        config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         return config;
     }
 }
