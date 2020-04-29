@@ -1,7 +1,7 @@
 const webpack = require("webpack");
 const path = require("path")
 const _ = require("lodash");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ExtractCssChunks = require('extract-css-chunks-webpack-plugin');
 
 module.exports = class {
     #$;
@@ -89,7 +89,7 @@ module.exports = class {
             },
             {
                 test: /\.css$/i,
-                use: [MiniCssExtractPlugin.loader,
+                use: [ExtractCssChunks.loader,
                     {
                         loader: 'css-loader',
                         options: {
@@ -102,7 +102,7 @@ module.exports = class {
             }
         );
         mergedConfig.plugins.push(
-            new MiniCssExtractPlugin({
+            new ExtractCssChunks({
                 filename: "[name][hash].css"
             }),
         );
@@ -113,7 +113,7 @@ module.exports = class {
             out.name = mapComponent.getPage();
             out.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/${mapComponent.getDir()}/`;
             out.entry[mapComponent.getName()] = path.join(this.#$.config.paths.pages, out.name);
-            out.output.path = path.join(this.#$.config.paths.babel,mapComponent.getDir());
+            out.output.path = path.join(this.#$.config.paths.babel, mapComponent.getDir());
             outs.push(out);
         }
         return outs;
@@ -173,12 +173,12 @@ module.exports = class {
             //path before file name is important cause it allows easy routing during development
             out.output.filename = "[name][hash].js";
             if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
-                out.output.path = path.join(this.#$.config.paths.lib,mapComponent.getDir());
+                out.output.path = path.join(this.#$.config.paths.lib, mapComponent.getDir());
             }
             out.entry[mapComponent.getName()] = web_front_entry;
             out.plugins.push(
                 new webpack.ProvidePlugin({
-                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel,mapComponent.getDir(), mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.getPage())
+                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.getDir(), mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.getPage())
                 }),
             );
             outs.push(out);
