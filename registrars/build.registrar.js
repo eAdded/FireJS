@@ -21,7 +21,7 @@ module.exports = class {
                                 this.#$.cli.log("Error making dir " + absDir);
                                 throw err;
                             }
-                            fs.rename(_path.join(this.#$.config.paths.babel, mapComponent.getDir(), chunk), _path.join(absDir, chunk), _ => {
+                            fs.rename(_path.join(this.#$.config.paths.babel,mapComponent.getDir(), chunk), _path.join(absDir, chunk), _ => {
                                 this.#$.cli.log("Moved chunk " + chunk);
                             });
                         });

@@ -17,7 +17,7 @@ module.exports = class {
         if (pagePath.hasContent())//if page has content then add it
             template = this.addChunk(template, pagePath.getContentPath(), "")
         mapComponent.chunks.forEach(chunk => {
-            template = this.addChunk(template, chunk);
+            template = this.addChunk(template,_path.join(mapComponent.getDir(), chunk));
         });
         return template.replace(
             this.#$.config.templateTags.static,
@@ -28,7 +28,7 @@ module.exports = class {
                         global.document = {};
                         global.__SSR__ = true;
                         global.React = require("react");
-                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.getDir(), mapComponent.babelChunk)).default, {content: pagePath.getContent()}, undefined))
+                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel,mapComponent.getDir() ,mapComponent.babelChunk)).default, {content: pagePath.getContent()}, undefined))
                     } else
                         return "";
                 })()

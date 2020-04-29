@@ -19,7 +19,6 @@ module.exports =  class {
         this.#dir = page.substring(0, page.lastIndexOf("/"));
         this.#name = page.substring(page.lastIndexOf("/")+1, page.lastIndexOf("."));
         this.#ext = page.substring(page.lastIndexOf("."));
-        console.log({page:this.#page,dir:this.#dir,name:this.#name,ext :this.#ext})
     }
 
     getPaths() {

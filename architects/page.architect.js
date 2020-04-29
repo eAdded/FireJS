@@ -1,5 +1,6 @@
 const webpack = require("webpack");
 const WebpackArchitect = require("../architects/webpack.architect");
+const _path = require("path");
 module.exports = class {
     #$;
 
@@ -76,6 +77,7 @@ module.exports = class {
     }
 
     build(configs, resolve, reject) {
+        console.log(configs);
         webpack(configs, (err, multiStats) => {
             if (err)
                 reject(err);

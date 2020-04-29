@@ -1,6 +1,5 @@
 const webpack = require("webpack");
 const path = require("path")
-const fs = require("fs");
 const _ = require("lodash");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -72,8 +71,9 @@ module.exports = class {
             ..._.cloneDeep(conf || this.getConfigBase())
             //settings un-touchable by user
         };
+        //very important for css path
+        mergedConfig.output.chunkFilename = '[name][hash].js';
         mergedConfig.output.filename = "[name][hash].js";
-        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         mergedConfig.output.globalObject = "this";
         mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
         mergedConfig.externals.React = "React";
@@ -103,16 +103,17 @@ module.exports = class {
         );
         mergedConfig.plugins.push(
             new MiniCssExtractPlugin({
-                filename: "[name][hash].css",
+                filename: "[name][hash].css"
             }),
         );
         const outs = [];
 
-        for (const entry of this.#$.map.entries()) {
+        for (const mapComponent of this.#$.map.values()) {
             const out = _.cloneDeep(mergedConfig)
-            out.name = entry[0];
-            out.entry[entry[1].getName()] = entry[1].getAbsolutePath();
-            out.output.path = path.join(this.#$.config.paths.babel, entry[1].getDir());
+            out.name = mapComponent.getPage();
+            out.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/${mapComponent.getDir()}/`;
+            out.entry[mapComponent.getName()] = path.join(this.#$.config.paths.pages, out.name);
+            out.output.path = path.join(this.#$.config.paths.babel,mapComponent.getDir());
             outs.push(out);
         }
         return outs;
@@ -169,15 +170,15 @@ module.exports = class {
         for (const mapComponent of this.#$.map.values()) {
             const out = _.cloneDeep(mergedConfig);
             out.name = mapComponent.getPage();
-            //  out.output.filename = `${mapComponent.getName()}[hash].js`
-            out.context = this.#$.config.paths.lib;
-            out.output.filename = path.join(mapComponent.getDir(),mapComponent.getName()).concat("[hash].js");
+            //path before file name is important cause it allows easy routing during development
+            out.output.filename = "[name][hash].js";
             if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
+                out.output.path = path.join(this.#$.config.paths.lib,mapComponent.getDir());
             }
-            out.entry = web_front_entry;
+            out.entry[mapComponent.getName()] = web_front_entry;
             out.plugins.push(
                 new webpack.ProvidePlugin({
-                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.babelChunk) : path.join(this.#$.config.paths.pages,mapComponent.getPage())
+                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel,mapComponent.getDir(), mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.getPage())
                 }),
             );
             outs.push(out);
