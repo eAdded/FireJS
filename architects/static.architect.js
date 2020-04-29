@@ -14,7 +14,7 @@ module.exports = class {
         if (pagePath.hasContent())//if page has content then add it
             template = this.addChunk(template, pagePath.getContentPath(), "")
         mapComponent.chunks.forEach(chunk => {
-            template = this.addChunk(template, _path.join(mapComponent.getDir(), chunk));
+            template = this.addChunk(template, chunk);
         });
         return template.replace(
             this.#$.config.templateTags.static,

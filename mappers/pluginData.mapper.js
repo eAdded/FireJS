@@ -30,7 +30,7 @@ module.exports = class {
         for (const mapComponent of this.#$.map.values()) {
             if (!mapComponent.isCustom()) {
                 let path = mapComponent.getPage();
-                path = path.substr(0,path.lastIndexOf(".js"));
+                path = "/"+path.substring(0,path.lastIndexOf(".js"));
                 mapComponent.getPaths().set(path, new PagePath(path, undefined, this.#$));
             }
         }

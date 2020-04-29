@@ -3,43 +3,67 @@ const FireJS = require("./index");
 const server = express();
 const app = new FireJS({});
 const _path = require("path");
+const {paths} = app.getConfig();
+const pageDataRelative = `/${_path.relative(paths.dist, paths.pageData)}/`;
+const libRelative = `/${_path.relative(paths.dist, paths.lib)}/`;
+const staticArchitect = app.newStaticArchitect();
+
 app.build().then(
     () => {
-        const staticArchitect = app.newStaticArchitect();
-        server.use("/lib", (req, res, next) => {
-            let found = false;
-            app.getMap().forEach(value => {
-                for(const assetName in value.stat.compilation.assets){
-                    console.log(req.url,assetName);
-                    if(req.url === assetName){
-                        found = true;
-                        res.write(value.stat.compilation.assets[assetName]);
-                        next();
-                    }
-
-                }
-            })
-            if (!found)
-                res.status(404);
-        })
         server.use((req, res, next) => {
-            if (!req.url.startsWith("/lib/")) {
-                let found = false;
-                app.getMap().forEach(value => {
-                    value.getPaths().forEach(path => {
-                        if (path.getPath() === req.url) {
-                            found = true;
-                            res.send(staticArchitect.finalize(staticArchitect.render(value, path)));
-                            next();
-                        }
-                    })
-                })
-                if (!found)
-                    res.status(404);
+            if (req.url.startsWith(pageDataRelative)) {
+                getPageData(req, res);
+            } else if (req.url.startsWith(libRelative)) {
+                getLib(req, res);
+            } else {
+                getPage(req, res)
             }
-        })
+            next();
+        });
         server.listen(5000, _ => {
             console.log("listening on port 5000");
         })
     }
 );
+
+function getPageData(req, res) {
+    let found = false;
+    app.getMap().forEach(mapComponent => {
+        for (const pagePath of mapComponent.getPaths().values()) {
+            if (req.url === `/${pagePath.getContentPath()}`) {
+                found = true;
+                res.send("window.___PAGE_CONTENT___=".concat(JSON.stringify(pagePath.getContent())));
+            }
+        }
+    })
+    if (!found)
+        res.status(404);
+}
+
+function getLib(req, res) {
+    let found = false;
+    app.getMap().forEach(mapComponent => {
+        for (const assetName in mapComponent.stat.compilation.assets) {
+            if (req.url === _path.join(libRelative, assetName)) {
+                found = true;
+                res.send(mapComponent.stat.compilation.assets[assetName]._value);
+            }
+        }
+    })
+    if (!found)
+        res.status(404);
+}
+
+function getPage(req, res) {
+    let found = false;
+    app.getMap().forEach(mapComponent => {
+        for (const pagePath of mapComponent.getPaths().values()) {
+            if (req.url === pagePath.getPath()) {
+                found = true;
+                res.send(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
+            }
+        }
+    })
+    if (!found)
+        res.status(404);
+}

@@ -172,7 +172,6 @@ module.exports = class {
             //  out.output.filename = `${mapComponent.getName()}[hash].js`
             out.context = this.#$.config.paths.lib;
             out.output.filename = path.join(mapComponent.getDir(),mapComponent.getName()).concat("[hash].js");
-            console.log(out.output.filename);
             if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
             }
             out.entry = web_front_entry;
