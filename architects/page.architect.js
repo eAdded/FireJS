@@ -27,6 +27,7 @@ module.exports = class {
                         })
                     });
                 } else {
+                    mapComponent.stat = stat;//store stat cause it allow it to be served from memory
                     const chunks = [];
                     stat.compilation.chunks.forEach(chunk => {
                         chunks.push(...chunk.files);

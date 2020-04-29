@@ -12,7 +12,7 @@ module.exports = class {
         const map = new Map();
         readdir.sync(this.#$.config.paths.pages, (page) => {
             const rel_page = page.replace(this.#$.config.paths.pages + "/", "")
-            map.set(rel_page, new MapComponent(page, rel_page, this.#$.template));
+            map.set(rel_page, new MapComponent(rel_page));
         })
         return map;
     };
@@ -20,7 +20,7 @@ module.exports = class {
     convertToMap(array) {
         const map = new Map();
         array.forEach(item =>
-            map.set(item, new MapComponent($path.join(this.#$.config.paths.pages, item), item, this.#$)));
+            map.set(item, new MapComponent(item)));
         return map;
     }
 

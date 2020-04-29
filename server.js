@@ -6,9 +6,23 @@ const _path = require("path");
 app.build().then(
     () => {
         const staticArchitect = app.newStaticArchitect();
-        server.use("/lib",express.static(app.getConfig().paths.lib))
+        server.use("/lib", (req, res, next) => {
+            let found = false;
+            app.getMap().forEach(value => {
+                for(const assetName in value.stat.compilation.assets){
+                    console.log(req.url,assetName);
+                    if(req.url === assetName){
+                        found = true;
+                        res.write(value.stat.compilation.assets[assetName]);
+                        next();
+                    }
+
+                }
+            })
+            if (!found)
+                res.status(404);
+        })
         server.use((req, res, next) => {
-            console.log(req.url);
             if (!req.url.startsWith("/lib/")) {
                 let found = false;
                 app.getMap().forEach(value => {
@@ -16,7 +30,6 @@ app.build().then(
                         if (path.getPath() === req.url) {
                             found = true;
                             res.send(staticArchitect.finalize(staticArchitect.render(value, path)));
-                            console.log("got it");
                             next();
                         }
                     })

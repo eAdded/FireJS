@@ -135,8 +135,6 @@ module.exports = class {
                 minimize: true
             },
         };
-        mergedConfig.output.filename = `[name][hash].js`;
-        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
 
         mergedConfig.externals.React = "React";
         mergedConfig.externals.ReactDOM = "ReactDOM";
@@ -171,15 +169,21 @@ module.exports = class {
         for (const mapComponent of this.#$.map.values()) {
             const out = _.cloneDeep(mergedConfig);
             out.name = mapComponent.getPage();
-            out.output.path = path.join(this.#$.config.paths.lib,mapComponent.getDir());
-            out.entry[mapComponent.getName()] = web_front_entry;
+            //  out.output.filename = `${mapComponent.getName()}[hash].js`
+            out.context = this.#$.config.paths.lib;
+            out.output.filename = path.join(mapComponent.getDir(),mapComponent.getName()).concat("[hash].js");
+            console.log(out.output.filename);
+            if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
+            }
+            out.entry = web_front_entry;
             out.plugins.push(
                 new webpack.ProvidePlugin({
-                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.getDir(), mapComponent.babelChunk) : mapComponent.getAbsolutePath()
+                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.babelChunk) : path.join(this.#$.config.paths.pages,mapComponent.getPage())
                 }),
             );
             outs.push(out);
         }
+        console.log(outs);
         return outs;
     }
 }

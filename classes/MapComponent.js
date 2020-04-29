@@ -1,10 +1,8 @@
 module.exports =  class {
     #page;
-    #dir;
-    #absPath
-    #fullName;
-    #ext;
     #name;
+    #dir;
+    #ext;
     #custom = false;
     #built = false;
     #semiBuilt = false;
@@ -15,17 +13,13 @@ module.exports =  class {
     #paths = new Map();
     chunks = [];
     babelChunk;
-
-    constructor(abs_path, page) {
-        this.#absPath = abs_path;
+    stat = {};
+    constructor(page) {
         this.#page = page;
-        this.#dir = page.substr(0, page.lastIndexOf("/"));
-        this.#fullName = page.substr((() => {
-            const index = page.lastIndexOf("/");
-            return index === -1 ? 0 : index;
-        })());
-        this.#name = this.#fullName.substr(0, this.#fullName.lastIndexOf("."));
-        this.#ext = this.#fullName.substr(this.#fullName.lastIndexOf("."));
+        this.#dir = page.substring(0, page.lastIndexOf("/"));
+        this.#name = page.substring(page.lastIndexOf("/")+1, page.lastIndexOf("."));
+        this.#ext = page.substring(page.lastIndexOf("."));
+        console.log({page:this.#page,dir:this.#dir,name:this.#name,ext :this.#ext})
     }
 
     getPaths() {
@@ -36,20 +30,12 @@ module.exports =  class {
         return this.#page;
     }
 
-    getFullName() {
-        return this.#fullName;
-    }
-
     getExt() {
         return this.#ext;
     }
 
     getName() {
         return this.#name;
-    }
-
-    getAbsolutePath() {
-        return this.#absPath;
     }
 
     getDir() {
