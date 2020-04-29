@@ -183,7 +183,6 @@ module.exports = class {
             );
             outs.push(out);
         }
-        console.log(outs);
         return outs;
     }
 }

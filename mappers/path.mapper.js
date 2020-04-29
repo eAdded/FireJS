@@ -1,5 +1,4 @@
 const readdir = require("recursive-dir-reader");
-const $path = require("path");
 const MapComponent = require("../classes/MapComponent");
 module.exports = class {
     #$;

@@ -1,5 +1,4 @@
 const _path = require("path");
-const fs = require("fs");
 const StaticArchitect = require("./static.architect");
 const FsUtil = require("../utils/fs-util");
 module.exports = class {

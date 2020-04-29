@@ -34,7 +34,6 @@ module.exports = class {
             if (!mapComponent.isCustom()) {
                 let path = mapComponent.getPage();
                 path = "/" + path.substring(0, path.lastIndexOf(".js"));
-                console.log(path);
                 mapComponent.getPaths().set(path, new PagePath(path, undefined, this.#$));
             }
         }

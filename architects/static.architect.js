@@ -1,7 +1,5 @@
 const {renderToString} = require("react-dom/server");
 const _path = require("path");
-//set globals for ssr
-
 module.exports = class {
     #$;
 

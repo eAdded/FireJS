@@ -46,7 +46,7 @@ function getLib(req, res) {
     let found = false;
     app.getMap().forEach(mapComponent => {
         for (const assetName in mapComponent.stat.compilation.assets) {
-            if (req.url === _path.join(libRelative, assetName)) {
+            if (req.url === _path.join(libRelative,mapComponent.getDir(), assetName)) {
                 found = true;
                 res.end(mapComponent.stat.compilation.assets[assetName]._value);
             }
