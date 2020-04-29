@@ -60,7 +60,8 @@ function getPage(req, res) {
     let found = false;
     app.getMap().forEach(mapComponent => {
         for (const pagePath of mapComponent.getPaths().values()) {
-            if (req.url === pagePath.getPath()) {
+            console.log(req.url);
+            if (req.url === pagePath.getPath() || (_path.join(req.url , "index") === pagePath.getPath())) {
                 found = true;
                 res.end(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
             }
