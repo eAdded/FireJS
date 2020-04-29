@@ -7,6 +7,7 @@ const Cli = require("./utils/cli-color");
 const PluginDataMapper = require("./mappers/pluginData.mapper");
 const PathArchitect = require("./architects/path.architect");
 const BuildRegistrar = require("./registrars/build.registrar");
+const StaticArchitect = require("./architects/static.architect");
 const _path = require("path");
 const fs = require("fs");
 module.exports = class {
@@ -29,10 +30,6 @@ module.exports = class {
         this.#$.webpackConfig = webpackConfig || this.newWebpackArchitect().readUserConfig();
     }
 
-    middleware(req, res, next) {
-
-    }
-
     build() {
         return new Promise((resolve, reject) => {
             const buildRegistrar = new BuildRegistrar(this.#$);
@@ -43,10 +40,6 @@ module.exports = class {
                 resolve();
             }).catch(reject);
         })
-    }
-
-    geCli() {
-        return this.#$.cli;
     }
 
     getMap() {
@@ -65,6 +58,9 @@ module.exports = class {
         new PluginDataMapper(this.#$).(page, paths, template, new PathArchitect(this.#$));
     }*/
 
+    newStaticArchitect(){
+        return new StaticArchitect(this.#$);
+    }
     newPathArchitect() {
         return new PathArchitect(this.#$);
     }
