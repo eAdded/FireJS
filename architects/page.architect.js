@@ -1,6 +1,5 @@
 const webpack = require("webpack");
 const WebpackArchitect = require("../architects/webpack.architect");
-const StaticArchitect = require("../architects/static.architect");
 module.exports = class {
     #$;
 
@@ -38,14 +37,10 @@ module.exports = class {
             }
 
             this.build(webpackArchitect.externals(), stat => {
-                const externals = [];
                 stat.compilation.chunks.forEach(chunk => {
-                    externals.push(...chunk.files);
+                    this.#$.externals.push(...chunk.files);
                 })
-                const staticArchitect = new StaticArchitect(this.#$);
-                externals.forEach(external => {//externals are same for all paths
-                    this.#$.template = staticArchitect.addChunk(this.#$.template, external);
-                })
+
                 if (this.#$.config.pro) {
                     this.#$.cli.log("-----babel------")
                     this.build(webpackArchitect.babel(this.#$.webpackConfig), multiStats => {

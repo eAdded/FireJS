@@ -16,6 +16,7 @@ module.exports = class {
         args: {},
         config: {},
         map: new Map(),
+        externals : [],
         cli: {},
         webpackConfig: {},
         template: "",
@@ -41,7 +42,9 @@ module.exports = class {
             }).catch(reject);
         })
     }
-
+    getExternals(){
+        return this.#$.externals;
+    }
     getMap() {
         return this.#$.map;
     }

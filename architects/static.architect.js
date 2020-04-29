@@ -11,6 +11,9 @@ module.exports = class {
 
     render(mapComponent, pagePath) {
         let template = this.#$.template
+        this.#$.externals.forEach(external => {//externals are same for all paths
+            template = this.addChunk(template, external);
+        });
         if (pagePath.hasContent())//if page has content then add it
             template = this.addChunk(template, pagePath.getContentPath(), "")
         mapComponent.chunks.forEach(chunk => {

@@ -10,6 +10,8 @@ const staticArchitect = app.newStaticArchitect();
 
 app.build().then(
     () => {
+        app.getExternals().forEach(external =>
+            server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
         server.use((req, res, next) => {
             if (req.url.startsWith(pageDataRelative)) {
                 getPageData(req, res);
@@ -32,7 +34,7 @@ function getPageData(req, res) {
         for (const pagePath of mapComponent.getPaths().values()) {
             if (req.url === `/${pagePath.getContentPath()}`) {
                 found = true;
-                res.send("window.___PAGE_CONTENT___=".concat(JSON.stringify(pagePath.getContent())));
+                res.end("window.___PAGE_CONTENT___=".concat(JSON.stringify(pagePath.getContent())));
             }
         }
     })
@@ -46,7 +48,7 @@ function getLib(req, res) {
         for (const assetName in mapComponent.stat.compilation.assets) {
             if (req.url === _path.join(libRelative, assetName)) {
                 found = true;
-                res.send(mapComponent.stat.compilation.assets[assetName]._value);
+                res.end(mapComponent.stat.compilation.assets[assetName]._value);
             }
         }
     })
@@ -60,7 +62,7 @@ function getPage(req, res) {
         for (const pagePath of mapComponent.getPaths().values()) {
             if (req.url === pagePath.getPath()) {
                 found = true;
-                res.send(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
+                res.end(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
             }
         }
     })
