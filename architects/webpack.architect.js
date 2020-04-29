@@ -1,7 +1,7 @@
 const webpack = require("webpack");
 const path = require("path")
 const _ = require("lodash");
-const ExtractCssChunks = require('extract-css-chunks-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = class {
     #$;
@@ -89,7 +89,7 @@ module.exports = class {
             },
             {
                 test: /\.css$/i,
-                use: [ExtractCssChunks.loader,
+                use: [MiniCssExtractPlugin.loader,
                     {
                         loader: 'css-loader',
                         options: {
@@ -102,7 +102,7 @@ module.exports = class {
             }
         );
         mergedConfig.plugins.push(
-            new ExtractCssChunks({
+            new MiniCssExtractPlugin({
                 filename: "[name][hash].css"
             }),
         );
