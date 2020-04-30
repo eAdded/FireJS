@@ -7,9 +7,9 @@
   "description": "Highly customizable no config react static site generator",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eADDED/firejs.git"
+    "url": "git+https://github.com/eAdded/firejs.git"
   },
-  "author": "Aniket Prajapati <prajapati.ani306@gmail.com>",
+  "author": "AniketFuryRocks <prajapati.ani306@gmail.com>",
   "private": false,
   "dependencies": {
     "@babel/core": "^7.9.0",
@@ -27,10 +27,9 @@
     "webpack": "^4.43.0"
   },
   "bugs": {
-    "url": "https://github.com/eADDED/firejs/issues"
+    "url": "https://github.com/eAdded/firejs/issues"
   },
-  "homepage": "https://github.com/eADDED/firejs#readme",
+  "homepage": "https://github.com/eAdded/firejs#readme",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
