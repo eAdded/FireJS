@@ -27,10 +27,9 @@ module.exports = class {
     }
 
     getConfigBase() {
+        // predefined object structure to prevent undefined error
         return {
-            entry: {
-                //  shared : []
-            },
+            entry: {},
             output: {},
             module: {
                 rules: []
@@ -41,7 +40,6 @@ module.exports = class {
     }
 
     readUserConfig() {
-        // predefined object structure to prevent undefined error
         const sample = this.getConfigBase();
         if (this.#$.config.paths.webpack) {
             const userWebpack = require(this.#$.config.paths.webpack);
@@ -63,12 +61,13 @@ module.exports = class {
         return sample;
     }
 
-    babel(conf) {
+    babel(mapComponent, user_config) {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
-            ..._.cloneDeep(conf || this.getConfigBase())
+            //add config base to user config to prevent undefined errors
+            ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.#$.webpackConfig),
             //settings un-touchable by user
         };
         //very important for css path
@@ -106,26 +105,19 @@ module.exports = class {
                 filename: "[name][hash].css"
             }),
         );
-        const outs = [];
-
-        for (const mapComponent of this.#$.map.values()) {
-            const out = _.cloneDeep(mergedConfig)
-            out.name = mapComponent.getPage();
-            out.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/${mapComponent.getDir()}/`;
-            out.entry[mapComponent.getName()] = path.join(this.#$.config.paths.pages, out.name);
-            out.output.path = path.join(this.#$.config.paths.babel, mapComponent.getDir());
-            outs.push(out);
-        }
-        return outs;
+        mergedConfig.name = mapComponent.getPage();
+        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/${mapComponent.getDir()}/`;
+        mergedConfig.entry[mapComponent.getName()] = path.join(this.#$.config.paths.pages, out.name);
+        mergedConfig.output.path = path.join(this.#$.config.paths.babel, mapComponent.getDir());
+        return mergedConfig;
     }
 
-    direct(conf) {
+    direct(mapComponent,user_config) {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
-            mode: this.#$.config.pro ? "production" : "development",
-            watch: !this.#$.config.pro,
-            ..._.cloneDeep(conf || this.getConfigBase()),
+            //add config base to user config to prevent undefined errors
+            ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.#$.webpackConfig),
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -164,25 +156,19 @@ module.exports = class {
                 }
             );
         }
-        const outs = [];
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
-
-        for (const mapComponent of this.#$.map.values()) {
-            const out = _.cloneDeep(mergedConfig);
-            out.name = mapComponent.getPage();
-            //path before file name is important cause it allows easy routing during development
-            out.output.filename = "[name][hash].js";
-            if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
-                out.output.path = path.join(this.#$.config.paths.lib, mapComponent.getDir());
-            }
-            out.entry[mapComponent.getName()] = web_front_entry;
-            out.plugins.push(
-                new webpack.ProvidePlugin({
-                    App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.getDir(), mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.getPage())
-                }),
-            );
-            outs.push(out);
+        mergedConfig.name = mapComponent.getPage();
+        //path before file name is important cause it allows easy routing during development
+        mergedConfig.output.filename = "[name][hash].js";
+        if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
+            mergedConfig.output.path = path.join(this.#$.config.paths.lib, mapComponent.getDir());
         }
-        return outs;
+        mergedConfig.entry[mapComponent.getName()] = web_front_entry;
+        mergedConfig.plugins.push(
+            new webpack.ProvidePlugin({
+                App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.getDir(), mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.getPage())
+            }),
+        );
+        return mergedConfig;
     }
 }

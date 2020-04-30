@@ -1,5 +1,6 @@
 const express = require("express");
 const FireJS = require("./index");
+//const reload = require("reload");
 const server = express();
 const app = new FireJS({});
 const _path = require("path");
@@ -25,6 +26,9 @@ app.build().then(
         server.listen(5000, _ => {
             console.log("listening on port 5000");
         })
+        /*reload(server).then(_ => {
+
+        })*/
     }
 );
 
@@ -46,7 +50,7 @@ function getLib(req, res) {
     let found = false;
     app.getMap().forEach(mapComponent => {
         for (const assetName in mapComponent.stat.compilation.assets) {
-            if (req.url === _path.join(libRelative,mapComponent.getDir(), assetName)) {
+            if (req.url === _path.join(libRelative, mapComponent.getDir(), assetName)) {
                 found = true;
                 res.end(mapComponent.stat.compilation.assets[assetName]._value);
             }
@@ -61,7 +65,7 @@ function getPage(req, res) {
     app.getMap().forEach(mapComponent => {
         for (const pagePath of mapComponent.getPaths().values()) {
             console.log(req.url);
-            if (req.url === pagePath.getPath() || (_path.join(req.url , "index") === pagePath.getPath())) {
+            if (req.url === pagePath.getPath() || (_path.join(req.url, "index") === pagePath.getPath())) {
                 found = true;
                 res.end(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
             }

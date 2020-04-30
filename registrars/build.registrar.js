@@ -10,42 +10,36 @@ module.exports = class {
     }
 
 
-    registerForSemiBuild() {
-        if (this.#$.config.pro) {//only write when pro else it is rendered
-            for (const mapComponent of this.#$.map.values()) {
-                mapComponent.resolveOnSemiBuild(() => {
-                    mapComponent.chunks.forEach(chunk => {//copy chunks to lib
-                        const absDir = _path.join(this.#$.config.paths.lib, mapComponent.getDir());
-                        fs.mkdir(absDir, {recursive: true}, err => {
-                            if (err) {
-                                this.#$.cli.log("Error making dir " + absDir);
-                                throw err;
-                            }
-                            fs.rename(_path.join(this.#$.config.paths.babel,mapComponent.getDir(), chunk), _path.join(absDir, chunk), _ => {
-                                this.#$.cli.log("Moved chunk " + chunk);
+    registerForSemiBuild(mapComponent) {
+        new Promise((resolve, reject) => {
+            mapComponent.resolveOnSemiBuild(() => {
+                const absDir = _path.join(this.#$.config.paths.lib, mapComponent.getDir());
+                fs.mkdir(absDir, {recursive: true}, err => {
+                    if (err)
+                        reject("Error making dir " + absDir);
+                    else
+                        mapComponent.chunks.forEach(chunk => {//copy chunks to lib
+                            fs.rename(_path.join(this.#$.config.paths.babel, mapComponent.getDir(), chunk), _path.join(absDir, chunk), err => {
+                                if (err)
+                                    reject("Error moving chunk " + chunk);
+                                else
+                                    resolve();
                             });
                         });
-                    });
                 });
-            }
-        }
+            });
+        });
     }
 
-    registerComponentForBuild() {
-        if (this.#$.config.pro) {//only write when pro else it is rendered
-            const pathArchitect = new PathArchitect(this.#$);
-            for (const mapComponent of this.#$.map.values()) {
-                mapComponent.resolveOnBuild(() => {
-                    for (const pagePath of mapComponent.getPaths().values())
-                        pathArchitect.writePath(mapComponent, pagePath)
-                            .then(_ => {
-                                this.#$.cli.ok(`Path ${pagePath.getPath()} written`)
-                            }).catch(e => {
-                            this.#$.cli.error(`Error writing path ${pagePath.getPath()}`)
-                            throw e;
-                        });
-                })
-            }
-        }
+    registerComponentForBuild(mapComponent) {
+        new Promise((resolve, reject) => {
+            mapComponent.resolveOnBuild(() => {
+                const pathArchitect = new PathArchitect(this.#$);
+                const promises = [];
+                for (const pagePath of mapComponent.getPaths().values())
+                    promises.push(pathArchitect.writePath(mapComponent, pagePath));
+                Promise.all(promises).then(resolve).catch(reject);
+            });
+        })
     }
 }
