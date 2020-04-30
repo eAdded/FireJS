@@ -7,7 +7,7 @@ Highly customizable no config react static site generator built on the principle
  - Very fast dev builds
  - Vey fast on the fly pro builds
  - Dev Server (live reload)
- - Easy parralel builds
+ - Easy parallel builds
  - Event hooks
  - Plugins
  - Easy dynamic routes
@@ -46,9 +46,9 @@ Project
 │       │   about.js
 │       │   ...
 │
-│	└─── plugins
+│   └─── plugins
 │   	│   plugin-name.js
-|		| 	...
+│       │   ...
 |
 | firejs.config.js
 | webpack.config.js
@@ -69,7 +69,7 @@ module.exports = {
 		 ]
 }]}
 ~~~
-This plugin fetches some data from an api asynchronasly and passes it to a route.
+This plugin fetches some data from an api asynchronously and passes it to a route.
 
 File `api/name.js` which is found in src dir, is used to create the route `/api/corona`.
 
