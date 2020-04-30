@@ -99,7 +99,7 @@ module.exports = class {
         config.pro = this.#$.args["--pro"] ? true : config.pro || false;
         this.#$.args["--pro"] = undefined;
         this.#$.cli.log("mode : " + (config.pro ? "production" : "development"))
-        config.name = "fire-js";
+        config.name = "firejs";
         config.paths = config.paths || {};
         config.plugins = config.plugins || [];
         this.#throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.#makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
