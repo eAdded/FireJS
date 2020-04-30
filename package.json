@@ -1,13 +1,13 @@
 {
   "name": "@eadded/firejs",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {},
   "description": "Highly customizable no config react static site generator",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eADDED/fire-js.git"
+    "url": "git+https://github.com/eADDED/firejs.git"
   },
   "author": "Aniket Prajapati <prajapati.ani306@gmail.com>",
   "private": false,
@@ -27,9 +27,9 @@
     "webpack": "^4.43.0"
   },
   "bugs": {
-    "url": "https://github.com/eADDED/fire-js/issues"
+    "url": "https://github.com/eADDED/firejs/issues"
   },
-  "homepage": "https://github.com/eADDED/fire-js#readme",
+  "homepage": "https://github.com/eADDED/firejs#readme",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   }

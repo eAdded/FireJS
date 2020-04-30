@@ -31,7 +31,7 @@ module.exports = class {
             if (!path.isAbsolute(this.#$.args["--conf"]))
                 this.#$.args["--conf"] = path.resolve(process.cwd(), this.#$.args["--conf"]);//create absolute path
         } else
-            this.#$.args["--conf"] = path.resolve(process.cwd(), `fire-js.config.js`);
+            this.#$.args["--conf"] = path.resolve(process.cwd(), `firejs.config.js`);
 
         return fs.existsSync(this.#$.args["--conf"]) ? (() => {///check if config file exists
             this.#$.cli.log(`Loading config from ${this.#$.args["--conf"]}`);
@@ -99,7 +99,6 @@ module.exports = class {
         config.pro = this.#$.args["--pro"] ? true : config.pro || false;
         this.#$.args["--pro"] = undefined;
         this.#$.cli.log("mode : " + (config.pro ? "production" : "development"))
-        config.name = "firejs";
         config.paths = config.paths || {};
         config.plugins = config.plugins || [];
         this.#throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.#makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
