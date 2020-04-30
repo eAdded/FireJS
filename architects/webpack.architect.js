@@ -107,7 +107,7 @@ module.exports = class {
         );
         mergedConfig.name = mapComponent.getPage();
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/${mapComponent.getDir()}/`;
-        mergedConfig.entry[mapComponent.getName()] = path.join(this.#$.config.paths.pages, out.name);
+        mergedConfig.entry[mapComponent.getName()] = path.join(this.#$.config.paths.pages, mapComponent.getPage());
         mergedConfig.output.path = path.join(this.#$.config.paths.babel, mapComponent.getDir());
         return mergedConfig;
     }
@@ -116,6 +116,7 @@ module.exports = class {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
+            mode: this.#$.config.pro ? "production" : "development",
             //add config base to user config to prevent undefined errors
             ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.#$.webpackConfig),
             //settings un-touchable by user

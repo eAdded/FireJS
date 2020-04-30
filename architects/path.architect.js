@@ -11,11 +11,11 @@ module.exports = class {
     writePath(mapComponent, pagePath) {
         const staticArchitect = new StaticArchitect(this.#$);
         const html = staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath));
-
         return FsUtil.writeFileRecursively(
             _path.join(this.#$.config.paths.dist, pagePath.getPath().concat(".html")),
             html
         )
     }
 
+    register
 }

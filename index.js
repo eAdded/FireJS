@@ -4,7 +4,7 @@ const PathMapper = require("./mappers/path.mapper")
 const PageArchitect = require("./architects/page.architect");
 const WebpackArchitect = require("./architects/webpack.architect");
 const Cli = require("./utils/cli-color");
-const PluginDataMapper = require("./mappers/pluginData.mapper");
+const PluginDataMapper = require("./mappers/plugin.mapper");
 const PathArchitect = require("./architects/path.architect");
 const BuildRegistrar = require("./registrars/build.registrar");
 const StaticArchitect = require("./architects/static.architect");
@@ -16,7 +16,7 @@ module.exports = class {
         args: {},
         config: {},
         map: new Map(),
-        externals : [],
+        externals: [],
         cli: {},
         webpackConfig: {},
         template: "",
@@ -25,55 +25,38 @@ module.exports = class {
     constructor({userConfig, config, args, map, webpackConfig, template}) {
         this.#$.args = args || ConfigMapper.getArgs();
         this.#$.cli = new Cli(this.#$.args);
-        this.#$.config = config || userConfig ? this.newConfigMapper().getConfig(_.cloneDeep(userConfig)) : this.newConfigMapper().getConfig();
+        this.#$.config = config || userConfig ? new ConfigMapper(this.#$).getConfig(_.cloneDeep(userConfig)) : new ConfigMapper(this.#$).getConfig();
         this.#$.template = template || fs.readFileSync(_path.join(__dirname, 'web/template.html')).toString();
         this.#$.map = map ? new PathMapper(this.#$).convertToMap(map) : new PathMapper(this.#$).map();
-        this.#$.webpackConfig = webpackConfig || this.newWebpackArchitect().readUserConfig();
+        this.#$.webpackConfig = webpackConfig || new WebpackArchitect(this.#$).readUserConfig();
     }
 
     build() {
-        return new Promise((resolve, reject) => {
-            const buildRegistrar = new BuildRegistrar(this.#$);
-            buildRegistrar.registerForSemiBuild();//register for copy chunks on semi build
-            new PluginDataMapper(this.#$).map();
-            buildRegistrar.registerComponentForBuild();
-            new PageArchitect(this.#$).autoBuild().then(() => {
-                resolve();
-            }).catch(reject);
-        })
-    }
-    getExternals(){
-        return this.#$.externals;
-    }
-    getMap() {
-        return this.#$.map;
-    }
-
-    getConfig() {
-        return this.#$.config;
-    }
-
-    getWebpackConfig() {
-        return this.#$.webpackConfig;
+        const buildRegistrar = new BuildRegistrar(this.#$);
+        const pageArchitect = new PageArchitect(this.#$);
+     //   new PluginDataMapper(this.#$).mapPlugins();
+        pageArchitect.buildExternals();
+        for (const mapComponent of this.#$.map.values()) {
+            if (this.#$.config.pro)
+                pageArchitect.buildBabel(mapComponent).then(_ => {
+                    buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
+                        pageArchitect.buildDirect(mapComponent).then(_ => {
+                            buildRegistrar.registerComponentForBuild(mapComponent).then(_ => {
+                                console.log("Done page " + mapComponent.getPage());
+                            }).catch(err => {throw err});
+                        }).catch(err => {throw err})
+                    }).catch(err => {throw err})
+                }).catch(err => {throw err})
+            else {
+                pageArchitect.buildDirect(mapComponent).then(_ => {
+                    console.log("Done page" + mapComponent.getPage());
+                }).catch(er=>{console.log(er)})
+            }
+        }
     }
 
-    /*applyPlugin(page, paths, template) {
-        new PluginDataMapper(this.#$).(page, paths, template, new PathArchitect(this.#$));
-    }*/
-
-    newStaticArchitect(){
-        return new StaticArchitect(this.#$);
-    }
-    newPathArchitect() {
-        return new PathArchitect(this.#$);
-    }
-
-    newWebpackArchitect() {
-        return new WebpackArchitect(this.#$);
-    }
-
-    newConfigMapper() {
-        return new ConfigMapper(this.#$);
+    getContext() {
+        return this.#$;
     }
 
 }

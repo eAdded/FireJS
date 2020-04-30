@@ -9,21 +9,17 @@ module.exports = class {
 
 
     buildExternals() {
-        this.build(new WebpackArchitect(this.#$).externals(), multiStats => {
-            multiStats.stats.forEach(stat=>{
-                stat.compilation.chunks.forEach(chunk => {
-                    this.#$.externals.push(...chunk.files);
-                })
+        this.build(new WebpackArchitect(this.#$).externals(), stat => {
+            stat.compilation.chunks.forEach(chunk => {
+                this.#$.externals.push(...chunk.files);
             })
         })
     }
 
-    buildPro(mapComponent) {
-        new Promise((resolve, reject) => {
-            this.#$.cli.log("-----babel------")
+    buildBabel(mapComponent) {
+        return new Promise((resolve, reject) => {
             this.build(new WebpackArchitect(this.#$).babel(mapComponent), stat => {
                 this.logStat(stat);
-                mapComponent.markSemiBuilt();
                 mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
@@ -31,19 +27,16 @@ module.exports = class {
                             mapComponent.chunks.push(file);
                     })
                 });
-                this.#$.cli.log("------direct------")
-                this.buildDev(mapComponent);
+                resolve();
             }, reject);
         })
     }
 
-    buildDev(mapComponent) {
-        new Promise((resolve, reject) => {
+    buildDirect(mapComponent) {
+        return new Promise((resolve, reject) => {
             this.build(new WebpackArchitect(this.#$).direct(mapComponent), stat => {
                 this.logStat(stat);
-                mapComponent.markBuilt(stat);
                 mapComponent.stat = stat;//set stat
-                mapComponent.chunks = [];//re-init with new chunks
                 stat.compilation.chunks.forEach(chunk => {
                     mapComponent.chunks.push(...chunk.files);
                 });
@@ -53,11 +46,11 @@ module.exports = class {
     }
 
     build(config, resolve, reject) {
-        webpack(config, (err, multiStats) => {
+        webpack(config, (err, stat) => {
             if (err)
                 reject(err);
             else
-                resolve(multiStats);
+                resolve(stat);
         });
     }
 
@@ -88,6 +81,5 @@ module.exports = class {
             this.#$.cli.error(`Compilation failed with ${errorCount} error(s) and ${warningCount} warnings(s)`)
         } else
             this.#$.cli.ok(`Compiled successfully with ${errorCount} error(s) and ${warningCount} warnings(s)`)
-
     }
 }
