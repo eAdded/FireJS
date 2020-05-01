@@ -30,14 +30,4 @@ module.exports = class {
             });
         });
     }
-
-    registerComponentForBuild(mapComponent) {
-        return new Promise((resolve, reject) => {
-            const pathArchitect = new PathArchitect(this.#$);
-            const promises = [];
-            for (const pagePath of mapComponent.getPaths().values())
-                promises.push(pathArchitect.writePath(mapComponent, pagePath));
-            Promise.all(promises).then(resolve).catch(reject);
-        });
-    }
 }

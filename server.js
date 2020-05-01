@@ -1,17 +1,18 @@
+const _path = require("path");
 const express = require("express");
 const FireJS = require("./index");
-//const reload = require("reload");
+const StaticArchitect = require("./architects/static.architect");
 const server = express();
 const app = new FireJS({});
-const _path = require("path");
-const {paths} = app.getConfig();
+const $ = app.getContext();
+const {config: {paths}} = $;
+const staticArchitect = new StaticArchitect()
 const pageDataRelative = `/${_path.relative(paths.dist, paths.pageData)}/`;
 const libRelative = `/${_path.relative(paths.dist, paths.lib)}/`;
-const staticArchitect = app.newStaticArchitect();
 
 app.build().then(
     () => {
-        app.getExternals().forEach(external =>
+        $.externals.forEach(external =>
             server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
         server.use((req, res, next) => {
             if (req.url.startsWith(pageDataRelative)) {
@@ -26,15 +27,12 @@ app.build().then(
         server.listen(5000, _ => {
             console.log("listening on port 5000");
         })
-        /*reload(server).then(_ => {
-
-        })*/
     }
 );
 
 function getPageData(req, res) {
     let found = false;
-    app.getMap().forEach(mapComponent => {
+    $.map.forEach(mapComponent => {
         for (const pagePath of mapComponent.getPaths().values()) {
             if (req.url === `/${pagePath.getContentPath()}`) {
                 found = true;
@@ -48,7 +46,7 @@ function getPageData(req, res) {
 
 function getLib(req, res) {
     let found = false;
-    app.getMap().forEach(mapComponent => {
+    $.map.forEach(mapComponent => {
         for (const assetName in mapComponent.stat.compilation.assets) {
             if (req.url === _path.join(libRelative, mapComponent.getDir(), assetName)) {
                 found = true;
@@ -62,7 +60,7 @@ function getLib(req, res) {
 
 function getPage(req, res) {
     let found = false;
-    app.getMap().forEach(mapComponent => {
+    $.map.forEach(mapComponent => {
         for (const pagePath of mapComponent.getPaths().values()) {
             console.log(req.url);
             if (req.url === pagePath.getPath() || (_path.join(req.url, "index") === pagePath.getPath())) {

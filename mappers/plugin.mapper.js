@@ -1,6 +1,7 @@
 const _path = require("path");
 const FsUtil = require("../utils/fs-util");
 const PagePath = require("../classes/PagePath");
+const PathArchitect = require("../architects/path.architect");
 module.exports = class {
     #$;
 
@@ -14,43 +15,61 @@ module.exports = class {
         });
     }
 
-    mapPlugin(path, data) {
-        const plugData = path ? require(path) : data;
+    mapPlugin(path) {
+        const plugData = require(path);
         Object.keys(plugData).forEach(page => {
             const mapComponent = this.#$.map.get(page);
             if (!mapComponent) //check if this page exists
-                throw new TypeError(`page ${page} either does not exists or is not mapped.`);
-            this.parsePagePaths(page, plugData[page], (path, content) => {
+                throw new TypeError(`page ${page} either does not exists or is not mapped`);
+            mapComponent.plugin = plugData;
+            /*this.parsePagePaths(page, plugData[page], (path, content) => {
                 const pagePath = new PagePath(path, content, this.#$);
                 mapComponent.getPaths().set(path, pagePath);
                 if (this.#$.config.pro)
+
+            }, reason => {
+                this.#$.cli.error(new Error(`Error in plugin ${path}`));
+                throw reason;
+            });*/
+        });
+    }
+
+    applyPlugin(mapComponent) {
+        const pathArchitect = new PathArchitect(this.#$);
+        if (mapComponent.plugin)
+            this.parsePagePaths(mapComponent.plugin, (path, content) => {
+                const pagePath = new PagePath(path, content, this.#$);
+                if (this.#$.config.pro) {
                     FsUtil.writeFileRecursively(//write content
                         _path.join(this.#$.config.paths.dist, pagePath.getContentPath()),
                         "window.___PAGE_CONTENT___=".concat(JSON.stringify(content))
                     );
-            }, reason => {
-                this.#$.cli.error(new Error(`Error in plugin ${path}`));
-                throw reason;
-            });
-        });
+                    pathArchitect.writePath(mapComponent, pagePath);//write html file
+                } else
+                    mapComponent.paths.push(pagePath);//push in dev mode
+            }, err => {
+                throw err;
+            })
+        else {
+            //make default page
+            let path = mapComponent.getPage();
+            path = "/" + path.substring(0, path.lastIndexOf(".js"));
+            const pagePath = new PagePath(path, undefined, this.#$);
+            if (this.#$.config.pro) {
+                pathArchitect.writePath(path, pagePath);//write html when pro
+            } else
+                mapComponent.paths.push(pagePath);//push when dev
+        }
     }
 
-    /*for (const mapComponent of this.#$.map.values()) {
-            if (!mapComponent.isCustom()) {
-                let path = mapComponent.getPage();
-                path = "/" + path.substring(0, path.lastIndexOf(".js"));
-                mapComponent.getPaths().set(path, new PagePath(path, undefined, this.#$));
-            }
-        }*/
-
-    parsePagePaths(page, paths, callback, reject) {
+    parsePagePaths(paths, callback, reject) {
         if (Array.isArray(paths)) {
             paths.forEach(path => {
                 if (typeof path === "string") {
                     callback(path, {});
                 } else if (path.constructor.name === "AsyncFunction") {
                     path().then(value => {
-                        this.parsePagePaths(page, value, callback, reject);
+                        this.parsePagePaths(value, callback, reject);
                     });
                 } else if (typeof path === "object") {
                     if (typeof path.path !== "string") {
