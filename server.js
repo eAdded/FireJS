@@ -6,7 +6,7 @@ const server = express();
 const app = new FireJS({});
 const $ = app.getContext();
 const {config: {paths}} = $;
-const staticArchitect = new StaticArchitect()
+const staticArchitect = new StaticArchitect($)
 const pageDataRelative = `/${_path.relative(paths.dist, paths.pageData)}/`;
 const libRelative = `/${_path.relative(paths.dist, paths.lib)}/`;
 app.build().then(
@@ -33,7 +33,7 @@ app.build().then(
 function getPageData(req, res) {
     let found = false;
     $.map.forEach(mapComponent => {
-        for (const pagePath of mapComponent.getPaths().values()) {
+        for (const pagePath of mapComponent.paths) {
             if (req.url === `/${pagePath.getContentPath()}`) {
                 found = true;
                 res.end("window.___PAGE_CONTENT___=".concat(JSON.stringify(pagePath.getContent())));
@@ -61,7 +61,7 @@ function getLib(req, res) {
 function getPage(req, res) {
     let found = false;
     $.map.forEach(mapComponent => {
-        for (const pagePath of mapComponent.getPaths().values()) {
+        for (const pagePath of mapComponent.paths) {
             console.log(req.url);
             if (req.url === pagePath.getPath() || (_path.join(req.url, "index") === pagePath.getPath())) {
                 found = true;
