@@ -1,34 +1,40 @@
 const _path = require("path");
 const express = require("express");
+const chokidar = require("chokidar");
 const FireJS = require("./index");
 const StaticArchitect = require("./architects/static.architect");
+const PageArchitect = require("./architects/page.architect");
+const MapComponent = require("./classes/MapComponent");
+const PagePath = require("./classes/PagePath");
+const PluginMapper = require("./mappers/plugin.mapper");
 const server = express();
 const app = new FireJS({});
 const $ = app.getContext();
 const {config: {paths}} = $;
 const staticArchitect = new StaticArchitect($)
+const pageArchitect = new PageArchitect($);
+const pluginMapper = new PluginMapper($);
 const pageDataRelative = `/${_path.relative(paths.dist, paths.pageData)}/`;
 const libRelative = `/${_path.relative(paths.dist, paths.lib)}/`;
-app.build().then(
-    () => {
-        console.log("done");
-        $.externals.forEach(external =>
-            server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
-        server.use((req, res, next) => {
-            if (req.url.startsWith(pageDataRelative)) {
-                getPageData(req, res);
-            } else if (req.url.startsWith(libRelative)) {
-                getLib(req, res);
-            } else {
-                getPage(req, res)
-            }
-            next();
-        });
-        server.listen(5000, _ => {
-            console.log("listening on port 5000");
-        })
-    }
-);
+
+app.mapPluginsAndBuildExternals().then(_ => {
+    chokidar.watch(paths.pages).on('add', buildPage).on('change', buildPage);//watch changes
+    $.externals.forEach(external =>//externals
+        server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
+    server.use((req, res, next) => {
+        if (req.url.startsWith(pageDataRelative)) {
+            getPageData(req, res);
+        } else if (req.url.startsWith(libRelative)) {
+            getLib(req, res);
+        } else {
+            getPage(req, res)
+        }
+        next();
+    });
+    server.listen(5000, _ => {
+        console.log("listening on port 5000");
+    })
+})
 
 function getPageData(req, res) {
     let found = false;
@@ -71,4 +77,22 @@ function getPage(req, res) {
     })
     if (!found)
         res.status(404);
+}
+
+function buildPage(path) {
+    const rel_page = path.replace(paths.pages + "/", "")
+    let mapComponent = $.map.get(rel_page);
+    if (!mapComponent) {
+        mapComponent = new MapComponent(rel_page);
+        $.map.set(rel_page, mapComponent);
+    }
+    pageArchitect.buildDirect(mapComponent).then(() => {
+        let path = mapComponent.getPage();
+        path = "/" + path.substring(0, path.lastIndexOf(".js"));
+        mapComponent.paths.push(new PagePath(path, undefined, $));
+        pluginMapper.applyPlugin(mapComponent);
+        console.log(`Successfully built page ${mapComponent.getPage()}`);
+    }).catch(err => {
+        throw err
+    });
 }

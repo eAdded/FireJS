@@ -9,10 +9,13 @@ module.exports = class {
 
 
     buildExternals() {
-        this.build(new WebpackArchitect(this.#$).externals(), stat => {
-            stat.compilation.chunks.forEach(chunk => {
-                this.#$.externals.push(...chunk.files);
-            })
+        return new Promise((resolve, reject) => {
+            this.build(new WebpackArchitect(this.#$).externals(), stat => {
+                stat.compilation.chunks.forEach(chunk => {
+                    this.#$.externals.push(...chunk.files);
+                })
+                resolve();
+            },reject)
         })
     }
 

@@ -29,19 +29,23 @@ module.exports = class {
         this.#$.webpackConfig = webpackConfig || new WebpackArchitect(this.#$).readUserConfig();
     }
 
-    build() {
-        const buildRegistrar = new BuildRegistrar(this.#$);
+    mapPluginsAndBuildExternals() {
         const pageArchitect = new PageArchitect(this.#$);
         const pluginMapper = new PluginMapper(this.#$);
-        this.#$.cli.log("Building Externals");
-        pageArchitect.buildExternals();
         this.#$.cli.log("Mapping Plugins");
         pluginMapper.mapPlugins();
-        this.#$.cli.log("Building Pages");
+        this.#$.cli.log("Building Externals");
+        return pageArchitect.buildExternals()
+    }
+
+    //only build pages in production because server builds it in dev
+    buildPro() {
         const promises = [];
-        for (const mapComponent of this.#$.map.values()) {
-            promises.push(new Promise(resolve => {
-                if (this.#$.config.pro)
+        this.mapPluginsAndBuildExternals().then((_) => {
+            const buildRegistrar = new BuildRegistrar(this.#$);
+            this.#$.cli.log("Building Pages");
+            for (const mapComponent of this.#$.map.values())
+                promises.push(new Promise(resolve => {
                     pageArchitect.buildBabel(mapComponent).then(_ => {
                         buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
                             pageArchitect.buildDirect(mapComponent).then(_ => {
@@ -57,16 +61,8 @@ module.exports = class {
                     }).catch(err => {
                         throw err
                     });
-                else
-                    pageArchitect.buildDirect(mapComponent).then(() => {
-                        resolve();
-                        this.#$.cli.ok(`Successfully built page ${mapComponent.getPage()}`);
-                        pluginMapper.applyPlugin(mapComponent);
-                    }).catch(err => {
-                        throw err
-                    });
-            }));
-        }
+                }));
+        });
         return Promise.all(promises)
     }
 
