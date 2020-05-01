@@ -28,6 +28,9 @@
     "style-loader": "^1.2.0",
     "webpack": "^4.43.0"
   },
+  "bin": {
+    "firejs": "./firejs.js"
+  },
   "bugs": {
     "url": "https://github.com/eAdded/firejs/issues"
   },
