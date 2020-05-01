@@ -16,27 +16,19 @@ module.exports = class {
     }
 
     mapPlugin(path) {
-        const plugData = require(path);
-        Object.keys(plugData).forEach(page => {
+        const plugin = require(path);
+        for (const page in plugin){
             const mapComponent = this.#$.map.get(page);
             if (!mapComponent) //check if this page exists
                 throw new TypeError(`page ${page} either does not exists or is not mapped`);
-            mapComponent.plugin = plugData;
-            /*this.parsePagePaths(page, plugData[page], (path, content) => {
-                const pagePath = new PagePath(path, content, this.#$);
-                mapComponent.getPaths().set(path, pagePath);
-                if (this.#$.config.pro)
-
-            }, reason => {
-                this.#$.cli.error(new Error(`Error in plugin ${path}`));
-                throw reason;
-            });*/
-        });
+            mapComponent.plugin = plugin[page];
+        }
     }
 
     applyPlugin(mapComponent) {
         const pathArchitect = new PathArchitect(this.#$);
-        if (mapComponent.plugin)
+        mapComponent.paths = [];//reset paths
+        if (mapComponent.plugin) {
             this.parsePagePaths(mapComponent.plugin, (path, content) => {
                 const pagePath = new PagePath(path, content, this.#$);
                 if (this.#$.config.pro) {
@@ -50,13 +42,13 @@ module.exports = class {
             }, err => {
                 throw err;
             })
-        else {
+        }else {
             //make default page
             let path = mapComponent.getPage();
             path = "/" + path.substring(0, path.lastIndexOf(".js"));
             const pagePath = new PagePath(path, undefined, this.#$);
             if (this.#$.config.pro) {
-                pathArchitect.writePath(path, pagePath);//write html when pro
+                pathArchitect.writePath(mapComponent, pagePath);//write html when pro
             } else
                 mapComponent.paths.push(pagePath);//push when dev
         }

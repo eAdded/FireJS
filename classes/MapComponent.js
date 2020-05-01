@@ -7,7 +7,7 @@ module.exports = class {
     chunks = [];
     babelChunk;
     stat = {};
-    plugin = {};
+    plugin = undefined;
 
     constructor(page) {
         this.#page = page;
