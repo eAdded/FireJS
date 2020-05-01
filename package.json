@@ -5,6 +5,9 @@
   "license": "MIT",
   "devDependencies": {},
   "description": "Highly customizable no config react static site generator",
+  "keywords": [
+    "react","react-static","firejs"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/eAdded/firejs.git"
