@@ -39,7 +39,9 @@ module.exports = class {
     }
 
     //only build pages in production because server builds it in dev
-    buildPro() {
+    buildPro(callback) {
+        const pluginMapper = new PluginMapper(this.#$);
+        const pageArchitect = new PageArchitect(this.#$);
         const promises = [];
         this.mapPluginsAndBuildExternals().then((_) => {
             const buildRegistrar = new BuildRegistrar(this.#$);
@@ -62,8 +64,8 @@ module.exports = class {
                         throw err
                     });
                 }));
+            Promise.all(promises).then(_ => callback());
         });
-        return Promise.all(promises)
     }
 
     getContext() {

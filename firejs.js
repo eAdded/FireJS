@@ -2,7 +2,7 @@
 const FireJS = require("./index");
 const app = new FireJS({});
 if(app.getContext().config.pro)
-    app.buildPro().then(_=>console.log("DONE")).catch(err=>{throw err});
+    app.buildPro(()=>{console.log("DONE")});
 else {
     require("./server")(app);
 }
