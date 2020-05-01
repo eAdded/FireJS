@@ -19,28 +19,34 @@ module.exports = class {
     buildBabel(mapComponent) {
         return new Promise((resolve, reject) => {
             this.build(new WebpackArchitect(this.#$).babel(mapComponent), stat => {
-                this.logStat(stat);
-                mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
-                stat.compilation.chunks.forEach(chunk => {
-                    chunk.files.forEach(file => {
-                        if (file !== mapComponent.babelChunk)//don't add babel main
-                            mapComponent.chunks.push(file);
-                    })
-                });
-                resolve();
-            }, reject);
+                if (this.logStat(stat))//true if errors
+                    reject();
+                else {
+                    mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
+                    stat.compilation.chunks.forEach(chunk => {
+                        chunk.files.forEach(file => {
+                            if (file !== mapComponent.babelChunk)//don't add babel main
+                                mapComponent.chunks.push(file);
+                        })
+                    });
+                    resolve();
+                }
+            }, err => reject({err}));
         })
     }
 
     buildDirect(mapComponent) {
         return new Promise((resolve, reject) => {
             this.build(new WebpackArchitect(this.#$).direct(mapComponent), stat => {
-                this.logStat(stat);
                 mapComponent.stat = stat;//set stat
-                stat.compilation.chunks.forEach(chunk => {
-                    mapComponent.chunks.push(...chunk.files);
-                });
-                resolve();
+                if (this.logStat(stat))//true if errors
+                    reject();
+                else {
+                    stat.compilation.chunks.forEach(chunk => {
+                        mapComponent.chunks.push(...chunk.files);
+                    });
+                    resolve();
+                }
             }, reject);
         });
     }
@@ -56,30 +62,23 @@ module.exports = class {
 
     logStat(stat) {
         let errorCount = 0;
-        let warningCount = 0;
-        this.#$.cli.log(`Built chunk ${stat.compilation.name}`)
         if (this.#$.args["--verbose"]) {
             this.#$.cli.log("Stat");
             this.#$.cli.normal(stat);
         }
-        if (stat.hasErrors()) {
-            if (stat.compilation.errors.length === 0) {
-                this.#$.cli.error(`Error in config ${stat.compilation.name}`)
-                errorCount++;
-            } else {
-                this.#$.cli.error(`Error in config ${stat.compilation.name}\n`, ...stat.compilation.errors);
-                errorCount += stat.compilation.errors.length;
-            }
-        }
         if (stat.hasWarnings()) {
-            this.#$.cli.warn(`Warning in config ${stat.compilation.name}\n`, ...stat.compilation.warnings);
-            warningCount += stat.compilation.warnings.length;
+            this.#$.cli.warn(`Warning in page ${stat.compilation.name}\n`, ...stat.compilation.warnings);
         }
-        if (errorCount > 0) {
+        if (stat.hasErrors()) {
+            if (stat.compilation.errors.length === 0)
+                this.#$.cli.error(`Error in page ${stat.compilation.name}`)
+            else {
+                this.#$.cli.error(`Error in page ${stat.compilation.name}\n`, ...stat.compilation.errors);
+            }
             if (this.#$.config.pro)
                 this.#$.cli.log("Some errors might not be displayed in production mode. Try moving to development mode.")
-            this.#$.cli.error(`Compilation failed with ${errorCount} error(s) and ${warningCount} warnings(s)`)
-        } else
-            this.#$.cli.ok(`Compiled successfully with ${errorCount} error(s) and ${warningCount} warnings(s)`)
+            this.#$.cli.error(`Unable to build page ${stat.compilation.name} with ${errorCount} error(s)`)
+            return true;
+        }
     }
 }

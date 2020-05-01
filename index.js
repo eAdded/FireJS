@@ -34,7 +34,7 @@ module.exports = class {
     build() {
         const buildRegistrar = new BuildRegistrar(this.#$);
         const pageArchitect = new PageArchitect(this.#$);
-     //   new PluginDataMapper(this.#$).mapPlugins();
+        //   new PluginDataMapper(this.#$).mapPlugins();
         pageArchitect.buildExternals();
         for (const mapComponent of this.#$.map.values()) {
             if (this.#$.config.pro)
@@ -42,15 +42,17 @@ module.exports = class {
                     buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
                         pageArchitect.buildDirect(mapComponent).then(_ => {
                             buildRegistrar.registerComponentForBuild(mapComponent).then(_ => {
-                                console.log("Done page " + mapComponent.getPage());
+                                this.#$.cli.ok(`Successfully built page ${mapComponent.getPage()}`)
                             }).catch(err => {throw err});
-                        }).catch(err => {throw err})
-                    }).catch(err => {throw err})
-                }).catch(err => {throw err})
+                        }).catch(({err}) => {throw err});
+                    }).catch(err => {throw err});
+                }).catch((err) => {throw err});
             else {
                 pageArchitect.buildDirect(mapComponent).then(_ => {
-                    console.log("Done page" + mapComponent.getPage());
-                }).catch(er=>{console.log(er)})
+                    this.#$.cli.ok(`Successfully built page ${mapComponent.getPage()}`)
+                }).catch(er => {
+                    console.log(er)
+                })
             }
         }
     }
@@ -58,5 +60,4 @@ module.exports = class {
     getContext() {
         return this.#$;
     }
-
 }
