@@ -14,17 +14,11 @@ Highly customizable no config react static site generator built on the principle
  - Easy dynamic routes  
   
 ## Why another React Static Site Gen... ?  
-This project was ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **FireJS**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.  
-  
+This project was ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **FireJS**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.    
     
 ## Install
-via yarn
 ~~~
-yarn global add @eadded/firejs
-~~~  
-via npm
-~~~
-mpm install @eadded/firejs -g
+yarn add @eadded/firejs
 ~~~  
 ##  Args
 ~~~  
@@ -37,7 +31,7 @@ mpm install @eadded/firejs -g
 ## Hello World
 Run the command below to start dev server. Pass args as needed.
 ~~~
-firejs
+yarn run firejs
 ~~~
 ## Project Structure  
 Below is a typical project structure which can be highly modified using firejs.config.js  
