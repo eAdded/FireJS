@@ -15,43 +15,41 @@ module.exports = class {
                     this.#$.externals.push(...chunk.files);
                 })
                 resolve();
-            },reject)
+            }, reject)
         })
     }
 
-    buildBabel(mapComponent) {
-        return new Promise((resolve, reject) => {
-            this.build(new WebpackArchitect(this.#$).babel(mapComponent), stat => {
-                if (this.logStat(stat))//true if errors
-                    reject();
-                else {
-                    mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
-                    stat.compilation.chunks.forEach(chunk => {
-                        chunk.files.forEach(file => {
-                            if (file !== mapComponent.babelChunk)//don't add babel main
-                                mapComponent.chunks.push(file);
-                        })
-                    });
-                    resolve();
-                }
-            }, err => reject({err}));
-        })
+    buildBabel(mapComponent, resolve, reject) {
+        this.build(new WebpackArchitect(this.#$).babel(mapComponent), stat => {
+            if (this.logStat(stat))//true if errors
+                reject();
+            else {
+                mapComponent.chunks = [];
+                mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
+                stat.compilation.chunks.forEach(chunk => {
+                    chunk.files.forEach(file => {
+                        if (file !== mapComponent.babelChunk)//don't add babel main
+                            mapComponent.chunks.push(file);
+                    })
+                });
+                resolve();
+            }
+        }, err => reject(err));
     }
 
-    buildDirect(mapComponent) {
-        return new Promise((resolve, reject) => {
-            this.build(new WebpackArchitect(this.#$).direct(mapComponent), stat => {
-                mapComponent.stat = stat;//set stat
-                if (this.logStat(stat))//true if errors
-                    reject();
-                else {
-                    stat.compilation.chunks.forEach(chunk => {
-                        mapComponent.chunks.push(...chunk.files);
-                    });
-                    resolve();
-                }
-            }, reject);
-        });
+    buildDirect(mapComponent, resolve, reject) {
+        this.build(new WebpackArchitect(this.#$).direct(mapComponent), stat => {
+            mapComponent.stat = stat;//set stat
+            if (this.logStat(stat))//true if errors
+                reject();
+            else {
+                mapComponent.chunks = [];
+                stat.compilation.chunks.forEach(chunk => {
+                    mapComponent.chunks.push(...chunk.files);
+                });
+                resolve();
+            }
+        }, reject);
     }
 
     build(config, resolve, reject) {

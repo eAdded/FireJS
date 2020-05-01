@@ -48,19 +48,19 @@ module.exports = class {
             this.#$.cli.log("Building Pages");
             for (const mapComponent of this.#$.map.values())
                 promises.push(new Promise(resolve => {
-                    pageArchitect.buildBabel(mapComponent).then(_ => {
+                    pageArchitect.buildBabel(mapComponent, _ => {
                         buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
-                            pageArchitect.buildDirect(mapComponent).then(_ => {
+                            pageArchitect.buildDirect(mapComponent, _ => {
                                 resolve();
                                 this.#$.cli.ok(`Successfully built page ${mapComponent.getPage()}`)
                                 pluginMapper.applyPlugin(mapComponent);
-                            }).catch(err => {
+                            }, err => {
                                 throw err
                             });
                         }).catch(err => {
                             throw err
                         });
-                    }).catch(err => {
+                    }, err => {
                         throw err
                     });
                 }));

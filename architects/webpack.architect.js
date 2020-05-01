@@ -112,11 +112,12 @@ module.exports = class {
         return mergedConfig;
     }
 
-    direct(mapComponent,user_config) {
+    direct(mapComponent, user_config) {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
             mode: this.#$.config.pro ? "production" : "development",
+            watch: !this.#$.config.pro,
             //add config base to user config to prevent undefined errors
             ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.#$.webpackConfig),
             //settings un-touchable by user

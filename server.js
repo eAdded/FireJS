@@ -18,7 +18,12 @@ module.exports = (app) => {
     const libRelative = `/${_path.relative(paths.dist, paths.lib)}/`;
 
     app.mapPluginsAndBuildExternals().then(_ => {
-        chokidar.watch(paths.pages).on('add', buildPage).on('change', buildPage);//watch changes
+        chokidar.watch(paths.pages)//watch changes
+            .on('add', buildPage)
+            .on('unlink', path => {
+                const rel_page = path.replace(paths.pages + "/", "")
+                $.map.delete(rel_page);
+            });
         $.externals.forEach(external =>//externals
             server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
         server.use((req, res, next) => {
@@ -85,14 +90,14 @@ module.exports = (app) => {
             mapComponent = new MapComponent(rel_page);
             $.map.set(rel_page, mapComponent);
         }
-        pageArchitect.buildDirect(mapComponent).then(() => {
+        pageArchitect.buildDirect(mapComponent, _ => {
             let path = mapComponent.getPage();
             path = "/" + path.substring(0, path.lastIndexOf(".js"));
             mapComponent.paths.push(new PagePath(path, undefined, $));
             pluginMapper.applyPlugin(mapComponent);
             $.cli.ok(`Successfully built page ${mapComponent.getPage()}`);
-        }).catch(err => {
-            throw err
+        }, err => {
+            $.cli.error(`Error while building page ${mapComponent.getPage()}`,err);
         });
     }
 }
