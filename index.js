@@ -5,9 +5,7 @@ const PageArchitect = require("./architects/page.architect");
 const WebpackArchitect = require("./architects/webpack.architect");
 const Cli = require("./utils/cli-color");
 const PluginMapper = require("./mappers/plugin.mapper");
-const PathArchitect = require("./architects/path.architect");
 const BuildRegistrar = require("./registrars/build.registrar");
-const StaticArchitect = require("./architects/static.architect");
 const _path = require("path");
 const fs = require("fs");
 module.exports = class {
@@ -40,31 +38,36 @@ module.exports = class {
         this.#$.cli.log("Mapping Plugins");
         pluginMapper.mapPlugins();
         this.#$.cli.log("Building Pages");
-        if (this.#$.config.pro)
-            for (const mapComponent of this.#$.map.values()) {
-                pageArchitect.buildBabel(mapComponent).then(_ => {
-                    buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
-                        pageArchitect.buildDirect(mapComponent).then(_ => {
-                            this.#$.cli.ok(`Successfully built page ${mapComponent.getPage()}`)
-                            pluginMapper.applyPlugin(mapComponent);
+        const promises = [];
+        for (const mapComponent of this.#$.map.values()) {
+            promises.push(new Promise(resolve => {
+                if (this.#$.config.pro)
+                    pageArchitect.buildBabel(mapComponent).then(_ => {
+                        buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
+                            pageArchitect.buildDirect(mapComponent).then(_ => {
+                                resolve();
+                                this.#$.cli.ok(`Successfully built page ${mapComponent.getPage()}`)
+                                pluginMapper.applyPlugin(mapComponent);
+                            }).catch(err => {
+                                throw err
+                            });
                         }).catch(err => {
                             throw err
                         });
                     }).catch(err => {
                         throw err
                     });
-                }).catch(err => {
-                    throw err
-                });
-            }
-        else
-            for (const mapComponent of this.#$.map.values())
-                pageArchitect.buildDirect(mapComponent).then(() => {
-                    this.#$.cli.ok(`Successfully built page ${mapComponent.getPage()}`);
-                    pluginMapper.applyPlugin(mapComponent);
-                }).catch(err => {
-                    throw err
-                });
+                else
+                    pageArchitect.buildDirect(mapComponent).then(() => {
+                        resolve();
+                        this.#$.cli.ok(`Successfully built page ${mapComponent.getPage()}`);
+                        pluginMapper.applyPlugin(mapComponent);
+                    }).catch(err => {
+                        throw err
+                    });
+            }));
+        }
+        return Promise.all(promises)
     }
 
     getContext() {

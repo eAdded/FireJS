@@ -9,9 +9,9 @@ const {config: {paths}} = $;
 const staticArchitect = new StaticArchitect()
 const pageDataRelative = `/${_path.relative(paths.dist, paths.pageData)}/`;
 const libRelative = `/${_path.relative(paths.dist, paths.lib)}/`;
-
 app.build().then(
     () => {
+        console.log("done");
         $.externals.forEach(external =>
             server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
         server.use((req, res, next) => {
