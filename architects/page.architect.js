@@ -26,10 +26,10 @@ module.exports = class {
             else {
                 mapComponent.chunks = [];
                 Object.keys(stat.compilation.assets).some(value => {
-                    if(value.startsWith("c")){//rest chunks start with a number
+                    if (value.startsWith("c")) {//rest chunks start with a number
                         mapComponent.babelChunk = value;
                         return true;
-                    }else
+                    } else
                         return false;
                 });
                 stat.compilation.chunks.forEach(chunk => {
@@ -49,6 +49,8 @@ module.exports = class {
             if (this.logStat(stat))//true if errors
                 reject();
             else {
+                if (!this.#$.config.pro)//re init in dev mode for new chunks
+                    mapComponent.chunks = [];
                 stat.compilation.chunks.forEach(chunk => {
                     mapComponent.chunks.push(...chunk.files);
                 });
