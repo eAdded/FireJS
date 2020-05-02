@@ -69,13 +69,21 @@ module.exports = class {
             //add config base to user config to prevent undefined errors
             ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.#$.webpackConfig),
             //settings un-touchable by user
+            optimization: {
+                splitChunks: {
+                    chunks: 'all',
+                    minChunks: Infinity
+                },
+                usedExports: true,
+                minimize: true
+            },
         };
-        //very important for css path
         mergedConfig.name = mapComponent.getPage();
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         mergedConfig.entry = path.join(this.#$.config.paths.pages, mapComponent.getPage());
         mergedConfig.output.path = this.#$.config.paths.babel;
-        mergedConfig.output.filename = "chunk[contentHash].js";
+        mergedConfig.output.filename = `m[contentHash].js`;
+        mergedConfig.output.chunkFilename = "c[contentHash].js";
         mergedConfig.output.globalObject = "this";
         mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
         mergedConfig.externals.React = "React";
@@ -105,7 +113,7 @@ module.exports = class {
         );
         mergedConfig.plugins.push(
             new MiniCssExtractPlugin({
-                filename: "chunk[contentHash].css"
+                filename: "c[contentHash].css"
             }),
         );
         return mergedConfig;
@@ -120,14 +128,6 @@ module.exports = class {
             //add config base to user config to prevent undefined errors
             ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.#$.webpackConfig),
             //settings un-touchable by user
-            optimization: {
-                splitChunks: {
-                    chunks: 'all',
-                    minChunks: Infinity
-                },
-                usedExports: true,
-                minimize: true
-            },
         };
 
         mergedConfig.externals.React = "React";
@@ -160,7 +160,7 @@ module.exports = class {
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
         mergedConfig.name = mapComponent.getPage();
         //path before file name is important cause it allows easy routing during development
-        mergedConfig.output.filename = "chunk[contentHash].js";
+        mergedConfig.output.filename = "m[contentHash].js";
         if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = this.#$.config.paths.lib;
         }

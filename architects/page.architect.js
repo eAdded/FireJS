@@ -26,11 +26,10 @@ module.exports = class {
             else {
                 mapComponent.chunks = [];
                 Object.keys(stat.compilation.assets).some(value => {
-                    if (value.startsWith("c")) {//rest chunks start with a number
+                    if (value.startsWith("m")) {//rest chunks start with a number
                         mapComponent.babelChunk = value;
                         return true;
-                    } else
-                        return false;
+                    }
                 });
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
