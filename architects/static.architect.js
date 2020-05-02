@@ -1,5 +1,5 @@
-const {renderToString} = require("react-dom/server");
 const _path = require("path");
+const {renderToString} = require("react-dom/server");
 module.exports = class {
     #$;
 
@@ -22,21 +22,22 @@ module.exports = class {
         });
         return template.replace(
             this.#$.config.templateTags.static,
-            "<div id='root'>".concat(
-                (() => {
+            "<div id='root'>".concat((() => {
                     if (this.#$.config.pro) {
                         global.window = {};
                         global.document = {};
                         global.__SSR__ = true;
                         global.React = require("react");
+                        global.ReactDOM = require("react-dom");
                         return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, {
                             path: pagePath.getPath(),
                             content: pagePath.getContent()
                         }, undefined))
-                    } else
-                        return "";
-                })()
-                , "</div>"));
+                    }else
+                        return ""
+                })(),
+                "</div>"
+            ));
     }
 
     addChunk(template, chunk, root) {
