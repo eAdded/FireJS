@@ -169,7 +169,7 @@ module.exports = class {
         mergedConfig.name = mapComponent.getPage();
         //path before file name is important cause it allows easy routing during development
         mergedConfig.output.filename = `m[contentHash].js`;
-     //   mergedConfig.output.chunkFilename = "c[contentHash].js";
+        mergedConfig.output.chunkFilename = "c[contentHash].js";
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = this.#$.config.paths.lib;
