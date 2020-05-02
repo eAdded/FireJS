@@ -71,8 +71,7 @@ module.exports = class {
             //settings un-touchable by user
         };
         //very important for css path
-        mergedConfig.output.chunkFilename = '[name][hash].js';
-        mergedConfig.output.filename = "[name][hash].js";
+        mergedConfig.output.filename = "chunk.[contentHash].js";
         mergedConfig.output.globalObject = "this";
         mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
         mergedConfig.externals.React = "React";
@@ -161,7 +160,7 @@ module.exports = class {
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
         mergedConfig.name = mapComponent.getPage();
         //path before file name is important cause it allows easy routing during development
-        mergedConfig.output.filename = "[name][hash].js";
+        mergedConfig.output.filename = "chunk.[contentHash].js";
         if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = path.join(this.#$.config.paths.lib, mapComponent.getDir());
         }
