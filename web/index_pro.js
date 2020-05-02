@@ -1,1 +1,1 @@
-ReactDOM.hydrate(React.createElement(App.default,{content : window.___PAGE_CONTENT___}), document.getElementById("root"));
+ReactDOM.hydrate(React.createElement(App.default,{path:window.__PATH__ ,content : window.___PAGE_CONTENT___}), document.getElementById("root"));

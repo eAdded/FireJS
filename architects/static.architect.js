@@ -8,7 +8,9 @@ module.exports = class {
     }
 
     render(mapComponent, pagePath) {
-        let template = this.#$.template
+        let template = this.#$.template;
+        template = template.replace(this.#$.config.templateTags.head, `<script>window.__PATH__="${pagePath.getPath()}"</script>${this.#$.config.templateTags.head}`);
+
         this.#$.externals.forEach(external => {//externals are same for all paths
             template = this.addChunk(template, external);
         });
@@ -27,7 +29,10 @@ module.exports = class {
                         global.document = {};
                         global.__SSR__ = true;
                         global.React = require("react");
-                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, {content: pagePath.getContent()}, undefined))
+                        return renderToString(React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default, {
+                            path: pagePath.getPath(),
+                            content: pagePath.getContent()
+                        }, undefined))
                     } else
                         return "";
                 })()
