@@ -45,7 +45,7 @@ module.exports = class {
         }else {
             //make default page
             let path = mapComponent.getPage();
-            path = "/" + path.substring(0, path.lastIndexOf(".js"));
+            path = "/" + path.substring(0, path.lastIndexOf(mapComponent.getExt()));
             const pagePath = new PagePath(path, undefined, this.#$);
             if (this.#$.config.pro) {
                 pathArchitect.writePath(mapComponent, pagePath);//write html when pro

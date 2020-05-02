@@ -25,7 +25,13 @@ module.exports = class {
                 reject();
             else {
                 mapComponent.chunks = [];
-                mapComponent.babelChunk = `${mapComponent.getName()}${stat.hash}.js`;
+                Object.keys(stat.compilation.assets).some(value => {
+                    if(value.startsWith("c")){//rest chunks start with a number
+                        mapComponent.babelChunk = value;
+                        return true;
+                    }else
+                        return false;
+                });
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
                         if (file !== mapComponent.babelChunk)//don't add babel main
@@ -43,7 +49,6 @@ module.exports = class {
             if (this.logStat(stat))//true if errors
                 reject();
             else {
-                mapComponent.chunks = [];
                 stat.compilation.chunks.forEach(chunk => {
                     mapComponent.chunks.push(...chunk.files);
                 });
