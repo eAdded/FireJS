@@ -24,19 +24,7 @@ module.exports = class {
             if (this.logStat(stat))//true if errors
                 reject();
             else {
-                mapComponent.chunks = [];
-                Object.keys(stat.compilation.assets).some(value => {
-                    if (value.startsWith("m")) {//rest chunks start with a number
-                        mapComponent.babelChunk = value;
-                        return true;
-                    }
-                });
-                stat.compilation.chunks.forEach(chunk => {
-                    chunk.files.forEach(file => {
-                        if (file !== mapComponent.babelChunk)//don't add babel main
-                            mapComponent.chunks.push(file);
-                    })
-                });
+                filterMainChunk(stat, mapComponent, "babelChunk")
                 resolve();
             }
         }, err => reject(err));
@@ -48,11 +36,7 @@ module.exports = class {
             if (this.logStat(stat))//true if errors
                 reject();
             else {
-                if (!this.#$.config.pro)//re init in dev mode for new chunks
-                    mapComponent.chunks = [];
-                stat.compilation.chunks.forEach(chunk => {
-                    mapComponent.chunks.unshift(...chunk.files);//add at the top
-                });
+                filterMainChunk(stat, mapComponent, "directChunk")
                 resolve();
             }
         }, reject);
@@ -88,4 +72,15 @@ module.exports = class {
             return true;
         }
     }
+}
+
+function filterMainChunk(stat, mapComponent, property) {
+    stat.compilation.chunks.forEach(chunk => {
+        chunk.files.forEach(file => {
+            if (file.startsWith("m")) {
+                mapComponent[property] = file;
+            } else //don't add babel main
+                mapComponent.chunks.push(file);
+        })
+    });
 }

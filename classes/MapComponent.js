@@ -1,11 +1,11 @@
 module.exports = class {
     #page;
     #name;
-    #dir;
     #ext;
     paths = [];
     chunks = [];
     babelChunk;
+    directChunk;
     stat = {};
     plugin = undefined;
 

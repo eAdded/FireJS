@@ -89,6 +89,7 @@ module.exports = (app) => {
             mapComponent = new MapComponent(rel_page);
             $.map.set(rel_page, mapComponent);
         }
+        mapComponent.chunks = []; //re init for new chunks
         pageArchitect.buildDirect(mapComponent, _ => {
             let path = mapComponent.getPage();
             path = "/" + path.substring(0, path.lastIndexOf(".js"));
