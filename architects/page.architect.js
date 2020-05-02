@@ -52,7 +52,7 @@ module.exports = class {
                 if (!this.#$.config.pro)//re init in dev mode for new chunks
                     mapComponent.chunks = [];
                 stat.compilation.chunks.forEach(chunk => {
-                    mapComponent.chunks.push(...chunk.files);
+                    mapComponent.chunks.unshift(...chunk.files);//add at the top
                 });
                 resolve();
             }
