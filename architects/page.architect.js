@@ -32,6 +32,8 @@ module.exports = class {
 
     buildDirect(mapComponent, resolve, reject) {
         this.build(new WebpackArchitect(this.#$).direct(mapComponent), stat => {
+            if (!this.#$.config.pro)
+                mapComponent.chunks = []; //re init for new chunks
             mapComponent.stat = stat;//set stat
             if (this.logStat(stat))//true if errors
                 reject();
