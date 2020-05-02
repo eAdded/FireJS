@@ -21,8 +21,7 @@ module.exports = (app) => {
         chokidar.watch(paths.pages)//watch changes
             .on('add', buildPage)
             .on('unlink', path => {
-                const rel_page = path.replace(paths.pages + "/", "")
-                $.map.delete(rel_page);
+                $.map.delete(path.replace(paths.pages + "/", ""));
             });
         $.externals.forEach(external =>//externals
             server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
@@ -43,42 +42,42 @@ module.exports = (app) => {
 
     function getPageData(req, res) {
         let found = false;
-        $.map.forEach(mapComponent => {
-            for (const pagePath of mapComponent.paths) {
+        for (const mapComponent of $.map.values()) {
+            if ((found = mapComponent.paths.some(pagePath => {
                 if (req.url === `/${pagePath.getContentPath()}`) {
-                    found = true;
                     res.end("window.___PAGE_CONTENT___=".concat(JSON.stringify(pagePath.getContent())));
+                    return true;
                 }
-            }
-        })
+            }))) break;
+        }
         if (!found)
             res.status(404);
     }
 
     function getLib(req, res) {
         let found = false;
-        $.map.forEach(mapComponent => {
-            for (const assetName in mapComponent.stat.compilation.assets) {
-                if (req.url === _path.join(libRelative, mapComponent.getDir(), assetName)) {
-                    found = true;
-                    res.end(mapComponent.stat.compilation.assets[assetName]._value);
+        for (const mapComponent of $.map.values()) {
+            if ((found = Object.keys(mapComponent.stat.compilation.assets).some(asset_name => {
+                if (req.url === _path.join(libRelative, asset_name)) {
+                    res.end(mapComponent.stat.compilation.assets[asset_name]._value);
+                    return true;
                 }
-            }
-        })
+            }))) break
+        }
         if (!found)
             res.status(404);
     }
 
     function getPage(req, res) {
         let found = false;
-        $.map.forEach(mapComponent => {
-            for (const pagePath of mapComponent.paths) {
+        for (const mapComponent of $.map.values()) {
+            if ((found = mapComponent.paths.some(pagePath => {
                 if (req.url === pagePath.getPath() || (_path.join(req.url, "index") === pagePath.getPath())) {
-                    found = true;
                     res.end(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
+                    return true;
                 }
-            }
-        })
+            }))) break;
+        }
         if (!found)
             res.status(404);
     }
@@ -97,7 +96,7 @@ module.exports = (app) => {
             pluginMapper.applyPlugin(mapComponent);
             $.cli.ok(`Successfully built page ${mapComponent.getPage()}`);
         }, err => {
-            $.cli.error(`Error while building page ${mapComponent.getPage()}`,err);
+            $.cli.error(`Error while building page ${mapComponent.getPage()}`, err);
         });
     }
 }
