@@ -71,7 +71,11 @@ module.exports = class {
             //settings un-touchable by user
         };
         //very important for css path
-        mergedConfig.output.filename = "chunk.[contentHash].js";
+        mergedConfig.name = mapComponent.getPage();
+        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
+        mergedConfig.entry = path.join(this.#$.config.paths.pages, mapComponent.getPage());
+        mergedConfig.output.path = this.#$.config.paths.babel;
+        mergedConfig.output.filename = "chunk[contentHash].js";
         mergedConfig.output.globalObject = "this";
         mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
         mergedConfig.externals.React = "React";
@@ -101,13 +105,9 @@ module.exports = class {
         );
         mergedConfig.plugins.push(
             new MiniCssExtractPlugin({
-                filename: "[name][hash].css"
+                filename: "chunk[contentHash].css"
             }),
         );
-        mergedConfig.name = mapComponent.getPage();
-        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/${mapComponent.getDir()}/`;
-        mergedConfig.entry[mapComponent.getName()] = path.join(this.#$.config.paths.pages, mapComponent.getPage());
-        mergedConfig.output.path = path.join(this.#$.config.paths.babel, mapComponent.getDir());
         return mergedConfig;
     }
 
@@ -160,14 +160,14 @@ module.exports = class {
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
         mergedConfig.name = mapComponent.getPage();
         //path before file name is important cause it allows easy routing during development
-        mergedConfig.output.filename = "chunk.[contentHash].js";
+        mergedConfig.output.filename = "chunk[contentHash].js";
         if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
-            mergedConfig.output.path = path.join(this.#$.config.paths.lib, mapComponent.getDir());
+            mergedConfig.output.path = this.#$.config.paths.lib;
         }
-        mergedConfig.entry[mapComponent.getName()] = web_front_entry;
+        mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(
             new webpack.ProvidePlugin({
-                App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.getDir(), mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.getPage())
+                App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.getPage())
             }),
         );
         return mergedConfig;
