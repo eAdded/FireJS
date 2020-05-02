@@ -59,6 +59,7 @@ module.exports = (app) => {
         for (const mapComponent of $.map.values()) {
             if ((found = Object.keys(mapComponent.stat.compilation.assets).some(asset_name => {
                 if (req.url === _path.join(libRelative, asset_name)) {
+                    console.log(mapComponent.stat.compilation.assets[asset_name])
                     res.end(mapComponent.stat.compilation.assets[asset_name]._value);
                     return true;
                 }

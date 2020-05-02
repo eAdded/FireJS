@@ -48,7 +48,6 @@ module.exports = class {
             this.#$.cli.log("Building Pages");
             for (const mapComponent of this.#$.map.values())
                 promises.push(new Promise(resolve => {
-                    console.log(mapComponent.getPage())
                     pageArchitect.buildBabel(mapComponent, _ => {
                         buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
                             pageArchitect.buildDirect(mapComponent, _ => {

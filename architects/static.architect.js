@@ -8,14 +8,14 @@ module.exports = class {
     }
 
     render(mapComponent, pagePath) {
-        let template = this.#$.template;
-        template = template.replace(this.#$.config.templateTags.head, `<script>window.__PATH__="${pagePath.getPath()}"</script>${this.#$.config.templateTags.head}`);
+        let template = this.#$.template.replace(this.#$.config.templateTags.head, `<script>window.__PATH__="${pagePath.getPath()}"</script>${this.#$.config.templateTags.head}`);
 
         this.#$.externals.forEach(external => {//externals are same for all paths
             template = this.addChunk(template, external);
         });
         if (pagePath.hasContent())//if page has content then add it
             template = this.addChunk(template, pagePath.getContentPath(), "")
+
         template = this.addChunk(template, mapComponent.directChunk);
         mapComponent.chunks.forEach(chunk => {
             template = this.addChunk(template, chunk);

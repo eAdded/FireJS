@@ -78,7 +78,9 @@ module.exports = class {
 
 function filterMainChunk(stat, mapComponent, property) {
     stat.compilation.chunks.forEach(chunk => {
+        console.log(chunk);
         chunk.files.forEach(file => {
+            console.log(file);
             if (file.startsWith("m")) {
                 mapComponent[property] = file;
             } else //don't add babel main
