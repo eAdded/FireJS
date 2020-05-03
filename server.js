@@ -14,7 +14,7 @@ module.exports = (app) => {
     const staticArchitect = new StaticArchitect($)
     const pageArchitect = new PageArchitect($);
     const pluginMapper = new PluginMapper($);
-    const pageDataRelative = `/${_path.relative(paths.dist, paths.pageData)}/`;
+    const pageDataRelative = `/${_path.relative(paths.dist, paths.map)}/`;
     const libRelative = `/${_path.relative(paths.dist, paths.lib)}/`;
 
     app.mapPluginsAndBuildExternals().then(_ => {
@@ -44,8 +44,8 @@ module.exports = (app) => {
         let found = false;
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
-                if (req.url === `/${pagePath.getContentPath()}`) {
-                    res.end("window.___PAGE_CONTENT___=".concat(JSON.stringify(pagePath.getContent())));
+                if (req.url === `/${pagePath.getMapPath()}`) {
+                    res.end(`window.__MAP__=${JSON.stringify(pagePath.getMap())}`);
                     return true;
                 }
             }))) break;
@@ -59,7 +59,6 @@ module.exports = (app) => {
         for (const mapComponent of $.map.values()) {
             if ((found = Object.keys(mapComponent.stat.compilation.assets).some(asset_name => {
                 if (req.url === _path.join(libRelative, asset_name)) {
-                    console.log(mapComponent.stat.compilation.assets[asset_name])
                     res.end(mapComponent.stat.compilation.assets[asset_name]._value);
                     return true;
                 }
@@ -93,7 +92,7 @@ module.exports = (app) => {
         pageArchitect.buildDirect(mapComponent, _ => {
             let path = mapComponent.getPage();
             path = "/" + path.substring(0, path.lastIndexOf(".js"));
-            mapComponent.paths.push(new PagePath(path, undefined, $));
+            mapComponent.paths.push(new PagePath(mapComponent, path, undefined, $));
             pluginMapper.applyPlugin(mapComponent);
             $.cli.ok(`Successfully built page ${mapComponent.getPage()}`);
         }, err => {
