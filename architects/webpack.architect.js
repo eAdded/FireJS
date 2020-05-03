@@ -16,7 +16,8 @@ module.exports = class {
             mode: this.#$.config.pro ? "production" : "development",
             entry: {
                 "React": "react",
-                "ReactDOM": "react-dom"
+                "ReactDOM": "react-dom",
+                "ReactHelmet":"react-helmet"
             },
             output: {
                 path: this.#$.config.paths.lib,

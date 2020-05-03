@@ -42,7 +42,7 @@ module.exports = class {
                         global.document = {};
                         global.React = require("react");
                         global.ReactDOM = require("react-dom");
-                        global.Helmet = Helmet;
+                        global.ReactHelmet = {Helmet};
                         return renderToString(
                             React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default,
                                 {content: window.__MAP__.content},//cheap way of deep copy

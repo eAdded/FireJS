@@ -1,7 +1,7 @@
 export default ({children}) => {
     return (
-        <Helmet>
+        <ReactHelmet.Helmet>
             {children}
-        </Helmet>
+        </ReactHelmet.Helmet>
     )
 }
