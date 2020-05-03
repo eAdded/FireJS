@@ -77,6 +77,10 @@ module.exports = class {
                 usedExports: true,
                 minimize: true
             },
+            externals: {
+                'React': 'react',
+                'ReactDOM': 'react-dom',
+            }
         };
         mergedConfig.name = mapComponent.getPage();
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
@@ -136,6 +140,10 @@ module.exports = class {
                 usedExports: true,
                 minimize: true
             },
+            externals: {
+                'React': 'react',
+                'ReactDOM': 'react-dom',
+            }
         };
 
         mergedConfig.externals.React = "React";
