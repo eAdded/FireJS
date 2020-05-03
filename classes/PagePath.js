@@ -1,27 +1,28 @@
 const _path = require("path");
 module.exports = class {
     #path;
-    #content;
-    #contentPath;
+    #map = {
+        path: "",
+        chunks: [],
+        content: {},
+    };
+    #map_path;
 
-    constructor(path, content, $) {
+    constructor(mapComponent, path, content, $) {
         this.#path = path;
-        if (content) {
-            this.#content = content;
-            this.#contentPath = _path.join(_path.relative($.config.paths.dist, $.config.paths.pageData),path.concat(".js"));
+        this.#map = {
+            chunks: mapComponent.chunks,
+            content
         }
+        this.#map_path = _path.join(_path.relative($.config.paths.dist, $.config.paths.map), path.concat(".map.js"));
     }
 
-    hasContent() {
-        return !!this.#content;
+    getMap() {
+        return this.#map;
     }
 
-    getContent() {
-        return this.#content;
-    }
-
-    getContentPath() {
-        return this.#contentPath;
+    getMapPath() {
+        return this.#map_path;
     }
 
     getPath() {

@@ -17,7 +17,7 @@ module.exports = class {
 
     mapPlugin(path) {
         const plugin = require(path);
-        for (const page in plugin){
+        for (const page in plugin) {
             const mapComponent = this.#$.map.get(page);
             if (!mapComponent) //check if this page exists
                 throw new TypeError(`page ${page} either does not exists or is not mapped`);
@@ -30,11 +30,11 @@ module.exports = class {
         mapComponent.paths = [];//reset paths
         if (mapComponent.plugin) {
             this.parsePagePaths(mapComponent.plugin, (path, content) => {
-                const pagePath = new PagePath(path, content, this.#$);
+                const pagePath = new PagePath(mapComponent, path, content, this.#$);
                 if (this.#$.config.pro) {
                     FsUtil.writeFileRecursively(//write content
-                        _path.join(this.#$.config.paths.dist, pagePath.getContentPath()),
-                        "window.___PAGE_CONTENT___=".concat(JSON.stringify(content))
+                        _path.join(this.#$.config.paths.dist, pagePath.getMapPath()),
+                        `window.__MAP__=${JSON.stringify(pagePath.getMap())}`
                     );
                     pathArchitect.writePath(mapComponent, pagePath);//write html file
                 } else
@@ -42,12 +42,16 @@ module.exports = class {
             }, err => {
                 throw err;
             })
-        }else {
+        } else {
             //make default page
             let path = mapComponent.getPage();
             path = "/" + path.substring(0, path.lastIndexOf(mapComponent.getExt()));
-            const pagePath = new PagePath(path, undefined, this.#$);
+            const pagePath = new PagePath(mapComponent, path, {}, this.#$);
             if (this.#$.config.pro) {
+                FsUtil.writeFileRecursively(//write content
+                    _path.join(this.#$.config.paths.dist, pagePath.getMapPath()),
+                    `window.__MAP__=${JSON.stringify(pagePath.getMap())}`
+                );
                 pathArchitect.writePath(mapComponent, pagePath);//write html when pro
             } else
                 mapComponent.paths.push(pagePath);//push when dev

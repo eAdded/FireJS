@@ -1,1 +1,6 @@
-ReactDOM.render(React.createElement(App.default,{path:window.__PATH__ ,content : window.___PAGE_CONTENT___}), document.getElementById("root"));
+ReactDOM.render(React.createElement(
+    App.default,
+    {content: JSON.parse(JSON.stringify(window.__MAP__.content))}//SIMPLEST WAY TOO DEEP COPY
+    ),
+    document.getElementById("root")
+);

@@ -38,7 +38,14 @@ module.exports = class {
             if (this.logStat(stat))//true if errors
                 reject();
             else {
-                filterMainChunk(stat, mapComponent, "directChunk")
+                stat.compilation.chunks.forEach(chunk => {
+                    chunk.files.forEach(file => {
+                        if (file.startsWith("m")) {
+                            mapComponent.chunks.unshift(file);//add main chunk to the top
+                        } else
+                            mapComponent.chunks.push(file);
+                    })
+                });
                 resolve();
             }
         }, reject);
@@ -78,9 +85,7 @@ module.exports = class {
 
 function filterMainChunk(stat, mapComponent, property) {
     stat.compilation.chunks.forEach(chunk => {
-        console.log(chunk);
         chunk.files.forEach(file => {
-            console.log(file);
             if (file.startsWith("m")) {
                 mapComponent[property] = file;
             } else //don't add babel main

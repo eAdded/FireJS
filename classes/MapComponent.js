@@ -5,7 +5,6 @@ module.exports = class {
     paths = [];
     chunks = [];
     babelChunk;
-    directChunk;
     stat = {};
     plugin = undefined;
 
