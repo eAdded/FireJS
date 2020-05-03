@@ -1,5 +1,6 @@
 const _path = require("path");
 const {renderToString} = require("react-dom/server");
+const {Helmet} = require("react-helmet")
 module.exports = class {
     #$;
 
@@ -10,7 +11,13 @@ module.exports = class {
     render(mapComponent, pagePath) {
         let template = this.#$.template;
         //set globals
-        template = template.replace(this.#$.config.templateTags.head, `<script>window.__PATH__="${pagePath.getPath()}";window:__LIB_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}";window:__MAP_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.map)}"</script>${this.#$.config.templateTags.head}`)
+        template = this.addInnerHTML(template,
+            `<script>` +
+            `window.__PATH__="${pagePath.getPath()}";` +
+            `window:__LIB_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}";` +
+            `window:__MAP_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.map)}"` +
+            `</script>`,
+            "head");
         //add map script
         template = this.addChunk(template, pagePath.getMapPath(), "", "head");
         //add externals
@@ -21,7 +28,7 @@ module.exports = class {
         mapComponent.chunks.forEach(chunk => {
             template = this.addChunk(template, chunk);
         });
-        return template.replace(
+        template = template.replace(
             this.#$.config.templateTags.static,
             "<div id='root'>".concat((() => {
                     if (this.#$.config.pro) {
@@ -35,6 +42,7 @@ module.exports = class {
                         global.document = {};
                         global.React = require("react");
                         global.ReactDOM = require("react-dom");
+                        global.Helmet = Helmet;
                         return renderToString(
                             React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default,
                                 {content: window.__MAP__.content},//cheap way of deep copy
@@ -45,6 +53,12 @@ module.exports = class {
                 })(),
                 "</div>"
             ));
+        if (this.#$.config.pro) {
+            const helmet = Helmet.renderStatic();
+            for (let head_element in helmet)
+                template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
+        }
+        return template
     }
 
     addChunk(template, chunk, root, tag) {
@@ -59,6 +73,10 @@ module.exports = class {
             return template.replace(templateTags.head, `<link href="/${href}">${templateTags.head}`);
         else
             return template.replace(templateTags.unknown, `<link href="/${href}">${templateTags.unknown}`);
+    }
+
+    addInnerHTML(template, element, tag) {
+        return template.replace(this.#$.config.templateTags[tag], `${element}${this.#$.config.templateTags[tag]}`)
     }
 
     finalize(template) {

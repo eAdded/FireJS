@@ -35,8 +35,9 @@ module.exports = class {
                 rules: []
             },
             plugins: [],
-            externals: {}
+            externals: []
         }
+
     }
 
     readUserConfig() {
@@ -77,11 +78,8 @@ module.exports = class {
                 usedExports: true,
                 minimize: true
             },
-            externals: {
-                'React': 'react',
-                'ReactDOM': 'react-dom',
-            }
         };
+        mergedConfig.externals.push('react', 'react-dom', 'react-helmet')
         mergedConfig.name = mapComponent.getPage();
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         mergedConfig.entry = path.join(this.#$.config.paths.pages, mapComponent.getPage());
@@ -90,8 +88,6 @@ module.exports = class {
         mergedConfig.output.chunkFilename = "c[contentHash].js";
         mergedConfig.output.globalObject = "this";
         mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
-        mergedConfig.externals.React = "React";
-        mergedConfig.externals.ReactDOM = "ReactDOM";
         mergedConfig.module.rules.push({
                 test: /\.js$/,
                 use: {
@@ -139,15 +135,10 @@ module.exports = class {
                 },
                 usedExports: true,
                 minimize: true
-            },
-            externals: {
-                'React': 'react',
-                'ReactDOM': 'react-dom',
             }
         };
 
-        mergedConfig.externals.React = "React";
-        mergedConfig.externals.ReactDOM = "ReactDOM";
+        mergedConfig.externals.push('react', 'react-dom', 'react-helmet')
 
         if (!this.#$.config.pro) {
             mergedConfig.module.rules.push({
