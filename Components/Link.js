@@ -2,6 +2,8 @@ export default ({to, children, className}) => {
     let wasLoaded = false;
 
     function load(event, callback) {
+        if (wasLoaded)
+            return;
         const map_script = document.createElement("script");
         map_script.src = `/${window.__MAP_REL__}${to === "/" ? "/index" : to}.map.js`;//make preloaded js to execute
         document.head.appendChild(map_script);
