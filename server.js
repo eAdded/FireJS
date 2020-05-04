@@ -25,14 +25,15 @@ module.exports = (app) => {
             });
         $.externals.forEach(external =>//externals
             server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
+        if (paths.static)
+            server.use(`/${_path.relative(paths.root, paths.static)}`, express.static(paths.static));
         server.use((req, res, next) => {
-            if (req.url.startsWith(pageDataRelative)) {
+            if (req.url.startsWith(pageDataRelative))
                 getPageData(req, res);
-            } else if (req.url.startsWith(libRelative)) {
+            else if (req.url.startsWith(libRelative))
                 getLib(req, res);
-            } else {
+            else
                 getPage(req, res)
-            }
             next();
         });
         server.listen(5000, _ => {

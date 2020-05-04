@@ -114,6 +114,8 @@ module.exports = class {
         this.#makeDirIfNotFound(config.paths.map = config.paths.map ? this.#makeAbsolute(config.paths.lib, config.paths.map) : path.join(config.paths.lib, "__MAP__"));
         //configs
         this.#undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
+        //static dir
+        this.#undefinedIfNotFound(config.paths, "static", config.paths.root, "static", "static dir");
         //plugins
         if (!config.noPlugin) {
             this.#undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
