@@ -124,7 +124,7 @@ module.exports = {
         static: String,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
         head: String,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
         style: String,     //this is replaced by all page styles, default : "<%=STYLE=%>"
-        unknown: String    //files imported in pages other than [js,css] go here. Make sure use a webpack loader for these files, default : "<%=UNKNOWN=%>"
+        unknown: String    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
     },
     pages: {
         _404: String       //404 page
