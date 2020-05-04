@@ -49,16 +49,16 @@ module.exports = class {
 
     #throwIfNotFound = (name, pathTo) => {
         if (!fs.existsSync(pathTo)) {
-            this.#$.cli.error(`${name} not found`);
+            this.#$.cli.error(`${name} not found`,pathTo);
             throw new Error();
         }
     }
 
     #undefinedIfNotFound = (config, property, pathRoot, name, msg) => {
         if (config[property]) {
-            this.#throwIfNotFound(msg, config[property])
             config[property] = this.#makeAbsolute(pathRoot, config[property]);
-        } else if (!fs.existsSync(config[property] = path.join(pathRoot, name)))
+            this.#throwIfNotFound(msg, config[property])
+        } else if (!fs.existsSync(config[property] = path.resolve(pathRoot, name)))
             config[property] = undefined;
     }
 

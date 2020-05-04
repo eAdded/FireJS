@@ -26,7 +26,7 @@ module.exports = (app) => {
         $.externals.forEach(external =>//externals
             server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
         if (paths.static)
-            server.use(`/${_path.relative(paths.root, paths.static)}`, express.static(paths.static));
+            server.use(`${paths.static.substring(paths.static.lastIndexOf("/"))}`, express.static(paths.static));
         server.use((req, res, next) => {
             if (req.url.startsWith(pageDataRelative))
                 getPageData(req, res);
@@ -81,7 +81,6 @@ module.exports = (app) => {
         }
         if (!found) {
             const _404_MapComponent = $.map.get($.config.pages._404);
-            console.log($.config.pages._404)
             res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent, _404_MapComponent.paths[0])));
         }
     }
