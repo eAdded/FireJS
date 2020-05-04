@@ -57,7 +57,7 @@ module.exports = class {
     #undefinedIfNotFound = (config, property, pathRoot, name, msg) => {
         if (config[property]) {
             this.#throwIfNotFound(msg, config[property])
-            config[property] = this.#$.#makeAbsolute(pathRoot, config[property]);
+            config[property] = this.#makeAbsolute(pathRoot, config[property]);
         } else if (!fs.existsSync(config[property] = path.join(pathRoot, name)))
             config[property] = undefined;
     }
@@ -115,7 +115,7 @@ module.exports = class {
         //configs
         this.#undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
         //static dir
-        this.#undefinedIfNotFound(config.paths, "static", config.paths.root, "static", "static dir");
+        this.#undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
         if (!config.noPlugin) {
             this.#undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
