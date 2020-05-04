@@ -41,7 +41,8 @@ Project
 └─── src    
 │   └─── pages    
 │       │   index.js    
-│       │   about.js    
+│       │   about.js
+│       │   404.js
 │       │   ...    
 │    
 │   └─── plugins    
@@ -51,6 +52,7 @@ Project
 | firejs.config.js    
 | webpack.config.js    
 ```
+**Note** Make sure you create a 404 page. For links to work perfectly.
 ## Components
 **FireJS** exports two components : Link and Head
 
@@ -92,4 +94,42 @@ This plugin fetches some data from an api asynchronously and passes it to a rout
     
 File `api/name.js` which is found in src dir, is used to create the route `/api/corona`.
 
-**Note** This project is in a very early stage, with incomplete docs and un tested blocks. Do not use for production.
+## Modifying Config
+Create a *firejs.config.js* or specify a file using ```[-c,--config]``` flags.
+
+*Example*
+
+```
+module.exports = {
+    pro: Boolean,          //production mode when true, dev mode when false
+    noPlugin: Boolean,     //disable or enable plugins
+    paths: {               //paths absolute or relative to parent dir
+        root: String,      //project root, default : process.cwd()
+        src: String,       //src dir, default : root/src
+        pages: String,     //pages dir, default : root/src/pages
+        out: String,       //output dir, default : root/out
+        dist: String,      //production dist, default : root/out/dist
+        cache: String,     //fire js cache dir, default : root/out/.cache
+        babel: String,     //fire js production babel cache, default : root/out/.cache/babel
+        template: String,  //template file, default : inbuilt template file
+        lib: String,       //dir where chunks are exported, default : root/out/dist/__LIB__
+        map: String,       //dir where chunk map and page data is exported, default : root/out/dist/__LIB__/__MAP__
+        webpack: String,   //webpack config file, default : root/webpack.config.js
+        static: String,    //dir where page static elements are stored eg. images, default : root/src/static
+        plugins: String,   //plugins dir, default : root/src/plugins
+    },
+    plugins: Array,        //plugins, default : []
+    templateTags: {        //these tags need to exist if you pass custom template file
+        script: String,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
+        static: String,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
+        head: String,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
+        style: String,     //this is replaced by all page styles, default : "<%=STYLE=%>"
+        unknown: String    //files imported in pages other than [js,css] go here. Make sure use a webpack loader for these files, default : "<%=UNKNOWN=%>"
+    },
+    pages: {
+        _404: String       //404 page
+    }
+}
+```
+
+> **Note** This project is in a very early stage, with incomplete docs and un tested blocks. Do not use for production.
