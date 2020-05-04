@@ -79,8 +79,10 @@ module.exports = (app) => {
                 }
             }))) break;
         }
-        if (!found)
-            res.status(404);
+        if (!found) {
+            const _404_MapComponent = $.map.get("404.js");
+            res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent, _404_MapComponent.paths[0])));
+        }
     }
 
     function buildPage(path) {

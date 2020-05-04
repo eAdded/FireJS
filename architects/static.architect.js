@@ -14,8 +14,10 @@ module.exports = class {
         template = this.addInnerHTML(template,
             `<script>` +
             `window.__PATH__="${pagePath.getPath()}";` +
-            `window:__LIB_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}";` +
-            `window:__MAP_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.map)}"` +
+            `window.__LIB_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}";` +
+            `window.__MAP_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.map)}";` +
+            `window.__PAGES__={};` +
+            `window.__PAGES__._404="${this.#$.config.pages._404.substring(0,this.#$.config.pages._404.lastIndexOf("."))}";` +
             `</script>`,
             "head");
         //add map script

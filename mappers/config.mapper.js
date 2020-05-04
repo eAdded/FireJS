@@ -129,6 +129,9 @@ module.exports = class {
         config.templateTags.head = config.templateTags.head || "<%=HEAD=%>";
         config.templateTags.style = config.templateTags.style || "<%=STYLE=%>";
         config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
+        //pages
+        config.pages = config.pages || {};
+        config.pages._404 = config.pages._404 || "404.js"
         return config;
     }
 }
