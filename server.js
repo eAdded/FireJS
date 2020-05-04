@@ -80,7 +80,8 @@ module.exports = (app) => {
             }))) break;
         }
         if (!found) {
-            const _404_MapComponent = $.map.get("404.js");
+            const _404_MapComponent = $.map.get($.config.pages._404);
+            console.log($.config.pages._404)
             res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent, _404_MapComponent.paths[0])));
         }
     }
