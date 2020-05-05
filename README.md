@@ -1,5 +1,5 @@
 # FireJS
- Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.    
+ Highly customizable no config react static site generator built on the principles of Gatsby, NextJs and create-react-app.    
     
 ## Features    
     
@@ -12,7 +12,7 @@
  - Easy dynamic routes
     
 ## Why another React Static Site Gen... ?
- This project was ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **FireJS**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.  
+ This need of the project ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **FireJS**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.  
   
 ## Install  
 ~~~  
@@ -35,28 +35,31 @@ yarn run firejs
 Below is a typical project structure which can be highly modified using firejs.config.js    
 ```    
 Project    
-└─── out    
-|  └─── .cache    
-│  └─── dist    
+└─── out                    //output dir
+|   └─── .cache             //cache required during build
+│   └─── dist               //production output
+│       └─── lib            //chunks
+│           └─── map        //page dataa and chunks map
 └─── src    
-│   └─── pages    
+│   └─── pages              //all project pages go here
 │       │   index.js    
 │       │   about.js
-│       │   404.js
+│       │   404.js          //404.js is required for Link to work properly
 │       │   ...    
 │    
-│   └─── plugins    
+│   └─── plugins            //all plugins go here
 │       │   plugin-name.js    
-│       │   ...    
-|    
-| firejs.config.js    
-| webpack.config.js    
+│       │   ...
+│
+│   └─── static             //all static files go here. eg : images
+│       │   example.png
+| firejs.config.js          //default config file
+| webpack.config.js         //default webpack config file
 ```
-**Note** Make sure you create a 404 page. For links to work perfectly.
 ## Components
 **FireJS** exports two components : Link and Head
 
- - Link : Used for navigating pages (in project only). Preloads page content onMouseEnter
+ - Link : Used for navigating pages (in project only). Preloads page content onMouseEnter. Preserves history.
  - Head : Injects children to head element. A wrapper around react-helmet. Allows SSR.
 
 *Example*
@@ -75,24 +78,26 @@ export default () => {
 }
 ```
 ## Plugins
-Plugins are used to provide content and routes structure    
+Plugins can be used to provide content and route structures.
+
+Suppose you have a dynamic page *[author]/[article].js*. A plugin can be used to provide routes and page content. Eg: path */john/corona* ,a markdown can be passed as content
     
 *Sample Plugin* 
 ~~~    
 const axios = require('axios').default;      
 module.exports = {      
- "api/name.js": [     
+ "[author]/[article].js": [     
     async () => {     
        let content = await axios.get("https://api.thevirustracker.com/free-api?global=stats");    
        content = content.data;    
        return [    
-           { path: "/api/corona", content }    
+           { path: "/john/corona", content }    
        ]    
 }]}    
 ~~~    
 This plugin fetches some data from an api asynchronously and passes it to a route.    
     
-File `api/name.js` which is found in src dir, is used to create the route `/api/corona`.
+File `[author]/[article].js` which is found in pages dir, is used to create the route `/john/corona`.
 
 ## Modifying Config
 Create a *firejs.config.js* or specify a file using ```[-c,--config]``` flags.
@@ -127,8 +132,8 @@ module.exports = {
         unknown: String    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
     },
     pages: {
-        _404: String       //404 page
+        _404: String       //404 page, default : 404.js 
     }
 }
 ```
-> **Note** This project is in a very early stage, with incomplete docs and un tested blocks. Do not use for production.
+> **Note** This project is in a very early stage, with rapidly changing codebase. Do not use for production.
