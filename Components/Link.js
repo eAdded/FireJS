@@ -1,5 +1,6 @@
 export default ({to, children, className}) => {
     let wasLoaded = false;
+
     function load(event, callback) {
         if (wasLoaded)
             return;
@@ -17,7 +18,7 @@ export default ({to, children, className}) => {
             if (callback)
                 callback();
         };
-        const onerror = () => {
+        map_script.onerror = (ev) => {
             document.head.removeChild(map_script);
             const _404 = document.createElement("script");
             _404.src = `/${window.__MAP_REL__}/${window.__PAGES__._404}.map.js`;//make preloaded js to execute
@@ -25,7 +26,6 @@ export default ({to, children, className}) => {
             document.head.appendChild(_404);
         };
         map_script.onload = onload;
-        map_script.onerror = onerror;
         wasLoaded = true;
     }
 
