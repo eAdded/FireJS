@@ -10,12 +10,14 @@ module.exports = class {
 
     render(mapComponent, pagePath) {
         let template = this.#$.template;
+        const libRel = _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib);
+        const mapRel = _path.relative(this.#$.config.paths.dist, this.#$.config.paths.map);
         //set globals
         template = this.addInnerHTML(template,
             `<script>` +
             `window.__PATH__="${pagePath.getPath()}";` +
-            `window.__LIB_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}";` +
-            `window.__MAP_REL__="${_path.relative(this.#$.config.paths.dist, this.#$.config.paths.map)}";` +
+            `window.__LIB_REL__="${libRel}";` +
+            `window.__MAP_REL__="${mapRel}";` +
             `window.__PAGES__={};` +
             `window.__PAGES__._404="${this.#$.config.pages._404.substring(0,this.#$.config.pages._404.lastIndexOf("."))}";` +
             `</script>`,
@@ -35,10 +37,10 @@ module.exports = class {
             "<div id='root'>".concat((() => {
                     if (this.#$.config.pro) {
                         global.window = {
-                            __LIB_REL__: _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib),
+                            __LIB_REL__: libRel,
                             __MAP__: pagePath.getMap(),
                             __PATH__: pagePath.getPath(),
-                            __MAP_REL__: "/" + _path.relative(this.#$.config.paths.dist, this.#$.config.paths.map),
+                            __MAP_REL__: mapRel,
                             SSR: true
                         };
                         global.document = {};

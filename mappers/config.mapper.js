@@ -49,7 +49,7 @@ module.exports = class {
 
     #throwIfNotFound = (name, pathTo) => {
         if (!fs.existsSync(pathTo)) {
-            this.#$.cli.error(`${name} not found`,pathTo);
+            this.#$.cli.error(`${name} not found`, pathTo);
             throw new Error();
         }
     }
@@ -110,8 +110,8 @@ module.exports = class {
         this.#makeDirIfNotFound(config.paths.cache = config.paths.cache ? this.#makeAbsolute(config.paths.out, config.paths.cache) : path.join(config.paths.out, ".cache"));
         this.#makeDirIfNotFound(config.paths.babel = path.join(config.paths.cache, "babel"));
         config.paths.template = config.paths.template ? this.#makeAbsolute(config.paths.root, config.paths.template) : path.resolve(config.paths.root, "web/template.html")
-        this.#makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.#makeAbsolute(config.paths.dist, config.paths.lib) : path.join(config.paths.dist, "__LIB__"));
-        this.#makeDirIfNotFound(config.paths.map = config.paths.map ? this.#makeAbsolute(config.paths.lib, config.paths.map) : path.join(config.paths.lib, "__MAP__"));
+        this.#makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.#makeAbsolute(config.paths.dist, config.paths.lib) : path.join(config.paths.dist, "lib"));
+        this.#makeDirIfNotFound(config.paths.map = config.paths.map ? this.#makeAbsolute(config.paths.lib, config.paths.map) : path.join(config.paths.lib, "map"));
         //configs
         this.#undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
         //static dir
