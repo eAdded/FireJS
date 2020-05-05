@@ -106,12 +106,12 @@ module.exports = class {
         this.#throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.#makeAbsolute(config.paths.root, config.paths.pages) : path.join(config.paths.src, "pages"));
         //out
         this.#makeDirIfNotFound(config.paths.out = config.paths.out ? this.#makeAbsolute(config.paths.root, config.paths.out) : path.join(config.paths.root, "out"));
-        this.#makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.#makeAbsolute(config.paths.out, config.paths.dist) : path.join(config.paths.out, "dist"));
-        this.#makeDirIfNotFound(config.paths.cache = config.paths.cache ? this.#makeAbsolute(config.paths.out, config.paths.cache) : path.join(config.paths.out, ".cache"));
+        this.#makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.#makeAbsolute(config.paths.root, config.paths.dist) : path.join(config.paths.out, "dist"));
+        this.#makeDirIfNotFound(config.paths.cache = config.paths.cache ? this.#makeAbsolute(config.paths.root, config.paths.cache) : path.join(config.paths.out, ".cache"));
         this.#makeDirIfNotFound(config.paths.babel = path.join(config.paths.cache, "babel"));
         config.paths.template = config.paths.template ? this.#makeAbsolute(config.paths.root, config.paths.template) : path.resolve(config.paths.root, "web/template.html")
-        this.#makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.#makeAbsolute(config.paths.dist, config.paths.lib) : path.join(config.paths.dist, "lib"));
-        this.#makeDirIfNotFound(config.paths.map = config.paths.map ? this.#makeAbsolute(config.paths.lib, config.paths.map) : path.join(config.paths.lib, "map"));
+        this.#makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.#makeAbsolute(config.paths.root, config.paths.lib) : path.join(config.paths.dist, "lib"));
+        this.#makeDirIfNotFound(config.paths.map = config.paths.map ? this.#makeAbsolute(config.paths.root, config.paths.map) : path.join(config.paths.lib, "map"));
         //configs
         this.#undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
         //static dir

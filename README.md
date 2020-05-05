@@ -103,7 +103,7 @@ Create a *firejs.config.js* or specify a file using ```[-c,--config]``` flags.
 module.exports = {
     pro: Boolean,          //production mode when true, dev mode when false
     noPlugin: Boolean,     //disable or enable plugins
-    paths: {               //paths absolute or relative to parent dir
+    paths: {               //paths absolute or relative to root
         root: String,      //project root, default : process.cwd()
         src: String,       //src dir, default : root/src
         pages: String,     //pages dir, default : root/src/pages
@@ -112,8 +112,8 @@ module.exports = {
         cache: String,     //fire js cache dir, default : root/out/.cache
         babel: String,     //fire js production babel cache, default : root/out/.cache/babel
         template: String,  //template file, default : inbuilt template file
-        lib: String,       //dir where chunks are exported, default : root/out/dist/__LIB__
-        map: String,       //dir where chunk map and page data is exported, default : root/out/dist/__LIB__/__MAP__
+        lib: String,       //dir where chunks are exported, default : root/out/dist/lib
+        map: String,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
         webpack: String,   //webpack config file, default : root/webpack.config.js
         static: String,    //dir where page static elements are stored eg. images, default : root/src/static
         plugins: String,   //plugins dir, default : root/src/plugins
@@ -131,5 +131,4 @@ module.exports = {
     }
 }
 ```
-
 > **Note** This project is in a very early stage, with incomplete docs and un tested blocks. Do not use for production.
