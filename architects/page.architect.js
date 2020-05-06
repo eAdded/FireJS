@@ -59,12 +59,22 @@ module.exports = class {
         const compiler = webpack(config);
         if (fileSystem)
             compiler.outputFileSystem = fileSystem;
-        compiler.run((err, stat) => {
-            if (err)
-                reject(err);
-            else
-                resolve(stat);
-        });
+        if (config.watch)
+            compiler.watch({}, (err, stat) => {
+                if (err)
+                    reject(err);
+                else
+                    resolve(stat);
+            });
+        else
+            compiler.run((err, stat) => {
+                if (err)
+                    reject(err);
+                else
+                    resolve(stat);
+            });
+
+
     }
 
     logStat(stat) {
