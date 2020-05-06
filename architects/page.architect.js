@@ -1,5 +1,7 @@
 const webpack = require("webpack");
 const WebpackArchitect = require("../architects/webpack.architect");
+const MemoryFileSystem = require("memory-fs");
+
 module.exports = class {
     #$;
 
@@ -10,7 +12,7 @@ module.exports = class {
 
     buildExternals() {
         return new Promise((resolve, reject) => {
-            this.build(new WebpackArchitect(this.#$).externals(), stat => {
+            this.build(new WebpackArchitect(this.#$).externals(), undefined, stat => {
                 stat.compilation.chunks.forEach(chunk => {
                     this.#$.externals.push(...chunk.files);
                 })
@@ -20,7 +22,7 @@ module.exports = class {
     }
 
     buildBabel(mapComponent, resolve, reject) {
-        this.build(new WebpackArchitect(this.#$).babel(mapComponent), stat => {
+        this.build(new WebpackArchitect(this.#$).babel(mapComponent), undefined, stat => {
             if (this.logStat(stat))//true if errors
                 reject();
             else {
@@ -31,10 +33,13 @@ module.exports = class {
     }
 
     buildDirect(mapComponent, resolve, reject) {
-        this.build(new WebpackArchitect(this.#$).direct(mapComponent), stat => {
-            if (!this.#$.config.pro)
+        const fileSystem = this.#$.config.pro ? undefined : new MemoryFileSystem();
+        console.log("sss", fileSystem.mkdirp)
+        this.build(new WebpackArchitect(this.#$).direct(mapComponent), fileSystem, stat => {
+            if (!this.#$.config.pro) {
                 mapComponent.chunks = []; //re init for new chunks
-            mapComponent.stat = stat;//set stat
+                mapComponent.memoryFileSystem = fileSystem;
+            }
             if (this.logStat(stat))//true if errors
                 reject();
             else {
@@ -51,8 +56,11 @@ module.exports = class {
         }, reject);
     }
 
-    build(config, resolve, reject) {
-        webpack(config, (err, stat) => {
+    build(config, fileSystem, resolve, reject) {
+        const compiler = webpack(config);
+        if (fileSystem)
+            compiler.outputFileSystem = fileSystem;
+        compiler.run((err, stat) => {
             if (err)
                 reject(err);
             else

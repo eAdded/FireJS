@@ -27,13 +27,13 @@ yarn add @eadded/firejs
 [--nc,--no_output] No output  
 ~~~  
 ## Hello World  
-Run the command below to start dev server. Pass args as needed.  
+Run the following command to start dev server. Pass args as needed.  
 ~~~  
 yarn run firejs  
 ~~~  
 ## Project Structure
-Below is a typical project structure which can be highly modified using firejs.config.js    
-```    
+This is a typical project structure which can be highly modified using firejs.config.js    
+```
 Project    
 └─── out                    //output dir
 |   └─── .cache             //cache required during build
@@ -80,7 +80,7 @@ export default () => {
 ## Plugins
 Plugins can be used to provide content and route structures.
 
-Suppose you have a dynamic page *[author]/[article].js*. A plugin can be used to provide routes and page content. Eg: path */john/corona* ,a markdown can be passed as content
+Suppose that you have a dynamic page *[author]/[article].js*. A plugin can be used to provide routes and page content. Eg: path */john/corona* ,a markdown can be passed as content
     
 *Sample Plugin* 
 ~~~    

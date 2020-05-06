@@ -5,7 +5,7 @@ module.exports = class {
     paths = [];
     chunks = [];
     babelChunk;
-    stat = {};
+    memoryFileSystem = {};
     plugin = undefined;
 
     constructor(page) {

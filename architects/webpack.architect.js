@@ -17,7 +17,7 @@ module.exports = class {
             entry: {
                 "React": "react",
                 "ReactDOM": "react-dom",
-                "ReactHelmet":"react-helmet"
+                "ReactHelmet": "react-helmet"
             },
             output: {
                 path: this.#$.config.paths.lib,
@@ -173,6 +173,8 @@ module.exports = class {
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = this.#$.config.paths.lib;
+        } else {
+            mergedConfig.output.path = "/";//in dev the content is served from memory
         }
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(

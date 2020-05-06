@@ -57,13 +57,12 @@ module.exports = (app) => {
 
     function getLib(req, res) {
         let found = false;
+        let cleanUrl = "/" + req.url.substring(libRelative.length);
         for (const mapComponent of $.map.values()) {
-            if ((found = Object.keys(mapComponent.stat.compilation.assets).some(asset_name => {
-                if (req.url === _path.join(libRelative, asset_name)) {
-                    res.end(mapComponent.stat.compilation.assets[asset_name]._value);
-                    return true;
-                }
-            }))) break
+            if ((found = mapComponent.memoryFileSystem.existsSync(cleanUrl))) {
+                res.end(mapComponent.memoryFileSystem.readFileSync(cleanUrl));
+                break;
+            }
         }
         if (!found)
             res.status(404);
