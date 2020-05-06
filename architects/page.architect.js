@@ -34,7 +34,6 @@ module.exports = class {
 
     buildDirect(mapComponent, resolve, reject) {
         const fileSystem = this.#$.config.pro ? undefined : new MemoryFileSystem();
-        console.log("sss", fileSystem.mkdirp)
         this.build(new WebpackArchitect(this.#$).direct(mapComponent), fileSystem, stat => {
             if (!this.#$.config.pro) {
                 mapComponent.chunks = []; //re init for new chunks

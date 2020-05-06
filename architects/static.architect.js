@@ -19,7 +19,7 @@ module.exports = class {
             `window.__LIB_REL__="${libRel}";` +
             `window.__MAP_REL__="${mapRel}";` +
             `window.__PAGES__={};` +
-            `window.__PAGES__._404="${this.#$.config.pages._404.substring(0,this.#$.config.pages._404.lastIndexOf("."))}";` +
+            `window.__PAGES__._404="${this.#$.config.pages._404.substring(0, this.#$.config.pages._404.lastIndexOf("."))}";` +
             `</script>`,
             "head");
         //add map script
@@ -69,12 +69,13 @@ module.exports = class {
         root = root === undefined ? _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib) : root;
         const templateTags = this.#$.config.templateTags;
         const href = _path.join(root, chunk);
-        if (tag === "script" || chunk.endsWith(".js"))
+        if (tag === "script" || chunk.endsWith(".js")) {
+            template = template.replace(templateTags.style, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${templateTags.style}`);
             return template.replace(templateTags.script, `<script src="/${href}"></script>${templateTags.script}`);
-        else if (tag === "style" || chunk.endsWith(".css"))
-            return template.replace(templateTags.style, `<link rel="stylesheet" href="/${href}">${templateTags.style}`);
+        } else if (tag === "style" || chunk.endsWith(".css"))
+            return template.replace(templateTags.style, `<link rel="stylesheet" href="/${href}" crossorigin="anonymous">${templateTags.style}`);
         else if (tag === "head")
-            return template.replace(templateTags.head, `<link href="/${href}">${templateTags.head}`);
+            return template.replace(templateTags.head, `<link href="/${href}" crossorigin="anonymous">${templateTags.head}`);
         else
             return template.replace(templateTags.unknown, `<link href="/${href}">${templateTags.unknown}`);
     }
