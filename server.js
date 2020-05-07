@@ -28,6 +28,7 @@ module.exports = (app) => {
         if (paths.static)
             server.use(`${paths.static.substring(paths.static.lastIndexOf("/"))}`, express.static(paths.static));
         server.use((req, res, next) => {
+            req.url = decodeURI(req.url);
             if (req.url.startsWith(pageDataRelative))
                 getPageData(req, res);
             else if (req.url.startsWith(libRelative))
