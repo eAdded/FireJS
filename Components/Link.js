@@ -14,7 +14,9 @@ export default ({to, children, className}) => {
     function apply(event) {
         event.preventDefault();
         if (!wasLoaded)//there is no muse enter in mobile devices
-            preLoad(undefined, loadPage(to))
+            preLoad(undefined, () => {
+                loadPage(to);
+            });
         else
             loadPage(to);
     }
