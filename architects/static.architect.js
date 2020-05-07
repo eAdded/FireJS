@@ -19,7 +19,7 @@ module.exports = class {
             `window.__LIB_REL__="${libRel}";` +
             `window.__MAP_REL__="${mapRel}";` +
             `window.__PAGES__={};` +
-            `window.__PAGES__._404="${this.#$.config.pages._404.substring(0, this.#$.config.pages._404.lastIndexOf("."))}";` +
+            `window.__PAGES__._404="/${this.#$.config.pages._404.substring(0, this.#$.config.pages._404.lastIndexOf("."))}";` +
             `</script>`,
             "head");
         //add map script
