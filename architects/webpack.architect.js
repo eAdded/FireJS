@@ -80,9 +80,8 @@ module.exports = class {
                 minimize: true
             },
         };
-        mergedConfig.externals.react = 'React';
-        mergedConfig.externals["react-dom"] = "ReactDOM";
-        mergedConfig.externals["react-helmet"] = "ReactHelmet";
+        mergedConfig.externals = [];
+        mergedConfig.externals.push('react', 'react-dom', 'react-helmet');
         mergedConfig.name = mapComponent.getPage();
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         mergedConfig.entry = path.join(this.#$.config.paths.pages, mapComponent.getPage());
