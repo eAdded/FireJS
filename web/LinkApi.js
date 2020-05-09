@@ -44,6 +44,9 @@ export function loadChunks() {
 }
 
 export function loadPage(url) {
-    loadChunks();
-    window.history.pushState('', '', url);
+    loadMap(url).onload = () => {
+        loadChunks();
+        window.__PATH__ = url;
+        window.history.pushState('', '', url);
+    }
 }
