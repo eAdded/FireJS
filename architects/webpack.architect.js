@@ -36,7 +36,7 @@ module.exports = class {
                 rules: []
             },
             plugins: [],
-            externals: []
+            externals: {}
         }
 
     }
@@ -80,7 +80,9 @@ module.exports = class {
                 minimize: true
             },
         };
-        mergedConfig.externals.push('react', 'react-dom', 'react-helmet')
+        mergedConfig.externals.react = 'React';
+        mergedConfig.externals["react-dom"] = "ReactDOM";
+        mergedConfig.externals["react-helmet"] = "ReactHelmet";
         mergedConfig.name = mapComponent.getPage();
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
         mergedConfig.entry = path.join(this.#$.config.paths.pages, mapComponent.getPage());
@@ -139,8 +141,9 @@ module.exports = class {
             }
         };
 
-        mergedConfig.externals.push('react', 'react-dom', 'react-helmet')
-
+        mergedConfig.externals.react = 'React';
+        mergedConfig.externals["react-dom"] = "ReactDOM";
+        mergedConfig.externals["react-helmet"] = "ReactHelmet";
         if (!this.#$.config.pro) {
             mergedConfig.module.rules.push({
                 test: /\.js$/,
@@ -171,11 +174,10 @@ module.exports = class {
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
-        if (this.#$.config.pro) {//only output in production because they'll be served from memory in dev mode
+        if (this.#$.config.pro) //only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = this.#$.config.paths.lib;
-        } else {
+        else
             mergedConfig.output.path = "/";//in dev the content is served from memory
-        }
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(
             new webpack.ProvidePlugin({
