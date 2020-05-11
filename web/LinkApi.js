@@ -12,7 +12,6 @@ export function preloadPage(url, callback) {
         callback();
     };
     map_script.onerror = _ => {
-        console.log("error")
         document.head.removeChild(map_script);
         const _404 = document.createElement("script");
         _404.src = getMapUrl(window.__PAGES__._404);//make preloaded js to execute
@@ -44,9 +43,17 @@ export function loadChunks() {
 }
 
 export function loadPage(url) {
-    loadMap(url).onload = () => {
+    const sc = loadMap(url);
+    sc.onload = () => {
         loadChunks();
-        window.__PATH__ = url;
-        window.history.pushState('', '', url);
     }
+    sc.onerror = _ => {
+        document.head.removeChild(sc);
+        const _404 = document.createElement("script");
+        _404.src = getMapUrl(window.__PAGES__._404);//make preloaded js to execute
+        _404.onload = loadChunks;
+        document.head.appendChild(_404);
+    };
+    window.__PATH__ = url;
+    window.history.pushState('', '', url);
 }
