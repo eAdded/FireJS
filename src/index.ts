@@ -81,7 +81,7 @@ export default class {
         });
     }
 
-    getContext() {
+    get Context(): $ {
         return this.$;
     }
 }

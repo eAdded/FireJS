@@ -6,7 +6,8 @@
     "declaration": true,
     "lib": [
       "ES6",
-      "DOM"
+      "DOM",
+      "es2015.promise"
     ],
     "jsx": "react"
   },

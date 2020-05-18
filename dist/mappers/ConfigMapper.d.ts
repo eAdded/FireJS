@@ -29,7 +29,6 @@ export interface Config {
         _404?: string;
     };
 }
-
 export interface Args {
     "--pro"?: boolean;
     "--conf"?: string;
@@ -38,18 +37,12 @@ export interface Args {
     "--silent"?: boolean;
     "--disable-plugins"?: boolean;
 }
-
 export declare function getArgs(): Args;
-
 export default class {
     $: $;
-
     constructor(globalData: $);
-
     getUserConfig(): any;
-
     getConfig(userConfig?: Config | undefined): Config;
-
     private makeAbsolute;
     private throwIfNotFound;
     private undefinedIfNotFound;

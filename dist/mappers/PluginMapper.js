@@ -55,28 +55,17 @@ class default_1 {
     }
     parsePagePaths(paths, callback, reject) {
         if (Array.isArray(paths)) {
-            paths.forEach(path => {
-                if (typeof path === "string") {
-                    callback(path, {});
-                }
-                else if (path.constructor.name === "AsyncFunction") {
-                    path().then(value => {
-                        this.parsePagePaths(value, callback, reject);
+            paths.forEach(pageObject => {
+                if (typeof pageObject === "string") {
+                    callback(pageObject, {});
+                } else if (pageObject.constructor.name === "AsyncFunction") {
+                    pageObject().then(pageObjects => {
+                        this.parsePagePaths(pageObjects, callback, reject);
                     });
-                }
-                else if (typeof path === "object") {
-                    if (typeof path.path !== "string") {
-                        reject(new TypeError(`Expected path:string got ${typeof path.path}`));
-                        return;
-                    }
-                    if (typeof path.content !== "object") {
-                        reject(new TypeError(`Expected content:object got ${typeof path.path}`));
-                        return;
-                    }
-                    callback(path.path, path.content);
-                }
-                else
-                    reject(new TypeError(`Expected String | Object | Array got ${typeof path} in plugin for path ${path}`));
+                } else if (typeof pageObject === "object") {
+                    callback(pageObject.path, pageObject.content);
+                } else
+                    reject(new TypeError(`Expected String | AsyncFunction | Object got ${typeof pageObject}`));
             });
         }
         else {

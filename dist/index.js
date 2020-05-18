@@ -58,7 +58,7 @@ class default_1 {
             Promise.all(promises).then(() => callback());
         });
     }
-    getContext() {
+    get Context() {
         return this.$;
     }
 }

@@ -21,12 +21,8 @@ export interface params {
 }
 export default class {
     private readonly $;
-
     constructor(params?: params);
-
     mapPluginsAndBuildExternals(): Promise<unknown>;
-
     buildPro(callback: any): void;
-
     getContext(): $;
 }

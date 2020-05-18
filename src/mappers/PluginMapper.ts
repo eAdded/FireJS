@@ -5,6 +5,21 @@ import PathArchitect from "../architects/PathArchitect";
 import {join} from "path"
 import MapComponent from "../classes/MapComponent";
 
+interface AyncFunc {
+    (): Promise<PathObject[]>;
+}
+
+export type PageObject = string | PathObject | AyncFunc;
+
+export interface PathObject {
+    path: string
+    content: any
+}
+
+export interface Plugin {
+    [key: string]: PageObject[]
+}
+
 export default class {
     private readonly $: $;
 
@@ -19,7 +34,7 @@ export default class {
     }
 
     mapPlugin(path: string) {
-        const plugin = require(path);
+        const plugin: Plugin = require(path);
         for (const page in plugin) {
             const mapComponent = this.$.map.get(page);
             if (!mapComponent) //check if this page exists
@@ -61,27 +76,19 @@ export default class {
         }
     }
 
-    parsePagePaths(paths, callback, reject) {
+    parsePagePaths(paths: PageObject[], callback, reject) {
         if (Array.isArray(paths)) {
-            paths.forEach(path => {
-                if (typeof path === "string") {
-                    callback(path, {});
-                } else if (path.constructor.name === "AsyncFunction") {
-                    path().then(value => {
-                        this.parsePagePaths(value, callback, reject);
+            paths.forEach(pageObject => {
+                if (typeof pageObject === "string") {
+                    callback(<string>pageObject, {});
+                } else if (pageObject.constructor.name === "AsyncFunction") {
+                    (<AyncFunc>pageObject)().then(pageObjects => {
+                        this.parsePagePaths(pageObjects, callback, reject);
                     });
-                } else if (typeof path === "object") {
-                    if (typeof path.path !== "string") {
-                        reject(new TypeError(`Expected path:string got ${typeof path.path}`));
-                        return;
-                    }
-                    if (typeof path.content !== "object") {
-                        reject(new TypeError(`Expected content:object got ${typeof path.path}`));
-                        return;
-                    }
-                    callback(path.path, path.content);
+                } else if (typeof pageObject === "object") {
+                    callback(pageObject.path, pageObject.content);
                 } else
-                    reject(new TypeError(`Expected String | Object | Array got ${typeof path} in plugin for path ${path}`))
+                    reject(new TypeError(`Expected String | AsyncFunction | Object got ${typeof pageObject}`))
             });
         } else {
             reject(new TypeError(`Expected array got ${typeof paths}`));

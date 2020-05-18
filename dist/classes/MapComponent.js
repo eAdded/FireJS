@@ -5,7 +5,6 @@ class default_1 {
         this.paths = [];
         this.chunks = [];
         this.memoryFileSystem = {};
-        this.plugin = undefined;
         this.page = page;
         this.name = page.substring(page.lastIndexOf("/") + 1, page.lastIndexOf("."));
         this.ext = page.substring(page.lastIndexOf("."));
