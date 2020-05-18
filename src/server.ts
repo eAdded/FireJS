@@ -11,7 +11,7 @@ import express = require("express");
 const server: express.Application = express();
 
 export default function (app: FireJS) {
-    const $ = app.getContext();
+    const $ = app.Context;
     const {config: {paths}} = $;
     const staticArchitect = new StaticArchitect($)
     const pageArchitect = new PageArchitect($);

@@ -10,8 +10,8 @@ const PluginMapper_1 = require("./mappers/PluginMapper");
 const express = require("express");
 const server = express();
 function default_1(app) {
-    const $ = app.getContext();
-    const { config: { paths } } = $;
+    const $ = app.Context;
+    const {config: {paths}} = $;
     const staticArchitect = new StaticArchitect_1.default($);
     const pageArchitect = new PageArchitect_1.default($);
     const pluginMapper = new PluginMapper_1.default($);
