@@ -82,7 +82,7 @@ export default class {
         config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         //pages
         config.pages = config.pages || {};
-        config.pages._404 = config.pages._404 || "404.js"
+        this.throwIfNotFound("404 page", join(config.paths.pages, config.pages._404 = config.pages._404 || "404.js"));
         return config;
     }
 
