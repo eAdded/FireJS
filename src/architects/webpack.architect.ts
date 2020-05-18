@@ -122,7 +122,7 @@ export default class {
         return mergedConfig;
     }
 
-    direct(mapComponent, user_config: any = {}) {
+    direct(mapComponent: MapComponent, user_config: any = {}) {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
@@ -169,7 +169,7 @@ export default class {
             );
         }
         const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
-        mergedConfig.name = mapComponent.getPage();
+        mergedConfig.name = mapComponent.Page;
         //path before file name is important cause it allows easy routing during development
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
@@ -181,7 +181,7 @@ export default class {
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(
             new webpack.ProvidePlugin({
-                App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.getPage())
+                App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.Page)
             }),
         );
         return mergedConfig;

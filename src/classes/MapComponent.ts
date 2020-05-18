@@ -10,7 +10,7 @@ export default class {
     private readonly name;
     private readonly ext;
 
-    constructor(page) {
+    constructor(page: string) {
         this.page = page;
         this.name = page.substring(page.lastIndexOf("/") + 1, page.lastIndexOf("."));
         this.ext = page.substring(page.lastIndexOf("."));

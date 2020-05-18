@@ -1,20 +1,22 @@
 import {join} from "path"
 import {$} from "../index";
+import StaticArchitect from "./static.architect"
+import {writeFileRecursively} from "../utils/fs-util";
+import MapComponent from "../classes/MapComponent";
+import PagePath from "../classes/PagePath";
 
-const StaticArchitect = require("./static.architect");
-const FsUtil = require("../utils/fs-util");
 export default class {
-    #$;
+    readonly #$;
 
     constructor(globalData: $) {
         this.#$ = globalData;
     }
 
-    writePath(mapComponent, pagePath) {
+    writePath(mapComponent: MapComponent, pagePath: PagePath) {
         const staticArchitect = new StaticArchitect(this.#$);
         const html = staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath));
-        return FsUtil.writeFileRecursively(
-            join(this.#$.config.paths.dist, pagePath.getPath().concat(".html")),
+        return writeFileRecursively(
+            join(this.#$.config.paths.dist, pagePath.Path.concat(".html")),
             html
         )
     }

@@ -1,6 +1,8 @@
 import {renderToString} from "react-dom/server"
 import {Helmet} from "react-helmet"
 import {$} from "../index";
+import MapComponent from "../classes/MapComponent";
+import PagePath from "../classes/PagePath";
 
 export default class {
     #$;
@@ -9,14 +11,14 @@ export default class {
         this.#$ = globalData;
     }
 
-    render(mapComponent, pagePath) {
+    render(mapComponent: MapComponent, pagePath: PagePath) {
         let template = this.#$.template;
         const libRel = _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib);
         const mapRel = _path.relative(this.#$.config.paths.dist, this.#$.config.paths.map);
         //set globals
         template = this.addInnerHTML(template,
             `<script>` +
-            `window.__PATH__="${pagePath.getPath()}";` +
+            `window.__PATH__="${pagePath.Path}";` +
             `window.__LIB_REL__="${libRel}";` +
             `window.__MAP_REL__="${mapRel}";` +
             `window.__PAGES__={};` +
@@ -24,7 +26,7 @@ export default class {
             `</script>`,
             "head");
         //add map script
-        template = this.addChunk(template, pagePath.getMapPath(), "", "head");
+        template = this.addChunk(template, pagePath.MapPath, "", "head");
         //add externals
         this.#$.externals.forEach(external => {//externals are same for all paths
             template = this.addChunk(template, external);
@@ -40,8 +42,8 @@ export default class {
                         // @ts-ignore
                         global.window = {
                             __LIB_REL__: libRel,
-                            __MAP__: pagePath.getMap(),
-                            __PATH__: pagePath.getPath(),
+                            __MAP__: pagePath.Map,
+                            __PATH__: pagePath.Path,
                             __MAP_REL__: mapRel,
                             SSR: true
                         };

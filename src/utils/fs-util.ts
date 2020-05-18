@@ -1,6 +1,6 @@
 import {mkdir, writeFile} from "fs";
 
-export function writeFileRecursively(path, data) {
+export function writeFileRecursively(path: string, data: string | Buffer) {
     return new Promise((resolve, reject) => {
         const dir = path.substr(0, path.lastIndexOf("/"));
         mkdir(dir, {recursive: true}, err => {
