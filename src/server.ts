@@ -48,8 +48,8 @@ export default function (app: FireJS) {
         let found = false;
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
-                if (req.url === `/${pagePath.getMapPath()}`) {
-                    res.end(`window.__MAP__=${JSON.stringify(pagePath.getMap())}`);
+                if (req.url === `/${pagePath.Map}`) {
+                    res.end(`window.__MAP__=${JSON.stringify(pagePath.Map)}`);
                     return true;
                 }
             }))) break;
@@ -75,7 +75,7 @@ export default function (app: FireJS) {
         let found = false;
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
-                if (req.url === pagePath.getPath() || (join(req.url, "index") === pagePath.getPath())) {
+                if (req.url === pagePath.Path || (join(req.url, "index") === pagePath.Path)) {
                     res.end(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
                     return true;
                 }
@@ -94,7 +94,7 @@ export default function (app: FireJS) {
             mapComponent = new MapComponent(rel_page);
             $.map.set(rel_page, mapComponent);
         }
-        pageArchitect.buildDirect(mapComponent, _ => {
+        pageArchitect.buildDirect(mapComponent, () => {
             let path = mapComponent.Page;
             path = "/" + path.substring(0, path.lastIndexOf(".js"));
             mapComponent.paths.push(new PagePath(mapComponent, path, undefined, $));

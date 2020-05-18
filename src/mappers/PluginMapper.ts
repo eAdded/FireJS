@@ -3,6 +3,7 @@ import PagePath from "../classes/PagePath";
 import {writeFileRecursively} from "../utils/Fs";
 import PathArchitect from "../architects/PathArchitect";
 import {join} from "path"
+import MapComponent from "../classes/MapComponent";
 
 export default class {
     private readonly $: $;
@@ -17,7 +18,7 @@ export default class {
         });
     }
 
-    mapPlugin(path) {
+    mapPlugin(path: string) {
         const plugin = require(path);
         for (const page in plugin) {
             const mapComponent = this.$.map.get(page);
@@ -27,7 +28,7 @@ export default class {
         }
     }
 
-    applyPlugin(mapComponent) {
+    applyPlugin(mapComponent: MapComponent) {
         const pathArchitect = new PathArchitect(this.$);
         mapComponent.paths = [];//reset paths
         if (mapComponent.plugin) {
@@ -46,8 +47,8 @@ export default class {
             })
         } else {
             //make default page
-            let path = mapComponent.getPage();
-            path = "/" + path.substring(0, path.lastIndexOf(mapComponent.getExt()));
+            let path = mapComponent.Page;
+            path = "/" + path.substring(0, path.lastIndexOf(mapComponent.Ext));
             const pagePath = new PagePath(mapComponent, path, {}, this.$);
             if (this.$.config.pro) {
                 writeFileRecursively(//write content

@@ -7,11 +7,12 @@ import BuildRegistrar from "./registrars/build.registrar"
 import {readFileSync} from "fs";
 import PathMapper from "./mappers/PathMapper";
 import Cli from "./utils/Cli";
+import MapComponent from "./classes/MapComponent";
 
 export interface $ {
     args?: any,
     config?: any,
-    map?: any,
+    map?: Map<string, MapComponent>,
     cli?: Cli,
     webpackConfig?: any,
     template?: string,
@@ -22,7 +23,7 @@ export interface params {
     userConfig?: any,
     config?: any,
     args?: any,
-    map?: any,
+    map?: string[],
     webpackConfig?: any,
     template?: string,
 }
@@ -57,11 +58,11 @@ export default class {
         this.mapPluginsAndBuildExternals().then((_) => {
             const buildRegistrar = new BuildRegistrar(this.$);
             this.$.cli.log("Building Pages");
-            for (const mapComponent of this.$.map.values())
+            for (const mapComponent of this.$.map.values()) {
                 promises.push(new Promise(resolve => {
-                    pageArchitect.buildBabel(mapComponent, _ => {
-                        buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
-                            pageArchitect.buildDirect(mapComponent, _ => {
+                    pageArchitect.buildBabel(mapComponent, () => {
+                        buildRegistrar.registerForSemiBuild(mapComponent).then(() => {
+                            pageArchitect.buildDirect(mapComponent, () => {
                                 resolve();
                                 this.$.cli.ok(`Successfully built page ${mapComponent.Page}`)
                                 pluginMapper.applyPlugin(mapComponent);
@@ -75,7 +76,8 @@ export default class {
                         throw err
                     });
                 }));
-            Promise.all(promises).then(_ => callback());
+            }
+            Promise.all(promises).then(() => callback());
         });
     }
 

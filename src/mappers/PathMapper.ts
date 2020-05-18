@@ -18,7 +18,7 @@ export default class {
         return map;
     };
 
-    convertToMap(array) {
+    convertToMap(array: string[]) {
         const map = new Map();
         array.forEach(item =>
             map.set(item, new MapComponent(item)));

@@ -2,6 +2,7 @@ import webpack = require("webpack");
 import MemoryFileSystem = require("memory-fs");
 import WebpackArchitect from "./WebpackArchitect";
 import {$} from "../index";
+import MapComponent from "../classes/MapComponent";
 
 export default class {
     private readonly $: $;
@@ -21,26 +22,33 @@ export default class {
         })
     }
 
-    buildBabel(mapComponent, resolve, reject) {
+    buildBabel(mapComponent: MapComponent, resolve: () => void, reject: (err: any | undefined) => void) {
         this.build(new WebpackArchitect(this.$).babel(mapComponent), undefined, stat => {
             if (this.logStat(stat))//true if errors
-                reject();
+                reject(undefined);
             else {
-                filterMainChunk(stat, mapComponent, "babelChunk")
+                stat.compilation.chunks.forEach(chunk => {
+                    chunk.files.forEach(file => {
+                        if (file.startsWith("m")) {
+                            mapComponent.babelChunk = file;
+                        } else //don't add babel main
+                            mapComponent.chunks.push(file);
+                    })
+                });
                 resolve();
             }
         }, err => reject(err));
     }
 
-    buildDirect(mapComponent, resolve, reject) {
+    buildDirect(mapComponent: MapComponent, resolve: () => void, reject: (err: any | undefined) => void) {
         const fileSystem = this.$.config.pro ? undefined : new MemoryFileSystem();
-        this.build(new WebpackArchitect(this.$).direct(mapComponent), fileSystem, stat => {
+        this.build(new WebpackArchitect(this.$).direct(mapComponent), fileSystem, (stat) => {
             if (!this.$.config.pro) {
                 mapComponent.chunks = []; //re init for new chunks
                 mapComponent.memoryFileSystem = fileSystem;
             }
             if (this.logStat(stat))//true if errors
-                reject();
+                reject(undefined);
             else {
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
@@ -55,7 +63,7 @@ export default class {
         }, reject);
     }
 
-    build(config, fileSystem, resolve, reject) {
+    build(config: any, fileSystem: MemoryFileSystem | undefined, resolve: (stat) => void, reject: (err) => void) {
         const compiler = webpack(config);
         if (fileSystem)
             compiler.outputFileSystem = fileSystem;
@@ -98,15 +106,4 @@ export default class {
             return true;
         }
     }
-}
-
-function filterMainChunk(stat, mapComponent, property) {
-    stat.compilation.chunks.forEach(chunk => {
-        chunk.files.forEach(file => {
-            if (file.startsWith("m")) {
-                mapComponent[property] = file;
-            } else //don't add babel main
-                mapComponent.chunks.push(file);
-        })
-    });
 }
