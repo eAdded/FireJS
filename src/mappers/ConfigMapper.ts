@@ -2,29 +2,69 @@ import {isAbsolute, join, resolve} from "path"
 import {existsSync, mkdirSync, readdirSync} from "fs"
 import {$} from "../index";
 
+export interface Config {
+    pro?: boolean,          //production mode when true, dev mode when false
+    noPlugin?: boolean,     //disable or enable plugins
+    paths?: {               //paths absolute or relative to root
+        root?: string,      //project root, default : process.cwd()
+        src?: string,       //src dir, default : root/src
+        pages?: string,     //pages dir, default : root/src/pages
+        out?: string,       //output dir, default : root/out
+        dist?: string,      //production dist, default : root/out/dist
+        cache?: string,     //fire js cache dir, default : root/out/.cache
+        babel?: string,     //fire js production babel cache, default : root/out/.cache/babel
+        template?: string,  //template file, default : inbuilt template file
+        lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
+        map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
+        webpack?: string,   //webpack config file, default : root/webpack.config.js
+        static?: string,    //dir where page static elements are stored eg. images, default : root/src/static
+        plugins?: string,   //plugins dir, default : root/src/plugins
+    },
+    plugins?: string[],        //plugins, default : []
+    templateTags?: {        //these tags need to exist if you pass custom template file
+        script?: string,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
+        static?: string,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
+        head?: string,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
+        style?: string,     //this is replaced by all page styles, default : "<%=STYLE=%>"
+        unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
+    },
+    pages?: {
+        _404?: string       //404 page, default : 404.js
+    }
+}
+
+export interface Args {
+    "--pro"?: boolean,
+    "--conf"?: string,
+    "--verbose"?: boolean,
+    "--plain"?: boolean,
+    "--silent"?: boolean,
+    "--disable-plugins"?: boolean
+}
+
+export function getArgs(): Args {
+    return require("arg")({
+        //Types
+        "--pro": Boolean,
+        "--conf": String,
+        "--verbose": Boolean,
+        "--plain": Boolean,
+        "--silent": Boolean,
+        "--disable-plugins": Boolean,
+        //Aliases
+        "-p": "--pro",
+        "-c": "--conf",
+        "-v": "--verbose",
+        "-s": "--silent",
+    })
+}
+
 export default class {
     $: $;
 
     constructor(globalData: $) {
         this.$ = globalData;
     }
-
-    static getArgs = () => {
-        return require("arg")({
-            //Types
-            "--pro": Boolean,
-            "--conf": String,
-            "--verbose": Boolean,
-            "--no_color": Boolean,
-            "--no_output": Boolean,
-            //Aliases
-            "-p": "--pro",
-            "-c": "--conf",
-            "-v": "--verbose",
-            "--nc": "--no_color",
-            "--no": "--no_output"
-        })
-    };
 
     getUserConfig() {
         const wasGiven = this.$.args["--conf"];//to store if user gave this arg so that log can be changed
@@ -44,11 +84,10 @@ export default class {
         })()
     }
 
-    getConfig(userConfig: any = undefined) {
+    getConfig(userConfig: Config | undefined = undefined): Config {
         this.$.cli.log("Loading configs");
-        const config = userConfig || this.getUserConfig();
+        const config: Config = userConfig || this.getUserConfig();
         config.pro = this.$.args["--pro"] ? true : config.pro || false;
-        this.$.args["--pro"] = undefined;
         this.$.cli.log("mode : " + (config.pro ? "production" : "development"))
         config.paths = config.paths || {};
         config.plugins = config.plugins || [];
@@ -97,15 +136,15 @@ export default class {
         }
     }
 
-    private undefinedIfNotFound = (config: {}, property: string, pathRoot: string, name: string, msg: string) => {
-        if (config[property]) {
-            config[property] = this.makeAbsolute(pathRoot, config[property]);
-            this.throwIfNotFound(msg, config[property])
-        } else if (!existsSync(config[property] = resolve(pathRoot, name)))
-            config[property] = undefined;
+    private undefinedIfNotFound<T extends { [key: string]: string }, K extends keyof T>(object: T, property: K, pathRoot: string, name: string, msg: string) {
+        if (object[property]) {
+            object[property] = this.makeAbsolute(pathRoot, object[property]) as T[K];
+            this.throwIfNotFound(msg, object[property])
+        } else if (!existsSync(object[property] = resolve(pathRoot, name) as T[K]))
+            object[property] = undefined;
     }
 
-    private getPlugins = (config: any) => {
+    private getPlugins = (config: Config) => {
         config.plugins = config.plugins || [];
         config.plugins.forEach((plugin, index) => {
             if (!this.pluginExists(plugin, [config.paths.root])) {

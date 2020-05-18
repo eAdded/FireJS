@@ -1,7 +1,7 @@
 {
   "name": "@eadded/firejs",
-  "main": "dist",
-  "version": "0.6.5",
+  "main": "dist/index.js",
+  "version": "0.7.1",
   "license": "MIT",
   "description": "Highly customizable no config react static site generator",
   "keywords": [

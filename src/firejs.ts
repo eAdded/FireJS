@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import FireJs from "./index"
+import FireJS from "./index"
 import Server from "./server"
 
-const app = new FireJs();
+const app = new FireJS();
 if (app.getContext().config.pro)
     app.buildPro(() => {
         app.getContext().cli.ok("DONE ⌐■-■")

@@ -1,7 +1,27 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
 const path_1 = require("path");
 const fs_1 = require("fs");
+
+function getArgs() {
+    return require("arg")({
+        //Types
+        "--pro": Boolean,
+        "--conf": String,
+        "--verbose": Boolean,
+        "--plain": Boolean,
+        "--silent": Boolean,
+        "--disable-plugins": Boolean,
+        //Aliases
+        "-p": "--pro",
+        "-c": "--conf",
+        "-v": "--verbose",
+        "-s": "--silent",
+    });
+}
+
+exports.getArgs = getArgs;
+
 class default_1 {
     constructor(globalData) {
         this.makeAbsolute = (root, pathTo) => {
@@ -12,14 +32,6 @@ class default_1 {
                 this.$.cli.error(`${name} not found`, pathTo);
                 throw new Error();
             }
-        };
-        this.undefinedIfNotFound = (config, property, pathRoot, name, msg) => {
-            if (config[property]) {
-                config[property] = this.makeAbsolute(pathRoot, config[property]);
-                this.throwIfNotFound(msg, config[property]);
-            }
-            else if (!fs_1.existsSync(config[property] = path_1.resolve(pathRoot, name)))
-                config[property] = undefined;
         };
         this.getPlugins = (config) => {
             config.plugins = config.plugins || [];
@@ -60,7 +72,6 @@ class default_1 {
         this.$.cli.log("Loading configs");
         const config = userConfig || this.getUserConfig();
         config.pro = this.$.args["--pro"] ? true : config.pro || false;
-        this.$.args["--pro"] = undefined;
         this.$.cli.log("mode : " + (config.pro ? "production" : "development"));
         config.paths = config.paths || {};
         config.plugins = config.plugins || [];
@@ -97,34 +108,27 @@ class default_1 {
         this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages._404 = config.pages._404 || "404.js"));
         return config;
     }
+
+    undefinedIfNotFound(object, property, pathRoot, name, msg) {
+        if (object[property]) {
+            object[property] = this.makeAbsolute(pathRoot, object[property]);
+            this.throwIfNotFound(msg, object[property]);
+        } else if (!fs_1.existsSync(object[property] = path_1.resolve(pathRoot, name)))
+            object[property] = undefined;
+    }
+
     pluginExists(plugin, paths = undefined) {
         try {
-            require.resolve(plugin, { paths });
+            require.resolve(plugin, {paths});
             return true;
-        }
-        catch (ex) {
+        } catch (ex) {
             return false;
         }
     }
+
     makeDirIfNotFound(path) {
         if (!fs_1.existsSync(path))
             fs_1.mkdirSync(path);
     }
 }
 exports.default = default_1;
-default_1.getArgs = () => {
-    return require("arg")({
-        //Types
-        "--pro": Boolean,
-        "--conf": String,
-        "--verbose": Boolean,
-        "--no_color": Boolean,
-        "--no_output": Boolean,
-        //Aliases
-        "-p": "--pro",
-        "-c": "--conf",
-        "-v": "--verbose",
-        "--nc": "--no_color",
-        "--no": "--no_output"
-    });
-};

@@ -1,10 +1,19 @@
-import { $ } from "../index";
+import MemoryFileSystem = require("memory-fs");
+import {$} from "../index";
+import MapComponent from "../classes/MapComponent";
+
 export default class {
     private readonly $;
+
     constructor(globalData: $);
+
     buildExternals(): Promise<unknown>;
-    buildBabel(mapComponent: any, resolve: any, reject: any): void;
-    buildDirect(mapComponent: any, resolve: any, reject: any): void;
-    build(config: any, fileSystem: any, resolve: any, reject: any): void;
+
+    buildBabel(mapComponent: MapComponent, resolve: () => void, reject: (err: any | undefined) => void): void;
+
+    buildDirect(mapComponent: MapComponent, resolve: () => void, reject: (err: any | undefined) => void): void;
+
+    build(config: any, fileSystem: MemoryFileSystem | undefined, resolve: (stat: any) => void, reject: (err: any) => void): void;
+
     logStat(stat: any): boolean;
 }

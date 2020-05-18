@@ -1,5 +1,5 @@
 import {cloneDeep} from "lodash";
-import ConfigMapper from "./mappers/ConfigMapper";
+import ConfigMapper, {Args, getArgs} from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
 import PluginMapper from "./mappers/PluginMapper"
@@ -10,7 +10,7 @@ import Cli from "./utils/Cli";
 import MapComponent from "./classes/MapComponent";
 
 export interface $ {
-    args?: any,
+    args?: Args,
     config?: any,
     map?: Map<string, MapComponent>,
     cli?: Cli,
@@ -22,7 +22,7 @@ export interface $ {
 export interface params {
     userConfig?: any,
     config?: any,
-    args?: any,
+    args?: Args,
     map?: string[],
     webpackConfig?: any,
     template?: string,
@@ -32,7 +32,7 @@ export default class {
     private readonly $: $ = {};
 
     constructor(params: params = {}) {
-        this.$.args = params.args || ConfigMapper.getArgs();
+        this.$.args = params.args || getArgs();
         this.$.cli = new Cli(this.$.args);
         this.$.config = params.config || params.userConfig ? new ConfigMapper(this.$).getConfig(cloneDeep(params.userConfig)) : new ConfigMapper(this.$).getConfig();
         this.$.template = params.template || readFileSync(this.$.config.paths.template).toString();

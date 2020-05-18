@@ -12,7 +12,7 @@ const Cli_1 = require("./utils/Cli");
 class default_1 {
     constructor(params = {}) {
         this.$ = {};
-        this.$.args = params.args || ConfigMapper_1.default.getArgs();
+        this.$.args = params.args || ConfigMapper_1.getArgs();
         this.$.cli = new Cli_1.default(this.$.args);
         this.$.config = params.config || params.userConfig ? new ConfigMapper_1.default(this.$).getConfig(lodash_1.cloneDeep(params.userConfig)) : new ConfigMapper_1.default(this.$).getConfig();
         this.$.template = params.template || fs_1.readFileSync(this.$.config.paths.template).toString();
