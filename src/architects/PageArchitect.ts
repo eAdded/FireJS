@@ -1,6 +1,6 @@
-import webpack from "webpack";
+import webpack = require("webpack");
+import MemoryFileSystem = require("memory-fs");
 import WebpackArchitect from "./WebpackArchitect";
-import MemoryFileSystem from "memory-fs";
 import {$} from "../index";
 
 export default class {

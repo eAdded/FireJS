@@ -1,5 +1,5 @@
-import webpack from "webpack"
-import _ from "lodash"
+import webpack = require("webpack");
+import {cloneDeep} from "lodash"
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import MapComponent from "../classes/MapComponent";
 import {$} from "../index";
@@ -71,7 +71,7 @@ export default class {
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
             //add config base to user config to prevent undefined errors
-            ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.$.webpackConfig),
+            ...cloneDeep({...this.getConfigBase(), ...user_config} || this.$.webpackConfig),
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -130,7 +130,7 @@ export default class {
             mode: this.$.config.pro ? "production" : "development",
             watch: !this.$.config.pro,
             //add config base to user config to prevent undefined errors
-            ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.$.webpackConfig),
+            ...cloneDeep({...this.getConfigBase(), ...user_config} || this.$.webpackConfig),
             //settings un-touchable by user
             optimization: {
                 splitChunks: {

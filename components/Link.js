@@ -1,4 +1,4 @@
-import {loadPage, preloadPage} from "../scripts/LinkApi"
+import {loadPage, preloadPage} from "../dist/scripts/LinkApi"
 
 export default ({to, children, className}) => {
     let wasLoaded = false;
@@ -26,6 +26,7 @@ export default ({to, children, className}) => {
     }
 
     return (
+        // @ts-ignore
         <a href={to} className={className} onClick={apply.bind(this)} onMouseEnter={preLoad.bind(this)}>
             {children}
         </a>

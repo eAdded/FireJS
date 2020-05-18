@@ -5,11 +5,12 @@ import PageArchitect from "./architects/PageArchitect"
 import MapComponent from "./classes/MapComponent"
 import PagePath from "./classes/PagePath"
 import PluginMapper from "./mappers/PluginMapper"
+import FireJS from "./index"
 import express = require("express");
 
 const server: express.Application = express();
 
-export default function (app) {
+export default function (app: FireJS) {
     const $ = app.getContext();
     const {config: {paths}} = $;
     const staticArchitect = new StaticArchitect($)
@@ -43,7 +44,7 @@ export default function (app) {
         })
     })
 
-    function getPageData(req, res) {
+    function getPageData(req: express.Request, res: express.Response) {
         let found = false;
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
@@ -57,7 +58,7 @@ export default function (app) {
             res.status(404);
     }
 
-    function getLib(req, res) {
+    function getLib(req: express.Request, res: express.Response) {
         let found = false;
         let cleanUrl = "/" + req.url.substring(libRelative.length);
         for (const mapComponent of $.map.values()) {
@@ -70,7 +71,7 @@ export default function (app) {
             res.status(404);
     }
 
-    function getPage(req, res) {
+    function getPage(req: express.Request, res: express.Response) {
         let found = false;
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
@@ -86,21 +87,21 @@ export default function (app) {
         }
     }
 
-    function buildPage(path) {
+    function buildPage(path: string) {
         const rel_page = path.replace(paths.pages + "/", "")
-        let mapComponent = $.map.get(rel_page);
+        let mapComponent: MapComponent = $.map.get(rel_page);
         if (!mapComponent) {
             mapComponent = new MapComponent(rel_page);
             $.map.set(rel_page, mapComponent);
         }
         pageArchitect.buildDirect(mapComponent, _ => {
-            let path = mapComponent.getPage();
+            let path = mapComponent.Page;
             path = "/" + path.substring(0, path.lastIndexOf(".js"));
             mapComponent.paths.push(new PagePath(mapComponent, path, undefined, $));
             pluginMapper.applyPlugin(mapComponent);
-            $.cli.ok(`Successfully built page ${mapComponent.getPage()}`);
+            $.cli.ok(`Successfully built page ${mapComponent.Page}`);
         }, err => {
-            $.cli.error(`Error while building page ${mapComponent.getPage()}`, err);
+            $.cli.error(`Error while building page ${mapComponent.Page}`, err);
         });
     }
 }

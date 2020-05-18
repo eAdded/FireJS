@@ -1,10 +1,9 @@
-import _ from "lodash";
+import {cloneDeep} from "lodash";
 import ConfigMapper from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
 import PluginMapper from "./mappers/PluginMapper"
 import BuildRegistrar from "./registrars/build.registrar"
-import {join} from "path"
 import {readFileSync} from "fs";
 import PathMapper from "./mappers/PathMapper";
 import Cli from "./utils/Cli";
@@ -34,8 +33,8 @@ export default class {
     constructor(params: params = {}) {
         this.$.args = params.args || ConfigMapper.getArgs();
         this.$.cli = new Cli(this.$.args);
-        this.$.config = params.config || params.userConfig ? new ConfigMapper(this.$).getConfig(_.cloneDeep(params.userConfig)) : new ConfigMapper(this.$).getConfig();
-        this.$.template = params.template || readFileSync(join(__dirname, 'web/template.html')).toString();
+        this.$.config = params.config || params.userConfig ? new ConfigMapper(this.$).getConfig(cloneDeep(params.userConfig)) : new ConfigMapper(this.$).getConfig();
+        this.$.template = params.template || readFileSync(this.$.config.paths.template).toString();
         this.$.map = params.map ? new PathMapper(this.$).convertToMap(params.map) : new PathMapper(this.$).map();
         this.$.webpackConfig = params.webpackConfig || new WebpackArchitect(this.$).readUserConfig();
         this.$.externals = [];

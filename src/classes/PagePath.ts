@@ -1,4 +1,6 @@
 import {join, relative} from "path";
+import MapComponent from "./MapComponent";
+import {$} from "../index";
 
 interface map {
     chunks: string[],
@@ -13,7 +15,7 @@ export default class {
     };
     private readonly map_path: string;
 
-    constructor(mapComponent, path, content, $) {
+    constructor(mapComponent: MapComponent, path: string, content: any, $: $) {
         this.path = path;
         this.map = {
             chunks: mapComponent.chunks,

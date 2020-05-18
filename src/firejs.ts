@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import FireJs from "./index"
+import Server from "./server"
 
 const app = new FireJs();
 if (app.getContext().config.pro)
@@ -7,5 +8,5 @@ if (app.getContext().config.pro)
         app.getContext().cli.ok("DONE ⌐■-■")
     });
 else {
-    require("./server")(app);
+    new Server(app);
 }

@@ -1,7 +1,8 @@
 import MemoryFileSystem from "memory-fs";
+import PagePath from "./PagePath";
 
 export default class {
-    public paths: string[] = [];
+    public paths: PagePath[] = [];
     public chunks: string[] = [];
     public babelChunk: string;
     public memoryFileSystem: MemoryFileSystem = {};
