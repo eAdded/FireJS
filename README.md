@@ -42,7 +42,7 @@ Project
 │           └─── map        //page dataa and chunks map
 └─── src    
 │   └─── pages              //all project pages go here
-│       │   index.js    
+│       │   index.ts    
 │       │   about.js
 │       │   404.js          //404.js is required for Link to work properly
 │       │   ...    

@@ -1,30 +1,33 @@
-const _ = require("lodash");
-const ConfigMapper = require("./mappers/config.mapper");
-const PathMapper = require("./mappers/path.mapper")
-const PageArchitect = require("./architects/page.architect");
-const WebpackArchitect = require("./architects/webpack.architect");
-const Cli = require("./utils/cli-color");
-const PluginMapper = require("./mappers/plugin.mapper");
-const BuildRegistrar = require("./registrars/build.registrar");
-const _path = require("path");
-const fs = require("fs");
+import _ from "lodash";
+import ConfigMapper from "./mappers/config.mapper"
+import PathMapper from "./mappers/path.mapper"
+import PageArchitect from "./architects/page.architect"
+import WebpackArchitect from "./architects/webpack.architect"
+import Cli from "./utils/cli-color"
+import PluginMapper from "./mappers/plugin.mapper"
+import BuildRegistrar from "./registrars/build.registrar"
+import {join} from "path"
+import {readFileSync} from "fs";
+
+interface $ {
+    args: any,
+    config: any,
+    map: any,
+    externals: string[],
+    cli: Cli,
+    webpackConfig: any,
+    template: string,
+}
+
 module.exports = class {
 
-    #$ = {
-        args: {},
-        config: {},
-        map: new Map(),
-        externals: [],
-        cli: {},
-        webpackConfig: {},
-        template: "",
-    };
+    #$: $;
 
     constructor({userConfig, config, args, map, webpackConfig, template}) {
         this.#$.args = args || ConfigMapper.getArgs();
         this.#$.cli = new Cli(this.#$.args);
         this.#$.config = config || userConfig ? new ConfigMapper(this.#$).getConfig(_.cloneDeep(userConfig)) : new ConfigMapper(this.#$).getConfig();
-        this.#$.template = template || fs.readFileSync(_path.join(__dirname, 'web/template.html')).toString();
+        this.#$.template = template || readFileSync(join(__dirname, 'web/template.html')).toString();
         this.#$.map = map ? new PathMapper(this.#$).convertToMap(map) : new PathMapper(this.#$).map();
         this.#$.webpackConfig = webpackConfig || new WebpackArchitect(this.#$).readUserConfig();
     }

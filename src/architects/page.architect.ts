@@ -1,5 +1,5 @@
 const webpack = require("webpack");
-const WebpackArchitect = require("../architects/webpack.architect");
+const WebpackArchitect = require("./webpack.architect");
 const MemoryFileSystem = require("memory-fs");
 
 module.exports = class {

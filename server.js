@@ -1,11 +1,11 @@
 const _path = require("path");
 const express = require("express");
 const chokidar = require("chokidar");
-const StaticArchitect = require("./architects/static.architect");
-const PageArchitect = require("./architects/page.architect");
-const MapComponent = require("./classes/MapComponent");
-const PagePath = require("./classes/PagePath");
-const PluginMapper = require("./mappers/plugin.mapper");
+const StaticArchitect = require("./src/architects/static.architect");
+const PageArchitect = require("./src/architects/page.architect");
+const MapComponent = require("./src/classes/MapComponent");
+const PagePath = require("./src/classes/PagePath");
+const PluginMapper = require("./src/mappers/plugin.mapper");
 const server = express();
 
 module.exports = (app) => {

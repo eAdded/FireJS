@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const FireJS = require("./index");
+const FireJS = require("./src");
 const app = new FireJS({});
 if (app.getContext().config.pro)
     app.buildPro(() => {
