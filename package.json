@@ -1,7 +1,7 @@
 {
   "name": "@eadded/firejs",
-  "version": "0.5.6",
-  "main": "src/index.ts",
+  "main": "dist",
+  "version": "0.6.3",
   "license": "MIT",
   "description": "Highly customizable no config react static site generator",
   "keywords": [
@@ -38,11 +38,14 @@
     "@types/node": "^14.0.1"
   },
   "bin": {
-    "firejs": "src/firejs.ts"
+    "firejs": "dist/firejs.js"
   },
   "bugs": {
     "url": "https://github.com/eAdded/firejs/issues"
   },
   "homepage": "https://github.com/eAdded/firejs#readme",
-  "scripts": {}
+  "scripts": {},
+  "files": [
+    "dist"
+  ]
 }
