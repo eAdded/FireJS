@@ -47,18 +47,13 @@ export default class {
         const sample = this.getConfigBase();
         if (this.$.config.paths.webpack) {
             const userWebpack = require(this.$.config.paths.webpack);
-            if (Array.isArray(userWebpack))
-                userWebpack.forEach((prop) => {
-                    if (prop.name === ("web-" + this.$.config.name))
-                        return {...sample, ...prop};
-                })
-            else if (typeof userWebpack === "object")
+            if (typeof userWebpack === "object")
                 return {
                     ...sample,
                     ...userWebpack
                 }
             else {
-                this.$.cli.error("Expected webpack config object or array got " + typeof userWebpack)
+                this.$.cli.error("Expected WebpackConfig Types [object] got" + typeof userWebpack)
                 throw new Error();
             }
         }

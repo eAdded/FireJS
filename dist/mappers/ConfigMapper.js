@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", {value: true});
 const path_1 = require("path");
 const fs_1 = require("fs");
-
 function getArgs() {
     return require("arg")({
         //Types
@@ -19,9 +18,7 @@ function getArgs() {
         "-s": "--silent",
     });
 }
-
 exports.getArgs = getArgs;
-
 class default_1 {
     constructor(globalData) {
         this.makeAbsolute = (root, pathTo) => {
@@ -91,7 +88,7 @@ class default_1 {
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
-        if (!config.noPlugin) {
+        if (!this.$.args["--disable-plugins"]) {
             this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
             if (config.paths.plugins) //Only getPlugins when dir exists
                 this.getPlugins(config);
@@ -108,7 +105,6 @@ class default_1 {
         this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages._404 = config.pages._404 || "404.js"));
         return config;
     }
-
     undefinedIfNotFound(object, property, pathRoot, name, msg) {
         if (object[property]) {
             object[property] = this.makeAbsolute(pathRoot, object[property]);
@@ -116,7 +112,6 @@ class default_1 {
         } else if (!fs_1.existsSync(object[property] = path_1.resolve(pathRoot, name)))
             object[property] = undefined;
     }
-
     pluginExists(plugin, paths = undefined) {
         try {
             require.resolve(plugin, {paths});
@@ -125,7 +120,6 @@ class default_1 {
             return false;
         }
     }
-
     makeDirIfNotFound(path) {
         if (!fs_1.existsSync(path))
             fs_1.mkdirSync(path);

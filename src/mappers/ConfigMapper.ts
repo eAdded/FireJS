@@ -4,7 +4,6 @@ import {$} from "../index";
 
 export interface Config {
     pro?: boolean,          //production mode when true, dev mode when false
-    noPlugin?: boolean,     //disable or enable plugins
     paths?: {               //paths absolute or relative to root
         root?: string,      //project root, default : process.cwd()
         src?: string,       //src dir, default : root/src
@@ -107,7 +106,7 @@ export default class {
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
-        if (!config.noPlugin) {
+        if (!this.$.args["--disable-plugins"]) {
             this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
             if (config.paths.plugins)//Only getPlugins when dir exists
                 this.getPlugins(config);

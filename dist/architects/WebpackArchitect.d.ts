@@ -1,8 +1,11 @@
 import MapComponent from "../classes/MapComponent";
-import { $ } from "../index";
+import {$} from "../index";
+
 export default class {
     private readonly $;
+
     constructor(globalData: $);
+
     externals: () => {
         target: string;
         mode: string;
@@ -12,7 +15,7 @@ export default class {
             ReactHelmet: string;
         };
         output: {
-            path: any;
+            path: string;
             filename: string;
             library: string;
         };

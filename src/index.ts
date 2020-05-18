@@ -1,5 +1,5 @@
 import {cloneDeep} from "lodash";
-import ConfigMapper, {Args, getArgs} from "./mappers/ConfigMapper";
+import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
 import PluginMapper from "./mappers/PluginMapper"
@@ -11,7 +11,7 @@ import MapComponent from "./classes/MapComponent";
 
 export interface $ {
     args?: Args,
-    config?: any,
+    config?: Config,
     map?: Map<string, MapComponent>,
     cli?: Cli,
     webpackConfig?: any,
@@ -20,8 +20,8 @@ export interface $ {
 }
 
 export interface params {
-    userConfig?: any,
-    config?: any,
+    userConfig?: Config,
+    config?: Config,
     args?: Args,
     map?: string[],
     webpackConfig?: any,
