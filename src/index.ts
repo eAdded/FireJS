@@ -10,26 +10,35 @@ import PathMapper from "./mappers/PathMapper";
 import Cli from "./utils/Cli";
 
 export interface $ {
-    args: any,
-    config: any,
-    map: any,
-    externals: string[],
-    cli: Cli,
-    webpackConfig: any,
-    template: string,
+    args?: any,
+    config?: any,
+    map?: any,
+    cli?: Cli,
+    webpackConfig?: any,
+    template?: string,
+    externals?: string[]
 }
 
-module.exports = class {
+export interface params {
+    userConfig?: any,
+    config?: any,
+    args?: any,
+    map?: any,
+    webpackConfig?: any,
+    template?: string,
+}
 
-    $: $;
+export default class {
+    private readonly $: $ = {};
 
-    constructor({userConfig, config, args, map, webpackConfig, template}) {
-        this.$.args = args || ConfigMapper.getArgs();
+    constructor(params: params = {}) {
+        this.$.args = params.args || ConfigMapper.getArgs();
         this.$.cli = new Cli(this.$.args);
-        this.$.config = config || userConfig ? new ConfigMapper(this.$).getConfig(_.cloneDeep(userConfig)) : new ConfigMapper(this.$).getConfig();
-        this.$.template = template || readFileSync(join(__dirname, 'web/template.html')).toString();
-        this.$.map = map ? new PathMapper(this.$).convertToMap(map) : new PathMapper(this.$).map();
-        this.$.webpackConfig = webpackConfig || new WebpackArchitect(this.$).readUserConfig();
+        this.$.config = params.config || params.userConfig ? new ConfigMapper(this.$).getConfig(_.cloneDeep(params.userConfig)) : new ConfigMapper(this.$).getConfig();
+        this.$.template = params.template || readFileSync(join(__dirname, 'web/template.html')).toString();
+        this.$.map = params.map ? new PathMapper(this.$).convertToMap(params.map) : new PathMapper(this.$).map();
+        this.$.webpackConfig = params.webpackConfig || new WebpackArchitect(this.$).readUserConfig();
+        this.$.externals = [];
     }
 
     mapPluginsAndBuildExternals() {
@@ -55,7 +64,7 @@ module.exports = class {
                         buildRegistrar.registerForSemiBuild(mapComponent).then(_ => {
                             pageArchitect.buildDirect(mapComponent, _ => {
                                 resolve();
-                                this.$.cli.ok(`Successfully built page ${mapComponent.getPage()}`)
+                                this.$.cli.ok(`Successfully built page ${mapComponent.Page}`)
                                 pluginMapper.applyPlugin(mapComponent);
                             }, err => {
                                 throw err

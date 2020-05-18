@@ -1,4 +1,4 @@
-import {loadPage, preloadPage} from "../web/LinkApi"
+import {loadPage, preloadPage} from "../scripts/LinkApi"
 
 export default ({to, children, className}) => {
     let wasLoaded = false;

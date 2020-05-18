@@ -1,4 +1,4 @@
-import "./HistoryListener";
+import "../src/scripts/HistoryListener";
 
 ReactDOM.hydrate(React.createElement(
     App.default,

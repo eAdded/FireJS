@@ -169,7 +169,7 @@ export default class {
                 }
             );
         }
-        const web_front_entry = resolve(__dirname, this.$.config.pro ? '../web/index_pro.ts' : '../web/index_dev.ts')
+        const web_front_entry = resolve(__dirname, this.$.config.pro ? '../../web/index_pro.js' : '../../web/index_dev.js')
         mergedConfig.name = mapComponent.Page;
         //path before file name is important cause it allows easy routing during development
         mergedConfig.output.filename = `m[contentHash].js`;
