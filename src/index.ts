@@ -9,7 +9,7 @@ import BuildRegistrar from "./registrars/build.registrar"
 import {join} from "path"
 import {readFileSync} from "fs";
 
-interface $ {
+export interface $ {
     args: any,
     config: any,
     map: any,

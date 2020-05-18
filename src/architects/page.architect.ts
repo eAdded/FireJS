@@ -1,8 +1,8 @@
-const webpack = require("webpack");
-const WebpackArchitect = require("./webpack.architect");
-const MemoryFileSystem = require("memory-fs");
+import webpack from "webpack";
+import WebpackArchitect from "./webpack.architect";
+import MemoryFileSystem from "memory-fs";
 
-module.exports = class {
+export default class {
     #$;
 
     constructor(globalData) {

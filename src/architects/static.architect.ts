@@ -1,10 +1,11 @@
-const _path = require("path");
-const {renderToString} = require("react-dom/server");
-const {Helmet} = require("react-helmet")
-module.exports = class {
+import {renderToString} from "react-dom/server"
+import {Helmet} from "react-helmet"
+import {$} from "../index";
+
+export default class {
     #$;
 
-    constructor(globalData) {
+    constructor(globalData: $) {
         this.#$ = globalData;
     }
 
@@ -36,6 +37,7 @@ module.exports = class {
             this.#$.config.templateTags.static,
             "<div id='root'>".concat((() => {
                     if (this.#$.config.pro) {
+                        // @ts-ignore
                         global.window = {
                             __LIB_REL__: libRel,
                             __MAP__: pagePath.getMap(),
@@ -43,12 +45,18 @@ module.exports = class {
                             __MAP_REL__: mapRel,
                             SSR: true
                         };
+                        // @ts-ignore
                         global.document = {};
+                        // @ts-ignore
                         global.React = require("react");
+                        // @ts-ignore
                         global.ReactDOM = require("react-dom");
+                        // @ts-ignore
                         global.ReactHelmet = {Helmet};
                         return renderToString(
+                            // @ts-ignore
                             React.createElement(require(_path.join(this.#$.config.paths.babel, mapComponent.babelChunk)).default,
+                                // @ts-ignore
                                 {content: window.__MAP__.content},//cheap way of deep copy
                                 undefined)
                         );
@@ -65,7 +73,7 @@ module.exports = class {
         return template
     }
 
-    addChunk(template, chunk, root, tag) {
+    addChunk(template: string, chunk: string, root: string | undefined = undefined, tag: string | undefined = undefined) {
         root = root === undefined ? _path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib) : root;
         const templateTags = this.#$.config.templateTags;
         const href = _path.join(root, chunk);
@@ -80,11 +88,11 @@ module.exports = class {
             return template.replace(templateTags.unknown, `<link href="/${href}">${templateTags.unknown}`);
     }
 
-    addInnerHTML(template, element, tag) {
+    addInnerHTML(template: string, element: string, tag: string) {
         return template.replace(this.#$.config.templateTags[tag], `${element}${this.#$.config.templateTags[tag]}`)
     }
 
-    finalize(template) {
+    finalize(template: string) {
         Object.keys(this.#$.config.templateTags).forEach(tag => {
             template = template.replace(this.#$.config.templateTags[tag], "");
         })

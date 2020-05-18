@@ -1,10 +1,12 @@
-const _path = require("path");
+import {join} from "path"
+import {$} from "../index";
+
 const StaticArchitect = require("./static.architect");
 const FsUtil = require("../utils/fs-util");
-module.exports = class {
+export default class {
     #$;
 
-    constructor(globalData) {
+    constructor(globalData: $) {
         this.#$ = globalData;
     }
 
@@ -12,7 +14,7 @@ module.exports = class {
         const staticArchitect = new StaticArchitect(this.#$);
         const html = staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath));
         return FsUtil.writeFileRecursively(
-            _path.join(this.#$.config.paths.dist, pagePath.getPath().concat(".html")),
+            join(this.#$.config.paths.dist, pagePath.getPath().concat(".html")),
             html
         )
     }

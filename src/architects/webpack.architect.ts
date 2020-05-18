@@ -1,12 +1,13 @@
-const webpack = require("webpack");
-const path = require("path")
-const _ = require("lodash");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+import webpack from "webpack"
+import _ from "lodash"
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import MapComponent from "../classes/MapComponent";
+import {$} from "../index";
 
-module.exports = class {
+export default class {
     #$;
 
-    constructor(globalData) {
+    constructor(globalData: $) {
         this.#$ = globalData;
     }
 
@@ -63,7 +64,7 @@ module.exports = class {
         return sample;
     }
 
-    babel(mapComponent, user_config) {
+    babel(mapComponent: MapComponent, user_config: any = {}) {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
@@ -82,9 +83,9 @@ module.exports = class {
         };
         mergedConfig.externals = [];
         mergedConfig.externals.push('react', 'react-dom', 'react-helmet');
-        mergedConfig.name = mapComponent.getPage();
+        mergedConfig.name = mapComponent.Page;
         mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
-        mergedConfig.entry = path.join(this.#$.config.paths.pages, mapComponent.getPage());
+        mergedConfig.entry = path.join(this.#$.config.paths.pages, mapComponent.Page);
         mergedConfig.output.path = this.#$.config.paths.babel;
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
@@ -121,7 +122,7 @@ module.exports = class {
         return mergedConfig;
     }
 
-    direct(mapComponent, user_config) {
+    direct(mapComponent, user_config: any = {}) {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',

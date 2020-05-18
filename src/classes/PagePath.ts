@@ -1,31 +1,36 @@
-const _path = require("path");
-module.exports = class {
-    #path;
-    #map = {
-        path: "",
+import {join, relative} from "path";
+
+interface map {
+    chunks: string[],
+    content: any
+}
+
+export default class {
+    private readonly path: string;
+    private readonly map: map = {
         chunks: [],
         content: {},
     };
-    #map_path;
+    private readonly map_path: string;
 
     constructor(mapComponent, path, content, $) {
-        this.#path = path;
-        this.#map = {
+        this.path = path;
+        this.map = {
             chunks: mapComponent.chunks,
             content
         }
-        this.#map_path = _path.join(_path.relative($.config.paths.dist, $.config.paths.map), path.concat(".map.js"));
+        this.map_path = join(relative($.config.paths.dist, $.config.paths.map), path + ".map.js");
     }
 
-    getMap() {
-        return this.#map;
+    get Map() {
+        return this.map;
     }
 
-    getMapPath() {
-        return this.#map_path;
+    get MapPath() {
+        return this.map_path;
     }
 
-    getPath() {
-        return this.#path;
+    get Path() {
+        return this.path;
     }
 }

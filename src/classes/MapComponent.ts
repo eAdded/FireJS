@@ -1,29 +1,31 @@
-module.exports = class {
-    #page;
-    #name;
-    #ext;
-    paths = [];
-    chunks = [];
-    babelChunk;
-    memoryFileSystem = {};
-    plugin = undefined;
+import MemoryFileSystem from "memory-fs";
+
+export default class {
+    public paths: string[] = [];
+    public chunks: string[] = [];
+    public babelChunk: string;
+    public memoryFileSystem: MemoryFileSystem = {};
+    public plugin = undefined;
+    private readonly page;
+    private readonly name;
+    private readonly ext;
 
     constructor(page) {
-        this.#page = page;
-        this.#name = page.substring(page.lastIndexOf("/") + 1, page.lastIndexOf("."));
-        this.#ext = page.substring(page.lastIndexOf("."));
+        this.page = page;
+        this.name = page.substring(page.lastIndexOf("/") + 1, page.lastIndexOf("."));
+        this.ext = page.substring(page.lastIndexOf("."));
     }
 
-    getPage() {
-        return this.#page;
+    get Page() {
+        return this.page;
     }
 
-    getExt() {
-        return this.#ext;
+    get Ext() {
+        return this.ext;
     }
 
-    getName() {
-        return this.#name;
+    get Name() {
+        return this.name;
     }
 
 }
