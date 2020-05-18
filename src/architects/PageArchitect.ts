@@ -1,20 +1,20 @@
 import webpack from "webpack";
-import WebpackArchitect from "./webpack.architect";
+import WebpackArchitect from "./WebpackArchitect";
 import MemoryFileSystem from "memory-fs";
+import {$} from "../index";
 
 export default class {
-    #$;
+    private readonly $: $;
 
-    constructor(globalData) {
-        this.#$ = globalData;
+    constructor(globalData: $) {
+        this.$ = globalData;
     }
-
 
     buildExternals() {
         return new Promise((resolve, reject) => {
-            this.build(new WebpackArchitect(this.#$).externals(), undefined, stat => {
+            this.build(new WebpackArchitect(this.$).externals(), undefined, stat => {
                 stat.compilation.chunks.forEach(chunk => {
-                    this.#$.externals.push(...chunk.files);
+                    this.$.externals.push(...chunk.files);
                 })
                 resolve();
             }, reject)
@@ -22,7 +22,7 @@ export default class {
     }
 
     buildBabel(mapComponent, resolve, reject) {
-        this.build(new WebpackArchitect(this.#$).babel(mapComponent), undefined, stat => {
+        this.build(new WebpackArchitect(this.$).babel(mapComponent), undefined, stat => {
             if (this.logStat(stat))//true if errors
                 reject();
             else {
@@ -33,9 +33,9 @@ export default class {
     }
 
     buildDirect(mapComponent, resolve, reject) {
-        const fileSystem = this.#$.config.pro ? undefined : new MemoryFileSystem();
-        this.build(new WebpackArchitect(this.#$).direct(mapComponent), fileSystem, stat => {
-            if (!this.#$.config.pro) {
+        const fileSystem = this.$.config.pro ? undefined : new MemoryFileSystem();
+        this.build(new WebpackArchitect(this.$).direct(mapComponent), fileSystem, stat => {
+            if (!this.$.config.pro) {
                 mapComponent.chunks = []; //re init for new chunks
                 mapComponent.memoryFileSystem = fileSystem;
             }
@@ -79,22 +79,22 @@ export default class {
 
     logStat(stat) {
         let errorCount = 0;
-        if (this.#$.args["--verbose"]) {
-            this.#$.cli.log("Stat");
-            this.#$.cli.normal(stat);
+        if (this.$.args["--verbose"]) {
+            this.$.cli.log("Stat");
+            this.$.cli.normal(stat);
         }
         if (stat.hasWarnings()) {
-            this.#$.cli.warn(`Warning in page ${stat.compilation.name}\n`, ...stat.compilation.warnings);
+            this.$.cli.warn(`Warning in page ${stat.compilation.name}\n`, ...stat.compilation.warnings);
         }
         if (stat.hasErrors()) {
             if (stat.compilation.errors.length === 0)
-                this.#$.cli.error(`Error in page ${stat.compilation.name}`)
+                this.$.cli.error(`Error in page ${stat.compilation.name}`)
             else {
-                this.#$.cli.error(`Error in page ${stat.compilation.name}\n`, ...stat.compilation.errors);
+                this.$.cli.error(`Error in page ${stat.compilation.name}\n`, ...stat.compilation.errors);
             }
-            if (this.#$.config.pro)
-                this.#$.cli.log("Some errors might not be displayed in production mode. Try moving to development mode.")
-            this.#$.cli.error(`Unable to build page ${stat.compilation.name} with ${errorCount} error(s)`)
+            if (this.$.config.pro)
+                this.$.cli.log("Some errors might not be displayed in production mode. Try moving to development mode.")
+            this.$.cli.error(`Unable to build page ${stat.compilation.name} with ${errorCount} error(s)`)
             return true;
         }
     }

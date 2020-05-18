@@ -3,25 +3,26 @@ import _ from "lodash"
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import MapComponent from "../classes/MapComponent";
 import {$} from "../index";
+import {join, relative, resolve} from "path"
 
 export default class {
-    #$;
+    private readonly $: $;
 
     constructor(globalData: $) {
-        this.#$ = globalData;
+        this.$ = globalData;
     }
 
     externals = () => {
         return {
             target: 'web',
-            mode: this.#$.config.pro ? "production" : "development",
+            mode: this.$.config.pro ? "production" : "development",
             entry: {
                 "React": "react",
                 "ReactDOM": "react-dom",
                 "ReactHelmet": "react-helmet"
             },
             output: {
-                path: this.#$.config.paths.lib,
+                path: this.$.config.paths.lib,
                 filename: "[name][contentHash].js",
                 library: "[name]",//make file as library so it can be imported for static generation
             }
@@ -44,11 +45,11 @@ export default class {
 
     readUserConfig() {
         const sample = this.getConfigBase();
-        if (this.#$.config.paths.webpack) {
-            const userWebpack = require(this.#$.config.paths.webpack);
+        if (this.$.config.paths.webpack) {
+            const userWebpack = require(this.$.config.paths.webpack);
             if (Array.isArray(userWebpack))
                 userWebpack.forEach((prop) => {
-                    if (prop.name === ("web-" + this.#$.config.name))
+                    if (prop.name === ("web-" + this.$.config.name))
                         return {...sample, ...prop};
                 })
             else if (typeof userWebpack === "object")
@@ -57,7 +58,7 @@ export default class {
                     ...userWebpack
                 }
             else {
-                this.#$.cli.error("Expected webpack config object or array got " + typeof userWebpack)
+                this.$.cli.error("Expected webpack config object or array got " + typeof userWebpack)
                 throw new Error();
             }
         }
@@ -68,9 +69,9 @@ export default class {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
-            mode: this.#$.config.pro ? "production" : "development",
+            mode: this.$.config.pro ? "production" : "development",
             //add config base to user config to prevent undefined errors
-            ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.#$.webpackConfig),
+            ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.$.webpackConfig),
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -84,9 +85,9 @@ export default class {
         mergedConfig.externals = [];
         mergedConfig.externals.push('react', 'react-dom', 'react-helmet');
         mergedConfig.name = mapComponent.Page;
-        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
-        mergedConfig.entry = path.join(this.#$.config.paths.pages, mapComponent.Page);
-        mergedConfig.output.path = this.#$.config.paths.babel;
+        mergedConfig.output.publicPath = `/${relative(this.$.config.paths.dist, this.$.config.paths.lib)}/`;
+        mergedConfig.entry = join(this.$.config.paths.pages, mapComponent.Page);
+        mergedConfig.output.path = this.$.config.paths.babel;
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
         mergedConfig.output.globalObject = "this";
@@ -126,10 +127,10 @@ export default class {
         let mergedConfig = {
             //settings which can be changed by user
             target: 'web',
-            mode: this.#$.config.pro ? "production" : "development",
-            watch: !this.#$.config.pro,
+            mode: this.$.config.pro ? "production" : "development",
+            watch: !this.$.config.pro,
             //add config base to user config to prevent undefined errors
-            ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.#$.webpackConfig),
+            ..._.cloneDeep({...this.getConfigBase(), ...user_config} || this.$.webpackConfig),
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -144,7 +145,7 @@ export default class {
         mergedConfig.externals.react = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
         mergedConfig.externals["react-helmet"] = "ReactHelmet";
-        if (!this.#$.config.pro) {
+        if (!this.$.config.pro) {
             mergedConfig.module.rules.push({
                 test: /\.js$/,
                 use: {
@@ -168,20 +169,20 @@ export default class {
                 }
             );
         }
-        const web_front_entry = path.resolve(__dirname, this.#$.config.pro ? '../web/index_pro.js' : '../web/index_dev.js')
+        const web_front_entry = resolve(__dirname, this.$.config.pro ? '../web/index_pro.ts' : '../web/index_dev.ts')
         mergedConfig.name = mapComponent.Page;
         //path before file name is important cause it allows easy routing during development
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
-        mergedConfig.output.publicPath = `/${path.relative(this.#$.config.paths.dist, this.#$.config.paths.lib)}/`;
-        if (this.#$.config.pro) //only output in production because they'll be served from memory in dev mode
-            mergedConfig.output.path = this.#$.config.paths.lib;
+        mergedConfig.output.publicPath = `/${relative(this.$.config.paths.dist, this.$.config.paths.lib)}/`;
+        if (this.$.config.pro) //only output in production because they'll be served from memory in dev mode
+            mergedConfig.output.path = this.$.config.paths.lib;
         else
             mergedConfig.output.path = "/";//in dev the content is served from memory
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(
             new webpack.ProvidePlugin({
-                App: this.#$.config.pro ? path.join(this.#$.config.paths.babel, mapComponent.babelChunk) : path.join(this.#$.config.paths.pages, mapComponent.Page)
+                App: this.$.config.pro ? join(this.$.config.paths.babel, mapComponent.babelChunk) : join(this.$.config.paths.pages, mapComponent.Page)
             }),
         );
         return mergedConfig;

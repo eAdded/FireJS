@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/web",
+    "module": "ES6",
+    "target": "es6",
+    "declaration": true,
+    "lib": [
+      "ES6",
+      "DOM"
+    ]
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}

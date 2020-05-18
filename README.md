@@ -1,4 +1,4 @@
-# FireJS
+# Firejs
  Highly customizable no config react static site generator built on the principles of Gatsby, NextJs and create-react-app.    
     
 ## Features    
@@ -12,7 +12,7 @@
  - Easy dynamic routes
     
 ## Why another React Static Site Gen... ?
- The need of this project ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **FireJS**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.  
+ The need of this project ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **Firejs**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.  
   
 ## Install  
 ~~~  
@@ -57,7 +57,7 @@ Project
 | webpack.config.js         //default webpack config file
 ```
 ## Components
-**FireJS** exports two components : Link and Head
+**Firejs** exports two components : Link and Head
 
  - Link : Used for navigating pages (in project only). Preloads page content onMouseEnter. Preserves history.
  - Head : Injects children to head element. A wrapper around react-helmet. Allows SSR.

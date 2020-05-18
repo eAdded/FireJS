@@ -1,16 +1,18 @@
-const _path = require("path");
-const FsUtil = require("../utils/fs-util");
-const PagePath = require("../classes/PagePath");
-const PathArchitect = require("../architects/path.architect");
-module.exports = class {
-    #$;
+import {$} from "../index";
+import PagePath from "../classes/PagePath";
+import {writeFileRecursively} from "../utils/Fs";
+import PathArchitect from "../architects/PathArchitect";
+import {join} from "path"
 
-    constructor(globalData) {
-        this.#$ = globalData;
+export default class {
+    private readonly $: $;
+
+    constructor(globalData: $) {
+        this.$ = globalData;
     }
 
     mapPlugins() {
-        this.#$.config.plugins.forEach(path => {
+        this.$.config.plugins.forEach(path => {
             this.mapPlugin(path);
         });
     }
@@ -18,7 +20,7 @@ module.exports = class {
     mapPlugin(path) {
         const plugin = require(path);
         for (const page in plugin) {
-            const mapComponent = this.#$.map.get(page);
+            const mapComponent = this.$.map.get(page);
             if (!mapComponent) //check if this page exists
                 throw new TypeError(`page ${page} either does not exists or is not mapped`);
             mapComponent.plugin = plugin[page];
@@ -26,15 +28,15 @@ module.exports = class {
     }
 
     applyPlugin(mapComponent) {
-        const pathArchitect = new PathArchitect(this.#$);
+        const pathArchitect = new PathArchitect(this.$);
         mapComponent.paths = [];//reset paths
         if (mapComponent.plugin) {
             this.parsePagePaths(mapComponent.plugin, (path, content) => {
-                const pagePath = new PagePath(mapComponent, path, content, this.#$);
-                if (this.#$.config.pro) {
-                    FsUtil.writeFileRecursively(//write content
-                        _path.join(this.#$.config.paths.dist, pagePath.getMapPath()),
-                        `window.__MAP__=${JSON.stringify(pagePath.getMap())}`
+                const pagePath = new PagePath(mapComponent, path, content, this.$);
+                if (this.$.config.pro) {
+                    writeFileRecursively(//write content
+                        join(this.$.config.paths.dist, pagePath.MapPath),
+                        `window.__MAP__=${JSON.stringify(pagePath.Map)}`
                     );
                     pathArchitect.writePath(mapComponent, pagePath);//write html file
                 } else
@@ -46,11 +48,11 @@ module.exports = class {
             //make default page
             let path = mapComponent.getPage();
             path = "/" + path.substring(0, path.lastIndexOf(mapComponent.getExt()));
-            const pagePath = new PagePath(mapComponent, path, {}, this.#$);
-            if (this.#$.config.pro) {
-                FsUtil.writeFileRecursively(//write content
-                    _path.join(this.#$.config.paths.dist, pagePath.getMapPath()),
-                    `window.__MAP__=${JSON.stringify(pagePath.getMap())}`
+            const pagePath = new PagePath(mapComponent, path, {}, this.$);
+            if (this.$.config.pro) {
+                writeFileRecursively(//write content
+                    join(this.$.config.paths.dist, pagePath.MapPath),
+                    `window.__MAP__=${JSON.stringify(pagePath.Map)}`
                 );
                 pathArchitect.writePath(mapComponent, pagePath);//write html when pro
             } else
