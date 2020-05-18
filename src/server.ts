@@ -1,30 +1,31 @@
-const _path = require("path");
-const express = require("express");
-const chokidar = require("chokidar");
-const StaticArchitect = require("./architects/StaticArchitect");
-const PageArchitect = require("./architects/PageArchitect");
-const MapComponent = require("./classes/MapComponent");
-const PagePath = require("./classes/PagePath");
-const PluginMapper = require("./mappers/PluginMapper");
-const server = express();
+import {join, relative} from "path"
+import {watch} from "chokidar"
+import StaticArchitect from "./architects/StaticArchitect"
+import PageArchitect from "./architects/PageArchitect"
+import MapComponent from "./classes/MapComponent"
+import PagePath from "./classes/PagePath"
+import PluginMapper from "./mappers/PluginMapper"
+import express = require("express");
 
-module.exports = (app) => {
+const server: express.Application = express();
+
+export default function (app) {
     const $ = app.getContext();
     const {config: {paths}} = $;
     const staticArchitect = new StaticArchitect($)
     const pageArchitect = new PageArchitect($);
     const pluginMapper = new PluginMapper($);
-    const pageDataRelative = `/${_path.relative(paths.dist, paths.map)}/`;
-    const libRelative = `/${_path.relative(paths.dist, paths.lib)}/`;
+    const pageDataRelative = `/${relative(paths.dist, paths.map)}/`;
+    const libRelative = `/${relative(paths.dist, paths.lib)}/`;
 
     app.mapPluginsAndBuildExternals().then(_ => {
-        chokidar.watch(paths.pages)//watch changes
+        watch(paths.pages)//watch changes
             .on('add', buildPage)
             .on('unlink', path => {
                 $.map.delete(path.replace(paths.pages + "/", ""));
             });
         $.externals.forEach(external =>//externals
-            server.use(`${libRelative}${external}`, express.static(_path.join(paths.dist, libRelative, external))));
+            server.use(`${libRelative}${external}`, express.static(join(paths.dist, libRelative, external))));
         if (paths.static)
             server.use(`${paths.static.substring(paths.static.lastIndexOf("/"))}`, express.static(paths.static));
         server.use((req, res, next) => {
@@ -73,7 +74,7 @@ module.exports = (app) => {
         let found = false;
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
-                if (req.url === pagePath.getPath() || (_path.join(req.url, "index") === pagePath.getPath())) {
+                if (req.url === pagePath.getPath() || (join(req.url, "index") === pagePath.getPath())) {
                     res.end(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
                     return true;
                 }
