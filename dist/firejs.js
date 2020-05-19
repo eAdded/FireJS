@@ -11,12 +11,7 @@ if (app.Context.config.pro)
         const $ = app.Context;
         $.cli.ok("Build finished");
         $.cli.log("Generating babel chunk map");
-        const babel_map = {};
-        for (const mapComponent of $.map.values()) {
-            babel_map[mapComponent.Page] = mapComponent.babelChunk;
-        }
-        fs_1.writeFileSync(path_1.join($.config.paths.out, "babel.map.json"), JSON.stringify(babel_map));
-        $.cli.ok("DONE");
+        fs_1.writeFileSync(path_1.join($.config.paths.out, "firejs.map.json"), JSON.stringify(app.generateMap()));
     });
 else {
     new server_1.default(app);

@@ -62,6 +62,19 @@ class default_1 {
             Promise.all(promises).then(callback);
         });
     }
+    generateMap() {
+        const babel_map = {
+            externals: this.$.externals,
+            pages: {}
+        };
+        for (const mapComponent of this.$.map.values()) {
+            babel_map.pages[mapComponent.Page] = {
+                babelChunk: mapComponent.babelChunk,
+                chunks: mapComponent.chunks
+            };
+        }
+        return babel_map;
+    }
     get Context() {
         return this.$;
     }

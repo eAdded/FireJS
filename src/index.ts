@@ -13,6 +13,16 @@ import {Configuration, Stats} from "webpack";
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
 
+export interface FireJS_MAP {
+    externals: string[],
+    pages: {
+        [key: string]: {
+            babelChunk: string,
+            chunks: string[]
+        }
+    }
+}
+
 export interface $ {
     args?: Args,
     config?: Config,
@@ -87,6 +97,20 @@ export default class {
             }
             Promise.all(promises).then(callback);
         });
+    }
+
+    generateMap(): FireJS_MAP {
+        const babel_map: FireJS_MAP = {
+            externals: this.$.externals,
+            pages: {}
+        };
+        for (const mapComponent of this.$.map.values()) {
+            babel_map.pages[mapComponent.Page] = {
+                babelChunk: mapComponent.babelChunk,
+                chunks: mapComponent.chunks
+            };
+        }
+        return babel_map;
     }
 
     get Context(): $ {

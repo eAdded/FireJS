@@ -4,6 +4,15 @@ import MapComponent from "./classes/MapComponent";
 import { Configuration, Stats } from "webpack";
 export declare type WebpackConfig = Configuration;
 export declare type WebpackStat = Stats;
+export interface FireJS_MAP {
+    externals: string[];
+    pages: {
+        [key: string]: {
+            babelChunk: string;
+            chunks: string[];
+        };
+    };
+}
 export interface $ {
     args?: Args;
     config?: Config;
@@ -26,5 +35,6 @@ export default class {
     constructor(params?: Params);
     mapPluginsAndBuildExternals(): Promise<unknown>;
     buildPro(callback: any): void;
+    generateMap(): FireJS_MAP;
     get Context(): $;
 }
