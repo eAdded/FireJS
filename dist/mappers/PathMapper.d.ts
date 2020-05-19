@@ -1,5 +1,4 @@
-import {$} from "../index";
-
+import { $ } from "../index";
 export default class {
     $: $;
     constructor(globalData: $);

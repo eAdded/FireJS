@@ -2,7 +2,7 @@ import webpack = require("webpack");
 import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import {cloneDeep} from "lodash"
 import MapComponent from "../classes/MapComponent";
-import {$} from "../index";
+import {$, WebpackConfig} from "../index";
 import {join, relative, resolve} from "path"
 
 export default class {
@@ -12,7 +12,7 @@ export default class {
         this.$ = globalData;
     }
 
-    externals = () => {
+    externals(): WebpackConfig {
         return {
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
@@ -29,7 +29,7 @@ export default class {
         };
     }
 
-    getConfigBase() {
+    getConfigBase(): WebpackConfig {
         // predefined object structure to prevent undefined error
         return {
             entry: {},
@@ -43,7 +43,7 @@ export default class {
 
     }
 
-    readUserConfig() {
+    readUserConfig(): WebpackConfig {
         const sample = this.getConfigBase();
         if (this.$.config.paths.webpack) {
             const userWebpack = require(this.$.config.paths.webpack);
@@ -60,13 +60,13 @@ export default class {
         return sample;
     }
 
-    babel(mapComponent: MapComponent, user_config: any = {}) {
-        let mergedConfig = {
+    babel(mapComponent: MapComponent, user_config: WebpackConfig): WebpackConfig {
+        let mergedConfig: WebpackConfig = {
             //settings which can be changed by user
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
             //add config base to user config to prevent undefined errors
-            ...cloneDeep({...this.getConfigBase(), ...user_config} || this.$.webpackConfig),
+            ...cloneDeep({...this.getConfigBase(), ...user_config}),
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -118,14 +118,14 @@ export default class {
         return mergedConfig;
     }
 
-    direct(mapComponent: MapComponent, user_config: any = {}) {
-        let mergedConfig = {
+    direct(mapComponent: MapComponent, user_config: WebpackConfig): WebpackConfig {
+        let mergedConfig: WebpackConfig = {
             //settings which can be changed by user
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
             watch: !this.$.config.pro,
             //add config base to user config to prevent undefined errors
-            ...cloneDeep({...this.getConfigBase(), ...user_config} || this.$.webpackConfig),
+            ...cloneDeep({...this.getConfigBase(), ...user_config}),
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -137,7 +137,7 @@ export default class {
             }
         };
 
-        mergedConfig.externals.react = 'React';
+        mergedConfig.externals["react"] = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
         mergedConfig.externals["react-helmet"] = "ReactHelmet";
         if (!this.$.config.pro) {

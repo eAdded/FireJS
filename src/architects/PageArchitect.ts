@@ -1,7 +1,7 @@
 import webpack = require("webpack");
 import MemoryFileSystem = require("memory-fs");
 import WebpackArchitect from "./WebpackArchitect";
-import {$} from "../index";
+import {$, WebpackConfig, WebpackStat} from "../index";
 import MapComponent from "../classes/MapComponent";
 
 export default class {
@@ -23,7 +23,7 @@ export default class {
     }
 
     buildBabel(mapComponent: MapComponent, resolve: () => void, reject: (err: any | undefined) => void) {
-        this.build(new WebpackArchitect(this.$).babel(mapComponent), undefined, stat => {
+        this.build(new WebpackArchitect(this.$).babel(mapComponent, this.$.webpackConfig), undefined, stat => {
             if (this.logStat(stat))//true if errors
                 reject(undefined);
             else {
@@ -42,7 +42,7 @@ export default class {
 
     buildDirect(mapComponent: MapComponent, resolve: () => void, reject: (err: any | undefined) => void) {
         const fileSystem = this.$.config.pro ? undefined : new MemoryFileSystem();
-        this.build(new WebpackArchitect(this.$).direct(mapComponent), fileSystem, (stat) => {
+        this.build(new WebpackArchitect(this.$).direct(mapComponent, this.$.webpackConfig), fileSystem, (stat) => {
             if (!this.$.config.pro) {
                 mapComponent.chunks = []; //re init for new chunks
                 mapComponent.memoryFileSystem = fileSystem;
@@ -63,7 +63,7 @@ export default class {
         }, reject);
     }
 
-    build(config: any, fileSystem: MemoryFileSystem | undefined, resolve: (stat) => void, reject: (err) => void) {
+    build(config: WebpackConfig, fileSystem: MemoryFileSystem | undefined, resolve: (stat) => void, reject: (err) => void) {
         const compiler = webpack(config);
         if (fileSystem)
             compiler.outputFileSystem = fileSystem;
@@ -85,23 +85,27 @@ export default class {
 
     }
 
-    logStat(stat) {
+    logStat(stat: WebpackStat) {
         let errorCount = 0;
         if (this.$.args["--verbose"]) {
             this.$.cli.log("Stat");
             this.$.cli.normal(stat);
         }
         if (stat.hasWarnings()) {
+            // @ts-ignore
             this.$.cli.warn(`Warning in page ${stat.compilation.name}\n`, ...stat.compilation.warnings);
         }
         if (stat.hasErrors()) {
             if (stat.compilation.errors.length === 0)
+                // @ts-ignore
                 this.$.cli.error(`Error in page ${stat.compilation.name}`)
             else {
+                // @ts-ignore
                 this.$.cli.error(`Error in page ${stat.compilation.name}\n`, ...stat.compilation.errors);
             }
             if (this.$.config.pro)
                 this.$.cli.log("Some errors might not be displayed in production mode. Try moving to development mode.")
+            // @ts-ignore
             this.$.cli.error(`Unable to build page ${stat.compilation.name} with ${errorCount} error(s)`)
             return true;
         }

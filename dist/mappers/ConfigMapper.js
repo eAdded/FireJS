@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {value: true});
+Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const fs_1 = require("fs");
 function getArgs() {
@@ -109,14 +109,16 @@ class default_1 {
         if (object[property]) {
             object[property] = this.makeAbsolute(pathRoot, object[property]);
             this.throwIfNotFound(msg, object[property]);
-        } else if (!fs_1.existsSync(object[property] = path_1.resolve(pathRoot, name)))
+        }
+        else if (!fs_1.existsSync(object[property] = path_1.resolve(pathRoot, name)))
             object[property] = undefined;
     }
     pluginExists(plugin, paths = undefined) {
         try {
-            require.resolve(plugin, {paths});
+            require.resolve(plugin, { paths });
             return true;
-        } catch (ex) {
+        }
+        catch (ex) {
             return false;
         }
     }

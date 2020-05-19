@@ -1,5 +1,4 @@
-import {$} from "../index";
-
+import { $ } from "../index";
 export interface Config {
     pro?: boolean;
     paths?: {

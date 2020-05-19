@@ -58,13 +58,16 @@ class default_1 {
             paths.forEach(pageObject => {
                 if (typeof pageObject === "string") {
                     callback(pageObject, {});
-                } else if (pageObject.constructor.name === "AsyncFunction") {
+                }
+                else if (pageObject.constructor.name === "AsyncFunction") {
                     pageObject().then(pageObjects => {
                         this.parsePagePaths(pageObjects, callback, reject);
                     });
-                } else if (typeof pageObject === "object") {
+                }
+                else if (typeof pageObject === "object") {
                     callback(pageObject.path, pageObject.content);
-                } else
+                }
+                else
                     reject(new TypeError(`Expected String | AsyncFunction | Object got ${typeof pageObject}`));
             });
         }

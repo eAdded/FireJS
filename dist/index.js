@@ -16,7 +16,7 @@ class default_1 {
         this.$.cli = new Cli_1.default(this.$.args);
         this.$.config = params.config || params.userConfig ? new ConfigMapper_1.default(this.$).getConfig(lodash_1.cloneDeep(params.userConfig)) : new ConfigMapper_1.default(this.$).getConfig();
         this.$.template = params.template || fs_1.readFileSync(this.$.config.paths.template).toString();
-        this.$.map = params.map ? new PathMapper_1.default(this.$).convertToMap(params.map) : new PathMapper_1.default(this.$).map();
+        this.$.map = params.pages ? new PathMapper_1.default(this.$).convertToMap(params.pages) : new PathMapper_1.default(this.$).map();
         this.$.webpackConfig = params.webpackConfig || new WebpackArchitect_1.default(this.$).readUserConfig();
         this.$.externals = [];
     }
@@ -33,7 +33,7 @@ class default_1 {
         const pluginMapper = new PluginMapper_1.default(this.$);
         const pageArchitect = new PageArchitect_1.default(this.$);
         const promises = [];
-        this.mapPluginsAndBuildExternals().then((_) => {
+        this.mapPluginsAndBuildExternals().then(() => {
             const buildRegistrar = new build_registrar_1.default(this.$);
             this.$.cli.log("Building Pages");
             for (const mapComponent of this.$.map.values()) {
@@ -55,7 +55,7 @@ class default_1 {
                     });
                 }));
             }
-            Promise.all(promises).then(() => callback());
+            Promise.all(promises).then(callback);
         });
     }
     get Context() {

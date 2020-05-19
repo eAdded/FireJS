@@ -1,33 +1,11 @@
 import MapComponent from "../classes/MapComponent";
-import {$} from "../index";
-
+import { $, WebpackConfig } from "../index";
 export default class {
     private readonly $;
     constructor(globalData: $);
-    externals: () => {
-        target: string;
-        mode: string;
-        entry: {
-            React: string;
-            ReactDOM: string;
-            ReactHelmet: string;
-        };
-        output: {
-            path: string;
-            filename: string;
-            library: string;
-        };
-    };
-    getConfigBase(): {
-        entry: {};
-        output: {};
-        module: {
-            rules: any[];
-        };
-        plugins: any[];
-        externals: {};
-    };
-    readUserConfig(): any;
-    babel(mapComponent: MapComponent, user_config?: any): any;
-    direct(mapComponent: MapComponent, user_config?: any): any;
+    externals(): WebpackConfig;
+    getConfigBase(): WebpackConfig;
+    readUserConfig(): WebpackConfig;
+    babel(mapComponent: MapComponent, user_config: WebpackConfig): WebpackConfig;
+    direct(mapComponent: MapComponent, user_config: WebpackConfig): WebpackConfig;
 }

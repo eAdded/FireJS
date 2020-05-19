@@ -1,17 +1,12 @@
 import MemoryFileSystem from "memory-fs";
 import PagePath from "./PagePath";
-
-interface Plugin {
-    [k: string]: {
-        name: string;
-    };
-}
+import { PageObject } from "../mappers/PluginMapper";
 export default class {
     paths: PagePath[];
     chunks: string[];
     babelChunk: string;
     memoryFileSystem: MemoryFileSystem;
-    plugin: Plugin | undefined;
+    plugin: PageObject[];
     private readonly page;
     private readonly name;
     private readonly ext;
@@ -20,4 +15,3 @@ export default class {
     get Ext(): any;
     get Name(): any;
 }
-export {};

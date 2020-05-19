@@ -6,11 +6,13 @@
     "declaration": true,
     "lib": [
       "ES6",
-      "DOM",
-      "es2015.promise"
+      "DOM"
     ],
     "jsx": "react"
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "node_modules"
   ]

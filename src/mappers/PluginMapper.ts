@@ -5,11 +5,11 @@ import PathArchitect from "../architects/PathArchitect";
 import {join} from "path"
 import MapComponent from "../classes/MapComponent";
 
-interface AyncFunc {
+export interface AsyncFunc {
     (): Promise<PathObject[]>;
 }
 
-export type PageObject = string | PathObject | AyncFunc;
+export type PageObject = string | PathObject | AsyncFunc;
 
 export interface PathObject {
     path: string
@@ -82,7 +82,7 @@ export default class {
                 if (typeof pageObject === "string") {
                     callback(<string>pageObject, {});
                 } else if (pageObject.constructor.name === "AsyncFunction") {
-                    (<AyncFunc>pageObject)().then(pageObjects => {
+                    (<AsyncFunc>pageObject)().then(pageObjects => {
                         this.parsePagePaths(pageObjects, callback, reject);
                     });
                 } else if (typeof pageObject === "object") {

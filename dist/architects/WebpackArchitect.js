@@ -6,23 +6,23 @@ const lodash_1 = require("lodash");
 const path_1 = require("path");
 class default_1 {
     constructor(globalData) {
-        this.externals = () => {
-            return {
-                target: 'web',
-                mode: this.$.config.pro ? "production" : "development",
-                entry: {
-                    "React": "react",
-                    "ReactDOM": "react-dom",
-                    "ReactHelmet": "react-helmet"
-                },
-                output: {
-                    path: this.$.config.paths.lib,
-                    filename: "[name][contentHash].js",
-                    library: "[name]",
-                }
-            };
-        };
         this.$ = globalData;
+    }
+    externals() {
+        return {
+            target: 'web',
+            mode: this.$.config.pro ? "production" : "development",
+            entry: {
+                "React": "react",
+                "ReactDOM": "react-dom",
+                "ReactHelmet": "react-helmet"
+            },
+            output: {
+                path: this.$.config.paths.lib,
+                filename: "[name][contentHash].js",
+                library: "[name]",
+            }
+        };
     }
     getConfigBase() {
         // predefined object structure to prevent undefined error
@@ -49,10 +49,10 @@ class default_1 {
         }
         return sample;
     }
-    babel(mapComponent, user_config = {}) {
+    babel(mapComponent, user_config) {
         let mergedConfig = Object.assign(Object.assign({ 
             //settings which can be changed by user
-            target: 'web', mode: this.$.config.pro ? "production" : "development" }, lodash_1.cloneDeep(Object.assign(Object.assign({}, this.getConfigBase()), user_config) || this.$.webpackConfig)), { 
+            target: 'web', mode: this.$.config.pro ? "production" : "development" }, lodash_1.cloneDeep(Object.assign(Object.assign({}, this.getConfigBase()), user_config))), { 
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -98,10 +98,10 @@ class default_1 {
         }));
         return mergedConfig;
     }
-    direct(mapComponent, user_config = {}) {
+    direct(mapComponent, user_config) {
         let mergedConfig = Object.assign(Object.assign({ 
             //settings which can be changed by user
-            target: 'web', mode: this.$.config.pro ? "production" : "development", watch: !this.$.config.pro }, lodash_1.cloneDeep(Object.assign(Object.assign({}, this.getConfigBase()), user_config) || this.$.webpackConfig)), { 
+            target: 'web', mode: this.$.config.pro ? "production" : "development", watch: !this.$.config.pro }, lodash_1.cloneDeep(Object.assign(Object.assign({}, this.getConfigBase()), user_config))), { 
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -111,7 +111,7 @@ class default_1 {
                 usedExports: true,
                 minimize: true
             } });
-        mergedConfig.externals.react = 'React';
+        mergedConfig.externals["react"] = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
         mergedConfig.externals["react-helmet"] = "ReactHelmet";
         if (!this.$.config.pro) {

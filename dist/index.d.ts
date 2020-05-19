@@ -1,13 +1,15 @@
-import {Args, Config} from "./mappers/ConfigMapper";
+import { Args, Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import MapComponent from "./classes/MapComponent";
-
+import { Configuration, Stats } from "webpack";
+export declare type WebpackConfig = Configuration;
+export declare type WebpackStat = Stats;
 export interface $ {
     args?: Args;
     config?: Config;
     map?: Map<string, MapComponent>;
     cli?: Cli;
-    webpackConfig?: any;
+    webpackConfig?: WebpackConfig;
     template?: string;
     externals?: string[];
 }
@@ -15,8 +17,8 @@ export interface params {
     userConfig?: Config;
     config?: Config;
     args?: Args;
-    map?: string[];
-    webpackConfig?: any;
+    pages?: string[];
+    webpackConfig?: WebpackConfig;
     template?: string;
 }
 export default class {
@@ -24,5 +26,5 @@ export default class {
     constructor(params?: params);
     mapPluginsAndBuildExternals(): Promise<unknown>;
     buildPro(callback: any): void;
-    getContext(): $;
+    get Context(): $;
 }

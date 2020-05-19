@@ -1,6 +1,5 @@
 import MapComponent from "./MapComponent";
-import {$} from "../index";
-
+import { $ } from "../index";
 interface map {
     chunks: string[];
     content: any;
