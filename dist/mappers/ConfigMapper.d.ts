@@ -7,7 +7,6 @@ export interface Config {
         pages?: string;
         out?: string;
         dist?: string;
-        cache?: string;
         babel?: string;
         template?: string;
         lib?: string;

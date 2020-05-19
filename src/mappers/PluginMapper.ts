@@ -46,6 +46,7 @@ export default class {
     applyPlugin(mapComponent: MapComponent) {
         const pathArchitect = new PathArchitect(this.$);
         mapComponent.paths = [];//reset paths
+        //fix this
         if (mapComponent.plugin) {
             this.parsePagePaths(mapComponent.plugin, (path, content) => {
                 const pagePath = new PagePath(mapComponent, path, content, this.$);

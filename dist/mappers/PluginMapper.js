@@ -25,6 +25,7 @@ class default_1 {
     applyPlugin(mapComponent) {
         const pathArchitect = new PathArchitect_1.default(this.$);
         mapComponent.paths = []; //reset paths
+        //fix this
         if (mapComponent.plugin) {
             this.parsePagePaths(mapComponent.plugin, (path, content) => {
                 const pagePath = new PagePath_1.default(mapComponent, path, content, this.$);
