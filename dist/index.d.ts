@@ -13,7 +13,7 @@ export interface $ {
     template?: string;
     externals?: string[];
 }
-export interface params {
+export interface Params {
     userConfig?: Config;
     config?: Config;
     args?: Args;
@@ -23,7 +23,7 @@ export interface params {
 }
 export default class {
     private readonly $;
-    constructor(params?: params);
+    constructor(params?: Params);
     mapPluginsAndBuildExternals(): Promise<unknown>;
     buildPro(callback: any): void;
     get Context(): $;

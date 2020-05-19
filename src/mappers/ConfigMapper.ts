@@ -19,7 +19,7 @@ export interface Config {
         static?: string,    //dir where page static elements are stored eg. images, default : root/src/static
         plugins?: string,   //plugins dir, default : root/src/plugins
     },
-    plugins?: string[],        //plugins, default : []
+    plugins?: string[],     //plugins, default : []
     templateTags?: {        //these tags need to exist if you pass custom template file
         script?: string,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
         static?: string,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
@@ -33,12 +33,12 @@ export interface Config {
 }
 
 export interface Args {
-    "--pro"?: boolean,
-    "--conf"?: string,
-    "--verbose"?: boolean,
-    "--plain"?: boolean,
-    "--silent"?: boolean,
-    "--disable-plugins"?: boolean
+    "--pro"?: boolean,              //Production Mode
+    "--conf"?: string,              //Path to Config file
+    "--verbose"?: boolean,          //Log Webpack Stat
+    "--plain"?: boolean,            //Log without styling i.e colors and symbols
+    "--silent"?: boolean,           //Log errors only
+    "--disable-plugins"?: boolean   //Disable plugins
 }
 
 export function getArgs(): Args {

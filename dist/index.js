@@ -30,6 +30,10 @@ class default_1 {
     }
     //only build pages in production because server builds it in dev
     buildPro(callback) {
+        if (!this.$.config.pro) {
+            this.$.cli.error("Not in production mode. Make sure to pass [--pro, -p] flag");
+            throw "";
+        }
         const pluginMapper = new PluginMapper_1.default(this.$);
         const pageArchitect = new PageArchitect_1.default(this.$);
         const promises = [];

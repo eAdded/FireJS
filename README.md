@@ -20,11 +20,12 @@ yarn add @eadded/firejs
 ~~~    
 ## Args  
 ~~~    
-[-p,--pro] Production Build (Static)  
-[-c,--conf] Path to Config file    
-[-v,--verbose] Print WebPack Stats  
-[-nc,--no_color] No Color and Symbols in logs  
-[--nc,--no_output] No output  
+"--pro"?: boolean,              //Production Mode
+"--conf"?: string,              //Path to Config file
+"--verbose"?: boolean,          //Log Webpack Stat
+"--plain"?: boolean,            //Log without styling i.e colors and symbols
+"--silent"?: boolean,           //Log errors only
+"--disable-plugins"?: boolean   //Disable plugins 
 ~~~  
 ## Hello World  
 Run the following command to start dev server. Pass args as needed.  
@@ -56,6 +57,9 @@ Project
 | firejs.config.js          //default config file
 | webpack.config.js         //default webpack config file
 ```
+
+*Note* During production static dir will not be copied.
+
 ## Components
 **Firejs** exports two components : Link and Head
 
@@ -64,8 +68,8 @@ Project
 
 *Example*
 ```
-import Link from "@eadded/firejs/Components/Link"  
-import Head from "@eadded/firejs/Components/Head";  
+import Link from "@eadded/firejs/components/Link"  
+import Head from "@eadded/firejs/components/Head";  
 export default () => {  
    return (  
     <div>  
@@ -80,63 +84,111 @@ export default () => {
 ## Plugins
 Plugins can be used to provide content and route structures.
 
-Suppose that you have a dynamic page *[author]/[article].js*. A plugin can be used to provide routes and page content. Eg: path */john/corona* ,a markdown can be passed as content
+*Plugin interface*
+~~~
+interface Plugin { [key: string]: PageObject[] }
+
+type PageObject = string | PathObject | AsyncFunc
+
+interface AsyncFunc { (): Promise<PathObject[]> }
+
+interface PathObject { path: string, content: any}
+~~~
+Suppose that you have a dynamic page *[author]/[article].js*. A plugin can be used to provide routes and page content. Eg: path */john/corona*, a markdown can be passed as content.
     
 *Sample Plugin* 
 ~~~    
 const axios = require('axios').default;      
 module.exports = {      
- "[author]/[article].js": [     
-    async () => {     
-       let content = await axios.get("https://api.thevirustracker.com/free-api?global=stats");    
-       content = content.data;    
-       return [    
-           { path: "/john/corona", content }    
-       ]    
-}]}    
-~~~    
+    "[author]/[article].js": [     
+        async () => {     
+            let content = await axios.get("https://api.thevirustracker.com/free-api?global=stats");    
+            content = content.data;    
+            return [    
+                { path: "/john/corona", content }    
+            ]    
+}]}
+~~~
 This plugin fetches some data from an api asynchronously and passes it to a route.    
     
 File `[author]/[article].js` which is found in pages dir, is used to create the route `/john/corona`.
 
-## Modifying Config
+## Configuration
 Create a *firejs.config.js* or specify a file using ```[-c,--config]``` flags.
 
-*Example*
+*Type Interface*
 
 ```
-module.exports = {
-    pro: Boolean,          //production mode when true, dev mode when false
-    noPlugin: Boolean,     //disable or enable plugins
-    paths: {               //paths absolute or relative to root
-        root: String,      //project root, default : process.cwd()
-        src: String,       //src dir, default : root/src
-        pages: String,     //pages dir, default : root/src/pages
-        out: String,       //output dir, default : root/out
-        dist: String,      //production dist, default : root/out/dist
-        cache: String,     //fire js cache dir, default : root/out/.cache
-        babel: String,     //fire js production babel cache, default : root/out/.cache/babel
-        template: String,  //template file, default : inbuilt template file
-        lib: String,       //dir where chunks are exported, default : root/out/dist/lib
-        map: String,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
-        webpack: String,   //webpack config file, default : root/webpack.config.js
-        static: String,    //dir where page static elements are stored eg. images, default : root/src/static
-        plugins: String,   //plugins dir, default : root/src/plugins
+{
+    pro?: boolean,          //production mode when true, dev mode when false
+    paths?: {               //paths absolute or relative to root
+        root?: string,      //project root, default : process.cwd()
+        src?: string,       //src dir, default : root/src
+        pages?: string,     //pages dir, default : root/src/pages
+        out?: string,       //output dir, default : root/out
+        dist?: string,      //production dist, default : root/out/dist
+        cache?: string,     //fire js cache dir, default : root/out/.cache
+        babel?: string,     //fire js production babel cache, default : root/out/.cache/babel
+        template?: string,  //template file, default : inbuilt template file
+        lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
+        map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
+        webpack?: string,   //webpack config file, default : root/webpack.config.js
+        static?: string,    //dir where page static elements are stored eg. images, default : root/src/static
+        plugins?: string,   //plugins dir, default : root/src/plugins
     },
-    plugins: Array,        //plugins, default : []
-    templateTags: {        //these tags need to exist if you pass custom template file
-        script: String,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
-        static: String,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
-        head: String,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
-        style: String,     //this is replaced by all page styles, default : "<%=STYLE=%>"
-        unknown: String    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
+    plugins?: string[],     //plugins, default : []
+    templateTags?: {        //these tags need to exist if you pass custom template file
+        script?: string,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
+        static?: string,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
+        head?: string,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
+        style?: string,     //this is replaced by all page styles, default : "<%=STYLE=%>"
+        unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
     },
-    pages: {
-        _404: String       //404 page, default : 404.js 
+    pages?: {
+        _404?: string       //404 page, default : 404.js
     }
 }
 ```
 
+## Node Interface
+*Production build*
+~~~
+import FireJS from "@eadded/firejs"
+const app = new FireJS({args: {"--pro": true}});
+app.buildPro(()=>{
+    console.log("Production build done")
+})
+~~~
+
+*Building a specific page*
+~~~
+import FireJS from "@eadded/firejs"
+//let's build 404 page
+const app = new FireJS({args: {"--pro": true}, pages: ["404.js"]});
+app.buildPro(() => {
+    console.log("Built page 404")
+});
+~~~
+
+*Passing Content*
+~~~
+import FireJS from "@eadded/firejs"
+
+const app = new FireJS({args: {"--pro": true}});
+//Get page from map and pass plugin to it
+app.Context.map.get("[author]/[article].js").plugin = [
+    {
+        path : "aniketfuryrocks/rust is the best",
+        content : {
+            "title" : "Rust is really the best"
+        }
+    }
+]
+//build
+app.buildPro(() => {
+    console.log("Build finished. Build is placed in the default [out] dir")
+})
+~~~
 ## License & Copyright
 Copyright (C) 2020 Aniket Prajapati
 

@@ -23,7 +23,7 @@ export interface $ {
     externals?: string[]
 }
 
-export interface params {
+export interface Params {
     userConfig?: Config,
     config?: Config,
     args?: Args,
@@ -35,7 +35,7 @@ export interface params {
 export default class {
     private readonly $: $ = {};
 
-    constructor(params: params = {}) {
+    constructor(params: Params = {}) {
         this.$.args = params.args || getArgs();
         this.$.cli = new Cli(this.$.args);
         this.$.config = params.config || params.userConfig ? new ConfigMapper(this.$).getConfig(cloneDeep(params.userConfig)) : new ConfigMapper(this.$).getConfig();
@@ -56,6 +56,10 @@ export default class {
 
     //only build pages in production because server builds it in dev
     buildPro(callback) {
+        if (!this.$.config.pro) {
+            this.$.cli.error("Not in production mode. Make sure to pass [--pro, -p] flag")
+            throw "";
+        }
         const pluginMapper = new PluginMapper(this.$);
         const pageArchitect = new PageArchitect(this.$);
         const promises = [];
