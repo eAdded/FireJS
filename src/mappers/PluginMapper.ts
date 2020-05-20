@@ -52,7 +52,9 @@ export default class {
         else {//make default page
             let path = mapComponent.Page;
             path = "/" + path.substring(0, path.lastIndexOf(mapComponent.Ext));
-            mapComponent.paths.push(new PagePath(mapComponent, path, {}, this.$));//push when dev
+            const pagePath = new PagePath(mapComponent, path, {}, this.$);
+            mapComponent.paths.push(pagePath);//push when dev
+            callback(pagePath);
         }
     }
 

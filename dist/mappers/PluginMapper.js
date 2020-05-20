@@ -31,7 +31,9 @@ class default_1 {
         else { //make default page
             let path = mapComponent.Page;
             path = "/" + path.substring(0, path.lastIndexOf(mapComponent.Ext));
-            mapComponent.paths.push(new PagePath_1.default(mapComponent, path, {}, this.$)); //push when dev
+            const pagePath = new PagePath_1.default(mapComponent, path, {}, this.$);
+            mapComponent.paths.push(pagePath); //push when dev
+            callback(pagePath);
         }
     }
     parsePagePaths(paths, callback, reject) {
