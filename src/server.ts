@@ -83,7 +83,7 @@ export default function (app: FireJS) {
         if (!found) {
             const _404_MapComponent = $.map.get($.config.pages["404"]);
             if (_404_MapComponent.paths.length > 0)
-                res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent.chunkGroup, _404_MapComponent.paths[0])));
+                res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent.chunkGroup, _404_MapComponent.paths[0], false)));
             else
                 res.end("Please Wait...")
         }
