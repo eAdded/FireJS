@@ -58,7 +58,7 @@ class default_1 {
                                         Fs_1.writeFileRecursively(//write content
                                         path_1.join(this.$.config.paths.dist, pagePath.MapPath), `window.__MAP__=${JSON.stringify(pagePath.Map)}`),
                                         Fs_1.writeFileRecursively(//write html
-                                        path_1.join(this.$.config.paths.dist, pagePath.Path.concat(".html")), staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath)))
+                                        path_1.join(this.$.config.paths.dist, pagePath.Path.concat(".html")), staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath, true)))
                                     ]).then(resolve).catch(err => {
                                         throw err;
                                     });

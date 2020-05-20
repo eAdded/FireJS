@@ -104,7 +104,7 @@ export default class {
                                         ),
                                         writeFileRecursively(//write html
                                             join(this.$.config.paths.dist, pagePath.Path.concat(".html")),
-                                            staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath))
+                                            staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath, true))
                                         )
                                     ]).then(resolve).catch(err => {
                                         throw err;
