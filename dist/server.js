@@ -5,7 +5,6 @@ const chokidar_1 = require("chokidar");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const PageArchitect_1 = require("./architects/PageArchitect");
 const MapComponent_1 = require("./classes/MapComponent");
-const PagePath_1 = require("./classes/PagePath");
 const PluginMapper_1 = require("./mappers/PluginMapper");
 const express = require("express");
 const server = express();
@@ -72,7 +71,7 @@ function default_1(app) {
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
                 if (req.url === pagePath.Path || (path_1.join(req.url, "index") === pagePath.Path)) {
-                    res.end(staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath)));
+                    res.end(staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath, false)));
                     return true;
                 }
             })))
@@ -94,11 +93,9 @@ function default_1(app) {
             $.map.set(rel_page, mapComponent);
         }
         pageArchitect.buildDirect(mapComponent, () => {
-            let path = mapComponent.Page;
-            path = "/" + path.substring(0, path.lastIndexOf(".js"));
-            mapComponent.paths.push(new PagePath_1.default(mapComponent, path, undefined, $));
-            pluginMapper.applyPlugin(mapComponent);
             $.cli.ok(`Successfully built page ${mapComponent.Page}`);
+            pluginMapper.applyPlugin(mapComponent, (pagePath) => {
+            });
         }, err => {
             $.cli.error(`Error while building page ${mapComponent.Page}`, err);
         });

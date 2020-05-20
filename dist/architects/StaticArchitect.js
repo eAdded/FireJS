@@ -7,7 +7,7 @@ class DefaultArchitect {
     constructor(param) {
         this.param = param;
     }
-    render(chunkGroup, pagePath, render_static = true) {
+    render(chunkGroup, pagePath, render_static) {
         let template = this.param.template;
         //set globals
         template = this.addInnerHTML(template, `<script>` +

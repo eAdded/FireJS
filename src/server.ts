@@ -3,7 +3,6 @@ import {watch} from "chokidar"
 import StaticArchitect from "./architects/StaticArchitect"
 import PageArchitect from "./architects/PageArchitect"
 import MapComponent from "./classes/MapComponent"
-import PagePath from "./classes/PagePath"
 import PluginMapper from "./mappers/PluginMapper"
 import FireJS from "./index"
 import express = require("express");
@@ -76,7 +75,7 @@ export default function (app: FireJS) {
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
                 if (req.url === pagePath.Path || (join(req.url, "index") === pagePath.Path)) {
-                    res.end(staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath)));
+                    res.end(staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath, false)));
                     return true;
                 }
             }))) break;
@@ -98,11 +97,9 @@ export default function (app: FireJS) {
             $.map.set(rel_page, mapComponent);
         }
         pageArchitect.buildDirect(mapComponent, () => {
-            let path = mapComponent.Page;
-            path = "/" + path.substring(0, path.lastIndexOf(".js"));
-            mapComponent.paths.push(new PagePath(mapComponent, path, undefined, $));
-            pluginMapper.applyPlugin(mapComponent);
             $.cli.ok(`Successfully built page ${mapComponent.Page}`);
+            pluginMapper.applyPlugin(mapComponent, (pagePath) => {
+            });
         }, err => {
             $.cli.error(`Error while building page ${mapComponent.Page}`, err);
         });

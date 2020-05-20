@@ -21,7 +21,7 @@ export class DefaultArchitect {
         this.param = param;
     }
 
-    render(chunkGroup: ChunkGroup, pagePath: PagePath, render_static: boolean = true) {
+    render(chunkGroup: ChunkGroup, pagePath: PagePath, render_static: boolean) {
         let template = this.param.template;
         //set globals
         template = this.addInnerHTML(template,
