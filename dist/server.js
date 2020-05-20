@@ -5,15 +5,14 @@ const chokidar_1 = require("chokidar");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const PageArchitect_1 = require("./architects/PageArchitect");
 const MapComponent_1 = require("./classes/MapComponent");
-const PluginMapper_1 = require("./mappers/PluginMapper");
 const express = require("express");
+const PluginMapper_1 = require("./mappers/PluginMapper");
 const server = express();
 function default_1(app) {
     const $ = app.Context;
     const { config: { paths } } = $;
     const staticArchitect = new StaticArchitect_1.default($);
     const pageArchitect = new PageArchitect_1.default($);
-    const pluginMapper = new PluginMapper_1.default($);
     const pageDataRelative = `/${path_1.relative(paths.dist, paths.map)}/`;
     const libRelative = `/${path_1.relative(paths.dist, paths.lib)}/`;
     app.mapPluginsAndBuildExternals().then(_ => {
@@ -94,8 +93,7 @@ function default_1(app) {
         }
         pageArchitect.buildDirect(mapComponent, () => {
             $.cli.ok(`Successfully built page ${mapComponent.Page}`);
-            pluginMapper.applyPlugin(mapComponent, (pagePath) => {
-            });
+            PluginMapper_1.applyPlugin(mapComponent, $.rel, () => { });
         }, err => {
             $.cli.error(`Error while building page ${mapComponent.Page}`, err);
         });

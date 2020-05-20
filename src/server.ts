@@ -3,8 +3,8 @@ import {watch} from "chokidar"
 import StaticArchitect from "./architects/StaticArchitect"
 import PageArchitect from "./architects/PageArchitect"
 import MapComponent from "./classes/MapComponent"
-import PluginMapper from "./mappers/PluginMapper"
 import FireJS from "./index"
+import {applyPlugin} from "./mappers/PluginMapper";
 import express = require("express");
 
 const server: express.Application = express();
@@ -14,7 +14,6 @@ export default function (app: FireJS) {
     const {config: {paths}} = $;
     const staticArchitect = new StaticArchitect($);
     const pageArchitect = new PageArchitect($);
-    const pluginMapper = new PluginMapper($);
     const pageDataRelative = `/${relative(paths.dist, paths.map)}/`;
     const libRelative = `/${relative(paths.dist, paths.lib)}/`;
 
@@ -98,7 +97,7 @@ export default function (app: FireJS) {
         }
         pageArchitect.buildDirect(mapComponent, () => {
             $.cli.ok(`Successfully built page ${mapComponent.Page}`);
-            pluginMapper.applyPlugin(mapComponent, (pagePath) => {
+            applyPlugin(mapComponent, $.rel, () => {
             });
         }, err => {
             $.cli.error(`Error while building page ${mapComponent.Page}`, err);
