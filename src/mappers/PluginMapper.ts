@@ -1,8 +1,5 @@
 import {$} from "../index";
 import PagePath from "../classes/PagePath";
-import {writeFileRecursively} from "../utils/Fs";
-import PathArchitect from "../architects/PathArchitect";
-import {join} from "path"
 import MapComponent from "../classes/MapComponent";
 
 export interface AsyncFunc {
@@ -43,37 +40,19 @@ export default class {
         }
     }
 
-    applyPlugin(mapComponent: MapComponent) {
-        const pathArchitect = new PathArchitect(this.$);
-        mapComponent.paths = [];//reset paths
-        //fix this
-        if (mapComponent.plugin) {
+    applyPlugin(mapComponent: MapComponent, callback: (PagePath) => void) {
+        if (mapComponent.plugin)
             this.parsePagePaths(mapComponent.plugin, (path, content) => {
                 const pagePath = new PagePath(mapComponent, path, content, this.$);
-                if (this.$.config.pro) {
-                    writeFileRecursively(//write content
-                        join(this.$.config.paths.dist, pagePath.MapPath),
-                        `window.__MAP__=${JSON.stringify(pagePath.Map)}`
-                    );
-                    pathArchitect.writePath(mapComponent, pagePath);//write html file
-                } else
-                    mapComponent.paths.push(pagePath);//push in dev mode
+                mapComponent.paths.push(pagePath);
+                callback(pagePath);
             }, err => {
                 throw err;
             })
-        } else {
-            //make default page
+        else {//make default page
             let path = mapComponent.Page;
             path = "/" + path.substring(0, path.lastIndexOf(mapComponent.Ext));
-            const pagePath = new PagePath(mapComponent, path, {}, this.$);
-            if (this.$.config.pro) {
-                writeFileRecursively(//write content
-                    join(this.$.config.paths.dist, pagePath.MapPath),
-                    `window.__MAP__=${JSON.stringify(pagePath.Map)}`
-                );
-                pathArchitect.writePath(mapComponent, pagePath);//write html when pro
-            } else
-                mapComponent.paths.push(pagePath);//push when dev
+            mapComponent.paths.push(new PagePath(mapComponent, path, {}, this.$));//push when dev
         }
     }
 

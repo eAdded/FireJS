@@ -5,5 +5,5 @@ export default class {
     private readonly $;
     private readonly staticArchitect;
     constructor($: $);
-    writePath(mapComponent: MapComponent, pagePath: PagePath): Promise<unknown>;
+    writePath(mapComponent: MapComponent, pagePath: PagePath): void;
 }

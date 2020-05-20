@@ -16,6 +16,6 @@ export default class {
     constructor(globalData: $);
     mapPlugins(): void;
     mapPlugin(path: string): void;
-    applyPlugin(mapComponent: MapComponent): void;
+    applyPlugin(mapComponent: MapComponent, callback: (PagePath: any) => void): void;
     parsePagePaths(paths: PageObject[], callback: any, reject: any): void;
 }

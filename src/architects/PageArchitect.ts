@@ -81,8 +81,6 @@ export default class {
                 else
                     resolve(stat);
             });
-
-
     }
 
     logStat(stat: WebpackStat) {

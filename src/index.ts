@@ -8,7 +8,9 @@ import PathMapper from "./mappers/PathMapper";
 import Cli from "./utils/Cli";
 import MapComponent from "./classes/MapComponent";
 import {Configuration, Stats} from "webpack";
-import {relative} from "path";
+import {join, relative} from "path";
+import {writeFileRecursively} from "./utils/Fs";
+import StaticArchitect from "./architects/StaticArchitect";
 
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
@@ -82,6 +84,7 @@ export default class {
         }
         const pluginMapper = new PluginMapper(this.$);
         const pageArchitect = new PageArchitect(this.$);
+        const staticArchitect = new StaticArchitect(this.$);
         const promises = [];
         this.mapPluginsAndBuildExternals().then(() => {
             const buildRegistrar = new BuildRegistrar(this.$);
@@ -93,7 +96,20 @@ export default class {
                             pageArchitect.buildDirect(mapComponent, () => {
                                 resolve();
                                 this.$.cli.ok(`Successfully built page ${mapComponent.Page}`)
-                                pluginMapper.applyPlugin(mapComponent);
+                                pluginMapper.applyPlugin(mapComponent, (pagePath) => {
+                                    Promise.all([
+                                        writeFileRecursively(//write content
+                                            join(this.$.config.paths.dist, pagePath.MapPath),
+                                            `window.__MAP__=${JSON.stringify(pagePath.Map)}`
+                                        ),
+                                        writeFileRecursively(//write html
+                                            join(this.$.config.paths.dist, pagePath.Path.concat(".html")),
+                                            staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath))
+                                        )
+                                    ]).then(resolve).catch(err => {
+                                        throw err;
+                                    })
+                                });
                             }, err => {
                                 throw err
                             });

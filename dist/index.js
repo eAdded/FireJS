@@ -9,6 +9,8 @@ const fs_1 = require("fs");
 const PathMapper_1 = require("./mappers/PathMapper");
 const Cli_1 = require("./utils/Cli");
 const path_1 = require("path");
+const Fs_1 = require("./utils/Fs");
+const StaticArchitect_1 = require("./architects/StaticArchitect");
 class default_1 {
     constructor(params = {}) {
         this.$ = { externals: [] };
@@ -39,6 +41,7 @@ class default_1 {
         }
         const pluginMapper = new PluginMapper_1.default(this.$);
         const pageArchitect = new PageArchitect_1.default(this.$);
+        const staticArchitect = new StaticArchitect_1.default(this.$);
         const promises = [];
         this.mapPluginsAndBuildExternals().then(() => {
             const buildRegistrar = new build_registrar_1.default(this.$);
@@ -50,7 +53,16 @@ class default_1 {
                             pageArchitect.buildDirect(mapComponent, () => {
                                 resolve();
                                 this.$.cli.ok(`Successfully built page ${mapComponent.Page}`);
-                                pluginMapper.applyPlugin(mapComponent);
+                                pluginMapper.applyPlugin(mapComponent, (pagePath) => {
+                                    Promise.all([
+                                        Fs_1.writeFileRecursively(//write content
+                                        path_1.join(this.$.config.paths.dist, pagePath.MapPath), `window.__MAP__=${JSON.stringify(pagePath.Map)}`),
+                                        Fs_1.writeFileRecursively(//write html
+                                        path_1.join(this.$.config.paths.dist, pagePath.Path.concat(".html")), staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath)))
+                                    ]).then(resolve).catch(err => {
+                                        throw err;
+                                    });
+                                });
                             }, err => {
                                 throw err;
                             });
