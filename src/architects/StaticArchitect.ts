@@ -15,7 +15,7 @@ interface param {
 }
 
 export class DefaultArchitect {
-    param: param
+    private param: param
 
     constructor(param: param) {
         this.param = param;
@@ -30,7 +30,7 @@ export class DefaultArchitect {
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
             `window.__PAGES__={};` +
-            `window.__PAGES__._404="/${this.param.pages._404.substring(0, this.param.pages._404.lastIndexOf("."))}";` +
+            `window.__PAGES__._404="/${this.param.pages["404"].substring(0, this.param.pages["404"].lastIndexOf("."))}";` +
             `</script>`,
             "head");
         //add map script

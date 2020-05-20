@@ -34,7 +34,7 @@ export interface Args {
 }
 
 export interface ExplicitPages {
-    _404?: string       //404 page, default : 404.js
+    "404"?: string       //404 page, default : 404.js
 }
 
 export interface TemplateTags {
@@ -124,7 +124,7 @@ export default class {
         config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         //pages
         config.pages = config.pages || {};
-        this.throwIfNotFound("404 page", join(config.paths.pages, config.pages._404 = config.pages._404 || "404.js"));
+        this.throwIfNotFound("404 page", join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"));
         return config;
     }
 

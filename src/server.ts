@@ -82,7 +82,7 @@ export default function (app: FireJS) {
             }))) break;
         }
         if (!found) {
-            const _404_MapComponent = $.map.get($.config.pages._404);
+            const _404_MapComponent = $.map.get($.config.pages["404"]);
             if (_404_MapComponent.paths.length > 0)
                 res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent.chunkGroup, _404_MapComponent.paths[0])));
             else

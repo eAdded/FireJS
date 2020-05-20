@@ -102,7 +102,7 @@ class default_1 {
         config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         //pages
         config.pages = config.pages || {};
-        this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages._404 = config.pages._404 || "404.js"));
+        this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"));
         return config;
     }
     undefinedIfNotFound(object, property, pathRoot, name, msg) {

@@ -10,7 +10,7 @@ interface param {
     template: string;
 }
 export declare class DefaultArchitect {
-    param: param;
+    private param;
     constructor(param: param);
     render(chunkGroup: ChunkGroup, pagePath: PagePath, render_static?: boolean): string;
     addChunk(template: string, chunk: string, root?: string | undefined, tag?: string | undefined): string;

@@ -28,7 +28,7 @@ export interface Args {
     "--disable-plugins"?: boolean;
 }
 export interface ExplicitPages {
-    _404?: string;
+    "404"?: string;
 }
 export interface TemplateTags {
     script?: string;
