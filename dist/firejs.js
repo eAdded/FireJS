@@ -12,6 +12,7 @@ if (app.Context.config.pro)
         $.cli.ok("Build finished");
         $.cli.log("Generating babel chunk map");
         fs_1.writeFileSync(path_1.join($.config.paths.out, "firejs.map.json"), JSON.stringify(app.generateMap()));
+        $.cli.ok("DONE");
     });
 else {
     new server_1.default(app);
