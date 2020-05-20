@@ -3,7 +3,7 @@ import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import {cloneDeep} from "lodash"
 import MapComponent from "../classes/MapComponent";
 import {$, WebpackConfig} from "../index";
-import {join, relative, resolve} from "path"
+import {join, resolve} from "path"
 
 export default class {
     private readonly $: $;
@@ -80,7 +80,7 @@ export default class {
         mergedConfig.externals = [];
         mergedConfig.externals.push('react', 'react-dom', 'react-helmet');
         mergedConfig.name = mapComponent.Page;
-        mergedConfig.output.publicPath = `/${relative(this.$.config.paths.dist, this.$.config.paths.lib)}/`;
+        mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         mergedConfig.entry = join(this.$.config.paths.pages, mapComponent.Page);
         mergedConfig.output.path = this.$.config.paths.babel;
         mergedConfig.output.filename = `m[contentHash].js`;
@@ -169,7 +169,7 @@ export default class {
         //path before file name is important cause it allows easy routing during development
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
-        mergedConfig.output.publicPath = `/${relative(this.$.config.paths.dist, this.$.config.paths.lib)}/`;
+        mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         if (this.$.config.pro) //only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = this.$.config.paths.lib;
         else

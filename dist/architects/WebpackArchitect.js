@@ -65,7 +65,7 @@ class default_1 {
         mergedConfig.externals = [];
         mergedConfig.externals.push('react', 'react-dom', 'react-helmet');
         mergedConfig.name = mapComponent.Page;
-        mergedConfig.output.publicPath = `/${path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib)}/`;
+        mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         mergedConfig.entry = path_1.join(this.$.config.paths.pages, mapComponent.Page);
         mergedConfig.output.path = this.$.config.paths.babel;
         mergedConfig.output.filename = `m[contentHash].js`;
@@ -141,7 +141,7 @@ class default_1 {
         //path before file name is important cause it allows easy routing during development
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
-        mergedConfig.output.publicPath = `/${path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib)}/`;
+        mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         if (this.$.config.pro) //only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = this.$.config.paths.lib;
         else
