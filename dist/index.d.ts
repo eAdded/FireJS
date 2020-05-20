@@ -43,3 +43,6 @@ export default class {
     generateMap(): FireJS_MAP;
     get Context(): $;
 }
+export declare class foo {
+    constructor();
+}

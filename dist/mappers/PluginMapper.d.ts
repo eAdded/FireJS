@@ -1,4 +1,4 @@
-import { $ } from "../index";
+import { PathRelatives } from "../index";
 import MapComponent from "../classes/MapComponent";
 export interface AsyncFunc {
     (): Promise<PathObject[]>;
@@ -11,11 +11,6 @@ export interface PathObject {
 export interface Plugin {
     [key: string]: PageObject[];
 }
-export default class {
-    private readonly $;
-    constructor(globalData: $);
-    mapPlugins(): void;
-    mapPlugin(path: string): void;
-    applyPlugin(mapComponent: MapComponent, callback: (PagePath: any) => void): void;
-    parsePagePaths(paths: PageObject[], callback: any, reject: any): void;
-}
+export declare function mapPlugins(plugins: string[], map: Map<string, MapComponent>): void;
+export declare function applyPlugin(mapComponent: MapComponent, rel: PathRelatives, callback: (PagePath: any) => void): void;
+export declare function parsePagePaths(paths: PageObject[], callback: any, reject: any): void;

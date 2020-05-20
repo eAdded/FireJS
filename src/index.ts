@@ -1,7 +1,7 @@
 import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
-import PluginMapper from "./mappers/PluginMapper"
+import {applyPlugin, mapPlugins} from "./mappers/PluginMapper"
 import BuildRegistrar from "./registrars/build.registrar"
 import {readFileSync} from "fs";
 import PathMapper from "./mappers/PathMapper";
@@ -69,9 +69,8 @@ export default class {
 
     mapPluginsAndBuildExternals() {
         const pageArchitect = new PageArchitect(this.$);
-        const pluginMapper = new PluginMapper(this.$);
         this.$.cli.log("Mapping Plugins");
-        pluginMapper.mapPlugins();
+        mapPlugins(this.$.config.plugins, this.$.map);
         this.$.cli.log("Building Externals");
         return pageArchitect.buildExternals()
     }
@@ -82,7 +81,6 @@ export default class {
             this.$.cli.error("Not in production mode. Make sure to pass [--pro, -p] flag")
             throw "";
         }
-        const pluginMapper = new PluginMapper(this.$);
         const pageArchitect = new PageArchitect(this.$);
         const staticArchitect = new StaticArchitect(this.$);
         const promises = [];
@@ -96,7 +94,7 @@ export default class {
                             pageArchitect.buildDirect(mapComponent, () => {
                                 resolve();
                                 this.$.cli.ok(`Successfully built page ${mapComponent.Page}`)
-                                pluginMapper.applyPlugin(mapComponent, (pagePath) => {
+                                applyPlugin(mapComponent, this.$.rel, (pagePath) => {
                                     Promise.all([
                                         writeFileRecursively(//write content
                                             join(this.$.config.paths.dist, pagePath.MapPath),
@@ -137,5 +135,11 @@ export default class {
 
     get Context(): $ {
         return this.$;
+    }
+}
+
+export class foo {
+    constructor() {
+
     }
 }

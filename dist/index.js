@@ -27,9 +27,8 @@ class default_1 {
     }
     mapPluginsAndBuildExternals() {
         const pageArchitect = new PageArchitect_1.default(this.$);
-        const pluginMapper = new PluginMapper_1.default(this.$);
         this.$.cli.log("Mapping Plugins");
-        pluginMapper.mapPlugins();
+        PluginMapper_1.mapPlugins(this.$.config.plugins, this.$.map);
         this.$.cli.log("Building Externals");
         return pageArchitect.buildExternals();
     }
@@ -39,7 +38,6 @@ class default_1 {
             this.$.cli.error("Not in production mode. Make sure to pass [--pro, -p] flag");
             throw "";
         }
-        const pluginMapper = new PluginMapper_1.default(this.$);
         const pageArchitect = new PageArchitect_1.default(this.$);
         const staticArchitect = new StaticArchitect_1.default(this.$);
         const promises = [];
@@ -53,7 +51,7 @@ class default_1 {
                             pageArchitect.buildDirect(mapComponent, () => {
                                 resolve();
                                 this.$.cli.ok(`Successfully built page ${mapComponent.Page}`);
-                                pluginMapper.applyPlugin(mapComponent, (pagePath) => {
+                                PluginMapper_1.applyPlugin(mapComponent, this.$.rel, (pagePath) => {
                                     Promise.all([
                                         Fs_1.writeFileRecursively(//write content
                                         path_1.join(this.$.config.paths.dist, pagePath.MapPath), `window.__MAP__=${JSON.stringify(pagePath.Map)}`),
@@ -91,3 +89,8 @@ class default_1 {
     }
 }
 exports.default = default_1;
+class foo {
+    constructor() {
+    }
+}
+exports.foo = foo;

@@ -1,6 +1,6 @@
-import {join, relative} from "path";
+import {join} from "path";
 import MapComponent from "./MapComponent";
-import {$} from "../index";
+import {PathRelatives} from "../index";
 
 interface map {
     chunks: string[],
@@ -15,13 +15,13 @@ export default class {
     };
     private readonly map_path: string;
 
-    constructor(mapComponent: MapComponent, path: string, content: any, $: $) {
+    constructor(mapComponent: MapComponent, path: string, content: any, rel: PathRelatives) {
         this.path = path;
         this.map = {
             chunks: mapComponent.chunkGroup.chunks,
             content
         }
-        this.map_path = join(relative($.config.paths.dist, $.config.paths.map), path + ".map.js");
+        this.map_path = join(rel.mapRel, path + ".map.js");
     }
 
     get Map() {
