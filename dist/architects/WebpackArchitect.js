@@ -148,7 +148,7 @@ class default_1 {
             mergedConfig.output.path = "/"; //in dev the content is served from memory
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
-            App: this.$.config.pro ? path_1.join(this.$.config.paths.babel, mapComponent.babelChunk) : path_1.join(this.$.config.paths.pages, mapComponent.Page)
+            App: this.$.config.pro ? path_1.join(this.$.config.paths.babel, mapComponent.chunkGroup.babelChunk) : path_1.join(this.$.config.paths.pages, mapComponent.Page)
         }));
         return mergedConfig;
     }

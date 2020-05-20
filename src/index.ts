@@ -1,4 +1,3 @@
-import {cloneDeep} from "lodash";
 import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
@@ -9,17 +8,25 @@ import PathMapper from "./mappers/PathMapper";
 import Cli from "./utils/Cli";
 import MapComponent from "./classes/MapComponent";
 import {Configuration, Stats} from "webpack";
+import {relative} from "path";
 
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
 
+export interface PathRelatives {
+    libRel: string,
+    mapRel: string
+}
+
+export interface ChunkGroup {
+    babelChunk: string,
+    chunks: string[]
+}
+
 export interface FireJS_MAP {
     externals: string[],
     pages: {
-        [key: string]: {
-            babelChunk: string,
-            chunks: string[]
-        }
+        [key: string]: ChunkGroup
     }
 }
 
@@ -30,11 +37,11 @@ export interface $ {
     cli?: Cli,
     webpackConfig?: WebpackConfig,
     template?: string,
-    externals?: string[]
+    externals?: string[],
+    rel?: PathRelatives
 }
 
 export interface Params {
-    userConfig?: Config,
     config?: Config,
     args?: Args,
     pages?: string[],
@@ -43,16 +50,19 @@ export interface Params {
 }
 
 export default class {
-    private readonly $: $ = {};
+    private readonly $: $ = {externals: []};
 
     constructor(params: Params = {}) {
         this.$.args = params.args || getArgs();
         this.$.cli = new Cli(this.$.args);
-        this.$.config = params.config || params.userConfig ? new ConfigMapper(this.$).getConfig(cloneDeep(params.userConfig)) : new ConfigMapper(this.$).getConfig();
+        this.$.config = new ConfigMapper(this.$).getConfig(params.config);
         this.$.template = params.template || readFileSync(this.$.config.paths.template).toString();
         this.$.map = params.pages ? new PathMapper(this.$).convertToMap(params.pages) : new PathMapper(this.$).map();
         this.$.webpackConfig = params.webpackConfig || new WebpackArchitect(this.$).readUserConfig();
-        this.$.externals = [];
+        this.$.rel = {
+            libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
+            mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
+        }
     }
 
     mapPluginsAndBuildExternals() {
@@ -104,12 +114,8 @@ export default class {
             externals: this.$.externals,
             pages: {}
         };
-        for (const mapComponent of this.$.map.values()) {
-            babel_map.pages[mapComponent.Page] = {
-                babelChunk: mapComponent.babelChunk,
-                chunks: mapComponent.chunks
-            };
-        }
+        for (const mapComponent of this.$.map.values())
+            babel_map.pages[mapComponent.Page] = mapComponent.chunkGroup
         return babel_map;
     }
 

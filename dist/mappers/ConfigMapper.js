@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const fs_1 = require("fs");
+const lodash_1 = require("lodash");
 function getArgs() {
     return require("arg")({
         //Types
@@ -67,7 +68,7 @@ class default_1 {
     }
     getConfig(userConfig = undefined) {
         this.$.cli.log("Loading configs");
-        const config = userConfig || this.getUserConfig();
+        const config = userConfig ? lodash_1.cloneDeep(userConfig) : this.getUserConfig();
         config.pro = this.$.args["--pro"] ? true : config.pro || false;
         this.$.cli.log("mode : " + (config.pro ? "production" : "development"));
         config.paths = config.paths || {};

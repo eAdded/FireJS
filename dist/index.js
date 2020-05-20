@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const lodash_1 = require("lodash");
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const PageArchitect_1 = require("./architects/PageArchitect");
 const WebpackArchitect_1 = require("./architects/WebpackArchitect");
@@ -9,16 +8,20 @@ const build_registrar_1 = require("./registrars/build.registrar");
 const fs_1 = require("fs");
 const PathMapper_1 = require("./mappers/PathMapper");
 const Cli_1 = require("./utils/Cli");
+const path_1 = require("path");
 class default_1 {
     constructor(params = {}) {
-        this.$ = {};
+        this.$ = { externals: [] };
         this.$.args = params.args || ConfigMapper_1.getArgs();
         this.$.cli = new Cli_1.default(this.$.args);
-        this.$.config = params.config || params.userConfig ? new ConfigMapper_1.default(this.$).getConfig(lodash_1.cloneDeep(params.userConfig)) : new ConfigMapper_1.default(this.$).getConfig();
+        this.$.config = new ConfigMapper_1.default(this.$).getConfig(params.config);
         this.$.template = params.template || fs_1.readFileSync(this.$.config.paths.template).toString();
         this.$.map = params.pages ? new PathMapper_1.default(this.$).convertToMap(params.pages) : new PathMapper_1.default(this.$).map();
         this.$.webpackConfig = params.webpackConfig || new WebpackArchitect_1.default(this.$).readUserConfig();
-        this.$.externals = [];
+        this.$.rel = {
+            libRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib),
+            mapRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.map)
+        };
     }
     mapPluginsAndBuildExternals() {
         const pageArchitect = new PageArchitect_1.default(this.$);
@@ -67,12 +70,8 @@ class default_1 {
             externals: this.$.externals,
             pages: {}
         };
-        for (const mapComponent of this.$.map.values()) {
-            babel_map.pages[mapComponent.Page] = {
-                babelChunk: mapComponent.babelChunk,
-                chunks: mapComponent.chunks
-            };
-        }
+        for (const mapComponent of this.$.map.values())
+            babel_map.pages[mapComponent.Page] = mapComponent.chunkGroup;
         return babel_map;
     }
     get Context() {

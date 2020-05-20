@@ -1,11 +1,11 @@
 import MemoryFileSystem from "memory-fs";
 import PagePath from "./PagePath";
 import {PageObject} from "../mappers/PluginMapper";
+import {ChunkGroup} from "../index";
 
 export default class {
     public paths: PagePath[] = [];
-    public chunks: string[] = [];
-    public babelChunk: string;
+    public chunkGroup: ChunkGroup = {chunks: [], babelChunk: ""}
     public memoryFileSystem: MemoryFileSystem = {};
     public plugin: PageObject[];
     private readonly page;

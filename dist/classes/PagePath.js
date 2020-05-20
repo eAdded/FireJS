@@ -9,7 +9,7 @@ class default_1 {
         };
         this.path = path;
         this.map = {
-            chunks: mapComponent.chunks,
+            chunks: mapComponent.chunkGroup.chunks,
             content
         };
         this.map_path = path_1.join(path_1.relative($.config.paths.dist, $.config.paths.map), path + ".map.js");

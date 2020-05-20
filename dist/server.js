@@ -72,7 +72,7 @@ function default_1(app) {
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
                 if (req.url === pagePath.Path || (path_1.join(req.url, "index") === pagePath.Path)) {
-                    res.end(staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath)));
+                    res.end(staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath)));
                     return true;
                 }
             })))
@@ -81,7 +81,7 @@ function default_1(app) {
         if (!found) {
             const _404_MapComponent = $.map.get($.config.pages._404);
             if (_404_MapComponent.paths.length > 0)
-                res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent, _404_MapComponent.paths[0])));
+                res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent.chunkGroup, _404_MapComponent.paths[0])));
             else
                 res.end("Please Wait...");
         }

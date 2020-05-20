@@ -177,7 +177,7 @@ export default class {
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(
             new webpack.ProvidePlugin({
-                App: this.$.config.pro ? join(this.$.config.paths.babel, mapComponent.babelChunk) : join(this.$.config.paths.pages, mapComponent.Page)
+                App: this.$.config.pro ? join(this.$.config.paths.babel, mapComponent.chunkGroup.babelChunk) : join(this.$.config.paths.pages, mapComponent.Page)
             }),
         );
         return mergedConfig;

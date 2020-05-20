@@ -1,6 +1,7 @@
 import {isAbsolute, join, resolve} from "path"
 import {existsSync, mkdirSync, readdirSync} from "fs"
 import {$} from "../index";
+import {cloneDeep} from "lodash"
 
 export interface Config {
     pro?: boolean,          //production mode when true, dev mode when false
@@ -19,16 +20,8 @@ export interface Config {
         plugins?: string,   //plugins dir, default : root/src/plugins
     },
     plugins?: string[],     //plugins, default : []
-    templateTags?: {        //these tags need to exist if you pass custom template file
-        script?: string,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
-        static?: string,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
-        head?: string,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
-        style?: string,     //this is replaced by all page styles, default : "<%=STYLE=%>"
-        unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
-    },
-    pages?: {
-        _404?: string       //404 page, default : 404.js
-    }
+    templateTags?: TemplateTags,
+    pages?: ExplicitPages
 }
 
 export interface Args {
@@ -38,6 +31,19 @@ export interface Args {
     "--plain"?: boolean,            //Log without styling i.e colors and symbols
     "--silent"?: boolean,           //Log errors only
     "--disable-plugins"?: boolean   //Disable plugins
+}
+
+export interface ExplicitPages {
+    _404?: string       //404 page, default : 404.js
+}
+
+export interface TemplateTags {
+    script?: string,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
+    static?: string,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
+    head?: string,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
+    style?: string,     //this is replaced by all page styles, default : "<%=STYLE=%>"
+    unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
+
 }
 
 export function getArgs(): Args {
@@ -84,7 +90,7 @@ export default class {
 
     getConfig(userConfig: Config | undefined = undefined): Config {
         this.$.cli.log("Loading configs");
-        const config: Config = userConfig || this.getUserConfig();
+        const config: Config = userConfig ? cloneDeep(userConfig) : this.getUserConfig();
         config.pro = this.$.args["--pro"] ? true : config.pro || false;
         this.$.cli.log("mode : " + (config.pro ? "production" : "development"))
         config.paths = config.paths || {};

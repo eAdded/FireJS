@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class default_1 {
     constructor(page) {
         this.paths = [];
-        this.chunks = [];
+        this.chunkGroup = { chunks: [], babelChunk: "" };
         this.memoryFileSystem = {};
         this.page = page;
         this.name = page.substring(page.lastIndexOf("/") + 1, page.lastIndexOf("."));

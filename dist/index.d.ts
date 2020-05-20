@@ -4,13 +4,18 @@ import MapComponent from "./classes/MapComponent";
 import { Configuration, Stats } from "webpack";
 export declare type WebpackConfig = Configuration;
 export declare type WebpackStat = Stats;
+export interface PathRelatives {
+    libRel: string;
+    mapRel: string;
+}
+export interface ChunkGroup {
+    babelChunk: string;
+    chunks: string[];
+}
 export interface FireJS_MAP {
     externals: string[];
     pages: {
-        [key: string]: {
-            babelChunk: string;
-            chunks: string[];
-        };
+        [key: string]: ChunkGroup;
     };
 }
 export interface $ {
@@ -21,9 +26,9 @@ export interface $ {
     webpackConfig?: WebpackConfig;
     template?: string;
     externals?: string[];
+    rel?: PathRelatives;
 }
 export interface Params {
-    userConfig?: Config;
     config?: Config;
     args?: Args;
     pages?: string[];

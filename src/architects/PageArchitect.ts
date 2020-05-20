@@ -30,9 +30,9 @@ export default class {
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
                         if (file.startsWith("m")) {
-                            mapComponent.babelChunk = file;
+                            mapComponent.chunkGroup.babelChunk = file;
                         } else //don't add babel main
-                            mapComponent.chunks.push(file);
+                            mapComponent.chunkGroup.chunks.push(file);
                     })
                 });
                 resolve();
@@ -44,7 +44,7 @@ export default class {
         const fileSystem = this.$.config.pro ? undefined : new MemoryFileSystem();
         this.build(new WebpackArchitect(this.$).direct(mapComponent, this.$.webpackConfig), fileSystem, (stat) => {
             if (!this.$.config.pro) {
-                mapComponent.chunks = []; //re init for new chunks
+                mapComponent.chunkGroup.chunks = []; //re init for new chunks
                 mapComponent.memoryFileSystem = fileSystem;
             }
             if (this.logStat(stat))//true if errors
@@ -53,9 +53,9 @@ export default class {
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
                         if (file.startsWith("m")) {
-                            mapComponent.chunks.unshift(file);//add main chunk to the top
+                            mapComponent.chunkGroup.chunks.unshift(file);//add main chunk to the top
                         } else
-                            mapComponent.chunks.push(file);
+                            mapComponent.chunkGroup.chunks.push(file);
                     })
                 });
                 resolve();

@@ -18,7 +18,7 @@ export default class {
     constructor(mapComponent: MapComponent, path: string, content: any, $: $) {
         this.path = path;
         this.map = {
-            chunks: mapComponent.chunks,
+            chunks: mapComponent.chunkGroup.chunks,
             content
         }
         this.map_path = join(relative($.config.paths.dist, $.config.paths.map), path + ".map.js");

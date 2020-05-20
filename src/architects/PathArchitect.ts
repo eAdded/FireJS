@@ -7,17 +7,17 @@ import {$} from "../index";
 
 export default class {
     private readonly $: $;
+    private readonly staticArchitect
 
-    constructor(globalData: $) {
-        this.$ = globalData;
+    constructor($: $) {
+        this.$ = $;
+        this.staticArchitect = new StaticArchitect($)
     }
 
     writePath(mapComponent: MapComponent, pagePath: PagePath) {
-        const staticArchitect = new StaticArchitect(this.$);
-        const html = staticArchitect.finalize(staticArchitect.render(mapComponent, pagePath));
         return writeFileRecursively(
             join(this.$.config.paths.dist, pagePath.Path.concat(".html")),
-            html
+            this.staticArchitect.finalize(this.staticArchitect.render(mapComponent.chunkGroup, pagePath))
         )
     }
 }

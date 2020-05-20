@@ -3,6 +3,7 @@ import PagePath from "../classes/PagePath";
 import { $ } from "../index";
 export default class {
     private readonly $;
-    constructor(globalData: $);
+    private readonly staticArchitect;
+    constructor($: $);
     writePath(mapComponent: MapComponent, pagePath: PagePath): Promise<unknown>;
 }

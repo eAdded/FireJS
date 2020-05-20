@@ -16,16 +16,8 @@ export interface Config {
         plugins?: string;
     };
     plugins?: string[];
-    templateTags?: {
-        script?: string;
-        static?: string;
-        head?: string;
-        style?: string;
-        unknown?: string;
-    };
-    pages?: {
-        _404?: string;
-    };
+    templateTags?: TemplateTags;
+    pages?: ExplicitPages;
 }
 export interface Args {
     "--pro"?: boolean;
@@ -34,6 +26,16 @@ export interface Args {
     "--plain"?: boolean;
     "--silent"?: boolean;
     "--disable-plugins"?: boolean;
+}
+export interface ExplicitPages {
+    _404?: string;
+}
+export interface TemplateTags {
+    script?: string;
+    static?: string;
+    head?: string;
+    style?: string;
+    unknown?: string;
 }
 export declare function getArgs(): Args;
 export default class {

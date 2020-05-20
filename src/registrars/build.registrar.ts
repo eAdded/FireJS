@@ -12,9 +12,9 @@ export default class {
 
     registerForSemiBuild(mapComponent: MapComponent) {
         return new Promise((resolve, reject) => {
-            if (mapComponent.chunks.length === 0)
+            if (mapComponent.chunkGroup.chunks.length === 0)
                 resolve();
-            mapComponent.chunks.forEach(chunk => {//copy chunks to lib
+            mapComponent.chunkGroup.chunks.forEach(chunk => {//copy chunks to lib
                 const babel_abs_path = join(this.$.config.paths.babel, chunk);
                 exists(babel_abs_path, exists => {
                     if (exists) {//only copy if it exists because it might be already copied before for page having same chunk
