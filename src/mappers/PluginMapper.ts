@@ -69,16 +69,16 @@ export function parsePagePaths(paths: PageObject[], callback, reject) {
     }
 }
 
-export function getPlugins(pluginsPath: string): string[] {
+export function getPlugins(pluginsPath: string, otherPlugins: string[]): string[] {
     const plugins = [];
+    otherPlugins.forEach(plugin => {
+        require.resolve(plugin);
+        plugins.push(plugin);
+    })
     readdirSync(pluginsPath).forEach(plugin => {
         const pPath = join(pluginsPath, plugin);
-        try {
-            require.resolve(pPath);
-            pluginsPath.push(pPath);
-        } catch (ex) {
-            this.$.cli.warn(`Plugin ${plugin} is not a valid plugin. Removing...`);
-        }
+        require.resolve(pPath);
+        plugins.push(pPath);
     });
     return plugins;
 }

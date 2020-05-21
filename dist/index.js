@@ -90,9 +90,9 @@ class default_1 {
 }
 exports.default = default_1;
 class foo {
-    constructor(config, pathToPlugins) {
+    constructor(config, pathToPlugins, otherPlugins = []) {
         this.config = config;
-        this.plugins = PluginMapper_1.getPlugins(pathToPlugins);
+        this.plugins = PluginMapper_1.getPlugins(pathToPlugins, otherPlugins);
     }
     renderPath() {
     }

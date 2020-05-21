@@ -142,9 +142,9 @@ export class foo {
     readonly config: StaticConfig;
     readonly plugins: string[]
 
-    constructor(config, pathToPlugins) {
+    constructor(config, pathToPlugins, otherPlugins: string[] = []) {
         this.config = config;
-        this.plugins = getPlugins(pathToPlugins);
+        this.plugins = getPlugins(pathToPlugins, otherPlugins);
     }
 
     renderPath() {

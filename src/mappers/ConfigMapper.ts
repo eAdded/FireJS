@@ -116,8 +116,7 @@ export default class {
         if (!this.args["--disable-plugins"]) {
             this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
             if (config.paths.plugins) {//Only getPlugins when dir exists
-                config.plugins = getPlugins(config.paths.plugins);
-                this.getPlugins(config);
+                config.plugins = getPlugins(config.paths.plugins, config.plugins);
             }
         }
         //html template tags

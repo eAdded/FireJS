@@ -14,4 +14,4 @@ export interface Plugin {
 export declare function mapPlugins(plugins: string[], map: Map<string, MapComponent>): void;
 export declare function applyPlugin(mapComponent: MapComponent, rel: PathRelatives, callback: (PagePath: any) => void): void;
 export declare function parsePagePaths(paths: PageObject[], callback: any, reject: any): void;
-export declare function getPlugins(pluginsPath: string): string[];
+export declare function getPlugins(pluginsPath: string, otherPlugins: string[]): string[];

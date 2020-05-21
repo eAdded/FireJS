@@ -47,6 +47,6 @@ export default class {
 export declare class foo {
     readonly config: StaticConfig;
     readonly plugins: string[];
-    constructor(config: any, pathToPlugins: any);
+    constructor(config: any, pathToPlugins: any, otherPlugins?: string[]);
     renderPath(): void;
 }
