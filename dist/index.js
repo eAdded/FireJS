@@ -31,6 +31,7 @@ class default_1 {
         const pageArchitect = new PageArchitect_1.default(this.$);
         this.$.cli.log("Mapping Plugins");
         PluginMapper_1.mapPlugins(this.$.config.plugins, this.$.map);
+        PluginMapper_1.addDefaultPlugins(this.$.map);
         this.$.cli.log("Building Externals");
         return pageArchitect.buildExternals();
     }
@@ -58,7 +59,7 @@ class default_1 {
                                         Fs_1.writeFileRecursively(//write content
                                         path_1.join(this.$.config.paths.dist, pagePath.MapPath), `window.__MAP__=${JSON.stringify(pagePath.Map)}`),
                                         Fs_1.writeFileRecursively(//write html
-                                        path_1.join(this.$.config.paths.dist, pagePath.Path.concat(".html")), staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath, true)))
+                                        path_1.join(this.$.config.paths.dist, pagePath.Path.concat(".html")), staticArchitect.finalize(staticArchitect.render(this.$.template, mapComponent.chunkGroup, pagePath, true)))
                                     ]).then(resolve).catch(err => {
                                         throw err;
                                     });
@@ -84,8 +85,11 @@ class default_1 {
 exports.default = default_1;
 class CustomRenderer {
     constructor(pathToBabelDir, pathToPluginsDir = undefined, customPlugins = [], rootDir = process.cwd()) {
-        const firejs_map = JSON.parse(fs_1.readFileSync(pathToBabelDir).toString());
-        firejs_map.staticConfig.babelPath = pathToPluginsDir;
+        this.map = new Map();
+        const firejs_map = JSON.parse(fs_1.readFileSync(path_1.join(pathToBabelDir, "firejs.map.json")).toString());
+        firejs_map.staticConfig.babelPath = path_1.join(rootDir, pathToBabelDir);
+        this.template = firejs_map.template;
+        this.rel = firejs_map.staticConfig.rel;
         this.architect = new StaticArchitect_1.DefaultArchitect(firejs_map.staticConfig);
         for (const page in firejs_map.pageMap) {
             const mapComponent = new MapComponent_1.default(page);
@@ -100,13 +104,38 @@ class CustomRenderer {
         else //prevent unnecessary copy
             plugins = PluginMapper_1.resolveCustomPlugins(customPlugins, rootDir);
         PluginMapper_1.mapPlugins(plugins, this.map);
+        PluginMapper_1.addDefaultPlugins(this.map);
     }
-    renderWithPluginData() {
+    renderWithPluginData(mapComponent, path, callback) {
+        // @ts-ignore
+        if (!mapComponent.wasApplied) {
+            let counter = 0;
+            PluginMapper_1.applyPlugin(mapComponent, this.rel, pagePath => {
+                // @ts-ignore
+                if (++counter == mapComponent.plugin.length) { //render when all paths are gained
+                    // @ts-ignore
+                    mapComponent.wasApplied = true;
+                    this.renderWithPluginData(mapComponent, path, callback);
+                }
+            });
+        }
+        else {
+            let pagePath;
+            if (!mapComponent.paths.some(p => {
+                if (p.Path === path) {
+                    pagePath = p;
+                    return true;
+                }
+                else
+                    return false;
+            }))
+                throw "path not found";
+            callback(this.architect.finalize(this.architect.render(this.template, mapComponent.chunkGroup, pagePath, true)));
+        }
     }
     render(page, path, content) {
-        for (const page in this.map.pageMap) {
-            this.architect.finalize(this.architect.render(this.map[page], new PagePath_1.default(path)));
-        }
+        const mapComponent = this.map.get(page);
+        return this.architect.finalize(this.architect.render(this.template, mapComponent.chunkGroup, new PagePath_1.default(mapComponent, path, content, this.rel), true));
     }
 }
 exports.CustomRenderer = CustomRenderer;

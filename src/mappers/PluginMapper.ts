@@ -32,26 +32,27 @@ export function mapPlugins(plugins: string[], map: Map<string, MapComponent>) {
     });
 }
 
-export function applyPlugin(mapComponent: MapComponent, rel: PathRelatives, callback: (PagePath) => void) {
-    if (mapComponent.plugin)
-        this.parsePagePaths(mapComponent.plugin, (path, content) => {
-            const pagePath = new PagePath(mapComponent, path, content, rel);
-            mapComponent.paths.push(pagePath);
-            callback(pagePath);
-        }, err => {
-            throw err;
-        })
-    else {//make default page
-        let path = mapComponent.Page;
-        path = "/" + path.substring(0, path.lastIndexOf(mapComponent.Ext));
-        const pagePath = new PagePath(mapComponent, path, {}, rel);
-        mapComponent.paths.push(pagePath);//push when dev
-        callback(pagePath);
+export function addDefaultPlugins(map: Map<string, MapComponent>) {
+    for (const mapComponent of map.values()) {
+        if (!mapComponent.plugin) {
+            let path = mapComponent.Page;
+            mapComponent.plugin = ["/" + path.substring(0, path.lastIndexOf(mapComponent.Ext))]
+        }
     }
 }
 
+export function applyPlugin(mapComponent: MapComponent, rel: PathRelatives, callback: (PagePath) => void) {
+    this.parsePagePaths(mapComponent.plugin, (path, content) => {
+        const pagePath = new PagePath(mapComponent, path, content, rel);
+        mapComponent.paths.push(pagePath);
+        callback(pagePath);
+    }, err => {
+        throw err;
+    })
+}
+
 export function parsePagePaths(paths: PageObject[], callback, reject) {
-    if (Array.isArray(paths)) {
+    if (paths instanceof Array) {
         paths.forEach(pageObject => {
             if (typeof pageObject === "string") {
                 callback(<string>pageObject, {});

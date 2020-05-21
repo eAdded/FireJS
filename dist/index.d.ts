@@ -47,7 +47,9 @@ export default class {
 export declare class CustomRenderer {
     readonly map: Map<string, MapComponent>;
     readonly architect: DefaultArchitect;
+    readonly template: string;
+    readonly rel: PathRelatives;
     constructor(pathToBabelDir: string, pathToPluginsDir?: string | undefined, customPlugins?: string[], rootDir?: string);
-    renderWithPluginData(): void;
-    render(page: any, path: any, content: any): void;
+    renderWithPluginData(mapComponent: MapComponent, path: string, callback: any): void;
+    render(page: string, path: string, content: any): string;
 }

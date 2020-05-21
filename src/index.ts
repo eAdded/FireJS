@@ -1,7 +1,7 @@
 import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
-import {applyPlugin, getPlugins, mapPlugins, resolveCustomPlugins} from "./mappers/PluginMapper"
+import {addDefaultPlugins, applyPlugin, getPlugins, mapPlugins, resolveCustomPlugins} from "./mappers/PluginMapper"
 import BuildRegistrar from "./registrars/build.registrar"
 import {readFileSync} from "fs";
 import PathMapper from "./mappers/PathMapper";
@@ -73,6 +73,7 @@ export default class {
         const pageArchitect = new PageArchitect(this.$);
         this.$.cli.log("Mapping Plugins");
         mapPlugins(this.$.config.plugins, this.$.map);
+        addDefaultPlugins(this.$.map)
         this.$.cli.log("Building Externals");
         return pageArchitect.buildExternals()
     }
@@ -104,7 +105,7 @@ export default class {
                                         ),
                                         writeFileRecursively(//write html
                                             join(this.$.config.paths.dist, pagePath.Path.concat(".html")),
-                                            staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath, true))
+                                            staticArchitect.finalize(staticArchitect.render(this.$.template, mapComponent.chunkGroup, pagePath, true))
                                         )
                                     ]).then(resolve).catch(err => {
                                         throw err;
@@ -131,12 +132,16 @@ export default class {
 }
 
 export class CustomRenderer {
-    readonly map: Map<string, MapComponent>
+    readonly map: Map<string, MapComponent> = new Map()
     readonly architect: DefaultArchitect;
+    readonly template: string;
+    readonly rel: PathRelatives;
 
     constructor(pathToBabelDir: string, pathToPluginsDir: string | undefined = undefined, customPlugins: string[] = [], rootDir: string = process.cwd()) {
-        const firejs_map = JSON.parse(readFileSync(pathToBabelDir).toString());
-        firejs_map.staticConfig.babelPath = pathToPluginsDir;
+        const firejs_map: FIREJS_MAP = JSON.parse(readFileSync(join(pathToBabelDir, "firejs.map.json")).toString());
+        firejs_map.staticConfig.babelPath = join(rootDir, pathToBabelDir);
+        this.template = firejs_map.template;
+        this.rel = firejs_map.staticConfig.rel
         this.architect = new DefaultArchitect(firejs_map.staticConfig);
         for (const page in firejs_map.pageMap) {
             const mapComponent = new MapComponent(page);
@@ -150,16 +155,39 @@ export class CustomRenderer {
         } else//prevent unnecessary copy
             plugins = resolveCustomPlugins(customPlugins, rootDir);
         mapPlugins(plugins, this.map);
+        addDefaultPlugins(this.map);
     }
 
-    renderWithPluginData() {
-
-    }
-
-    render(page, path, content) {
-        for (const page in this.map.pageMap) {
-            this.architect.finalize(this.architect.render(this.map[page], new PagePath(, path,)))
-
+    renderWithPluginData(mapComponent: MapComponent, path: string, callback) {
+        // @ts-ignore
+        if (!mapComponent.wasApplied) {
+            let counter = 0;
+            applyPlugin(mapComponent, this.rel, pagePath => {
+                // @ts-ignore
+                if (++counter == mapComponent.plugin.length) {//render when all paths are gained
+                    // @ts-ignore
+                    mapComponent.wasApplied = true;
+                    this.renderWithPluginData(mapComponent, path, callback);
+                }
+            })
+        } else {
+            let pagePath;
+            if (!mapComponent.paths.some(p => {
+                if (p.Path === path) {
+                    pagePath = p;
+                    return true
+                } else
+                    return false
+            }))
+                throw "path not found"
+            callback(this.architect.finalize(
+                this.architect.render(this.template, mapComponent.chunkGroup, pagePath, true)));
         }
+    }
+
+    render(page: string, path: string, content: any) {
+        const mapComponent = this.map.get(page);
+        return this.architect.finalize(
+            this.architect.render(this.template, mapComponent.chunkGroup, new PagePath(mapComponent, path, content, this.rel), true));
     }
 }

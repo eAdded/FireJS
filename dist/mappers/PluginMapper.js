@@ -16,26 +16,27 @@ function mapPlugins(plugins, map) {
     });
 }
 exports.mapPlugins = mapPlugins;
-function applyPlugin(mapComponent, rel, callback) {
-    if (mapComponent.plugin)
-        this.parsePagePaths(mapComponent.plugin, (path, content) => {
-            const pagePath = new PagePath_1.default(mapComponent, path, content, rel);
-            mapComponent.paths.push(pagePath);
-            callback(pagePath);
-        }, err => {
-            throw err;
-        });
-    else { //make default page
-        let path = mapComponent.Page;
-        path = "/" + path.substring(0, path.lastIndexOf(mapComponent.Ext));
-        const pagePath = new PagePath_1.default(mapComponent, path, {}, rel);
-        mapComponent.paths.push(pagePath); //push when dev
-        callback(pagePath);
+function addDefaultPlugins(map) {
+    for (const mapComponent of map.values()) {
+        if (!mapComponent.plugin) {
+            let path = mapComponent.Page;
+            mapComponent.plugin = ["/" + path.substring(0, path.lastIndexOf(mapComponent.Ext))];
+        }
     }
+}
+exports.addDefaultPlugins = addDefaultPlugins;
+function applyPlugin(mapComponent, rel, callback) {
+    this.parsePagePaths(mapComponent.plugin, (path, content) => {
+        const pagePath = new PagePath_1.default(mapComponent, path, content, rel);
+        mapComponent.paths.push(pagePath);
+        callback(pagePath);
+    }, err => {
+        throw err;
+    });
 }
 exports.applyPlugin = applyPlugin;
 function parsePagePaths(paths, callback, reject) {
-    if (Array.isArray(paths)) {
+    if (paths instanceof Array) {
         paths.forEach(pageObject => {
             if (typeof pageObject === "string") {
                 callback(pageObject, {});
