@@ -110,7 +110,7 @@ class CustomRenderer {
         // @ts-ignore
         if (!mapComponent.wasApplied) {
             let counter = 0;
-            PluginMapper_1.applyPlugin(mapComponent, this.rel, pagePath => {
+            PluginMapper_1.applyPlugin(mapComponent, this.rel, _ => {
                 // @ts-ignore
                 if (++counter == mapComponent.plugin.length) { //render when all paths are gained
                     // @ts-ignore
