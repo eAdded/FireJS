@@ -19,7 +19,6 @@ export interface Plugin {
     [key: string]: PageObject[]
 }
 
-
 export function mapPlugins(plugins: string[], map: Map<string, MapComponent>) {
     plugins.forEach(path => {
         const plug = require(path);

@@ -8,9 +8,11 @@ const build_registrar_1 = require("./registrars/build.registrar");
 const fs_1 = require("fs");
 const PathMapper_1 = require("./mappers/PathMapper");
 const Cli_1 = require("./utils/Cli");
+const MapComponent_1 = require("./classes/MapComponent");
 const path_1 = require("path");
 const Fs_1 = require("./utils/Fs");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
+const PagePath_1 = require("./classes/PagePath");
 class default_1 {
     constructor(params = {}) {
         this.$ = { externals: [] };
@@ -75,27 +77,36 @@ class default_1 {
             Promise.all(promises).then(callback);
         });
     }
-    generateMap() {
-        const babel_map = {
-            externals: this.$.externals,
-            pages: {}
-        };
-        for (const mapComponent of this.$.map.values())
-            babel_map.pages[mapComponent.Page] = mapComponent.chunkGroup;
-        return babel_map;
-    }
     get Context() {
         return this.$;
     }
 }
 exports.default = default_1;
-class foo {
-    constructor(config, pathToPlugins, otherPlugins = [], rootDir = process.cwd()) {
-        this.config = config;
-        this.plugins = PluginMapper_1.getPlugins(pathToPlugins);
-        this.plugins.push(...PluginMapper_1.resolveCustomPlugins(otherPlugins, rootDir));
+class CustomRenderer {
+    constructor(pathToBabelDir, pathToPluginsDir = undefined, customPlugins = [], rootDir = process.cwd()) {
+        const firejs_map = JSON.parse(fs_1.readFileSync(pathToBabelDir).toString());
+        firejs_map.staticConfig.babelPath = pathToPluginsDir;
+        this.architect = new StaticArchitect_1.DefaultArchitect(firejs_map.staticConfig);
+        for (const page in firejs_map.pageMap) {
+            const mapComponent = new MapComponent_1.default(page);
+            mapComponent.chunkGroup = firejs_map.pageMap[page];
+            this.map.set(page, mapComponent);
+        }
+        let plugins;
+        if (pathToPluginsDir) {
+            plugins = PluginMapper_1.getPlugins(pathToPluginsDir);
+            plugins.push(...PluginMapper_1.resolveCustomPlugins(customPlugins, rootDir));
+        }
+        else //prevent unnecessary copy
+            plugins = PluginMapper_1.resolveCustomPlugins(customPlugins, rootDir);
+        PluginMapper_1.mapPlugins(plugins, this.map);
     }
-    renderPath() {
+    renderWithPluginData() {
+    }
+    render(page, path, content) {
+        for (const page in this.map.pageMap) {
+            this.architect.finalize(this.architect.render(this.map[page], new PagePath_1.default(path)));
+        }
     }
 }
-exports.foo = foo;
+exports.CustomRenderer = CustomRenderer;

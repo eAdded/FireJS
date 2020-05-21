@@ -2,7 +2,7 @@ import { Args, Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import MapComponent from "./classes/MapComponent";
 import { Configuration, Stats } from "webpack";
-import { StaticConfig } from "./architects/StaticArchitect";
+import { DefaultArchitect, StaticConfig } from "./architects/StaticArchitect";
 export declare type WebpackConfig = Configuration;
 export declare type WebpackStat = Stats;
 export interface PathRelatives {
@@ -12,12 +12,6 @@ export interface PathRelatives {
 export interface ChunkGroup {
     babelChunk: string;
     chunks: string[];
-}
-export interface FireJS_MAP {
-    externals: string[];
-    pages: {
-        [key: string]: ChunkGroup;
-    };
 }
 export interface $ {
     args?: Args;
@@ -36,17 +30,24 @@ export interface Params {
     webpackConfig?: WebpackConfig;
     template?: string;
 }
+export interface FIREJS_MAP {
+    staticConfig: StaticConfig;
+    pageMap: {
+        [key: string]: ChunkGroup;
+    };
+    template: string;
+}
 export default class {
     private readonly $;
     constructor(params?: Params);
     mapPluginsAndBuildExternals(): Promise<unknown>;
     buildPro(callback: any): void;
-    generateMap(): FireJS_MAP;
     get Context(): $;
 }
-export declare class foo {
-    readonly config: StaticConfig;
-    readonly plugins: string[];
-    constructor(config: any, pathToPlugins: any, otherPlugins?: string[], rootDir?: string);
-    renderPath(): void;
+export declare class CustomRenderer {
+    readonly map: Map<string, MapComponent>;
+    readonly architect: DefaultArchitect;
+    constructor(pathToBabelDir: string, pathToPluginsDir?: string | undefined, customPlugins?: string[], rootDir?: string);
+    renderWithPluginData(): void;
+    render(page: any, path: any, content: any): void;
 }

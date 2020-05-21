@@ -12,14 +12,19 @@ if (app.Context.config.pro) {
         const $ = app.Context;
         $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
         $.cli.log("Generating babel chunk map");
-        fs_1.writeFileSync(path_1.join($.config.paths.out, "CHUNK_MAP.json"), JSON.stringify(app.generateMap()));
-        $.cli.log("Writing config cache map");
-        fs_1.writeFileSync(path_1.join($.config.paths.out, "STATIC_CONFIG.json"), JSON.stringify({
-            rel: $.rel,
-            tags: $.config.templateTags,
-            pages: $.config.pages,
-            template: $.template,
-        }));
+        const map = {
+            staticConfig: {
+                rel: $.rel,
+                tags: $.config.templateTags,
+                pages: $.config.pages,
+                externals: $.externals,
+            },
+            pageMap: {},
+            template: $.template
+        };
+        for (const mapComponent of $.map.values())
+            map.pageMap[mapComponent.Page] = mapComponent.chunkGroup;
+        fs_1.writeFileSync(path_1.join($.config.paths.babel, "firejs.map.json"), JSON.stringify(map));
         $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
     });
 }

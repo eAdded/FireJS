@@ -10,7 +10,8 @@ import MapComponent from "./classes/MapComponent";
 import {Configuration, Stats} from "webpack";
 import {join, relative} from "path";
 import {writeFileRecursively} from "./utils/Fs";
-import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
+import StaticArchitect, {DefaultArchitect, StaticConfig} from "./architects/StaticArchitect";
+import PagePath from "./classes/PagePath";
 
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
@@ -23,13 +24,6 @@ export interface PathRelatives {
 export interface ChunkGroup {
     babelChunk: string,
     chunks: string[]
-}
-
-export interface FireJS_MAP {
-    externals: string[],
-    pages: {
-        [key: string]: ChunkGroup
-    }
 }
 
 export interface $ {
@@ -49,6 +43,14 @@ export interface Params {
     pages?: string[],
     webpackConfig?: WebpackConfig,
     template?: string,
+}
+
+export interface FIREJS_MAP {
+    staticConfig: StaticConfig,
+    pageMap: {
+        [key: string]: ChunkGroup
+    },
+    template: string
 }
 
 export default class {
@@ -123,32 +125,41 @@ export default class {
         });
     }
 
-    generateMap(): FireJS_MAP {
-        const babel_map: FireJS_MAP = {
-            externals: this.$.externals,
-            pages: {}
-        };
-        for (const mapComponent of this.$.map.values())
-            babel_map.pages[mapComponent.Page] = mapComponent.chunkGroup
-        return babel_map;
-    }
-
     get Context(): $ {
         return this.$;
     }
 }
 
-export class foo {
-    readonly config: StaticConfig;
-    readonly plugins: string[]
+export class CustomRenderer {
+    readonly map: Map<string, MapComponent>
+    readonly architect: DefaultArchitect;
 
-    constructor(config, pathToPlugins, otherPlugins: string[] = [], rootDir: string = process.cwd()) {
-        this.config = config;
-        this.plugins = getPlugins(pathToPlugins);
-        this.plugins.push(...resolveCustomPlugins(otherPlugins, rootDir));
+    constructor(pathToBabelDir: string, pathToPluginsDir: string | undefined = undefined, customPlugins: string[] = [], rootDir: string = process.cwd()) {
+        const firejs_map = JSON.parse(readFileSync(pathToBabelDir).toString());
+        firejs_map.staticConfig.babelPath = pathToPluginsDir;
+        this.architect = new DefaultArchitect(firejs_map.staticConfig);
+        for (const page in firejs_map.pageMap) {
+            const mapComponent = new MapComponent(page);
+            mapComponent.chunkGroup = firejs_map.pageMap[page];
+            this.map.set(page, mapComponent);
+        }
+        let plugins;
+        if (pathToPluginsDir) {
+            plugins = getPlugins(pathToPluginsDir);
+            plugins.push(...resolveCustomPlugins(customPlugins, rootDir));
+        } else//prevent unnecessary copy
+            plugins = resolveCustomPlugins(customPlugins, rootDir);
+        mapPlugins(plugins, this.map);
     }
 
-    renderPath() {
+    renderWithPluginData() {
 
+    }
+
+    render(page, path, content) {
+        for (const page in this.map.pageMap) {
+            this.architect.finalize(this.architect.render(this.map[page], new PagePath(, path,)))
+
+        }
     }
 }

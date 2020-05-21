@@ -7,8 +7,7 @@ class DefaultArchitect {
     constructor(param) {
         this.param = param;
     }
-    render(chunkGroup, pagePath, render_static) {
-        let template = this.param.template;
+    render(template, chunkGroup, pagePath, render_static) {
         //set globals
         template = this.addInnerHTML(template, `<script>` +
             `window.__PATH__="${pagePath.Path}";` +

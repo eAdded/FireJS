@@ -12,7 +12,7 @@ export interface StaticConfig {
 export declare class DefaultArchitect {
     private param;
     constructor(param: StaticConfig);
-    render(chunkGroup: ChunkGroup, pagePath: PagePath, render_static: boolean): string;
+    render(template: string, chunkGroup: ChunkGroup, pagePath: PagePath, render_static: boolean): string;
     addChunk(template: string, chunk: string, root?: string | undefined, tag?: string | undefined): string;
     addInnerHTML(template: string, element: string, tag: string): string;
     finalize(template: string): string;
