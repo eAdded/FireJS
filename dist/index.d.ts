@@ -2,6 +2,7 @@ import { Args, Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import MapComponent from "./classes/MapComponent";
 import { Configuration, Stats } from "webpack";
+import { StaticConfig } from "./architects/StaticArchitect";
 export declare type WebpackConfig = Configuration;
 export declare type WebpackStat = Stats;
 export interface PathRelatives {
@@ -44,5 +45,8 @@ export default class {
     get Context(): $;
 }
 export declare class foo {
-    constructor();
+    readonly config: StaticConfig;
+    readonly plugins: string[];
+    constructor(config: any, pathToPlugins: any);
+    renderPath(): void;
 }

@@ -1,6 +1,8 @@
 import {PathRelatives} from "../index";
 import PagePath from "../classes/PagePath";
 import MapComponent from "../classes/MapComponent";
+import {readdirSync} from "fs";
+import {join} from "path";
 
 export interface AsyncFunc {
     (): Promise<PathObject[]>;
@@ -65,4 +67,18 @@ export function parsePagePaths(paths: PageObject[], callback, reject) {
     } else {
         reject(new TypeError(`Expected array got ${typeof paths}`));
     }
+}
+
+export function getPlugins(pluginsPath: string): string[] {
+    const plugins = [];
+    readdirSync(pluginsPath).forEach(plugin => {
+        const pPath = join(pluginsPath, plugin);
+        try {
+            require.resolve(pPath);
+            pluginsPath.push(pPath);
+        } catch (ex) {
+            this.$.cli.warn(`Plugin ${plugin} is not a valid plugin. Removing...`);
+        }
+    });
+    return plugins;
 }

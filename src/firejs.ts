@@ -19,7 +19,6 @@ if (app.Context.config.pro) {
             tags: $.config.templateTags,
             pages: $.config.pages,
             template: $.template,
-            babelPath: $.config.templateTags
         }));
         $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
     });

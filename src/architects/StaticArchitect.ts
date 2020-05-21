@@ -5,7 +5,7 @@ import {$, ChunkGroup, PathRelatives} from "../index";
 import {join} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
 
-interface param {
+export interface StaticConfig {
     rel: PathRelatives,
     tags: TemplateTags,
     externals: string[],
@@ -15,9 +15,9 @@ interface param {
 }
 
 export class DefaultArchitect {
-    private param: param
+    private param: StaticConfig
 
-    constructor(param: param) {
+    constructor(param: StaticConfig) {
         this.param = param;
     }
 

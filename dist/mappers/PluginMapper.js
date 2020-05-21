@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const PagePath_1 = require("../classes/PagePath");
+const fs_1 = require("fs");
+const path_1 = require("path");
 function mapPlugins(plugins, map) {
     plugins.forEach(path => {
         const plugin = require(path);
@@ -54,3 +56,18 @@ function parsePagePaths(paths, callback, reject) {
     }
 }
 exports.parsePagePaths = parsePagePaths;
+function getPlugins(pluginsPath) {
+    const plugins = [];
+    fs_1.readdirSync(pluginsPath).forEach(plugin => {
+        const pPath = path_1.join(pluginsPath, plugin);
+        try {
+            require.resolve(pPath);
+            pluginsPath.push(pPath);
+        }
+        catch (ex) {
+            this.$.cli.warn(`Plugin ${plugin} is not a valid plugin. Removing...`);
+        }
+    });
+    return plugins;
+}
+exports.getPlugins = getPlugins;

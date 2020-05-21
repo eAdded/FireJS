@@ -1,7 +1,8 @@
 import {isAbsolute, join, resolve} from "path"
-import {existsSync, mkdirSync, readdirSync} from "fs"
-import {$} from "../index";
+import {existsSync, mkdirSync} from "fs"
 import {cloneDeep} from "lodash"
+import {getPlugins} from "./PluginMapper";
+import Cli from "../utils/Cli";
 
 export interface Config {
     pro?: boolean,          //production mode when true, dev mode when false
@@ -64,35 +65,37 @@ export function getArgs(): Args {
 }
 
 export default class {
-    $: $;
+    private readonly cli: Cli;
+    private readonly args: Args;
 
-    constructor(globalData: $) {
-        this.$ = globalData;
+    constructor(cli, args) {
+        this.cli = cli;
+        this.args = args;
     }
 
     getUserConfig() {
-        const wasGiven = this.$.args["--conf"];//to store if user gave this arg so that log can be changed
-        if (this.$.args["--conf"]) {//tweak conf path
-            if (!isAbsolute(this.$.args["--conf"]))
-                this.$.args["--conf"] = resolve(process.cwd(), this.$.args["--conf"]);//create absolute path
+        const wasGiven = this.args["--conf"];//to store if user gave this arg so that log can be changed
+        if (this.args["--conf"]) {//tweak conf path
+            if (!isAbsolute(this.args["--conf"]))
+                this.args["--conf"] = resolve(process.cwd(), this.args["--conf"]);//create absolute path
         } else
-            this.$.args["--conf"] = resolve(process.cwd(), `firejs.config.js`);
+            this.args["--conf"] = resolve(process.cwd(), `firejs.config.js`);
 
-        return existsSync(this.$.args["--conf"]) ? (() => {///check if config file exists
-            this.$.cli.log(`Loading config from ${this.$.args["--conf"]}`);
-            return require(this.$.args["--conf"])
+        return existsSync(this.args["--conf"]) ? (() => {///check if config file exists
+            this.cli.log(`Loading config from ${this.args["--conf"]}`);
+            return require(this.args["--conf"])
         })() : (() => {//if config does not exists just return args
             if (wasGiven)
-                this.$.cli.warn(`Config not found at ${this.$.args["--conf"]}. Loading defaults`);
+                this.cli.warn(`Config not found at ${this.args["--conf"]}. Loading defaults`);
             return {};
         })()
     }
 
     getConfig(userConfig: Config | undefined = undefined): Config {
-        this.$.cli.log("Loading configs");
+        this.cli.log("Loading configs");
         const config: Config = userConfig ? cloneDeep(userConfig) : this.getUserConfig();
-        config.pro = this.$.args["--pro"] ? true : config.pro || false;
-        this.$.cli.log("mode : " + (config.pro ? "production" : "development"))
+        config.pro = this.args["--pro"] ? true : config.pro || false;
+        this.cli.log("mode : " + (config.pro ? "production" : "development"))
         config.paths = config.paths || {};
         config.plugins = config.plugins || [];
         this.throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
@@ -110,10 +113,12 @@ export default class {
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
-        if (!this.$.args["--disable-plugins"]) {
+        if (!this.args["--disable-plugins"]) {
             this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            if (config.paths.plugins)//Only getPlugins when dir exists
+            if (config.paths.plugins) {//Only getPlugins when dir exists
+                config.plugins = getPlugins(config.paths.plugins);
                 this.getPlugins(config);
+            }
         }
         //html template tags
         config.templateTags = config.templateTags || {};
@@ -134,7 +139,7 @@ export default class {
 
     private throwIfNotFound = (name: string, pathTo: string) => {
         if (!existsSync(pathTo)) {
-            this.$.cli.error(`${name} not found`, pathTo);
+            this.cli.error(`${name} not found`, pathTo);
             throw new Error();
         }
     }
@@ -147,32 +152,6 @@ export default class {
             object[property] = undefined;
     }
 
-    private getPlugins = (config: Config) => {
-        config.plugins = config.plugins || [];
-        config.plugins.forEach((plugin, index) => {
-            if (!this.pluginExists(plugin, [config.paths.root])) {
-                config.plugins.splice(index, 1);
-                this.$.cli.warn(`Plugin ${plugin} is not a valid plugin. Removing...`);
-            }
-        })
-        readdirSync(config.paths.plugins).forEach(plugin => {
-            const pPath = join(config.paths.plugins, plugin);
-            if (this.pluginExists(pPath))
-                config.plugins.push(pPath);
-            else
-                this.$.cli.warn(`Plugin ${plugin} is not a valid plugin. Removing...`);
-        });
-
-    }
-
-    private pluginExists(plugin: string, paths: string[] | undefined = undefined) {
-        try {
-            require.resolve(plugin, {paths});
-            return true;
-        } catch (ex) {
-            return false;
-        }
-    }
 
     private makeDirIfNotFound(path: string) {
         if (!existsSync(path))

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const fs_1 = require("fs");
 const lodash_1 = require("lodash");
+const PluginMapper_1 = require("./PluginMapper");
 function getArgs() {
     return require("arg")({
         //Types
@@ -21,56 +22,41 @@ function getArgs() {
 }
 exports.getArgs = getArgs;
 class default_1 {
-    constructor(globalData) {
+    constructor(cli, args) {
         this.makeAbsolute = (root, pathTo) => {
             return path_1.isAbsolute(pathTo) ? pathTo : path_1.resolve(root, pathTo);
         };
         this.throwIfNotFound = (name, pathTo) => {
             if (!fs_1.existsSync(pathTo)) {
-                this.$.cli.error(`${name} not found`, pathTo);
+                this.cli.error(`${name} not found`, pathTo);
                 throw new Error();
             }
         };
-        this.getPlugins = (config) => {
-            config.plugins = config.plugins || [];
-            config.plugins.forEach((plugin, index) => {
-                if (!this.pluginExists(plugin, [config.paths.root])) {
-                    config.plugins.splice(index, 1);
-                    this.$.cli.warn(`Plugin ${plugin} is not a valid plugin. Removing...`);
-                }
-            });
-            fs_1.readdirSync(config.paths.plugins).forEach(plugin => {
-                const pPath = path_1.join(config.paths.plugins, plugin);
-                if (this.pluginExists(pPath))
-                    config.plugins.push(pPath);
-                else
-                    this.$.cli.warn(`Plugin ${plugin} is not a valid plugin. Removing...`);
-            });
-        };
-        this.$ = globalData;
+        this.cli = cli;
+        this.args = args;
     }
     getUserConfig() {
-        const wasGiven = this.$.args["--conf"]; //to store if user gave this arg so that log can be changed
-        if (this.$.args["--conf"]) { //tweak conf path
-            if (!path_1.isAbsolute(this.$.args["--conf"]))
-                this.$.args["--conf"] = path_1.resolve(process.cwd(), this.$.args["--conf"]); //create absolute path
+        const wasGiven = this.args["--conf"]; //to store if user gave this arg so that log can be changed
+        if (this.args["--conf"]) { //tweak conf path
+            if (!path_1.isAbsolute(this.args["--conf"]))
+                this.args["--conf"] = path_1.resolve(process.cwd(), this.args["--conf"]); //create absolute path
         }
         else
-            this.$.args["--conf"] = path_1.resolve(process.cwd(), `firejs.config.js`);
-        return fs_1.existsSync(this.$.args["--conf"]) ? (() => {
-            this.$.cli.log(`Loading config from ${this.$.args["--conf"]}`);
-            return require(this.$.args["--conf"]);
+            this.args["--conf"] = path_1.resolve(process.cwd(), `firejs.config.js`);
+        return fs_1.existsSync(this.args["--conf"]) ? (() => {
+            this.cli.log(`Loading config from ${this.args["--conf"]}`);
+            return require(this.args["--conf"]);
         })() : (() => {
             if (wasGiven)
-                this.$.cli.warn(`Config not found at ${this.$.args["--conf"]}. Loading defaults`);
+                this.cli.warn(`Config not found at ${this.args["--conf"]}. Loading defaults`);
             return {};
         })();
     }
     getConfig(userConfig = undefined) {
-        this.$.cli.log("Loading configs");
+        this.cli.log("Loading configs");
         const config = userConfig ? lodash_1.cloneDeep(userConfig) : this.getUserConfig();
-        config.pro = this.$.args["--pro"] ? true : config.pro || false;
-        this.$.cli.log("mode : " + (config.pro ? "production" : "development"));
+        config.pro = this.args["--pro"] ? true : config.pro || false;
+        this.cli.log("mode : " + (config.pro ? "production" : "development"));
         config.paths = config.paths || {};
         config.plugins = config.plugins || [];
         this.throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
@@ -88,10 +74,12 @@ class default_1 {
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
-        if (!this.$.args["--disable-plugins"]) {
+        if (!this.args["--disable-plugins"]) {
             this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            if (config.paths.plugins) //Only getPlugins when dir exists
+            if (config.paths.plugins) { //Only getPlugins when dir exists
+                config.plugins = PluginMapper_1.getPlugins(config.paths.plugins);
                 this.getPlugins(config);
+            }
         }
         //html template tags
         config.templateTags = config.templateTags || {};
@@ -112,15 +100,6 @@ class default_1 {
         }
         else if (!fs_1.existsSync(object[property] = path_1.resolve(pathRoot, name)))
             object[property] = undefined;
-    }
-    pluginExists(plugin, paths = undefined) {
-        try {
-            require.resolve(plugin, { paths });
-            return true;
-        }
-        catch (ex) {
-            return false;
-        }
     }
     makeDirIfNotFound(path) {
         if (!fs_1.existsSync(path))

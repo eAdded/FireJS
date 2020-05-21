@@ -1,7 +1,7 @@
 import PagePath from "../classes/PagePath";
 import { $, ChunkGroup, PathRelatives } from "../index";
 import { ExplicitPages, TemplateTags } from "../mappers/ConfigMapper";
-interface param {
+export interface StaticConfig {
     rel: PathRelatives;
     tags: TemplateTags;
     externals: string[];
@@ -11,7 +11,7 @@ interface param {
 }
 export declare class DefaultArchitect {
     private param;
-    constructor(param: param);
+    constructor(param: StaticConfig);
     render(chunkGroup: ChunkGroup, pagePath: PagePath, render_static: boolean): string;
     addChunk(template: string, chunk: string, root?: string | undefined, tag?: string | undefined): string;
     addInnerHTML(template: string, element: string, tag: string): string;
@@ -20,4 +20,3 @@ export declare class DefaultArchitect {
 export default class extends DefaultArchitect {
     constructor($: $);
 }
-export {};

@@ -10,7 +10,7 @@ import MapComponent from "./classes/MapComponent";
 import {Configuration, Stats} from "webpack";
 import {join, relative} from "path";
 import {writeFileRecursively} from "./utils/Fs";
-import StaticArchitect from "./architects/StaticArchitect";
+import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
 
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
@@ -57,7 +57,7 @@ export default class {
     constructor(params: Params = {}) {
         this.$.args = params.args || getArgs();
         this.$.cli = new Cli(this.$.args);
-        this.$.config = new ConfigMapper(this.$).getConfig(params.config);
+        this.$.config = new ConfigMapper(this.$.cli, this.$.args).getConfig(params.config);
         this.$.template = params.template || readFileSync(this.$.config.paths.template).toString();
         this.$.map = params.pages ? new PathMapper(this.$).convertToMap(params.pages) : new PathMapper(this.$).map();
         this.$.webpackConfig = params.webpackConfig || new WebpackArchitect(this.$).readUserConfig();
@@ -139,7 +139,15 @@ export default class {
 }
 
 export class foo {
-    constructor() {
+    readonly config: StaticConfig;
+    readonly plugins: string[]
+
+    constructor(config, pathToPlugins) {
+        this.config = config;
+        this.plugins = new ConfigMapper($)
+    }
+
+    renderPath() {
 
     }
 }

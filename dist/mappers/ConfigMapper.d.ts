@@ -1,4 +1,3 @@
-import { $ } from "../index";
 export interface Config {
     pro?: boolean;
     paths?: {
@@ -39,14 +38,13 @@ export interface TemplateTags {
 }
 export declare function getArgs(): Args;
 export default class {
-    $: $;
-    constructor(globalData: $);
+    private readonly cli;
+    private readonly args;
+    constructor(cli: any, args: any);
     getUserConfig(): any;
     getConfig(userConfig?: Config | undefined): Config;
     private makeAbsolute;
     private throwIfNotFound;
     private undefinedIfNotFound;
-    private getPlugins;
-    private pluginExists;
     private makeDirIfNotFound;
 }
