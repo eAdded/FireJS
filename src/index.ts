@@ -1,7 +1,7 @@
 import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
-import {applyPlugin, mapPlugins} from "./mappers/PluginMapper"
+import {applyPlugin, getPlugins, mapPlugins} from "./mappers/PluginMapper"
 import BuildRegistrar from "./registrars/build.registrar"
 import {readFileSync} from "fs";
 import PathMapper from "./mappers/PathMapper";
@@ -144,7 +144,7 @@ export class foo {
 
     constructor(config, pathToPlugins) {
         this.config = config;
-        this.plugins = new ConfigMapper($)
+        this.plugins = getPlugins(pathToPlugins);
     }
 
     renderPath() {

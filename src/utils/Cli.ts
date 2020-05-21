@@ -1,4 +1,6 @@
 //tick ✓ log # warning ! error X
+import {Args} from "../mappers/ConfigMapper";
+
 export default class {
     normal;
     error;
@@ -6,8 +8,8 @@ export default class {
     warn;
     log;
 
-    constructor(args) {
-        if (args["--no_output"]) {
+    constructor(args: Args) {
+        if (args["--silent"]) {
             this.normal = () => {
             }
             this.ok = () => {
@@ -18,7 +20,7 @@ export default class {
             };
             this.log = () => {
             };
-        } else if (args["--no_color"]) {
+        } else if (args["--plain"]) {
             this.normal = this.ok = console.log;
             this.error = console.error;
             this.warn = console.warn;

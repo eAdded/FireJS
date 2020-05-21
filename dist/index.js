@@ -92,7 +92,7 @@ exports.default = default_1;
 class foo {
     constructor(config, pathToPlugins) {
         this.config = config;
-        this.plugins = new ConfigMapper_1.default($);
+        this.plugins = PluginMapper_1.getPlugins(pathToPlugins);
     }
     renderPath() {
     }

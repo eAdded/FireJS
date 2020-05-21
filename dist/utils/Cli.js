@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//tick ✓ log # warning ! error X
 class default_1 {
     constructor(args) {
-        if (args["--no_output"]) {
+        if (args["--silent"]) {
             this.normal = () => {
             };
             this.ok = () => {
@@ -15,7 +14,7 @@ class default_1 {
             this.log = () => {
             };
         }
-        else if (args["--no_color"]) {
+        else if (args["--plain"]) {
             this.normal = this.ok = console.log;
             this.error = console.error;
             this.warn = console.warn;
