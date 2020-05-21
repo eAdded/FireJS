@@ -42,7 +42,7 @@ export default class {
     private readonly args;
     constructor(cli: any, args: any);
     getUserConfig(): any;
-    getConfig(userConfig: Config): Config;
+    getConfig(userConfig?: Config | undefined): Config;
     private makeAbsolute;
     private throwIfNotFound;
     private undefinedIfNotFound;

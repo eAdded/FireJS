@@ -83,7 +83,8 @@ export default class {
 
         return existsSync(this.args["--conf"]) ? (() => {///check if config file exists
             this.cli.log(`Loading config from ${this.args["--conf"]}`);
-            return require(this.args["--conf"]).default
+            const config = require(this.args["--conf"]);
+            return config.default || config;
         })() : (() => {//if config does not exists just return args
             if (wasGiven)
                 this.cli.warn(`Config not found at ${this.args["--conf"]}. Loading defaults`);
@@ -91,9 +92,9 @@ export default class {
         })()
     }
 
-    getConfig(userConfig: Config): Config {
+    getConfig(userConfig: Config | undefined = undefined): Config {
         this.cli.log("Loading configs");
-        const config: Config = cloneDeep(userConfig);
+        const config: Config = userConfig ? cloneDeep(userConfig) : this.getUserConfig();
         config.pro = this.args["--pro"] ? true : config.pro || false;
         this.cli.log("mode : " + (config.pro ? "production" : "development"))
         config.paths = config.paths || {};

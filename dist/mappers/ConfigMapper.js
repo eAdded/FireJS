@@ -45,16 +45,17 @@ class default_1 {
             this.args["--conf"] = path_1.resolve(process.cwd(), `firejs.config.js`);
         return fs_1.existsSync(this.args["--conf"]) ? (() => {
             this.cli.log(`Loading config from ${this.args["--conf"]}`);
-            return require(this.args["--conf"]).default;
+            const config = require(this.args["--conf"]);
+            return config.default || config;
         })() : (() => {
             if (wasGiven)
                 this.cli.warn(`Config not found at ${this.args["--conf"]}. Loading defaults`);
             return {};
         })();
     }
-    getConfig(userConfig) {
+    getConfig(userConfig = undefined) {
         this.cli.log("Loading configs");
-        const config = lodash_1.cloneDeep(userConfig);
+        const config = userConfig ? lodash_1.cloneDeep(userConfig) : this.getUserConfig();
         config.pro = this.args["--pro"] ? true : config.pro || false;
         this.cli.log("mode : " + (config.pro ? "production" : "development"));
         config.paths = config.paths || {};

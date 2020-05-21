@@ -22,7 +22,8 @@ export interface Plugin {
 
 export function mapPlugins(plugins: string[], map: Map<string, MapComponent>) {
     plugins.forEach(path => {
-        const plugin: Plugin = require(path);
+        const plug = require(path);
+        const plugin: Plugin = plug.default || plug;
         for (const page in plugin) {
             const mapComponent = map.get(page);
             if (!mapComponent) //check if this page exists

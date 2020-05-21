@@ -5,7 +5,8 @@ const fs_1 = require("fs");
 const path_1 = require("path");
 function mapPlugins(plugins, map) {
     plugins.forEach(path => {
-        const plugin = require(path);
+        const plug = require(path);
+        const plugin = plug.default || plug;
         for (const page in plugin) {
             const mapComponent = map.get(page);
             if (!mapComponent) //check if this page exists
