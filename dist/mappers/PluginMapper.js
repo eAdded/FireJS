@@ -56,12 +56,8 @@ function parsePagePaths(paths, callback, reject) {
     }
 }
 exports.parsePagePaths = parsePagePaths;
-function getPlugins(pluginsPath, otherPlugins) {
+function getPlugins(pluginsPath) {
     const plugins = [];
-    otherPlugins.forEach(plugin => {
-        require.resolve(plugin);
-        plugins.push(plugin);
-    });
     fs_1.readdirSync(pluginsPath).forEach(plugin => {
         const pPath = path_1.join(pluginsPath, plugin);
         require.resolve(pPath);
@@ -70,3 +66,11 @@ function getPlugins(pluginsPath, otherPlugins) {
     return plugins;
 }
 exports.getPlugins = getPlugins;
+function resolveCustomPlugins(otherPlugins, rootDir) {
+    const plugins = [];
+    otherPlugins.forEach(plugin => {
+        plugins.push(require.resolve(plugin, { paths: [rootDir] }));
+    });
+    return plugins;
+}
+exports.resolveCustomPlugins = resolveCustomPlugins;

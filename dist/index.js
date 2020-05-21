@@ -16,7 +16,7 @@ class default_1 {
         this.$ = { externals: [] };
         this.$.args = params.args || ConfigMapper_1.getArgs();
         this.$.cli = new Cli_1.default(this.$.args);
-        this.$.config = new ConfigMapper_1.default(this.$.cli, this.$.args).getConfig(params.config);
+        this.$.config = new ConfigMapper_1.default(this.$.cli, this.$.args).getConfig(params.config || new ConfigMapper_1.default(this.$.cli, this.$.args).getUserConfig());
         this.$.template = params.template || fs_1.readFileSync(this.$.config.paths.template).toString();
         this.$.map = params.pages ? new PathMapper_1.default(this.$).convertToMap(params.pages) : new PathMapper_1.default(this.$).map();
         this.$.webpackConfig = params.webpackConfig || new WebpackArchitect_1.default(this.$).readUserConfig();
@@ -90,9 +90,11 @@ class default_1 {
 }
 exports.default = default_1;
 class foo {
-    constructor(config, pathToPlugins, otherPlugins = []) {
+    constructor(config, pathToPlugins, otherPlugins = [], rootDir) {
         this.config = config;
-        this.plugins = PluginMapper_1.getPlugins(pathToPlugins, otherPlugins);
+        this.plugins = PluginMapper_1.getPlugins(pathToPlugins);
+        PluginMapper_1.checkOtherPlugins(otherPlugins, rootDir);
+        this.plugins.push(...otherPlugins);
     }
     renderPath() {
     }

@@ -69,16 +69,20 @@ export function parsePagePaths(paths: PageObject[], callback, reject) {
     }
 }
 
-export function getPlugins(pluginsPath: string, otherPlugins: string[]): string[] {
+export function getPlugins(pluginsPath: string): string[] {
     const plugins = [];
-    otherPlugins.forEach(plugin => {
-        require.resolve(plugin);
-        plugins.push(plugin);
-    })
     readdirSync(pluginsPath).forEach(plugin => {
         const pPath = join(pluginsPath, plugin);
         require.resolve(pPath);
         plugins.push(pPath);
     });
+    return plugins;
+}
+
+export function resolveCustomPlugins(otherPlugins: string[], rootDir: string): string[] {
+    const plugins = [];
+    otherPlugins.forEach(plugin => {
+        plugins.push(require.resolve(plugin, {paths: [rootDir]}));
+    })
     return plugins;
 }

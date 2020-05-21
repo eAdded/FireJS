@@ -45,20 +45,19 @@ class default_1 {
             this.args["--conf"] = path_1.resolve(process.cwd(), `firejs.config.js`);
         return fs_1.existsSync(this.args["--conf"]) ? (() => {
             this.cli.log(`Loading config from ${this.args["--conf"]}`);
-            return require(this.args["--conf"]);
+            return require(this.args["--conf"]).default;
         })() : (() => {
             if (wasGiven)
                 this.cli.warn(`Config not found at ${this.args["--conf"]}. Loading defaults`);
             return {};
         })();
     }
-    getConfig(userConfig = undefined) {
+    getConfig(userConfig) {
         this.cli.log("Loading configs");
-        const config = userConfig ? lodash_1.cloneDeep(userConfig) : this.getUserConfig();
+        const config = lodash_1.cloneDeep(userConfig);
         config.pro = this.args["--pro"] ? true : config.pro || false;
         this.cli.log("mode : " + (config.pro ? "production" : "development"));
         config.paths = config.paths || {};
-        config.plugins = config.plugins || [];
         this.throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
         this.throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.makeAbsolute(config.paths.root, config.paths.src) : path_1.join(config.paths.root, "src"));
         this.throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.makeAbsolute(config.paths.root, config.paths.pages) : path_1.join(config.paths.src, "pages"));
@@ -76,9 +75,12 @@ class default_1 {
         //plugins
         if (!this.args["--disable-plugins"]) {
             this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            if (config.paths.plugins) { //Only getPlugins when dir exists
-                config.plugins = PluginMapper_1.getPlugins(config.paths.plugins, config.plugins);
-            }
+            if (config.plugins)
+                config.plugins = PluginMapper_1.resolveCustomPlugins(config.plugins, config.paths.root);
+            else
+                config.plugins = [];
+            if (config.paths.plugins) //Only getPlugins when dir exists
+                config.plugins.push(...PluginMapper_1.getPlugins(config.paths.plugins));
         }
         //html template tags
         config.templateTags = config.templateTags || {};

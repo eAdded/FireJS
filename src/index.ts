@@ -1,7 +1,7 @@
 import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
-import {applyPlugin, getPlugins, mapPlugins} from "./mappers/PluginMapper"
+import {applyPlugin, checkOtherPlugins, getPlugins, mapPlugins} from "./mappers/PluginMapper"
 import BuildRegistrar from "./registrars/build.registrar"
 import {readFileSync} from "fs";
 import PathMapper from "./mappers/PathMapper";
@@ -57,7 +57,7 @@ export default class {
     constructor(params: Params = {}) {
         this.$.args = params.args || getArgs();
         this.$.cli = new Cli(this.$.args);
-        this.$.config = new ConfigMapper(this.$.cli, this.$.args).getConfig(params.config);
+        this.$.config = new ConfigMapper(this.$.cli, this.$.args).getConfig(params.config || new ConfigMapper(this.$.cli, this.$.args).getUserConfig());
         this.$.template = params.template || readFileSync(this.$.config.paths.template).toString();
         this.$.map = params.pages ? new PathMapper(this.$).convertToMap(params.pages) : new PathMapper(this.$).map();
         this.$.webpackConfig = params.webpackConfig || new WebpackArchitect(this.$).readUserConfig();
@@ -142,9 +142,11 @@ export class foo {
     readonly config: StaticConfig;
     readonly plugins: string[]
 
-    constructor(config, pathToPlugins, otherPlugins: string[] = []) {
+    constructor(config, pathToPlugins, otherPlugins: string[] = [], rootDir: string) {
         this.config = config;
-        this.plugins = getPlugins(pathToPlugins, otherPlugins);
+        this.plugins = getPlugins(pathToPlugins);
+        checkOtherPlugins(otherPlugins, rootDir)
+        this.plugins.push(...otherPlugins)
     }
 
     renderPath() {

@@ -1,7 +1,7 @@
 import {isAbsolute, join, resolve} from "path"
 import {existsSync, mkdirSync} from "fs"
 import {cloneDeep} from "lodash"
-import {getPlugins} from "./PluginMapper";
+import {getPlugins, resolveCustomPlugins} from "./PluginMapper";
 import Cli from "../utils/Cli";
 
 export interface Config {
@@ -83,7 +83,7 @@ export default class {
 
         return existsSync(this.args["--conf"]) ? (() => {///check if config file exists
             this.cli.log(`Loading config from ${this.args["--conf"]}`);
-            return require(this.args["--conf"])
+            return require(this.args["--conf"]).default
         })() : (() => {//if config does not exists just return args
             if (wasGiven)
                 this.cli.warn(`Config not found at ${this.args["--conf"]}. Loading defaults`);
@@ -91,13 +91,12 @@ export default class {
         })()
     }
 
-    getConfig(userConfig: Config | undefined = undefined): Config {
+    getConfig(userConfig: Config): Config {
         this.cli.log("Loading configs");
-        const config: Config = userConfig ? cloneDeep(userConfig) : this.getUserConfig();
+        const config: Config = cloneDeep(userConfig);
         config.pro = this.args["--pro"] ? true : config.pro || false;
         this.cli.log("mode : " + (config.pro ? "production" : "development"))
         config.paths = config.paths || {};
-        config.plugins = config.plugins || [];
         this.throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
         this.throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.makeAbsolute(config.paths.root, config.paths.src) : join(config.paths.root, "src"));
         this.throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.makeAbsolute(config.paths.root, config.paths.pages) : join(config.paths.src, "pages"));
@@ -115,9 +114,12 @@ export default class {
         //plugins
         if (!this.args["--disable-plugins"]) {
             this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            if (config.paths.plugins) {//Only getPlugins when dir exists
-                config.plugins = getPlugins(config.paths.plugins, config.plugins);
-            }
+            if (config.plugins)
+                config.plugins = resolveCustomPlugins(config.plugins, config.paths.root);
+            else
+                config.plugins = [];
+            if (config.paths.plugins) //Only getPlugins when dir exists
+                config.plugins.push(...getPlugins(config.paths.plugins));
         }
         //html template tags
         config.templateTags = config.templateTags || {};
