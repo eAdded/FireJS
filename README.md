@@ -127,8 +127,7 @@ Create a *firejs.config.js* or specify a file using ```[-c,--config]``` flags.
         pages?: string,     //pages dir, default : root/src/pages
         out?: string,       //output dir, default : root/out
         dist?: string,      //production dist, default : root/out/dist
-        cache?: string,     //fire js cache dir, default : root/out/.cache
-        babel?: string,     //fire js production babel cache, default : root/out/.cache/babel
+        babel?: string,     //fire js production babel cache, default : root/out/babel
         template?: string,  //template file, default : inbuilt template file
         lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
         map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
