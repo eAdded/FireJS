@@ -8,10 +8,6 @@ export default class {
     memoryFileSystem: MemoryFileSystem;
     plugin: PageObject[];
     private readonly page;
-    private readonly name;
-    private readonly ext;
     constructor(page: string);
     get Page(): any;
-    get Ext(): any;
-    get Name(): any;
 }

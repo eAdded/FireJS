@@ -6,17 +6,9 @@ class default_1 {
         this.chunkGroup = { chunks: [], babelChunk: "" };
         this.memoryFileSystem = {};
         this.page = page;
-        this.name = page.substring(page.lastIndexOf("/") + 1, page.lastIndexOf("."));
-        this.ext = page.substring(page.lastIndexOf("."));
     }
     get Page() {
         return this.page;
-    }
-    get Ext() {
-        return this.ext;
-    }
-    get Name() {
-        return this.name;
     }
 }
 exports.default = default_1;

@@ -78,7 +78,6 @@ class default_1 {
             });
     }
     logStat(stat) {
-        let errorCount = 0;
         if (this.$.args["--verbose"]) {
             this.$.cli.log("Stat");
             this.$.cli.normal(stat);
@@ -88,17 +87,16 @@ class default_1 {
             this.$.cli.warn(`Warning in page ${stat.compilation.name}\n`, ...stat.compilation.warnings);
         }
         if (stat.hasErrors()) {
-            if (stat.compilation.errors.length === 0)
+            if (stat.compilation.errors.length === 0) {
                 // @ts-ignore
                 this.$.cli.error(`Error in page ${stat.compilation.name}`);
+            }
             else {
                 // @ts-ignore
                 this.$.cli.error(`Error in page ${stat.compilation.name}\n`, ...stat.compilation.errors);
             }
-            if (this.$.config.pro)
-                this.$.cli.log("Some errors might not be displayed in production mode. Try moving to development mode.");
             // @ts-ignore
-            this.$.cli.error(`Unable to build page ${stat.compilation.name} with ${errorCount} error(s)`);
+            this.$.cli.error(`Unable to build page ${stat.compilation.name} with ${stat.compilation.errors.length} error(s)`);
             return true;
         }
     }

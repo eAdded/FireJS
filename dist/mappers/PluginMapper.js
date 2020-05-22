@@ -20,7 +20,7 @@ function addDefaultPlugins(map) {
     for (const mapComponent of map.values()) {
         if (!mapComponent.plugin) {
             let path = mapComponent.Page;
-            mapComponent.plugin = ["/" + path.substring(0, path.lastIndexOf(mapComponent.Ext))];
+            mapComponent.plugin = ["/" + path.substring(0, path.lastIndexOf("."))];
         }
     }
 }

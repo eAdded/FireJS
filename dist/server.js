@@ -70,7 +70,7 @@ function default_1(app) {
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
                 if (req.url === pagePath.Path || (path_1.join(req.url, "index") === pagePath.Path)) {
-                    res.end(staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath, false)));
+                    res.end(staticArchitect.finalize(staticArchitect.render($.template, mapComponent.chunkGroup, pagePath, false)));
                     return true;
                 }
             })))
@@ -79,7 +79,7 @@ function default_1(app) {
         if (!found) {
             const _404_MapComponent = $.map.get($.config.pages["404"]);
             if (_404_MapComponent.paths.length > 0)
-                res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent.chunkGroup, _404_MapComponent.paths[0], false)));
+                res.end(staticArchitect.finalize(staticArchitect.render($.template, _404_MapComponent.chunkGroup, _404_MapComponent.paths[0], false)));
             else
                 res.end("Please Wait...");
         }
@@ -93,8 +93,15 @@ function default_1(app) {
         }
         pageArchitect.buildDirect(mapComponent, () => {
             $.cli.ok(`Successfully built page ${mapComponent.Page}`);
-            PluginMapper_1.applyPlugin(mapComponent, $.rel, () => {
-            });
+            // @ts-ignore
+            if (!mapComponent.wasApplied) {
+                // @ts-ignore
+                mapComponent.wasApplied = true;
+                $.cli.log(`Applying plugin for page ${mapComponent.Page}`);
+                PluginMapper_1.applyPlugin(mapComponent, $.rel, (pagePath) => {
+                    $.cli.ok(`Data fetched for path ${pagePath.Path}`);
+                });
+            }
         }, err => {
             $.cli.error(`Error while building page ${mapComponent.Page}`, err);
         });

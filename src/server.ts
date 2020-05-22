@@ -5,6 +5,7 @@ import PageArchitect from "./architects/PageArchitect"
 import MapComponent from "./classes/MapComponent"
 import FireJS from "./index"
 import {applyPlugin} from "./mappers/PluginMapper";
+import PagePath from "./classes/PagePath";
 import express = require("express");
 
 const server: express.Application = express();
@@ -74,7 +75,7 @@ export default function (app: FireJS) {
         for (const mapComponent of $.map.values()) {
             if ((found = mapComponent.paths.some(pagePath => {
                 if (req.url === pagePath.Path || (join(req.url, "index") === pagePath.Path)) {
-                    res.end(staticArchitect.finalize(staticArchitect.render(mapComponent.chunkGroup, pagePath, false)));
+                    res.end(staticArchitect.finalize(staticArchitect.render($.template, mapComponent.chunkGroup, pagePath, false)));
                     return true;
                 }
             }))) break;
@@ -82,7 +83,7 @@ export default function (app: FireJS) {
         if (!found) {
             const _404_MapComponent = $.map.get($.config.pages["404"]);
             if (_404_MapComponent.paths.length > 0)
-                res.end(staticArchitect.finalize(staticArchitect.render(_404_MapComponent.chunkGroup, _404_MapComponent.paths[0], false)));
+                res.end(staticArchitect.finalize(staticArchitect.render($.template, _404_MapComponent.chunkGroup, _404_MapComponent.paths[0], false)));
             else
                 res.end("Please Wait...")
         }
@@ -97,8 +98,15 @@ export default function (app: FireJS) {
         }
         pageArchitect.buildDirect(mapComponent, () => {
             $.cli.ok(`Successfully built page ${mapComponent.Page}`);
-            applyPlugin(mapComponent, $.rel, () => {
-            });
+            // @ts-ignore
+            if (!mapComponent.wasApplied) {
+                // @ts-ignore
+                mapComponent.wasApplied = true;
+                $.cli.log(`Applying plugin for page ${mapComponent.Page}`);
+                applyPlugin(mapComponent, $.rel, (pagePath: PagePath) => {
+                    $.cli.ok(`Data fetched for path ${pagePath.Path}`);
+                });
+            }
         }, err => {
             $.cli.error(`Error while building page ${mapComponent.Page}`, err);
         });
