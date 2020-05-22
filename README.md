@@ -189,6 +189,46 @@ app.buildPro(() => {
     console.log("Build finished. Build is placed in the default [out] dir")
 })
 ~~~
+#### Rendering On the fly
+If you need to SSR (Server Side Render) your page, or if you want to do something like [this](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3). We've got your back.
+
+*Rendering a page with data from plugins*
+~~~
+import {CustomRenderer} from "@eadded/firejs/dist";
+
+const app = new CustomRenderer("./out/babel", "./src/plugins");
+app.renderWithPluginData(app.map.get("[author]/[article].js"), "/aniket/rust",(html)=>{
+    console.log(html)
+});
+~~~
+
+*Rendering a page with data custom data*
+~~~
+import {CustomRenderer} from "@eadded/firejs/dist";
+
+const app = new CustomRenderer("./out/babel", "./src/plugins");
+
+const html = app.render("[author]/[article].js","/aniket/rust",{
+    name : "this is content for the page"
+})
+console.log(html);
+~~~
+
+In the given examples we are rendering page **[author]/[article].js** for path **/aniket/rust**.
+
+**Points to keep in mind**
+1. If you are rendering in a remote location, like in a s3 function. You need to have [babel dir and plugins dir] in the vicinity. Babel Dir is nothing but a folder in the **out** dir.
+
+2. Make sure the path that you pass exists. i.e the path shall either provided by a plugin, or the path must be a [default path](#default-path).
+
+## Default Path
+
+When you don't provide a path for a page using a plugin then the path of the page will be used as its' path.
+
+Eg. A page "index.js" will have a default path "/index".
+
+If you provide a blank plugin then default paths will not be applied.
+
 ## License & Copyright
 Copyright (C) 2020 Aniket Prajapati
 
