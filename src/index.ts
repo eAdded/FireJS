@@ -2,16 +2,15 @@ import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
 import PageArchitect from "./architects/PageArchitect"
 import WebpackArchitect from "./architects/WebpackArchitect"
 import {addDefaultPlugins, applyPlugin, getPlugins, mapPlugins, resolveCustomPlugins} from "./mappers/PluginMapper"
-import BuildRegistrar from "./registrars/build.registrar"
 import {readFileSync} from "fs";
 import PathMapper from "./mappers/PathMapper";
 import Cli from "./utils/Cli";
-import MapComponent from "./classes/MapComponent";
+import MapComponent from "./classes/Page";
 import {Configuration, Stats} from "webpack";
 import {join, relative} from "path";
-import {writeFileRecursively} from "./utils/Fs";
+import {moveChunks, writeFileRecursively} from "./utils/Fs";
 import StaticArchitect, {DefaultArchitect, StaticConfig} from "./architects/StaticArchitect";
-import PagePath from "./classes/PagePath";
+import PagePath from "./classes/Path";
 
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
@@ -88,12 +87,11 @@ export default class {
         const staticArchitect = new StaticArchitect(this.$);
         const promises = [];
         this.mapPluginsAndBuildExternals().then(() => {
-            const buildRegistrar = new BuildRegistrar(this.$);
             this.$.cli.log("Building Pages");
             for (const mapComponent of this.$.map.values()) {
                 promises.push(new Promise(resolve => {
                     pageArchitect.buildBabel(mapComponent, () => {
-                        buildRegistrar.registerForSemiBuild(mapComponent).then(() => {
+                        moveChunks(mapComponent, this.$).then(() => {
                             pageArchitect.buildDirect(mapComponent, () => {
                                 resolve();
                                 this.$.cli.ok(`Successfully built page ${mapComponent.Page}`)
@@ -185,7 +183,14 @@ export class CustomRenderer {
         }
     }
 
-    render(page: string, path: string, content: any) {
+    render(page
+               :
+               string, path
+               :
+               string, content
+               :
+               any
+    ) {
         const mapComponent = this.map.get(page);
         return this.architect.finalize(
             this.architect.render(this.template, mapComponent.chunkGroup, new PagePath(mapComponent, path, content, this.rel), true));

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const PagePath_1 = require("../classes/PagePath");
+const Path_1 = require("../classes/Path");
 const fs_1 = require("fs");
 const path_1 = require("path");
 function mapPlugins(plugins, map) {
@@ -27,7 +27,7 @@ function addDefaultPlugins(map) {
 exports.addDefaultPlugins = addDefaultPlugins;
 function applyPlugin(mapComponent, rel, callback) {
     this.parsePagePaths(mapComponent.plugin, (path, content) => {
-        const pagePath = new PagePath_1.default(mapComponent, path, content, rel);
+        const pagePath = new Path_1.default(mapComponent, path, content, rel);
         mapComponent.paths.push(pagePath);
         callback(pagePath);
     }, err => {

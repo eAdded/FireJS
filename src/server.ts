@@ -2,10 +2,10 @@ import {join, relative} from "path"
 import {watch} from "chokidar"
 import StaticArchitect from "./architects/StaticArchitect"
 import PageArchitect from "./architects/PageArchitect"
-import MapComponent from "./classes/MapComponent"
+import MapComponent from "./classes/Page"
 import FireJS from "./index"
 import {applyPlugin} from "./mappers/PluginMapper";
-import PagePath from "./classes/PagePath";
+import PagePath from "./classes/Path";
 import express = require("express");
 
 const server: express.Application = express();

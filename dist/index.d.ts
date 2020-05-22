@@ -1,6 +1,6 @@
 import { Args, Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
-import MapComponent from "./classes/MapComponent";
+import MapComponent from "./classes/Page";
 import { Configuration, Stats } from "webpack";
 import { DefaultArchitect, StaticConfig } from "./architects/StaticArchitect";
 export declare type WebpackConfig = Configuration;

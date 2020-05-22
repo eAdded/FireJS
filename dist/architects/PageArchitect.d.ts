@@ -1,6 +1,6 @@
 import MemoryFileSystem = require("memory-fs");
 import { $, WebpackConfig, WebpackStat } from "../index";
-import MapComponent from "../classes/MapComponent";
+import MapComponent from "../classes/Page";
 export default class {
     private readonly $;
     constructor(globalData: $);

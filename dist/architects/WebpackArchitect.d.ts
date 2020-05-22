@@ -1,4 +1,4 @@
-import MapComponent from "../classes/MapComponent";
+import MapComponent from "../classes/Page";
 import { $, WebpackConfig } from "../index";
 export default class {
     private readonly $;

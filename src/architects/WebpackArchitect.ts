@@ -1,7 +1,7 @@
 import webpack = require("webpack");
 import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import {cloneDeep} from "lodash"
-import MapComponent from "../classes/MapComponent";
+import MapComponent from "../classes/Page";
 import {$, WebpackConfig} from "../index";
 import {join, resolve} from "path"
 

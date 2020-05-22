@@ -22,8 +22,8 @@ if (app.Context.config.pro) {
             pageMap: {},
             template: $.template
         };
-        for (const mapComponent of $.map.values())
-            map.pageMap[mapComponent.Page] = mapComponent.chunkGroup;
+        for (const page of $.map.values())
+            map.pageMap[page.Page] = page.chunkGroup;
         fs_1.writeFileSync(path_1.join($.config.paths.babel, "firejs.map.json"), JSON.stringify(map));
         $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
     });

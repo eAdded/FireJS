@@ -1,5 +1,5 @@
 import {join} from "path";
-import MapComponent from "./MapComponent";
+import MapComponent from "./Page";
 import {PathRelatives} from "../index";
 
 interface map {

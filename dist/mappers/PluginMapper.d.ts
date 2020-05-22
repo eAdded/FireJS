@@ -1,5 +1,5 @@
 import { PathRelatives } from "../index";
-import MapComponent from "../classes/MapComponent";
+import MapComponent from "../classes/Page";
 export interface AsyncFunc {
     (): Promise<PathObject[]>;
 }

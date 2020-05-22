@@ -4,7 +4,7 @@ const path_1 = require("path");
 const chokidar_1 = require("chokidar");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const PageArchitect_1 = require("./architects/PageArchitect");
-const MapComponent_1 = require("./classes/MapComponent");
+const Page_1 = require("./classes/Page");
 const PluginMapper_1 = require("./mappers/PluginMapper");
 const express = require("express");
 const server = express();
@@ -88,7 +88,7 @@ function default_1(app) {
         const rel_page = path.replace(paths.pages + "/", "");
         let mapComponent = $.map.get(rel_page);
         if (!mapComponent) {
-            mapComponent = new MapComponent_1.default(rel_page);
+            mapComponent = new Page_1.default(rel_page);
             $.map.set(rel_page, mapComponent);
         }
         pageArchitect.buildDirect(mapComponent, () => {

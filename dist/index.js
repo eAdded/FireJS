@@ -4,15 +4,14 @@ const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const PageArchitect_1 = require("./architects/PageArchitect");
 const WebpackArchitect_1 = require("./architects/WebpackArchitect");
 const PluginMapper_1 = require("./mappers/PluginMapper");
-const build_registrar_1 = require("./registrars/build.registrar");
 const fs_1 = require("fs");
 const PathMapper_1 = require("./mappers/PathMapper");
 const Cli_1 = require("./utils/Cli");
-const MapComponent_1 = require("./classes/MapComponent");
+const Page_1 = require("./classes/Page");
 const path_1 = require("path");
 const Fs_1 = require("./utils/Fs");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
-const PagePath_1 = require("./classes/PagePath");
+const Path_1 = require("./classes/Path");
 class default_1 {
     constructor(params = {}) {
         this.$ = { externals: [] };
@@ -45,12 +44,11 @@ class default_1 {
         const staticArchitect = new StaticArchitect_1.default(this.$);
         const promises = [];
         this.mapPluginsAndBuildExternals().then(() => {
-            const buildRegistrar = new build_registrar_1.default(this.$);
             this.$.cli.log("Building Pages");
             for (const mapComponent of this.$.map.values()) {
                 promises.push(new Promise(resolve => {
                     pageArchitect.buildBabel(mapComponent, () => {
-                        buildRegistrar.registerForSemiBuild(mapComponent).then(() => {
+                        Fs_1.moveChunks(mapComponent, this.$).then(() => {
                             pageArchitect.buildDirect(mapComponent, () => {
                                 resolve();
                                 this.$.cli.ok(`Successfully built page ${mapComponent.Page}`);
@@ -92,7 +90,7 @@ class CustomRenderer {
         this.rel = firejs_map.staticConfig.rel;
         this.architect = new StaticArchitect_1.DefaultArchitect(firejs_map.staticConfig);
         for (const page in firejs_map.pageMap) {
-            const mapComponent = new MapComponent_1.default(page);
+            const mapComponent = new Page_1.default(page);
             mapComponent.chunkGroup = firejs_map.pageMap[page];
             this.map.set(page, mapComponent);
         }
@@ -135,7 +133,7 @@ class CustomRenderer {
     }
     render(page, path, content) {
         const mapComponent = this.map.get(page);
-        return this.architect.finalize(this.architect.render(this.template, mapComponent.chunkGroup, new PagePath_1.default(mapComponent, path, content, this.rel), true));
+        return this.architect.finalize(this.architect.render(this.template, mapComponent.chunkGroup, new Path_1.default(mapComponent, path, content, this.rel), true));
     }
 }
 exports.CustomRenderer = CustomRenderer;

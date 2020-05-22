@@ -1,5 +1,5 @@
 import MemoryFileSystem from "memory-fs";
-import PagePath from "./PagePath";
+import PagePath from "./Path";
 import { PageObject } from "../mappers/PluginMapper";
 import { ChunkGroup } from "../index";
 export default class {

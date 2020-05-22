@@ -1,6 +1,6 @@
 import {PathRelatives} from "../index";
-import PagePath from "../classes/PagePath";
-import MapComponent from "../classes/MapComponent";
+import PagePath from "../classes/Path";
+import MapComponent from "../classes/Page";
 import {readdirSync} from "fs";
 import {join} from "path";
 

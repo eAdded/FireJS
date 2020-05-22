@@ -2,7 +2,7 @@ import webpack = require("webpack");
 import MemoryFileSystem = require("memory-fs");
 import WebpackArchitect from "./WebpackArchitect";
 import {$, WebpackConfig, WebpackStat} from "../index";
-import MapComponent from "../classes/MapComponent";
+import MapComponent from "../classes/Page";
 
 export default class {
     private readonly $: $;

@@ -1,6 +1,6 @@
 import {$} from "../index";
 import {sync} from "recursive-dir-reader";
-import MapComponent from "../classes/MapComponent";
+import MapComponent from "../classes/Page";
 
 export default class {
     $: $;
