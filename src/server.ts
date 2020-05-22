@@ -5,7 +5,7 @@ import PageArchitect from "./architects/PageArchitect"
 import MapComponent from "./classes/Page"
 import FireJS from "./index"
 import {applyPlugin} from "./mappers/PluginMapper";
-import PagePath from "./classes/Path";
+import PagePath from "./classes/PagePath";
 import express = require("express");
 
 const server: express.Application = express();

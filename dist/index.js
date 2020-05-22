@@ -11,7 +11,7 @@ const Page_1 = require("./classes/Page");
 const path_1 = require("path");
 const Fs_1 = require("./utils/Fs");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
-const Path_1 = require("./classes/Path");
+const PagePath_1 = require("./classes/PagePath");
 class default_1 {
     constructor(params = {}) {
         this.$ = { externals: [] };
@@ -106,11 +106,11 @@ class CustomRenderer {
     }
     renderWithPluginData(mapComponent, path, callback) {
         // @ts-ignore
-        if (!mapComponent.wasApplied) {
-            let counter = 0;
-            PluginMapper_1.applyPlugin(mapComponent, this.rel, _ => {
+        if (!mapComponent.paths) {
+            PluginMapper_1.applyPlugin(mapComponent, this.rel, (pagePath, index) => {
                 // @ts-ignore
-                if (++counter == mapComponent.plugin.length) { //render when all paths are gained
+                mapComponent.plugin[index] = undefined;
+                if (mapComponent. == mapComponent.plugin.length) { //render when all paths are gained
                     // @ts-ignore
                     mapComponent.wasApplied = true;
                     this.renderWithPluginData(mapComponent, path, callback);
@@ -133,7 +133,7 @@ class CustomRenderer {
     }
     render(page, path, content) {
         const mapComponent = this.map.get(page);
-        return this.architect.finalize(this.architect.render(this.template, mapComponent.chunkGroup, new Path_1.default(mapComponent, path, content, this.rel), true));
+        return this.architect.finalize(this.architect.render(this.template, mapComponent.chunkGroup, new PagePath_1.default(mapComponent, path, content, this.rel), true));
     }
 }
 exports.CustomRenderer = CustomRenderer;

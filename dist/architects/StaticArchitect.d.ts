@@ -1,4 +1,4 @@
-import PagePath from "../classes/Path";
+import PagePath from "../classes/PagePath";
 import { $, ChunkGroup, PathRelatives } from "../index";
 import { ExplicitPages, TemplateTags } from "../mappers/ConfigMapper";
 export interface StaticConfig {

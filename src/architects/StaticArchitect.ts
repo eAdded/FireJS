@@ -1,6 +1,6 @@
 import {renderToString} from "react-dom/server"
 import {Helmet} from "react-helmet"
-import PagePath from "../classes/Path";
+import PagePath from "../classes/PagePath";
 import {$, ChunkGroup, PathRelatives} from "../index";
 import {join} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";

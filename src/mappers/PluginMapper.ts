@@ -1,5 +1,5 @@
 import {PathRelatives} from "../index";
-import PagePath from "../classes/Path";
+import PagePath from "../classes/PagePath";
 import MapComponent from "../classes/Page";
 import {readdirSync} from "fs";
 import {join} from "path";
@@ -41,8 +41,8 @@ export function addDefaultPlugins(map: Map<string, MapComponent>) {
     }
 }
 
-export function applyPlugin(mapComponent: MapComponent, rel: PathRelatives, callback: (PagePath) => void) {
-    this.parsePagePaths(mapComponent.plugin, (path, content) => {
+export function applyPlugin(mapComponent: MapComponent, rel: PathRelatives, callback: (pagePath: PagePath, index: number) => void) {
+    this.parsePagePaths(mapComponent.plugin, (path, content, index) => {
         const pagePath = new PagePath(mapComponent, path, content, rel);
         mapComponent.paths.push(pagePath);
         callback(pagePath);
@@ -51,17 +51,17 @@ export function applyPlugin(mapComponent: MapComponent, rel: PathRelatives, call
     })
 }
 
-export function parsePagePaths(paths: PageObject[], callback, reject) {
+export function parsePagePaths(paths: PageObject[], callback, reject, index = undefined) {
     if (paths instanceof Array) {
-        paths.forEach(pageObject => {
+        paths.forEach((pageObject, i) => {
             if (typeof pageObject === "string") {
-                callback(<string>pageObject, {});
+                callback(<string>pageObject, {}, index || i);
             } else if (pageObject.constructor.name === "AsyncFunction") {
                 (<AsyncFunc>pageObject)().then(pageObjects => {
-                    this.parsePagePaths(pageObjects, callback, reject);
+                    this.parsePagePaths(pageObjects, callback, reject, index || i);
                 });
             } else if (typeof pageObject === "object") {
-                callback(pageObject.path, pageObject.content);
+                callback(pageObject.path, pageObject.content, index || i);
             } else
                 reject(new TypeError(`Expected String | AsyncFunction | Object got ${typeof pageObject}`))
         });

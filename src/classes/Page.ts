@@ -1,20 +1,18 @@
-import MemoryFileSystem from "memory-fs";
-import PagePath from "./Path";
+import PagePath from "./PagePath";
 import {PageObject} from "../mappers/PluginMapper";
 import {ChunkGroup} from "../index";
 
 export default class {
     public paths: PagePath[] = [];
     public chunkGroup: ChunkGroup = {chunks: [], babelChunk: ""}
-    public memoryFileSystem: MemoryFileSystem = {};
     public plugin: PageObject[];
-    private readonly page;
+    private readonly name: string;
 
     constructor(page: string) {
-        this.page = page;
+        this.name = page;
     }
 
-    get Page() {
-        return this.page;
+    get Name(): string {
+        return this.name;
     }
 }

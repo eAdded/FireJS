@@ -1,6 +1,6 @@
-import {join} from "path";
-import MapComponent from "./Page";
 import {PathRelatives} from "../index";
+import {join} from "path";
+import Page from "./Page";
 
 interface map {
     chunks: string[],
@@ -15,7 +15,7 @@ export default class {
     };
     private readonly map_path: string;
 
-    constructor(mapComponent: MapComponent, path: string, content: any, rel: PathRelatives) {
+    constructor(mapComponent: Page, path: string, content: any, rel: PathRelatives) {
         this.path = path;
         this.map = {
             chunks: mapComponent.chunkGroup.chunks,

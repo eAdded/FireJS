@@ -10,7 +10,7 @@ import {Configuration, Stats} from "webpack";
 import {join, relative} from "path";
 import {moveChunks, writeFileRecursively} from "./utils/Fs";
 import StaticArchitect, {DefaultArchitect, StaticConfig} from "./architects/StaticArchitect";
-import PagePath from "./classes/Path";
+import PagePath from "./classes/PagePath";
 
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
@@ -158,11 +158,11 @@ export class CustomRenderer {
 
     renderWithPluginData(mapComponent: MapComponent, path: string, callback) {
         // @ts-ignore
-        if (!mapComponent.wasApplied) {
-            let counter = 0;
-            applyPlugin(mapComponent, this.rel, _ => {
+        if (!mapComponent.paths) {
+            applyPlugin(mapComponent, this.rel, (pagePath, index) => {
                 // @ts-ignore
-                if (++counter == mapComponent.plugin.length) {//render when all paths are gained
+                mapComponent.plugin[index] = undefined;
+                if (mapComponent. == mapComponent.plugin.length) {//render when all paths are gained
                     // @ts-ignore
                     mapComponent.wasApplied = true;
                     this.renderWithPluginData(mapComponent, path, callback);
@@ -183,14 +183,7 @@ export class CustomRenderer {
         }
     }
 
-    render(page
-               :
-               string, path
-               :
-               string, content
-               :
-               any
-    ) {
+    render(page: string, path: string, content: any) {
         const mapComponent = this.map.get(page);
         return this.architect.finalize(
             this.architect.render(this.template, mapComponent.chunkGroup, new PagePath(mapComponent, path, content, this.rel), true));

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Path_1 = require("../classes/Path");
+const PagePath_1 = require("../classes/PagePath");
 const fs_1 = require("fs");
 const path_1 = require("path");
 function mapPlugins(plugins, map) {
@@ -26,8 +26,8 @@ function addDefaultPlugins(map) {
 }
 exports.addDefaultPlugins = addDefaultPlugins;
 function applyPlugin(mapComponent, rel, callback) {
-    this.parsePagePaths(mapComponent.plugin, (path, content) => {
-        const pagePath = new Path_1.default(mapComponent, path, content, rel);
+    this.parsePagePaths(mapComponent.plugin, (path, content, index) => {
+        const pagePath = new PagePath_1.default(mapComponent, path, content, rel);
         mapComponent.paths.push(pagePath);
         callback(pagePath);
     }, err => {
@@ -35,19 +35,19 @@ function applyPlugin(mapComponent, rel, callback) {
     });
 }
 exports.applyPlugin = applyPlugin;
-function parsePagePaths(paths, callback, reject) {
+function parsePagePaths(paths, callback, reject, index = undefined) {
     if (paths instanceof Array) {
-        paths.forEach(pageObject => {
+        paths.forEach((pageObject, i) => {
             if (typeof pageObject === "string") {
-                callback(pageObject, {});
+                callback(pageObject, {}, index || i);
             }
             else if (pageObject.constructor.name === "AsyncFunction") {
                 pageObject().then(pageObjects => {
-                    this.parsePagePaths(pageObjects, callback, reject);
+                    this.parsePagePaths(pageObjects, callback, reject, index || i);
                 });
             }
             else if (typeof pageObject === "object") {
-                callback(pageObject.path, pageObject.content);
+                callback(pageObject.path, pageObject.content, index || i);
             }
             else
                 reject(new TypeError(`Expected String | AsyncFunction | Object got ${typeof pageObject}`));
