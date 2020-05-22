@@ -1,6 +1,4 @@
-import {WebpackStat} from "../index";
 import Page from "./Page";
-import PagePath from "./PagePath";
 
 export default class {
     page: Page;
@@ -9,20 +7,13 @@ export default class {
         this.page = new Page(page);
     }
 
-    onPageBuild(stat: WebpackStat, actions) {
-    }
-
-    onRender(html: string) {
-        return html;
-    }
-
     async getPaths(): Promise<string[]> {
         return [
-            "/" + this.page.Name.substring(0, this.page.Name.lastIndexOf("."))
+            "/" + this.page.getName().substring(0, this.page.getName().lastIndexOf("."))
         ]
     }
 
-    async getContent(pagePath: PagePath): Promise<any> {
+    async getContent(path: string): Promise<any> {
         return {}
     }
 }

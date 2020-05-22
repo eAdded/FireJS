@@ -1,18 +1,18 @@
 import PagePath from "./PagePath";
-import {PageObject} from "../mappers/PluginMapper";
 import {ChunkGroup} from "../index";
+import Plugin from "./Plugin";
 
 export default class {
     public paths: PagePath[] = [];
     public chunkGroup: ChunkGroup = {chunks: [], babelChunk: ""}
-    public plugin: PageObject[];
+    public plugin: Plugin;
     private readonly name: string;
 
     constructor(page: string) {
         this.name = page;
     }
 
-    get Name(): string {
+    getName(): string {
         return this.name;
     }
 }

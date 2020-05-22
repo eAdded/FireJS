@@ -1,7 +1,6 @@
 import {isAbsolute, join, resolve} from "path"
 import {existsSync, mkdirSync} from "fs"
 import {cloneDeep} from "lodash"
-import {getPlugins, resolveCustomPlugins} from "./PluginMapper";
 import Cli from "../utils/Cli";
 
 export interface Config {
@@ -113,22 +112,7 @@ export default class {
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
-        if (!this.args["--disable-plugins"]) {
-            this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            if (config.plugins)
-                config.plugins = resolveCustomPlugins(config.plugins, config.paths.root);
-            else
-                config.plugins = [];
-            if (config.paths.plugins) //Only getPlugins when dir exists
-                config.plugins.push(...getPlugins(config.paths.plugins));
-        }
-        //html template tags
-        config.templateTags = config.templateTags || {};
-        config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
-        config.templateTags.static = config.templateTags.static || "<%=STATIC=%>";
-        config.templateTags.head = config.templateTags.head || "<%=HEAD=%>";
-        config.templateTags.style = config.templateTags.style || "<%=STYLE=%>";
-        config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
+        this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
         //pages
         config.pages = config.pages || {};
         this.throwIfNotFound("404 page", join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"));

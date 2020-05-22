@@ -16,11 +16,10 @@ export interface ChunkGroup {
 export interface $ {
     args?: Args;
     config?: Config;
-    map?: Map<string, MapComponent>;
+    pageMap?: Map<string, MapComponent>;
     cli?: Cli;
     webpackConfig?: WebpackConfig;
     template?: string;
-    externals?: string[];
     rel?: PathRelatives;
 }
 export interface Params {
@@ -40,9 +39,8 @@ export interface FIREJS_MAP {
 export default class {
     private readonly $;
     constructor(params?: Params);
-    mapPluginsAndBuildExternals(): Promise<unknown>;
-    buildPro(callback: any): void;
-    get Context(): $;
+    buildPro(): Promise<any>;
+    getContext(): $;
 }
 export declare class CustomRenderer {
     readonly map: Map<string, MapComponent>;

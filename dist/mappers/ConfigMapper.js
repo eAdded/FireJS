@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const fs_1 = require("fs");
 const lodash_1 = require("lodash");
-const PluginMapper_1 = require("./PluginMapper");
 function getArgs() {
     return require("arg")({
         //Types
@@ -74,22 +73,7 @@ class default_1 {
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
-        if (!this.args["--disable-plugins"]) {
-            this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            if (config.plugins)
-                config.plugins = PluginMapper_1.resolveCustomPlugins(config.plugins, config.paths.root);
-            else
-                config.plugins = [];
-            if (config.paths.plugins) //Only getPlugins when dir exists
-                config.plugins.push(...PluginMapper_1.getPlugins(config.paths.plugins));
-        }
-        //html template tags
-        config.templateTags = config.templateTags || {};
-        config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
-        config.templateTags.static = config.templateTags.static || "<%=STATIC=%>";
-        config.templateTags.head = config.templateTags.head || "<%=HEAD=%>";
-        config.templateTags.style = config.templateTags.style || "<%=STYLE=%>";
-        config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
+        this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
         //pages
         config.pages = config.pages || {};
         this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"));
