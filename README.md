@@ -221,6 +221,9 @@ In the given examples we are rendering page **[author]/[article].js** for path *
 
 2. Make sure the path that you pass exists. i.e the path shall either provided by a plugin, or the path must be a [default path](#default-path).
 
+**Map variable**
+
+The map variable i.e app.map , maps all the pages, with its paths and plugins.
 ## Default Path
 
 When you don't provide a path for a page using a plugin then the path of the page will be used as its' path.
