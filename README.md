@@ -195,16 +195,16 @@ If you need to SSR (Server Side Render) your page, or if you want to do somethin
 *Rendering a page with data from plugins*
 ~~~
 import {CustomRenderer} from "@eadded/firejs/dist";
-
+//here we are passing path to babel dir and plugins dir. Read ahead for more info.
 const app = new CustomRenderer("./out/babel", "./src/plugins");
 app.renderWithPluginData(app.map.get("[author]/[article].js"), "/aniket/rust",(html)=>{
     console.log(html)
 });
 ~~~
 
-*Rendering a page with data custom data*
+*Rendering a page with custom data*
 ~~~
-import {CustomRenderer} from "@eadded/firejs/dist";
+import {CustomRenderer} from "@eadded/firejs/dislt";
 
 const app = new CustomRenderer("./out/babel", "./src/plugins");
 
@@ -217,7 +217,7 @@ console.log(html);
 In the given examples we are rendering page **[author]/[article].js** for path **/aniket/rust**.
 
 **Points to keep in mind**
-1. If you are rendering in a remote location, like in a s3 function. You need to have [babel dir and plugins dir] in the vicinity. Babel Dir is nothing but a folder in the **out** dir.
+1. If you are rendering in a remote location, like in a s3 function. You need to have [babel dir and plugins dir] in the vicinity. Babel Dir is nothing but a folder in the **out** dir. No other dir like the **src** dir is required.
 
 2. Make sure the path that you pass exists. i.e the path shall either provided by a plugin, or the path must be a [default path](#default-path).
 
