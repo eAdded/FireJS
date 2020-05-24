@@ -3,7 +3,9 @@ import Page from "../classes/Page";
 export default class {
     private readonly $;
     private readonly webpackArchitect;
-    constructor(globalData: $, webpackArchitect: any);
+    private readonly isOutputCustom;
+    private readonly isInputCustom;
+    constructor(globalData: $, webpackArchitect: any, isOutputCustom: boolean, isInputCustom: boolean);
     buildExternals(): Promise<string[]>;
     buildBabel(page: Page, resolve: () => void, reject: (err: any | undefined) => void): void;
     buildDirect(page: Page, resolve: () => void, reject: (err: any | undefined) => void): void;

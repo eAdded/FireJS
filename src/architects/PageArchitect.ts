@@ -6,10 +6,14 @@ import Page from "../classes/Page";
 export default class {
     private readonly $: $;
     private readonly webpackArchitect: WebpackArchitect
+    private readonly isOutputCustom: boolean
+    private readonly isInputCustom: boolean
 
-    constructor(globalData: $, webpackArchitect) {
+    constructor(globalData: $, webpackArchitect, isOutputCustom: boolean, isInputCustom: boolean) {
         this.$ = globalData;
         this.webpackArchitect = webpackArchitect;
+        this.isOutputCustom = isOutputCustom;
+        this.isInputCustom = isInputCustom;
     }
 
     buildExternals() {
@@ -62,8 +66,10 @@ export default class {
 
     build(config: WebpackConfig, resolve: (stat) => void, reject: (err) => void) {
         const compiler = webpack(config);
-        compiler.outputFileSystem = this.$.outputFileSystem;
-        compiler.inputFileSystem = this.$.inputFileSystem;
+        if (this.isOutputCustom)
+            compiler.outputFileSystem = this.$.outputFileSystem;
+        if (this.isInputCustom)
+            compiler.inputFileSystem = this.$.inputFileSystem;
         if (config.watch)
             compiler.watch({}, (err, stat) => {
                 if (err)

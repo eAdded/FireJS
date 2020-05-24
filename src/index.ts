@@ -2,7 +2,7 @@ import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
 import {Configuration, Stats} from "webpack";
-import {relative} from "path";
+import {join, relative} from "path";
 import {mapPlugins} from "./mappers/PluginMapper";
 import PageArchitect from "./architects/PageArchitect";
 import {moveChunks, writeFileRecursively} from "./utils/Fs";
@@ -10,6 +10,7 @@ import * as fs from "fs"
 import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
 import {convertToMap, createMap} from "./mappers/PathMapper";
 import WebpackArchitect from "./architects/WebpackArchitect";
+
 
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
@@ -71,14 +72,13 @@ export default class {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
         }
-        this.$.outputFileSystem = this.$.outputFileSystem || require("fs");
         this.$.cli.log("Mapping Plugins");
         if (!this.$.args["--disable-plugins"])
             if (this.$.config.paths.plugins)
                 mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
             else
                 throw new Error("Plugins Dir Not found")
-        this.$.pageArchitect = new PageArchitect(this.$, new WebpackArchitect(this.$, params.webpackConfig));
+        this.$.pageArchitect = new PageArchitect(this.$, new WebpackArchitect(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
         this.$.cli.log("Building Externals");
         this.$.pageArchitect.buildExternals().then(externals => {
             this.$.renderer = new StaticArchitect({
@@ -100,7 +100,7 @@ export default class {
                 for (const page of this.$.pageMap.values())
                     promises.push(new Promise(resolve => {
                         this.$.pageArchitect.buildBabel(page, () => {
-                            moveChunks(page, this.$).then(() => {
+                            moveChunks(page, this.$, this.$.outputFileSystem).then(() => {
                                 this.$.pageArchitect.buildDirect(page, () => {
                                     this.$.cli.ok(`Successfully built page ${page.toString()}`)
                                     page.plugin.getPaths().then(paths => {
@@ -108,12 +108,13 @@ export default class {
                                             page.plugin.getContent(path)
                                                 .then(content => {
                                                     Promise.all([
-                                                        writeFileRecursively(`${path}.map.json`, JSON.stringify({
+                                                        writeFileRecursively(join(this.$.config.paths.map, `${path}.map.json`), JSON.stringify({
                                                             content,
                                                             chunks: page.chunkGroup.chunks
-                                                        })),
-                                                        writeFileRecursively(`${path}.map.html`,
-                                                            this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true))
+                                                        }), this.$.outputFileSystem),
+                                                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.map.html`),
+                                                            this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)),
+                                                            this.$.outputFileSystem
                                                         )
                                                     ]).then(resolve).catch(err => {
                                                         throw err;

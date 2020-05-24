@@ -2,9 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const webpack = require("webpack");
 class default_1 {
-    constructor(globalData, webpackArchitect) {
+    constructor(globalData, webpackArchitect, isOutputCustom, isInputCustom) {
         this.$ = globalData;
         this.webpackArchitect = webpackArchitect;
+        this.isOutputCustom = isOutputCustom;
+        this.isInputCustom = isInputCustom;
     }
     buildExternals() {
         return new Promise((resolve, reject) => {
@@ -53,8 +55,10 @@ class default_1 {
     }
     build(config, resolve, reject) {
         const compiler = webpack(config);
-        compiler.outputFileSystem = this.$.outputFileSystem;
-        compiler.inputFileSystem = this.$.inputFileSystem;
+        if (this.isOutputCustom)
+            compiler.outputFileSystem = this.$.outputFileSystem;
+        if (this.isInputCustom)
+            compiler.inputFileSystem = this.$.inputFileSystem;
         if (config.watch)
             compiler.watch({}, (err, stat) => {
                 if (err)

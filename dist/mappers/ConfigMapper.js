@@ -74,6 +74,13 @@ class default_1 {
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
         this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
+        //html template tags
+        config.templateTags = config.templateTags || {};
+        config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
+        config.templateTags.static = config.templateTags.static || "<%=STATIC=%>";
+        config.templateTags.head = config.templateTags.head || "<%=HEAD=%>";
+        config.templateTags.style = config.templateTags.style || "<%=STYLE=%>";
+        config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         //pages
         config.pages = config.pages || {};
         this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"));

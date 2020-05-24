@@ -119,7 +119,7 @@ export default class {
                 minimize: true
             }
         };
-
+        mergedConfig.externals = {};
         mergedConfig.externals["react"] = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
         mergedConfig.externals["react-helmet"] = "ReactHelmet";

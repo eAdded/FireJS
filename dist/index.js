@@ -24,14 +24,13 @@ class default_1 {
             libRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.map)
         };
-        this.$.outputFileSystem = this.$.outputFileSystem || require("fs");
         this.$.cli.log("Mapping Plugins");
         if (!this.$.args["--disable-plugins"])
             if (this.$.config.paths.plugins)
                 PluginMapper_1.mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
             else
                 throw new Error("Plugins Dir Not found");
-        this.$.pageArchitect = new PageArchitect_1.default(this.$, new WebpackArchitect_1.default(this.$, params.webpackConfig));
+        this.$.pageArchitect = new PageArchitect_1.default(this.$, new WebpackArchitect_1.default(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
         this.$.cli.log("Building Externals");
         this.$.pageArchitect.buildExternals().then(externals => {
             this.$.renderer = new StaticArchitect_1.default({
@@ -52,7 +51,7 @@ class default_1 {
             for (const page of this.$.pageMap.values())
                 promises.push(new Promise(resolve => {
                     this.$.pageArchitect.buildBabel(page, () => {
-                        Fs_1.moveChunks(page, this.$).then(() => {
+                        Fs_1.moveChunks(page, this.$, this.$.outputFileSystem).then(() => {
                             this.$.pageArchitect.buildDirect(page, () => {
                                 this.$.cli.ok(`Successfully built page ${page.toString()}`);
                                 page.plugin.getPaths().then(paths => {
@@ -60,11 +59,11 @@ class default_1 {
                                         page.plugin.getContent(path)
                                             .then(content => {
                                             Promise.all([
-                                                Fs_1.writeFileRecursively(`${path}.map.json`, JSON.stringify({
+                                                Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.json`), JSON.stringify({
                                                     content,
                                                     chunks: page.chunkGroup.chunks
-                                                })),
-                                                Fs_1.writeFileRecursively(`${path}.map.html`, this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)))
+                                                }), this.$.outputFileSystem),
+                                                Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.map.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)), this.$.outputFileSystem)
                                             ]).then(resolve).catch(err => {
                                                 throw err;
                                             });
