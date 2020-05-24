@@ -5,6 +5,11 @@ import {mapPlugins} from "./mappers/PluginMapper";
 import {FIREJS_MAP, PathRelatives} from "./index";
 import * as fs from "fs"
 
+interface RenderReturn {
+    html: string,
+    pageMap: string
+}
+
 export default class {
     readonly map: Map<string, Page> = new Map()
     readonly renderer: StaticArchitect;
@@ -27,18 +32,30 @@ export default class {
     }
 
     renderWithPluginData(__page: string, path: string) {
-        return new Promise<string>((resolve, reject) => {
+        return new Promise<RenderReturn>((resolve, reject) => {
             const page = this.map.get(__page);
             page.plugin.getContent(path).then(content => {
-                resolve(this.renderer.finalize(
-                    this.renderer.render(this.template, page, path, content)));
+                resolve({
+                    html: this.renderer.finalize(
+                        this.renderer.render(this.template, page, path, content)),
+                    pageMap: `window.__MAP__=${JSON.stringify({
+                        content,
+                        chunks: page.chunkGroup.chunks
+                    })}`
+                })
             }).catch(reject);
         })
     }
 
-    render(__page: string, path: string, content: any) {
+    render(__page: string, path: string, content: any): RenderReturn {
         const page = this.map.get(__page);
-        return this.renderer.finalize(
-            this.renderer.render(this.template, page, path, content));
+        return {
+            html: this.renderer.finalize(
+                this.renderer.render(this.template, page, path, content)),
+            pageMap: `window.__MAP__=${JSON.stringify({
+                content,
+                chunks: page.chunkGroup.chunks
+            })}`
+        }
     }
 }

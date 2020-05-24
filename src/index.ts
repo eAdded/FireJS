@@ -108,10 +108,10 @@ export default class {
                                             page.plugin.getContent(path)
                                                 .then(content => {
                                                     Promise.all([
-                                                        writeFileRecursively(join(this.$.config.paths.map, `${path}.map.json`), JSON.stringify({
+                                                        writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
                                                             content,
                                                             chunks: page.chunkGroup.chunks
-                                                        }), this.$.outputFileSystem),
+                                                        })}`, this.$.outputFileSystem),
                                                         writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
                                                             this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)),
                                                             this.$.outputFileSystem

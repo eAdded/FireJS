@@ -59,10 +59,10 @@ class default_1 {
                                         page.plugin.getContent(path)
                                             .then(content => {
                                             Promise.all([
-                                                Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.json`), JSON.stringify({
+                                                Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
                                                     content,
                                                     chunks: page.chunkGroup.chunks
-                                                }), this.$.outputFileSystem),
+                                                })}`, this.$.outputFileSystem),
                                                 Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)), this.$.outputFileSystem)
                                             ]).then(resolve).catch(err => {
                                                 throw err;
