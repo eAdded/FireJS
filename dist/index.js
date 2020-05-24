@@ -63,7 +63,7 @@ class default_1 {
                                                     content,
                                                     chunks: page.chunkGroup.chunks
                                                 }), this.$.outputFileSystem),
-                                                Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.map.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)), this.$.outputFileSystem)
+                                                Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)), this.$.outputFileSystem)
                                             ]).then(resolve).catch(err => {
                                                 throw err;
                                             });

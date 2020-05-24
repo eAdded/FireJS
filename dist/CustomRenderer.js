@@ -6,9 +6,9 @@ const path_1 = require("path");
 const PluginMapper_1 = require("./mappers/PluginMapper");
 const fs = require("fs");
 class default_1 {
-    constructor(pathToBabelDir, pathToPluginsDir = undefined, customPlugins = [], rootDir = process.cwd()) {
+    constructor(pathToBabelDir, pathToPluginsDir = undefined, rootDir = process.cwd()) {
         this.map = new Map();
-        const firejs_map = JSON.parse(fs.readFileSync(path_1.join(pathToBabelDir, "firejs.map.json")).toString());
+        const firejs_map = JSON.parse(fs.readFileSync(path_1.join(rootDir, pathToBabelDir, "firejs.map.json")).toString());
         firejs_map.staticConfig.babelPath = path_1.join(rootDir, pathToBabelDir);
         this.template = firejs_map.template;
         this.rel = firejs_map.staticConfig.rel;
@@ -19,7 +19,7 @@ class default_1 {
             this.map.set(__page, page);
         }
         if (pathToPluginsDir)
-            PluginMapper_1.mapPlugins(fs, pathToPluginsDir, this.map);
+            PluginMapper_1.mapPlugins(fs, path_1.join(rootDir, pathToPluginsDir), this.map);
     }
     renderWithPluginData(__page, path) {
         return new Promise((resolve, reject) => {

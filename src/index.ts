@@ -112,7 +112,7 @@ export default class {
                                                             content,
                                                             chunks: page.chunkGroup.chunks
                                                         }), this.$.outputFileSystem),
-                                                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.map.html`),
+                                                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
                                                             this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)),
                                                             this.$.outputFileSystem
                                                         )

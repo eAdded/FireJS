@@ -11,8 +11,8 @@ export default class {
     readonly template: string;
     readonly rel: PathRelatives;
 
-    constructor(pathToBabelDir: string, pathToPluginsDir: string | undefined = undefined, customPlugins: string[] = [], rootDir: string = process.cwd()) {
-        const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(pathToBabelDir, "firejs.map.json")).toString());
+    constructor(pathToBabelDir: string, pathToPluginsDir: string | undefined = undefined, rootDir: string = process.cwd()) {
+        const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(rootDir, pathToBabelDir, "firejs.map.json")).toString());
         firejs_map.staticConfig.babelPath = join(rootDir, pathToBabelDir);
         this.template = firejs_map.template;
         this.rel = firejs_map.staticConfig.rel
@@ -23,7 +23,7 @@ export default class {
             this.map.set(__page, page);
         }
         if (pathToPluginsDir)
-            mapPlugins(fs, pathToPluginsDir, this.map);
+            mapPlugins(fs, join(rootDir, pathToPluginsDir), this.map);
     }
 
     renderWithPluginData(__page: string, path: string) {
