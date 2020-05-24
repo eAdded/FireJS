@@ -28,22 +28,24 @@ export default class {
         })
     }
 
-    buildBabel(page: Page, resolve: () => void, reject: (err: any | undefined) => void) {
-        this.build(this.webpackArchitect.babel(page), stat => {
-            if (this.logStat(stat))//true if errors
-                reject(undefined);
-            else {
-                stat.compilation.chunks.forEach(chunk => {
-                    chunk.files.forEach(file => {
-                        if (file.startsWith("m"))
-                            page.chunkGroup.babelChunk = file;
-                        else //don't add babel main
-                            page.chunkGroup.chunks.push(file);
-                    })
-                });
-                resolve();
-            }
-        }, reject);
+    buildBabel(page: Page) {
+        return new Promise((resolve, reject) => {
+            this.build(this.webpackArchitect.babel(page), stat => {
+                if (this.logStat(stat))//true if errors
+                    reject();
+                else {
+                    stat.compilation.chunks.forEach(chunk => {
+                        chunk.files.forEach(file => {
+                            if (file.startsWith("m"))
+                                page.chunkGroup.babelChunk = file;
+                            else //don't add babel main
+                                page.chunkGroup.chunks.push(file);
+                        })
+                    });
+                    resolve();
+                }
+            }, reject);
+        })
     }
 
     buildDirect(page: Page, resolve: () => void, reject: (err: any | undefined) => void) {

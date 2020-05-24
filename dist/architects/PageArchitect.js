@@ -19,22 +19,24 @@ class default_1 {
             }, reject);
         });
     }
-    buildBabel(page, resolve, reject) {
-        this.build(this.webpackArchitect.babel(page), stat => {
-            if (this.logStat(stat)) //true if errors
-                reject(undefined);
-            else {
-                stat.compilation.chunks.forEach(chunk => {
-                    chunk.files.forEach(file => {
-                        if (file.startsWith("m"))
-                            page.chunkGroup.babelChunk = file;
-                        else //don't add babel main
-                            page.chunkGroup.chunks.push(file);
+    buildBabel(page) {
+        return new Promise((resolve, reject) => {
+            this.build(this.webpackArchitect.babel(page), stat => {
+                if (this.logStat(stat)) //true if errors
+                    reject();
+                else {
+                    stat.compilation.chunks.forEach(chunk => {
+                        chunk.files.forEach(file => {
+                            if (file.startsWith("m"))
+                                page.chunkGroup.babelChunk = file;
+                            else //don't add babel main
+                                page.chunkGroup.chunks.push(file);
+                        });
                     });
-                });
-                resolve();
-            }
-        }, reject);
+                    resolve();
+                }
+            }, reject);
+        });
     }
     buildDirect(page, resolve, reject) {
         this.build(this.webpackArchitect.direct(page), (stat) => {

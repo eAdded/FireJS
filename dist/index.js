@@ -60,41 +60,29 @@ class default_1 {
             this.$.cli.log("Building Pages");
             const promises = [];
             for (const page of this.$.pageMap.values())
-                promises.push(new Promise(resolve => {
-                    this.$.pageArchitect.buildBabel(page, () => {
-                        Fs_1.moveChunks(page, this.$, this.$.outputFileSystem).then(() => {
-                            this.$.pageArchitect.buildDirect(page, () => {
-                                this.$.cli.ok(`Successfully built page ${page.toString()}`);
-                                page.plugin.getPaths().then(paths => {
-                                    paths.forEach(path => {
-                                        page.plugin.getContent(path)
-                                            .then(content => {
-                                            Promise.all([
-                                                Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
-                                                    content,
-                                                    chunks: page.chunkGroup.chunks
-                                                })}`, this.$.outputFileSystem),
-                                                Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)), this.$.outputFileSystem)
-                                            ]).then(resolve).catch(err => {
-                                                throw err;
-                                            });
-                                        }).catch(err => {
-                                            throw err;
-                                        });
-                                    });
-                                }).catch(err => {
-                                    throw err;
-                                });
-                            }, err => {
-                                throw err;
-                            });
-                        }).catch(err => {
-                            throw err;
+                promises.push(new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                    yield this.$.pageArchitect.buildBabel(page);
+                    yield Fs_1.moveChunks(page, this.$, this.$.outputFileSystem);
+                    this.$.pageArchitect.buildDirect(page, () => __awaiter(this, void 0, void 0, function* () {
+                        this.$.cli.ok(`Successfully built page ${page.toString()}`);
+                        const paths = yield page.plugin.getPaths();
+                        paths.forEach(path => {
+                            (() => __awaiter(this, void 0, void 0, function* () {
+                                const content = yield page.plugin.getContent(path);
+                                yield Promise.all([
+                                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
+                                        content,
+                                        chunks: page.chunkGroup.chunks
+                                    })}`, this.$.outputFileSystem),
+                                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true)), this.$.outputFileSystem)
+                                ]);
+                                resolve();
+                            }))();
                         });
-                    }, err => {
+                    }), err => {
                         throw err;
                     });
-                }));
+                })));
             Promise.all(promises).then(resolve).catch(reject);
         });
     }
