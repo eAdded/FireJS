@@ -3,6 +3,7 @@ import StaticArchitect from "./architects/StaticArchitect";
 import {join} from "path";
 import {mapPlugins} from "./mappers/PluginMapper";
 import {FIREJS_MAP, PathRelatives} from "./index";
+import * as fs from "fs"
 
 export default class {
     readonly map: Map<string, Page> = new Map()
@@ -11,7 +12,7 @@ export default class {
     readonly rel: PathRelatives;
 
     constructor(pathToBabelDir: string, pathToPluginsDir: string | undefined = undefined, customPlugins: string[] = [], rootDir: string = process.cwd()) {
-        const firejs_map: FIREJS_MAP = JSON.parse(readFileSync(join(pathToBabelDir, "firejs.map.json")).toString());
+        const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(pathToBabelDir, "firejs.map.json")).toString());
         firejs_map.staticConfig.babelPath = join(rootDir, pathToBabelDir);
         this.template = firejs_map.template;
         this.rel = firejs_map.staticConfig.rel
@@ -21,14 +22,8 @@ export default class {
             page.chunkGroup = firejs_map.pageMap[__page];
             this.map.set(__page, page);
         }
-        let plugins;
-        if (pathToPluginsDir) {
-            plugins = getPlugins(pathToPluginsDir);
-            plugins.push(...resolveCustomPlugins(customPlugins, rootDir));
-        } else//prevent unnecessary copy
-            plugins = resolveCustomPlugins(customPlugins, rootDir);
-        mapPlugins(plugins, this.map);
-        addDefaultPlugins(this.map);
+        if (pathToPluginsDir)
+            mapPlugins(fs, pathToPluginsDir, this.map);
     }
 
     renderWithPluginData(__page: string, path: string) {
