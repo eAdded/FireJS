@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const Cli_1 = require("./utils/Cli");
@@ -24,19 +33,21 @@ class default_1 {
             libRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.map)
         };
-        this.$.cli.log("Mapping Plugins");
-        if (!this.$.args["--disable-plugins"])
-            if (this.$.config.paths.plugins)
-                PluginMapper_1.mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
-            else
-                throw new Error("Plugins Dir Not found");
         this.$.pageArchitect = new PageArchitect_1.default(this.$, new WebpackArchitect_1.default(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
-        this.$.cli.log("Building Externals");
-        this.$.pageArchitect.buildExternals().then(externals => {
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this.$.cli.log("Building Externals");
+            this.$.cli.log("Mapping Plugins");
+            if (!this.$.args["--disable-plugins"])
+                if (this.$.config.paths.plugins)
+                    PluginMapper_1.mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
+                else
+                    throw new Error("Plugins Dir Not found");
             this.$.renderer = new StaticArchitect_1.default({
                 rel: this.$.rel,
                 babelPath: this.$.config.paths.babel,
-                externals,
+                externals: yield this.$.pageArchitect.buildExternals(),
                 explicitPages: this.$.config.pages,
                 tags: this.$.config.templateTags,
             });

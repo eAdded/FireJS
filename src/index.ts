@@ -11,7 +11,6 @@ import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
 import {convertToMap, createMap} from "./mappers/PathMapper";
 import WebpackArchitect from "./architects/WebpackArchitect";
 
-
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
 
@@ -72,34 +71,36 @@ export default class {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
         }
+        this.$.pageArchitect = new PageArchitect(this.$, new WebpackArchitect(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
+
+    }
+
+    async init() {
+        this.$.cli.log("Building Externals");
         this.$.cli.log("Mapping Plugins");
         if (!this.$.args["--disable-plugins"])
             if (this.$.config.paths.plugins)
                 mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
             else
                 throw new Error("Plugins Dir Not found")
-        this.$.pageArchitect = new PageArchitect(this.$, new WebpackArchitect(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
-        this.$.cli.log("Building Externals");
-        this.$.pageArchitect.buildExternals().then(externals => {
-            this.$.renderer = new StaticArchitect({
-                rel: this.$.rel,
-                babelPath: this.$.config.paths.babel,
-                externals,
-                explicitPages: this.$.config.pages,
-                tags: this.$.config.templateTags,
-            })
-        });
+        this.$.renderer = new StaticArchitect({
+            rel: this.$.rel,
+            babelPath: this.$.config.paths.babel,
+            externals: await this.$.pageArchitect.buildExternals(),
+            explicitPages: this.$.config.pages,
+            tags: this.$.config.templateTags,
+        })
     }
 
     buildPro() {
         return new Promise<any>((resolve, reject) => {
-                if (!this.$.config.pro)
-                    throw new Error("Not in production mode. Make sure to pass [--pro, -p] flag");
-                this.$.cli.log("Building Pages");
-                const promises = [];
-                for (const page of this.$.pageMap.values())
-                    promises.push(new Promise(resolve => {
-                        this.$.pageArchitect.buildBabel(page, () => {
+            if (!this.$.config.pro)
+                throw new Error("Not in production mode. Make sure to pass [--pro, -p] flag");
+            this.$.cli.log("Building Pages");
+            const promises = [];
+            for (const page of this.$.pageMap.values())
+                promises.push(new Promise(resolve => {
+                    this.$.pageArchitect.buildBabel(page, () => {
                             moveChunks(page, this.$, this.$.outputFileSystem).then(() => {
                                 this.$.pageArchitect.buildDirect(page, () => {
                                     this.$.cli.ok(`Successfully built page ${page.toString()}`)

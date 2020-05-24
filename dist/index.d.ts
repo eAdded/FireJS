@@ -45,6 +45,7 @@ export interface FIREJS_MAP {
 export default class {
     private readonly $;
     constructor(params?: Params);
+    init(): Promise<void>;
     buildPro(): Promise<any>;
     getContext(): $;
 }
