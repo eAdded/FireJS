@@ -1,67 +1,60 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const webpack = require("webpack");
-const MemoryFileSystem = require("memory-fs");
-const WebpackArchitect_1 = require("./WebpackArchitect");
 class default_1 {
-    constructor(globalData) {
+    constructor(globalData, webpackArchitect) {
         this.$ = globalData;
+        this.webpackArchitect = webpackArchitect;
     }
     buildExternals() {
         return new Promise((resolve, reject) => {
-            this.build(new WebpackArchitect_1.default(this.$).externals(), undefined, stat => {
+            this.build(this.webpackArchitect.externals(), stat => {
+                const externals = [];
                 stat.compilation.chunks.forEach(chunk => {
-                    this.$.externals.push(...chunk.files);
+                    externals.push(...chunk.files);
                 });
-                resolve();
+                resolve(externals);
             }, reject);
         });
     }
-    buildBabel(mapComponent, resolve, reject) {
-        this.build(new WebpackArchitect_1.default(this.$).babel(mapComponent, this.$.webpackConfig), undefined, stat => {
+    buildBabel(page, resolve, reject) {
+        this.build(this.webpackArchitect.babel(page), stat => {
             if (this.logStat(stat)) //true if errors
                 reject(undefined);
             else {
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
-                        if (file.startsWith("m")) {
-                            mapComponent.chunkGroup.babelChunk = file;
-                        }
+                        if (file.startsWith("m"))
+                            page.chunkGroup.babelChunk = file;
                         else //don't add babel main
-                            mapComponent.chunkGroup.chunks.push(file);
-                    });
-                });
-                resolve();
-            }
-        }, err => reject(err));
-    }
-    buildDirect(mapComponent, resolve, reject) {
-        const fileSystem = this.$.config.pro ? undefined : new MemoryFileSystem();
-        this.build(new WebpackArchitect_1.default(this.$).direct(mapComponent, this.$.webpackConfig), fileSystem, (stat) => {
-            if (!this.$.config.pro) {
-                mapComponent.chunkGroup.chunks = []; //re init for new chunks
-                mapComponent.memoryFileSystem = fileSystem;
-            }
-            if (this.logStat(stat)) //true if errors
-                reject(undefined);
-            else {
-                stat.compilation.chunks.forEach(chunk => {
-                    chunk.files.forEach(file => {
-                        if (file.startsWith("m")) {
-                            mapComponent.chunkGroup.chunks.unshift(file); //add main chunk to the top
-                        }
-                        else
-                            mapComponent.chunkGroup.chunks.push(file);
+                            page.chunkGroup.chunks.push(file);
                     });
                 });
                 resolve();
             }
         }, reject);
     }
-    build(config, fileSystem, resolve, reject) {
+    buildDirect(page, resolve, reject) {
+        this.build(this.webpackArchitect.direct(page), (stat) => {
+            if (this.logStat(stat)) //true if errors
+                reject(undefined);
+            else {
+                stat.compilation.chunks.forEach(chunk => {
+                    chunk.files.forEach(file => {
+                        if (file.startsWith("m"))
+                            page.chunkGroup.chunks.unshift(file); //add main chunk to the top
+                        else
+                            page.chunkGroup.chunks.push(file);
+                    });
+                });
+                resolve();
+            }
+        }, reject);
+    }
+    build(config, resolve, reject) {
         const compiler = webpack(config);
-        if (fileSystem)
-            compiler.outputFileSystem = fileSystem;
+        compiler.outputFileSystem = this.$.outputFileSystem;
+        compiler.inputFileSystem = this.$.inputFileSystem;
         if (config.watch)
             compiler.watch({}, (err, stat) => {
                 if (err)

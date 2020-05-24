@@ -1,14 +1,15 @@
 import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
-import WebpackArchitect from "./architects/WebpackArchitect"
-import PathMapper from "./mappers/PathMapper";
 import Cli from "./utils/Cli";
-import MapComponent from "./classes/Page";
+import Page from "./classes/Page";
 import {Configuration, Stats} from "webpack";
-import {join, relative} from "path";
-import StaticArchitect, {DefaultArchitect, StaticConfig} from "./architects/StaticArchitect";
+import {relative} from "path";
 import {mapPlugins} from "./mappers/PluginMapper";
 import PageArchitect from "./architects/PageArchitect";
 import {moveChunks, writeFileRecursively} from "./utils/Fs";
+import * as fs from "fs"
+import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
+import {convertToMap, createMap} from "./mappers/PathMapper";
+import WebpackArchitect from "./architects/WebpackArchitect";
 
 export type WebpackConfig = Configuration;
 export type WebpackStat = Stats;
@@ -26,19 +27,25 @@ export interface ChunkGroup {
 export interface $ {
     args?: Args,
     config?: Config,
-    pageMap?: Map<string, MapComponent>,
+    pageMap?: Map<string, Page>,
     cli?: Cli,
-    webpackConfig?: WebpackConfig,
     template?: string,
-    rel?: PathRelatives
+    rel?: PathRelatives,
+    outputFileSystem?,
+    inputFileSystem?,
+    renderer?: StaticArchitect,
+    pageArchitect?
+    PageArchitect?
 }
 
 export interface Params {
     config?: Config,
     args?: Args,
     pages?: string[],
-    webpackConfig?: WebpackConfig,
     template?: string,
+    webpackConfig?: WebpackConfig
+    outputFileSystem?,
+    inputFileSystem?
 }
 
 export interface FIREJS_MAP {
@@ -53,88 +60,97 @@ export default class {
     private readonly $: $ = {};
 
     constructor(params: Params = {}) {
+        this.$.inputFileSystem = params.inputFileSystem || fs;
+        this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.args = params.args || getArgs();
-        this.$.cli = new Cli(this.$.args);
+        this.$.cli = new Cli(this.$.args["--plain"] ? "--plain" : this.$.args["--silent"] ? "--silent" : undefined);
         this.$.config = new ConfigMapper(this.$.cli, this.$.args).getConfig(params.config);
-        this.$.template = params.template || readFileSync(this.$.config.paths.template).toString();
-        this.$.map = params.pages ? new PathMapper(this.$).convertToMap(params.pages) : new PathMapper(this.$).map();
-        this.$.webpackConfig = params.webpackConfig || new WebpackArchitect(this.$).readUserConfig();
+        this.$.template = params.template || this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
+        this.$.pageMap = params.pages ? convertToMap(params.pages) : createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
         }
+        this.$.outputFileSystem = this.$.outputFileSystem || require("fs");
+        this.$.cli.log("Mapping Plugins");
+        if (!this.$.args["--disable-plugins"])
+            if (this.$.config.paths.plugins)
+                mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
+            else
+                throw new Error("Plugins Dir Not found")
+        this.$.pageArchitect = new PageArchitect(this.$, new WebpackArchitect(this.$, params.webpackConfig));
+        this.$.cli.log("Building Externals");
+        this.$.pageArchitect.buildExternals().then(externals => {
+            this.$.renderer = new StaticArchitect({
+                rel: this.$.rel,
+                babelPath: this.$.config.paths.babel,
+                externals,
+                explicitPages: this.$.config.pages,
+                tags: this.$.config.templateTags,
+            })
+        });
     }
 
     buildPro() {
         return new Promise<any>((resolve, reject) => {
-            if (!this.$.config.pro)
-                throw new Error("Not in production mode. Make sure to pass [--pro, -p] flag");
-            const pageArchitect = new PageArchitect(this.$);
-            const staticArchitect = new StaticArchitect(this.$);
-            this.$.cli.log("Mapping Plugins");
-            if (!this.$.args["--disable-plugins"])
-                if (this.$.config.paths.plugins)
-                    mapPlugins(this.$.config.paths.plugins, this.$.pageMap);
-                else
-                    throw new Error("Plugins Dir Not found")
-
-            this.$.cli.log("Building Externals");
-            new PageArchitect(this.$)
-                .buildExternals()
-                .then(_ => {
-                    this.$.cli.log("Building Pages");
-                    const promises = [];
-                    for (const page of this.$.pageMap.values())
-                        promises.push(new Promise(resolve => {
-                            pageArchitect.buildBabel(page, () => {
-                                moveChunks(page, this.$).then(() => {
-                                    pageArchitect.buildDirect(page, () => {
-                                        this.$.cli.ok(`Successfully built page ${page.getName()}`)
-                                        page.plugin.getPaths().then(paths => {
-                                            paths.forEach(path => {
-                                                page.plugin.getContent(path)
-                                                    .then(content => {
-                                                        Promise.all([
-                                                            writeFileRecursively(`${path}.map.json`, JSON.stringify({
-                                                                content,
-                                                                chunks: page.chunkGroup.chunks
-                                                            })),
-                                                            writeFileRecursively(`${path}.map.html`,
-                                                                staticArchitect.finalize(staticArchitect.render(this.$.template, page.chunkGroup, path, true))
-                                                            )
-                                                        ]).then(resolve).catch(err => {
-                                                            throw err;
-                                                        })
-                                                    }).catch(err => {
-                                                    throw err;
-                                                })
+                if (!this.$.config.pro)
+                    throw new Error("Not in production mode. Make sure to pass [--pro, -p] flag");
+                this.$.cli.log("Building Pages");
+                const promises = [];
+                for (const page of this.$.pageMap.values())
+                    promises.push(new Promise(resolve => {
+                        this.$.pageArchitect.buildBabel(page, () => {
+                            moveChunks(page, this.$).then(() => {
+                                this.$.pageArchitect.buildDirect(page, () => {
+                                    this.$.cli.ok(`Successfully built page ${page.toString()}`)
+                                    page.plugin.getPaths().then(paths => {
+                                        paths.forEach(path => {
+                                            page.plugin.getContent(path)
+                                                .then(content => {
+                                                    Promise.all([
+                                                        writeFileRecursively(`${path}.map.json`, JSON.stringify({
+                                                            content,
+                                                            chunks: page.chunkGroup.chunks
+                                                        })),
+                                                        writeFileRecursively(`${path}.map.html`,
+                                                            this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, true))
+                                                        )
+                                                    ]).then(resolve).catch(err => {
+                                                        throw err;
+                                                    })
+                                                }).catch(err => {
+                                                throw err;
                                             })
-                                        }).catch(err => {
-                                            throw err;
                                         })
-                                    }, err => {
+                                    }).catch(err => {
                                         throw err;
                                     })
-                                }).catch(err => {
+                                }, err => {
                                     throw err;
                                 })
-                            }, err => {
+                            }).catch(err => {
                                 throw err;
                             })
-                        }))
-                })
-        })
+                        }, err => {
+                            throw err;
+                        })
+                    }))
+                Promise.all(promises).then(resolve).catch(reject);
+            }
+        )
     }
 
-
-    getContext(): $ {
+    getContext()
+        :
+        $ {
         return this.$;
     }
 }
 
+/*
 
 export class CustomRenderer {
-    readonly map: Map<string, MapComponent> = new Map()
+    readonly map: Map<string, Page> = new Map()
     readonly architect: DefaultArchitect;
     readonly template: string;
     readonly rel: PathRelatives;
@@ -192,4 +208,4 @@ export class CustomRenderer {
         return this.architect.finalize(
             this.architect.render(this.template, mapComponent.chunkGroup, new PagePath(mapComponent, path, content, this.rel), true));
     }
-}
+}*/

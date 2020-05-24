@@ -3,36 +3,39 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("react-dom/server");
 const react_helmet_1 = require("react-helmet");
 const path_1 = require("path");
-class DefaultArchitect {
+class default_1 {
     constructor(param) {
         this.param = param;
     }
-    render(template, chunkGroup, pagePath, render_static) {
+    render(template, page, path, content) {
         //set globals
         template = this.addInnerHTML(template, `<script>` +
-            `window.__PATH__="${pagePath.Path}";` +
+            `window.__PATH__="${path}";` +
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
             `window.__PAGES__={};` +
-            `window.__PAGES__._404="/${this.param.pages["404"].substring(0, this.param.pages["404"].lastIndexOf("."))}";` +
+            `window.__PAGES__._404="/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}";` +
             `</script>`, "head");
         //add map script
-        template = this.addChunk(template, pagePath.MapPath, "", "head");
+        template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
         //add externals
         this.param.externals.forEach(external => {
             template = this.addChunk(template, external);
         });
         //add main entry
-        chunkGroup.chunks.forEach(chunk => {
+        page.chunkGroup.chunks.forEach(chunk => {
             template = this.addChunk(template, chunk);
         });
         template = template.replace(this.param.tags.static, "<div id='root'>".concat((() => {
-            if (render_static) {
+            if (content) {
                 // @ts-ignore
                 global.window = {
                     __LIB_REL__: this.param.rel.libRel,
-                    __MAP__: pagePath.Map,
-                    __PATH__: pagePath.Path,
+                    __MAP__: {
+                        content,
+                        chunks: page.chunkGroup.chunks
+                    },
+                    __PATH__: path,
                     __MAP_REL__: this.param.rel.mapRel,
                     SSR: true
                 };
@@ -46,14 +49,14 @@ class DefaultArchitect {
                 global.ReactHelmet = { Helmet: react_helmet_1.Helmet };
                 return server_1.renderToString(
                 // @ts-ignore
-                React.createElement(require(path_1.join(this.param.babelPath, chunkGroup.babelChunk)).default, 
+                React.createElement(require(path_1.join(this.param.babelPath, page.chunkGroup.babelChunk)).default, 
                 // @ts-ignore
                 { content: window.__MAP__.content }, undefined));
             }
             else
                 return "";
         })(), "</div>"));
-        if (render_static) {
+        if (content) {
             const helmet = react_helmet_1.Helmet.renderStatic();
             for (let head_element in helmet)
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
@@ -82,19 +85,6 @@ class DefaultArchitect {
             template = template.replace(this.param.tags[tag], "");
         });
         return template;
-    }
-}
-exports.DefaultArchitect = DefaultArchitect;
-class default_1 extends DefaultArchitect {
-    constructor($) {
-        super({
-            rel: $.rel,
-            tags: $.config.templateTags,
-            externals: $.externals,
-            pages: $.config.pages,
-            babelPath: $.config.paths.babel,
-            template: $.template
-        });
     }
 }
 exports.default = default_1;

@@ -1,27 +1,18 @@
-import {$} from "../index";
-import {sync} from "recursive-dir-reader";
-import MapComponent from "../classes/Page";
+import Page from "../classes/Page";
+import {readDirRecursively} from "../utils/Fs";
 
-export default class {
-    $: $;
+export function createMap(path_to_pages: string, inputFileSystem): Map<string, Page> {
+    const map = new Map();
+    readDirRecursively(path_to_pages, inputFileSystem, (page) => {
+        const rel_page = page.replace(path_to_pages + "/", "")
+        map.set(rel_page, new Page(rel_page));
+    })
+    return map;
+}
 
-    constructor(globalData: $) {
-        this.$ = globalData;
-    }
-
-    map() {
-        const map = new Map();
-        sync(this.$.config.paths.pages, (page) => {
-            const rel_page = page.replace(this.$.config.paths.pages + "/", "")
-            map.set(rel_page, new MapComponent(rel_page));
-        })
-        return map;
-    };
-
-    convertToMap(array: string[]) {
-        const map = new Map();
-        array.forEach(item =>
-            map.set(item, new MapComponent(item)));
-        return map;
-    }
+export function convertToMap(array: string[]): Map<string, Page> {
+    const map = new Map();
+    array.forEach(item =>
+        map.set(item, new Page(item)));
+    return map;
 }

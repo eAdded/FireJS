@@ -5,8 +5,15 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const lodash_1 = require("lodash");
 const path_1 = require("path");
 class default_1 {
-    constructor(globalData) {
+    constructor(globalData, userConfig = {}) {
         this.$ = globalData;
+        const userWebpack = userConfig || (this.$.config.paths.webpack ? require(this.$.config.paths.webpack) : {});
+        if (typeof userWebpack === "object")
+            this.userConfig = Object.assign({ entry: {}, output: {}, module: {
+                    rules: []
+                }, plugins: [] }, userWebpack);
+        else
+            throw new Error("Expected WebpackConfig Types [object] got" + typeof userWebpack);
     }
     externals() {
         return {
@@ -24,35 +31,10 @@ class default_1 {
             }
         };
     }
-    getConfigBase() {
-        // predefined object structure to prevent undefined error
-        return {
-            entry: {},
-            output: {},
-            module: {
-                rules: []
-            },
-            plugins: [],
-            externals: {}
-        };
-    }
-    readUserConfig() {
-        const sample = this.getConfigBase();
-        if (this.$.config.paths.webpack) {
-            const userWebpack = require(this.$.config.paths.webpack);
-            if (typeof userWebpack === "object")
-                return Object.assign(Object.assign({}, sample), userWebpack);
-            else {
-                this.$.cli.error("Expected WebpackConfig Types [object] got" + typeof userWebpack);
-                throw new Error();
-            }
-        }
-        return sample;
-    }
-    babel(mapComponent, user_config) {
+    babel(page) {
         let mergedConfig = Object.assign(Object.assign({ 
             //settings which can be changed by user
-            target: 'web', mode: this.$.config.pro ? "production" : "development" }, lodash_1.cloneDeep(Object.assign(Object.assign({}, this.getConfigBase()), user_config))), { 
+            target: 'web', mode: this.$.config.pro ? "production" : "development" }, lodash_1.cloneDeep(this.userConfig)), { 
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -64,9 +46,9 @@ class default_1 {
             } });
         mergedConfig.externals = [];
         mergedConfig.externals.push('react', 'react-dom', 'react-helmet');
-        mergedConfig.name = mapComponent.Page;
+        mergedConfig.name = page.toString();
+        mergedConfig.entry = path_1.join(this.$.config.paths.pages, page.toString());
         mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
-        mergedConfig.entry = path_1.join(this.$.config.paths.pages, mapComponent.Page);
         mergedConfig.output.path = this.$.config.paths.babel;
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
@@ -98,10 +80,10 @@ class default_1 {
         }));
         return mergedConfig;
     }
-    direct(mapComponent, user_config) {
+    direct(page) {
         let mergedConfig = Object.assign(Object.assign({ 
             //settings which can be changed by user
-            target: 'web', mode: this.$.config.pro ? "production" : "development", watch: !this.$.config.pro }, lodash_1.cloneDeep(Object.assign(Object.assign({}, this.getConfigBase()), user_config))), { 
+            target: 'web', mode: this.$.config.pro ? "production" : "development", watch: !this.$.config.pro }, lodash_1.cloneDeep(this.userConfig)), { 
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
@@ -137,7 +119,7 @@ class default_1 {
             });
         }
         const web_front_entry = path_1.resolve(__dirname, this.$.config.pro ? '../../web/index_pro.js' : '../../web/index_dev.js');
-        mergedConfig.name = mapComponent.Page;
+        mergedConfig.name = page.toString();
         //path before file name is important cause it allows easy routing during development
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
@@ -148,7 +130,7 @@ class default_1 {
             mergedConfig.output.path = "/"; //in dev the content is served from memory
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
-            App: this.$.config.pro ? path_1.join(this.$.config.paths.babel, mapComponent.chunkGroup.babelChunk) : path_1.join(this.$.config.paths.pages, mapComponent.Page)
+            App: this.$.config.pro ? path_1.join(this.$.config.paths.babel, page.chunkGroup.babelChunk) : path_1.join(this.$.config.paths.pages, page.toString())
         }));
         return mergedConfig;
     }

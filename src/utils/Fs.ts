@@ -40,3 +40,14 @@ export function moveChunks(mapComponent: MapComponent, $) {
         });
     });
 }
+
+export function readDirRecursively(dir: string, inputFileSystem, callback) {
+    const items = inputFileSystem.readdirSync(dir);
+    items.forEach(itemName => {
+        const path = `${dir}/${itemName}`;
+        if (inputFileSystem.statSync(path).isDirectory())
+            readDirRecursively(path, inputFileSystem, callback);
+        else
+            callback(path)
+    });
+}

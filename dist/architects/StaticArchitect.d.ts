@@ -1,22 +1,18 @@
-import PagePath from "../classes/PagePath";
-import { $, ChunkGroup, PathRelatives } from "../index";
+import { PathRelatives } from "../index";
 import { ExplicitPages, TemplateTags } from "../mappers/ConfigMapper";
+import Page from "../classes/Page";
 export interface StaticConfig {
     rel: PathRelatives;
     tags: TemplateTags;
     externals: string[];
-    pages: ExplicitPages;
+    explicitPages: ExplicitPages;
     babelPath: string;
-    template: string;
 }
-export declare class DefaultArchitect {
-    private param;
+export default class {
+    param: StaticConfig;
     constructor(param: StaticConfig);
-    render(template: string, chunkGroup: ChunkGroup, pagePath: PagePath, render_static: boolean): string;
+    render(template: string, page: Page, path: string, content: any): string;
     addChunk(template: string, chunk: string, root?: string | undefined, tag?: string | undefined): string;
     addInnerHTML(template: string, element: string, tag: string): string;
     finalize(template: string): string;
-}
-export default class extends DefaultArchitect {
-    constructor($: $);
 }

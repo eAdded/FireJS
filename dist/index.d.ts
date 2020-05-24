@@ -1,8 +1,8 @@
 import { Args, Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
-import MapComponent from "./classes/Page";
+import Page from "./classes/Page";
 import { Configuration, Stats } from "webpack";
-import { DefaultArchitect, StaticConfig } from "./architects/StaticArchitect";
+import StaticArchitect, { StaticConfig } from "./architects/StaticArchitect";
 export declare type WebpackConfig = Configuration;
 export declare type WebpackStat = Stats;
 export interface PathRelatives {
@@ -16,18 +16,24 @@ export interface ChunkGroup {
 export interface $ {
     args?: Args;
     config?: Config;
-    pageMap?: Map<string, MapComponent>;
+    pageMap?: Map<string, Page>;
     cli?: Cli;
-    webpackConfig?: WebpackConfig;
     template?: string;
     rel?: PathRelatives;
+    outputFileSystem?: any;
+    inputFileSystem?: any;
+    renderer?: StaticArchitect;
+    pageArchitect?: any;
+    PageArchitect?: any;
 }
 export interface Params {
     config?: Config;
     args?: Args;
     pages?: string[];
-    webpackConfig?: WebpackConfig;
     template?: string;
+    webpackConfig?: WebpackConfig;
+    outputFileSystem?: any;
+    inputFileSystem?: any;
 }
 export interface FIREJS_MAP {
     staticConfig: StaticConfig;
@@ -41,13 +47,4 @@ export default class {
     constructor(params?: Params);
     buildPro(): Promise<any>;
     getContext(): $;
-}
-export declare class CustomRenderer {
-    readonly map: Map<string, MapComponent>;
-    readonly architect: DefaultArchitect;
-    readonly template: string;
-    readonly rel: PathRelatives;
-    constructor(pathToBabelDir: string, pathToPluginsDir?: string | undefined, customPlugins?: string[], rootDir?: string);
-    renderWithPluginData(mapComponent: MapComponent, path: string, callback: any): void;
-    render(page: string, path: string, content: any): string;
 }

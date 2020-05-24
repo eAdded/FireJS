@@ -9,7 +9,7 @@ export default class {
 
     async getPaths(): Promise<string[]> {
         return [
-            "/" + this.page.getName().substring(0, this.page.getName().lastIndexOf("."))
+            "/" + this.page.toString().substring(0, this.page.toString().lastIndexOf("."))
         ]
     }
 
