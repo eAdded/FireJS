@@ -26,9 +26,5 @@ class default_1 {
             return {};
         });
     }
-    serverRequest(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
-    }
 }
 exports.default = default_1;

@@ -22,11 +22,6 @@ export default class {
             .on('unlink', path => {
                 this.$.pageMap.delete(path.replace(this.$.config.paths.pages + "/", ""));
             });
-        /*watch(this.$.config.paths.plugins)//watch changes
-            .on('add', this.buildPage)
-            .on('unlink', path => {
-                this.$.pageMap.delete(path.replace(this.$.config.paths.pages + "/", ""));
-            });*/
         this.$.cli.ok("Watching for file changes")
         const server: express.Application = express();
         this.$.renderer.param.externals.forEach(external =>//externals
