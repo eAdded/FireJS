@@ -1,4 +1,4 @@
-import FireJS from "./index";
+import FireJS from "./FireJS";
 export default class {
     private readonly $;
     private readonly app;

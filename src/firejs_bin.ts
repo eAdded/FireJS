@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import FireJS, {FIREJS_MAP} from "./index"
+import FireJS, {FIREJS_MAP} from "./FireJS"
 import Server from "./server"
 import {join} from "path"
 

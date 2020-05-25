@@ -1,6 +1,6 @@
 {
   "name": "@eadded/firejs",
-  "main": "dist/index.js",
+  "main": "dist/FireJS.js",
   "version": "0.10.0",
   "license": "MIT",
   "description": "Highly customizable no config react static site generator",
@@ -40,7 +40,7 @@
     "@types/webpack": "^4.41.13"
   },
   "bin": {
-    "firejs": "dist/firejs.js"
+    "firejs": "dist/firejs_bin.js"
   },
   "bugs": {
     "url": "https://github.com/eAdded/firejs/issues"

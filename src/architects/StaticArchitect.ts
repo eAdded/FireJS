@@ -1,6 +1,6 @@
 import {renderToString} from "react-dom/server"
 import {Helmet} from "react-helmet"
-import {PathRelatives} from "../index";
+import {PathRelatives} from "../FireJS";
 import {join} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";

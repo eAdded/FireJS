@@ -1,4 +1,4 @@
-import { PathRelatives } from "../index";
+import { PathRelatives } from "../FireJS";
 import { ExplicitPages, TemplateTags } from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
 export interface StaticConfig {

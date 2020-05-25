@@ -1,9 +1,9 @@
 import Page from "./classes/Page";
 import StaticArchitect from "./architects/StaticArchitect";
-import { PathRelatives } from "./index";
+import { PathRelatives } from "./FireJS";
 interface RenderReturn {
     html: string;
-    pageMap: string;
+    map: string;
 }
 export default class {
     readonly map: Map<string, Page>;

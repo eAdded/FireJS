@@ -2,12 +2,12 @@ import Page from "./classes/Page";
 import StaticArchitect from "./architects/StaticArchitect";
 import {join} from "path";
 import {mapPlugins} from "./mappers/PluginMapper";
-import {FIREJS_MAP, PathRelatives} from "./index";
+import {FIREJS_MAP, PathRelatives} from "./FireJS";
 import * as fs from "fs"
 
 interface RenderReturn {
     html: string,
-    pageMap: string
+    map: string
 }
 
 export default class {
@@ -38,7 +38,7 @@ export default class {
                 resolve({
                     html: this.renderer.finalize(
                         this.renderer.render(this.template, page, path, content || {})),
-                    pageMap: `window.__MAP__=${JSON.stringify({
+                    map: `window.__MAP__=${JSON.stringify({
                         content,
                         chunks: page.chunkGroup.chunks
                     })}`
@@ -52,7 +52,7 @@ export default class {
         return {
             html: this.renderer.finalize(
                 this.renderer.render(this.template, page, path, content)),
-            pageMap: `window.__MAP__=${JSON.stringify({
+            map: `window.__MAP__=${JSON.stringify({
                 content,
                 chunks: page.chunkGroup.chunks
             })}`

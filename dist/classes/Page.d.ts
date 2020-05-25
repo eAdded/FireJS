@@ -1,4 +1,4 @@
-import { ChunkGroup } from "../index";
+import { ChunkGroup } from "../FireJS";
 import Plugin from "./Plugin";
 export default class {
     chunkGroup: ChunkGroup;

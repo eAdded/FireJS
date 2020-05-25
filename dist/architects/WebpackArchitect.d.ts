@@ -1,4 +1,4 @@
-import { $, WebpackConfig } from "../index";
+import { $, WebpackConfig } from "../FireJS";
 import Page from "../classes/Page";
 export default class {
     private readonly $;

@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("./index");
+const FireJS_1 = require("./FireJS");
 const server_1 = require("./server");
 const path_1 = require("path");
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const startTime = new Date().getTime();
-        const app = new index_1.default();
+        const app = new FireJS_1.default();
         const $ = app.getContext();
         if ($.config.pro) {
             try {

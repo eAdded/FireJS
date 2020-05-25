@@ -1,6 +1,6 @@
 import {join} from "path"
 import {watch} from "chokidar"
-import FireJS, {$} from "./index"
+import FireJS, {$} from "./FireJS"
 import MemoryFS = require("memory-fs");
 import express = require("express");
 

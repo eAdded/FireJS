@@ -27,7 +27,7 @@ class default_1 {
             page.plugin.getContent(path).then(content => {
                 resolve({
                     html: this.renderer.finalize(this.renderer.render(this.template, page, path, content || {})),
-                    pageMap: `window.__MAP__=${JSON.stringify({
+                    map: `window.__MAP__=${JSON.stringify({
                         content,
                         chunks: page.chunkGroup.chunks
                     })}`
@@ -39,7 +39,7 @@ class default_1 {
         const page = this.map.get(__page);
         return {
             html: this.renderer.finalize(this.renderer.render(this.template, page, path, content)),
-            pageMap: `window.__MAP__=${JSON.stringify({
+            map: `window.__MAP__=${JSON.stringify({
                 content,
                 chunks: page.chunkGroup.chunks
             })}`

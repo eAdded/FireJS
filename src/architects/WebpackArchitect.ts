@@ -1,7 +1,7 @@
 import webpack = require("webpack");
 import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import {cloneDeep} from "lodash"
-import {$, WebpackConfig} from "../index";
+import {$, WebpackConfig} from "../FireJS";
 import {join, resolve} from "path"
 import Page from "../classes/Page";
 
