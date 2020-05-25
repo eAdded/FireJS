@@ -25,6 +25,7 @@ export interface Args {
     "--plain"?: boolean;
     "--silent"?: boolean;
     "--disable-plugins"?: boolean;
+    "--help"?: boolean;
 }
 export interface ExplicitPages {
     "404"?: string;

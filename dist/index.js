@@ -22,10 +22,24 @@ const WebpackArchitect_1 = require("./architects/WebpackArchitect");
 class default_1 {
     constructor(params = {}) {
         this.$ = {};
-        this.$.inputFileSystem = params.inputFileSystem || fs;
-        this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.args = params.args || ConfigMapper_1.getArgs();
         this.$.cli = new Cli_1.default(this.$.args["--plain"] ? "--plain" : this.$.args["--silent"] ? "--silent" : undefined);
+        if (this.$.args["--help"]) {
+            console.log("\n\n    \x1b[1m Fire JS \x1b[0m - Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.");
+            console.log("\n    \x1b[1m Flags \x1b[0m\n" +
+                "\n\t\x1b[34m--pro, -p\x1b[0m\n\t    Production Mode\n" +
+                "\n\t\x1b[34m--conf, -c\x1b[0m\n\t    Path to Config file\n" +
+                "\n\t\x1b[34m--verbose, -v\x1b[0m\n\t    Log Webpack Stat\n" +
+                "\n\t\x1b[34m--plain\x1b[0m\n\t    Log without styling i.e colors and symbols\n" +
+                "\n\t\x1b[34m--silent, s\x1b[0m\n\t    Log errors only\n" +
+                "\n\t\x1b[34m--disable-plugins\x1b[0m\n\t    Disable plugins\n" +
+                "\n\t\x1b[34m--help, -h\x1b[0m\n\t    Help");
+            console.log("\n    \x1b[1m\ Version :\x1b[0m 1.0.0");
+            console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n");
+            process.exit(0);
+        }
+        this.$.inputFileSystem = params.inputFileSystem || fs;
+        this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper_1.default(this.$.cli, this.$.args).getConfig(params.config);
         this.$.template = params.template || this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
         this.$.pageMap = params.pages ? PathMapper_1.convertToMap(params.pages) : PathMapper_1.createMap(this.$.config.paths.pages, this.$.inputFileSystem);

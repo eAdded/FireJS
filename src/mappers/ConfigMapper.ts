@@ -31,6 +31,7 @@ export interface Args {
     "--plain"?: boolean,            //Log without styling i.e colors and symbols
     "--silent"?: boolean,           //Log errors only
     "--disable-plugins"?: boolean   //Disable plugins
+    "--help"?: boolean              //Help
 }
 
 export interface ExplicitPages {
@@ -55,11 +56,13 @@ export function getArgs(): Args {
         "--plain": Boolean,
         "--silent": Boolean,
         "--disable-plugins": Boolean,
+        "--help": Boolean,
         //Aliases
         "-p": "--pro",
         "-c": "--conf",
         "-v": "--verbose",
         "-s": "--silent",
+        "-h": "--help",
     })
 }
 

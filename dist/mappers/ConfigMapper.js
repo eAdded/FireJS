@@ -12,11 +12,13 @@ function getArgs() {
         "--plain": Boolean,
         "--silent": Boolean,
         "--disable-plugins": Boolean,
+        "--help": Boolean,
         //Aliases
         "-p": "--pro",
         "-c": "--conf",
         "-v": "--verbose",
         "-s": "--silent",
+        "-h": "--help",
     });
 }
 exports.getArgs = getArgs;
