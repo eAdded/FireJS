@@ -25,7 +25,7 @@ class default_1 {
                 "ReactHelmet": "react-helmet"
             },
             output: {
-                path: this.$.config.paths.lib,
+                path: this.$.config.pro ? this.$.config.paths.lib : `/${this.$.rel.libRel}`,
                 filename: "[name][contentHash].js",
                 library: "[name]",
             }
@@ -128,7 +128,7 @@ class default_1 {
         if (this.$.config.pro) //only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = this.$.config.paths.lib;
         else
-            mergedConfig.output.path = "/"; //in dev the content is served from memory
+            mergedConfig.output.path = mergedConfig.output.publicPath; //in dev the content is served from memory
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
             App: this.$.config.pro ? path_1.join(this.$.config.paths.babel, page.chunkGroup.babelChunk) : path_1.join(this.$.config.paths.pages, page.toString())

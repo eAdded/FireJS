@@ -36,7 +36,7 @@ export default class {
                 "ReactHelmet": "react-helmet"
             },
             output: {
-                path: this.$.config.paths.lib,
+                path: this.$.config.pro ? this.$.config.paths.lib : `/${this.$.rel.libRel}`,
                 filename: "[name][contentHash].js",
                 library: "[name]",//make file as library so it can be imported for static generation
             }
@@ -156,7 +156,7 @@ export default class {
         if (this.$.config.pro) //only output in production because they'll be served from memory in dev mode
             mergedConfig.output.path = this.$.config.paths.lib;
         else
-            mergedConfig.output.path = "/";//in dev the content is served from memory
+            mergedConfig.output.path = mergedConfig.output.publicPath//in dev the content is served from memory
         mergedConfig.entry = web_front_entry;
         mergedConfig.plugins.push(
             new webpack.ProvidePlugin({

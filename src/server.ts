@@ -30,7 +30,9 @@ export default class {
         this.$.cli.ok("Watching for file changes")
         const server: express.Application = express();
         this.$.renderer.param.externals.forEach(external =>//externals
-            server.use(`${this.$.rel.libRel}${external}`, express.static(join(this.$.config.paths.dist, this.$.rel.libRel, external))));
+            server.get(`${this.$.rel.libRel}${external}`, (req, res) => {
+                res.end(this.$.outputFileSystem.readFileSync(req.url));
+            }));
 
         if (this.$.config.paths.static)
             server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
@@ -53,10 +55,14 @@ export default class {
     private getPageMap(req: express.Request, res: express.Response) {
         let found = false;
         const path = req.url.substring(("/" + this.$.rel.mapRel).length, req.url.lastIndexOf(".map.js"));
-        console.log(path)
         for (const page of this.$.pageMap.values())
             if ((found = page.plugin.paths.some(_path => path === _path))) {
-                res.end(`window.__MAP__=${page.plugin.getContent(path)}`)
+                (async () => {
+                    res.end(`window.__MAP__=${JSON.stringify({
+                        content: await page.plugin.getContent(path),
+                        chunks: page.chunkGroup.chunks
+                    })}`)
+                })()
                 break;
             }
         if (!found)
@@ -75,10 +81,9 @@ export default class {
 
     private getLib(req: express.Request, res: express.Response) {
         let found = false;
-        let cleanUrl = "/" + req.url.substring(("/" + this.$.rel.libRel).length);
         for (const page of this.$.pageMap.values()) {
-            if ((found = this.$.outputFileSystem.existsSync(cleanUrl))) {
-                res.end(this.$.outputFileSystem.readFileSync(cleanUrl));
+            if ((found = this.$.outputFileSystem.existsSync(req.url))) {
+                res.end(this.$.outputFileSystem.readFileSync(req.url));
                 break;
             }
         }
@@ -98,7 +103,6 @@ export default class {
         }
         if (!found) {
             const page404 = this.$.pageMap.get(this.$.config.pages["404"]);
-            console.log(page404)
             if (this.$.outputFileSystem.existsSync(page404.plugin.paths[0]))
                 res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page404, page404.plugin.paths[0], undefined)))
             else
