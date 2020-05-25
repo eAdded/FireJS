@@ -34,8 +34,7 @@ export interface $ {
     outputFileSystem?,
     inputFileSystem?,
     renderer?: StaticArchitect,
-    pageArchitect?
-    PageArchitect?
+    pageArchitect?: PageArchitect
 }
 
 export interface Params {
@@ -104,8 +103,8 @@ export default class {
                         await moveChunks(page, this.$, this.$.outputFileSystem)
                         this.$.pageArchitect.buildDirect(page, async () => {
                             this.$.cli.ok(`Successfully built page ${page.toString()}`)
-                            const paths = await page.plugin.getPaths()
-                            paths.forEach(path => {
+                            await page.plugin.initPaths();
+                            await page.plugin.paths.forEach(path => {
                                 (async () => {
                                     const content = await page.plugin.getContent(path)
                                     await Promise.all([

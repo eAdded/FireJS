@@ -2,6 +2,7 @@ import { Args, Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
 import { Configuration, Stats } from "webpack";
+import PageArchitect from "./architects/PageArchitect";
 import StaticArchitect, { StaticConfig } from "./architects/StaticArchitect";
 export declare type WebpackConfig = Configuration;
 export declare type WebpackStat = Stats;
@@ -23,8 +24,7 @@ export interface $ {
     outputFileSystem?: any;
     inputFileSystem?: any;
     renderer?: StaticArchitect;
-    pageArchitect?: any;
-    PageArchitect?: any;
+    pageArchitect?: PageArchitect;
 }
 export interface Params {
     config?: Config;

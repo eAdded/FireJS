@@ -65,8 +65,8 @@ class default_1 {
                     yield Fs_1.moveChunks(page, this.$, this.$.outputFileSystem);
                     this.$.pageArchitect.buildDirect(page, () => __awaiter(this, void 0, void 0, function* () {
                         this.$.cli.ok(`Successfully built page ${page.toString()}`);
-                        const paths = yield page.plugin.getPaths();
-                        paths.forEach(path => {
+                        yield page.plugin.initPaths();
+                        yield page.plugin.paths.forEach(path => {
                             (() => __awaiter(this, void 0, void 0, function* () {
                                 const content = yield page.plugin.getContent(path);
                                 yield Promise.all([

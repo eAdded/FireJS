@@ -12,14 +12,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Page_1 = require("./Page");
 class default_1 {
     constructor(page) {
+        this.paths = [];
         if (page instanceof Page_1.default)
             this.page = page;
         else
             this.page = new Page_1.default(page);
     }
-    getPaths() {
+    initPaths() {
         return __awaiter(this, void 0, void 0, function* () {
-            return [
+            this.paths = [
                 "/" + this.page.toString().substring(0, this.page.toString().lastIndexOf("."))
             ];
         });
@@ -27,6 +28,10 @@ class default_1 {
     getContent(path) {
         return __awaiter(this, void 0, void 0, function* () {
             return {};
+        });
+    }
+    serverRequest(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
         });
     }
 }

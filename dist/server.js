@@ -11,51 +11,96 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const chokidar_1 = require("chokidar");
+const index_1 = require("./index");
 const Page_1 = require("./classes/Page");
 const express = require("express");
-const server = express();
-function default_1(app) {
-    return __awaiter(this, void 0, void 0, function* () {
-        const $ = app.getContext();
-        const { config: { paths } } = $;
-        const pageDataRelative = `/${path_1.relative(paths.dist, paths.map)}/`;
-        const libRelative = `/${path_1.relative(paths.dist, paths.lib)}/`;
-        chokidar_1.watch(paths.pages) //watch changes
-            .on('add', buildPage)
-            .on('unlink', path => {
-            $.pageMap.delete(path.replace(paths.pages + "/", ""));
+class default_1 {
+    constructor() {
+        this.cacheMap = new Map();
+        this.$ = (this.app = new index_1.default()).getContext();
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            this;
+            this.$.cli.log("Caching data from plugins");
+            chokidar_1.watch(this.$.config.paths.pages) //watch changes
+                .on('add', this.buildPage)
+                .on('unlink', path => {
+                this.$.pageMap.delete(path.replace(this.$.config.paths.pages + "/", ""));
+            });
+            this.$.cli.ok("Watching for file changes");
+            const server = express();
+            this.$.renderer.param.externals.forEach(external => //externals
+             server.use(`${this.$.rel.libRel}${external}`, express.static(path_1.join(this.$.config.paths.dist, this.$.rel.libRel, external))));
+            if (this.$.config.paths.static)
+                server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
+            server.use((req, res, next) => {
+                req.url = decodeURI(req.url);
+                if (req.url.startsWith(this.$.rel.mapRel))
+                    this.getPageMap(req, res);
+                else if (req.url.startsWith(this.$.rel.libRel))
+                    getLib(req, res);
+                else
+                    getPage(req, res);
+                next();
+            });
+            server.listen(5000, _ => {
+                this.$.cli.ok("listening on port 5000");
+            });
         });
-        $.renderer.param.externals.forEach(external => //externals
-         server.use(`${libRelative}${external}`, express.static(path_1.join(paths.dist, libRelative, external))));
-        if (paths.static)
-            server.use(`${paths.static.substring(paths.static.lastIndexOf("/"))}`, express.static(paths.static));
-        server.use((req, res, next) => {
-            req.url = decodeURI(req.url);
-            if (req.url.startsWith(pageDataRelative))
-                getPageData(req, res);
-            else if (req.url.startsWith(libRelative))
-                getLib(req, res);
-            else
-                getPage(req, res);
-            next();
+    }
+    generatePageCache(page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const pathMap = new Map();
+            const promises = [];
+            (yield page.plugin.getPaths()).forEach(path => {
+                promises.push(() => __awaiter(this, void 0, void 0, function* () {
+                    return pathMap.set(path, `window.__MAP__=${JSON.stringify({
+                        content: yield page.plugin.getContent(path),
+                        chunks: page.chunkGroup.chunks
+                    })}`);
+                }));
+            });
+            yield Promise.all(promises);
+            return pathMap;
         });
-        server.listen(5000, _ => {
-            $.cli.ok("listening on port 5000");
-        });
-        function getPageData(req, res) {
-            let found = false;
-            for (const mapComponent of $.map.values()) {
-                if ((found = mapComponent.paths.some(pagePath => {
-                    if (req.url === `/${pagePath.MapPath}`) {
-                        res.end(`window.__MAP__=${JSON.stringify(pagePath.Map)}`);
-                        return true;
-                    }
-                })))
-                    break;
+    }
+    getPageMap(req, res) {
+        let found = false;
+        const path = req.url.substring(0, req.url.lastIndexOf(".map.js"));
+        for (const pathsMap of this.cacheMap.values()) {
+            const pathMap = pathsMap.get(path);
+            if (found = !!pathMap) {
+                res.end(pathMap);
+                break;
             }
-            if (!found)
-                res.status(404);
         }
+        if (!found)
+            res.status(404);
+    }
+    buildPage(page_path) {
+        const page = new Page_1.default(page_path = page_path.replace(this.$.config.paths.pages + "/", ""));
+        page.plugin =
+            this.$.pageArchitect.buildDirect().buildDirect(mapComponent, () => {
+                let pathsMap = this.cacheMap.get(page_path);
+                $.cli.ok(`Successfully built page ${mapComponent.Page}`);
+                // @ts-ignore
+                if (!mapComponent.wasApplied) {
+                    // @ts-ignore
+                    mapComponent.wasApplied = true;
+                    $.cli.log(`Applying plugin for page ${mapComponent.Page}`);
+                    applyPlugin(mapComponent, $.rel, (pagePath) => {
+                        $.cli.ok(`Data fetched for path ${pagePath.Path}`);
+                    });
+                }
+            }, err => {
+                $.cli.error(`Error while building page ${mapComponent.Page}`, err);
+            });
+    }
+}
+exports.default = default_1;
+function s(app) {
+    return __awaiter(this, void 0, void 0, function* () {
         function getLib(req, res) {
             let found = false;
             let cleanUrl = "/" + req.url.substring(libRelative.length);
@@ -87,28 +132,8 @@ function default_1(app) {
                     res.end("Please Wait...");
             }
         }
-        function buildPage(path) {
-            const rel_page = path.replace(paths.pages + "/", "");
-            let mapComponent = $.map.get(rel_page);
-            if (!mapComponent) {
-                mapComponent = new Page_1.default(rel_page);
-                $.map.set(rel_page, mapComponent);
-            }
-            pageArchitect.buildDirect(mapComponent, () => {
-                $.cli.ok(`Successfully built page ${mapComponent.Page}`);
-                // @ts-ignore
-                if (!mapComponent.wasApplied) {
-                    // @ts-ignore
-                    mapComponent.wasApplied = true;
-                    $.cli.log(`Applying plugin for page ${mapComponent.Page}`);
-                    applyPlugin(mapComponent, $.rel, (pagePath) => {
-                        $.cli.ok(`Data fetched for path ${pagePath.Path}`);
-                    });
-                }
-            }, err => {
-                $.cli.error(`Error while building page ${mapComponent.Page}`, err);
-            });
+        function generateCache() {
         }
     });
 }
-exports.default = default_1;
+exports.s = s;

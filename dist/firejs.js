@@ -18,9 +18,9 @@ const path_1 = require("path");
         const startTime = new Date().getTime();
         const app = new index_1.default();
         const $ = app.getContext();
-        try {
-            yield app.init();
-            if ($.config.pro) {
+        if ($.config.pro) {
+            try {
+                yield app.init();
                 yield app.buildPro();
                 $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
                 $.cli.log("Generating babel chunk map");
@@ -34,11 +34,13 @@ const path_1 = require("path");
                 $.outputFileSystem.writeFileSync(path_1.join($.config.paths.babel, "firejs.map.json"), JSON.stringify(map));
                 $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
             }
-            else
-                yield server_1.default(app);
+            catch (err) {
+                $.cli.error(err);
+            }
         }
-        catch (err) {
-            $.cli.error(err);
+        else {
+            const server = new server_1.default();
+            yield server.init();
         }
     });
 })();

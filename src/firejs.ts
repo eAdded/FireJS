@@ -7,9 +7,9 @@ import {join} from "path"
     const startTime = new Date().getTime();
     const app = new FireJS();
     const $ = app.getContext();
-    try {
-        await app.init();
-        if ($.config.pro) {
+    if ($.config.pro) {
+        try {
+            await app.init();
             await app.buildPro();
             $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
             $.cli.log("Generating babel chunk map");
@@ -23,9 +23,11 @@ import {join} from "path"
             $.outputFileSystem.writeFileSync(join($.config.paths.babel, "firejs.map.json"),
                 JSON.stringify(map));
             $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
-        } else
-            await Server(app);
-    } catch (err) {
-        $.cli.error(err)
+        } catch (err) {
+            $.cli.error(err)
+        }
+    } else {
+        const server = new Server();
+        await server.init();
     }
 })()
