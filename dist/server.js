@@ -37,7 +37,7 @@ class default_1 {
             if (this.$.config.paths.static)
                 server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
             server.use((req, res, next) => {
-                req.url = decodeURI(req.url);
+                req.url = req.path;
                 if (req.url.startsWith("/" + this.$.rel.mapRel + "/"))
                     this.getPageMap(req, res);
                 else if (req.url.startsWith("/" + this.$.rel.libRel + "/"))
@@ -46,8 +46,8 @@ class default_1 {
                     this.getPage(req, res);
                 next();
             });
-            server.listen(5000, _ => {
-                this.$.cli.ok("listening on port 5000");
+            server.listen(process.env.PORT || 5000, () => {
+                this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`);
             });
         });
     }
