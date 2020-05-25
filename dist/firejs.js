@@ -35,7 +35,7 @@ const path_1 = require("path");
                 $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
             }
             else
-                new server_1.default(app);
+                yield server_1.default(app);
         }
         catch (err) {
             $.cli.error(err);

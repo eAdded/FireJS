@@ -12,6 +12,6 @@ export default class {
     readonly rel: PathRelatives;
     constructor(pathToBabelDir: string, pathToPluginsDir?: string | undefined, rootDir?: string);
     renderWithPluginData(__page: string, path: string): Promise<RenderReturn>;
-    render(__page: string, path: string, content: any): RenderReturn;
+    render(__page: string, path: string, content?: any): RenderReturn;
 }
 export {};

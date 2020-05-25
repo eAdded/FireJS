@@ -24,7 +24,7 @@ import {join} from "path"
                 JSON.stringify(map));
             $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
         } else
-            new Server(app);
+            await Server(app);
     } catch (err) {
         $.cli.error(err)
     }

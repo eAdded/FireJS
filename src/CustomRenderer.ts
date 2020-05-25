@@ -37,7 +37,7 @@ export default class {
             page.plugin.getContent(path).then(content => {
                 resolve({
                     html: this.renderer.finalize(
-                        this.renderer.render(this.template, page, path, content)),
+                        this.renderer.render(this.template, page, path, content || {})),
                     pageMap: `window.__MAP__=${JSON.stringify({
                         content,
                         chunks: page.chunkGroup.chunks
@@ -47,7 +47,7 @@ export default class {
         })
     }
 
-    render(__page: string, path: string, content: any): RenderReturn {
+    render(__page: string, path: string, content: any = {}): RenderReturn {
         const page = this.map.get(__page);
         return {
             html: this.renderer.finalize(
