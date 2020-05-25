@@ -71,9 +71,14 @@ export default class {
 
     private buildPage(page_path: string) {
         const page = this.$.pageMap.get(page_path.substring((this.$.config.paths.pages + "/").length));
-        this.$.pageArchitect.buildDirect(page, async () => {
+        this.$.pageArchitect.buildDirect(page, () => {
+            page.chunkGroup.chunks.forEach(chunk => {
+                this.$.outputFileSystem.unlinkSync(`/${this.$.rel.libRel}/${chunk}`)
+            })
+            page.chunkGroup.chunks = [];//reinit chunks
+            console.log(this.$.outputFileSystem)
             this.$.cli.ok(`Successfully built page ${page.toString()}`);
-            await page.plugin.initPaths();
+            page.plugin.initPaths();
         }, err => {
             this.$.cli.error(`Error while building page ${page.toString()}`, err);
         });

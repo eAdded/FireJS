@@ -53,6 +53,7 @@ export default class {
             if (this.logStat(stat))//true if errors
                 reject(undefined);
             else {
+                resolve();
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
                         if (file.startsWith("m"))
@@ -61,7 +62,6 @@ export default class {
                             page.chunkGroup.chunks.push(file)
                     })
                 });
-                resolve();
             }
         }, reject);
     }
