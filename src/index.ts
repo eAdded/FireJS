@@ -71,17 +71,16 @@ export default class {
             mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
         }
         this.$.pageArchitect = new PageArchitect(this.$, new WebpackArchitect(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
-
     }
 
     async init() {
-        this.$.cli.log("Building Externals");
         this.$.cli.log("Mapping Plugins");
         if (!this.$.args["--disable-plugins"])
             if (this.$.config.paths.plugins)
                 mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
             else
                 throw new Error("Plugins Dir Not found")
+        this.$.cli.log("Building Externals");
         this.$.renderer = new StaticArchitect({
             rel: this.$.rel,
             babelPath: this.$.config.paths.babel,

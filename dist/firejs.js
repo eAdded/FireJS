@@ -39,7 +39,7 @@ const path_1 = require("path");
             }
         }
         else {
-            const server = new server_1.default();
+            const server = new server_1.default(app);
             yield server.init();
         }
     });

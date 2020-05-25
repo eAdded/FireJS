@@ -2,11 +2,10 @@ import FireJS from "./index";
 export default class {
     private readonly $;
     private readonly app;
-    private cacheMap;
-    constructor();
+    constructor(app: FireJS);
     init(): Promise<void>;
-    private generatePageCache;
     private getPageMap;
     private buildPage;
+    private getLib;
+    private getPage;
 }
-export declare function s(app: FireJS): Promise<void>;

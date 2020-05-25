@@ -9,14 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Page_1 = require("./Page");
 class default_1 {
     constructor(page) {
         this.paths = [];
-        if (page instanceof Page_1.default)
-            this.page = page;
-        else
-            this.page = new Page_1.default(page);
+        this.page = page;
     }
     initPaths() {
         return __awaiter(this, void 0, void 0, function* () {

@@ -6,8 +6,8 @@ import Page from "../classes/Page";
 export default class {
     private readonly $: $;
     private readonly webpackArchitect: WebpackArchitect
-    private readonly isOutputCustom: boolean
-    private readonly isInputCustom: boolean
+    public isOutputCustom: boolean
+    public isInputCustom: boolean
 
     constructor(globalData: $, webpackArchitect, isOutputCustom: boolean, isInputCustom: boolean) {
         this.$ = globalData;

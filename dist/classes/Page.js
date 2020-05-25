@@ -5,7 +5,7 @@ class default_1 {
     constructor(page) {
         this.chunkGroup = { chunks: [], babelChunk: "" };
         this.name = page;
-        this.plugin = new Plugin_1.default(this);
+        this.plugin = new Plugin_1.default(this.name);
     }
     toString() {
         return this.name;

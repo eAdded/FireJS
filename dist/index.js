@@ -37,13 +37,13 @@ class default_1 {
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.$.cli.log("Building Externals");
             this.$.cli.log("Mapping Plugins");
             if (!this.$.args["--disable-plugins"])
                 if (this.$.config.paths.plugins)
                     PluginMapper_1.mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
                 else
                     throw new Error("Plugins Dir Not found");
+            this.$.cli.log("Building Externals");
             this.$.renderer = new StaticArchitect_1.default({
                 rel: this.$.rel,
                 babelPath: this.$.config.paths.babel,

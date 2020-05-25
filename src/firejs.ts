@@ -27,7 +27,7 @@ import {join} from "path"
             $.cli.error(err)
         }
     } else {
-        const server = new Server();
+        const server = new Server(app);
         await server.init();
     }
 })()

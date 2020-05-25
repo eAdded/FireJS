@@ -8,7 +8,7 @@ export default class {
 
     constructor(page: string) {
         this.name = page;
-        this.plugin = new Plugin(this);
+        this.plugin = new Plugin(this.name);
     }
 
     toString(): string {

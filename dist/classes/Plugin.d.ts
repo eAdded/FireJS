@@ -1,9 +1,8 @@
-import Page from "./Page";
 import { Request, Response } from "express";
 export default class {
-    page: Page;
+    page: string;
     paths: string[];
-    constructor(page: string | Page);
+    constructor(page: string);
     initPaths(): Promise<void>;
     getContent(path: string): Promise<any>;
     serverRequest(req: Request, res: Response): Promise<void>;

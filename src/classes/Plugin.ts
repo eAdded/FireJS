@@ -1,15 +1,11 @@
-import Page from "./Page";
 import {Request, Response} from "express";
 
 export default class {
-    page: Page;
+    page: string;
     paths: string[] = []
 
-    constructor(page: string | Page) {
-        if (page instanceof Page)
-            this.page = page;
-        else
-            this.page = new Page(page);
+    constructor(page: string) {
+        this.page = page;
     }
 
     async initPaths(): Promise<void> {

@@ -7,10 +7,10 @@ export function mapPlugins(inputFileSystem, pluginsPath: string, map: Map<string
         if (pluginFile.endsWith(".ts"))
             return
         const plugin: Plugin = new (require(join(pluginsPath, pluginFile)).default)();
-        const page = map.get(plugin.page.toString());
+        const page = map.get(plugin.page);
         if (page)
             page.plugin = plugin;
         else
-            throw new Error(`Page ${plugin.page.toString()} requested by plugin ${pluginFile} does not exist`)
+            throw new Error(`Page ${plugin.page} requested by plugin ${pluginFile} does not exist`)
     });
 }
