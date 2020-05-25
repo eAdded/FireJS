@@ -3,14 +3,13 @@
     
 ## Features    
     
- - Highly customizable
- - Very fast dev builds 
- - Vey fast on the fly pro builds
+ - [Highly customizable](#configuration)
+ - 🚀🚀🚀 Very fast builds (< 2s)
+ - [Very fast SSR](#rendering-on-the-fly)
  - Dev Server (live reload)
- - Easy node interface
- - Plugins
- - Easy dynamic routes
-    
+ - [Easy to use node interface](#node-interface)
+ - [Plugins](#plugins)
+🚀
 ## Why another React Static Site Gen... ?
  The need of this project ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **Firejs**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.  
   
@@ -175,7 +174,7 @@ import FireJS from "@eadded/firejs/dist/FireJS";
 })()
 ~~~
 
-#### Rendering On the fly
+## Rendering On the fly
 If you need to SSR (Server Side Render) your page, or if you want to do something like [this](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3). We've got your back.
 
 *Rendering a page with custom data*
