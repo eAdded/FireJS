@@ -1,3 +1,5 @@
+import {Request, Response} from "express";
+
 export default class {
     page: string;
     paths: string[] = []
@@ -14,5 +16,8 @@ export default class {
 
     async getContent(path: string): Promise<any> {
         return {}
+    }
+
+    async onRequest(req: Request, res: Response): Promise<void> {
     }
 }

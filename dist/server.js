@@ -96,7 +96,10 @@ class default_1 {
         for (const page of this.$.pageMap.values()) {
             if ((found = page.plugin.paths.some(path => {
                 if (req.url === path || (path_1.join(req.url, "index") === path)) {
-                    res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)));
+                    (() => __awaiter(this, void 0, void 0, function* () {
+                        yield page.plugin.onRequest(req, res);
+                        res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)));
+                    }))();
                     return true;
                 }
             })))

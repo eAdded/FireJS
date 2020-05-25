@@ -95,7 +95,10 @@ export default class {
         for (const page of this.$.pageMap.values()) {
             if ((found = page.plugin.paths.some(path => {
                 if (req.url === path || (join(req.url, "index") === path)) {
-                    res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)))
+                    (async () => {
+                        await page.plugin.onRequest(req, res);
+                        res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)))
+                    })()
                     return true;
                 }
             }))) break;
