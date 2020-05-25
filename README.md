@@ -116,7 +116,7 @@ export default class extends Plugin {
 File `[author]/[article].js` which is found in pages dir, is used to create the route `/aniket/rust`.
 
 ## Configuration
-Create a *firejs.config.js* or specify a file using ```[-c,--config]``` flags.
+Create a *firejs.config.js* file or specify a file using ```[-c,--config]``` flags.
 
 *Type Interface*
 
@@ -145,7 +145,7 @@ Create a *firejs.config.js* or specify a file using ```[-c,--config]``` flags.
         unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
     },
     pages?: {
-        _404?: string       //404 page, default : 404.js
+        404?: string       //404 page, default : 404.js
     }
 }
 ```
@@ -166,7 +166,7 @@ import FireJS from "@eadded/firejs/dist/FireJS";
 *Building a specific pro page*
 ~~~
 import FireJS from "@eadded/firejs/dist/FireJS";
-//here we are building page [author]/article.js
+//here we are building page [author]/[article].js
 (async () => {
     const app = new FireJS({args: {"--pro": true}, pages: ["[author]/[article].js"]});
     await app.init();
@@ -194,9 +194,11 @@ The **obj** variable is json of structure
     map : string    //contains map for the page
 }
 ~~~
-The **map** property contains the page chunks and its content. It shall be served by the route */lib/map/[path]*
+The **map** property contains the page chunks and its content. It shall be served by the route */lib/map/[path].map.js*
 
 Make sure you serve the **map** by the correct route to ensure the correct functioning of **Link** component
+
+The map for path */aniket/rust* shall be served by the route */lib/map/aniket/rust.map.js*
 
 **Rendering a page with data from plugins**
 
@@ -209,8 +211,6 @@ import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
     console.log(obj);
 })()
 ~~~
-
-In the given examples we are rendering page **[author]/[article].js** for path **/aniket/rust**.
 
 **Points to keep in mind**
 
@@ -238,5 +238,3 @@ Licensed under the [GNU GENERAL PUBLIC LICENSE](LICENSE)
 
 ## Contributors
  + [Aniket Prajapati](https://github.com/aniketfuryrocks) @ prajapati.ani306@gmail.com , [eAdded](http://www.eadded.com)
-
-> **Note** This project is in a very early stage, with rapidly changing codebase. Do not use for production.
