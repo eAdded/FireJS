@@ -104,7 +104,7 @@ class default_1 {
         }
         if (!found) {
             const page404 = this.$.pageMap.get(this.$.config.pages["404"]);
-            if (this.$.outputFileSystem.existsSync(page404.plugin.paths[0]))
+            if (this.$.outputFileSystem.existsSync("/" + this.$.rel.libRel + "/" + page404.chunkGroup.chunks[0]))
                 res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page404, page404.plugin.paths[0], undefined)));
             else
                 res.end("Please Wait...");
