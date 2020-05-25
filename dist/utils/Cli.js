@@ -24,10 +24,10 @@ class default_1 {
                 break;
             default:
                 this.normal = console.log;
-                this.log = (...messages) => console.error('\x1b[34m#', ...messages, '\x1b[0m');
-                this.ok = (...messages) => console.error('\x1b[32m✓', ...messages, '\x1b[0m');
+                this.log = (...messages) => console.log('\x1b[34m#', ...messages, '\x1b[0m');
+                this.ok = (...messages) => console.log('\x1b[32m✓', ...messages, '\x1b[0m');
                 this.error = (...messages) => console.error('\x1b[31mX', ...messages, '\x1b[0m');
-                this.warn = (...messages) => console.error('\x1b[33m!', ...messages, '\x1b[0m');
+                this.warn = (...messages) => console.warn('\x1b[33m!', ...messages, '\x1b[0m');
         }
     }
 }

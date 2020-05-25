@@ -71,7 +71,6 @@ export default class {
                 this.$.outputFileSystem.unlinkSync(`/${this.$.rel.libRel}/${chunk}`)
             })
             page.chunkGroup.chunks = [];//reinit chunks
-            console.log(this.$.outputFileSystem)
             this.$.cli.ok(`Successfully built page ${page.toString()}`);
             page.plugin.initPaths();
         }, err => {

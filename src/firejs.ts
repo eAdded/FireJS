@@ -23,6 +23,8 @@ import {join} from "path"
             $.outputFileSystem.writeFileSync(join($.config.paths.babel, "firejs.map.json"),
                 JSON.stringify(map));
             $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
+            if ($.config.paths.static)
+                $.cli.warn("Don't forget to copy the static folder to dist");
         } catch (err) {
             $.cli.error(err)
         }
