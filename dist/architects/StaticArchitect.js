@@ -30,6 +30,7 @@ class default_1 {
             if (content) {
                 // @ts-ignore
                 global.window = {
+                    // @ts-ignore
                     __LIB_REL__: this.param.rel.libRel,
                     __MAP__: {
                         content,

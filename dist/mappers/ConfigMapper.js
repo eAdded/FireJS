@@ -71,7 +71,7 @@ class default_1 {
         this.makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.makeAbsolute(config.paths.root, config.paths.lib) : path_1.join(config.paths.dist, "lib"));
         this.makeDirIfNotFound(config.paths.map = config.paths.map ? this.makeAbsolute(config.paths.root, config.paths.map) : path_1.join(config.paths.lib, "map"));
         //configs
-        this.undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.js", "webpack config");
+        this.undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.ts", "webpack config");
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins

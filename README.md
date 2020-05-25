@@ -11,7 +11,7 @@
  - 💯 [Plugins](#plugins)
 
 ## Why another React Static Site Gen... ?
-The need of this project ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **Firejs**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.  
+The need of this project ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **Firejs**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.ts**.  
   
 ## Install  
 ~~~  
@@ -50,7 +50,7 @@ Project
 │   └─── static             //all static files go here. eg : images
 │       │   example.png
 | firejs.config.js          //default config file
-| webpack.config.js         //default webpack config file
+| webpack.config.ts         //default webpack config file
 ```
 
 *Note* During production static dir will not be copied.
@@ -132,7 +132,7 @@ Create a *firejs.config.js* file or specify a file using ```[-c,--config]``` fla
         template?: string,  //template file, default : inbuilt template file
         lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
         map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
-        webpack?: string,   //webpack config file, default : root/webpack.config.js
+        webpack?: string,   //webpack config file, default : root/webpack.config.ts
         static?: string,    //dir where page static elements are stored eg. images, default : root/src/static
         plugins?: string,   //plugins dir, default : root/src/plugins
     },
