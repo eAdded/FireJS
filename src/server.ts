@@ -1,68 +1,88 @@
-import {join, relative} from "path"
+import {join} from "path"
 import {watch} from "chokidar"
-import StaticArchitect from "./architects/StaticArchitect"
-import PageArchitect from "./architects/PageArchitect"
-import MapComponent from "./classes/MapComponent"
-import FireJS from "./index"
-import {applyPlugin} from "./mappers/PluginMapper";
-import PagePath from "./classes/PagePath";
+import FireJS, {$} from "./FireJS"
+import MemoryFS = require("memory-fs");
 import express = require("express");
 
-const server: express.Application = express();
+export default class {
+    private readonly $: $
+    private readonly app: FireJS;
 
-export default function (app: FireJS) {
-    const $ = app.Context;
-    const {config: {paths}} = $;
-    const staticArchitect = new StaticArchitect($);
-    const pageArchitect = new PageArchitect($);
-    const pageDataRelative = `/${relative(paths.dist, paths.map)}/`;
-    const libRelative = `/${relative(paths.dist, paths.lib)}/`;
+    constructor(app: FireJS) {
+        this.app = app;
+        this.$ = app.getContext();
+        this.$.outputFileSystem = new MemoryFS()
+        this.$.pageArchitect.isOutputCustom = true;
+    }
 
-    app.mapPluginsAndBuildExternals().then(_ => {
-        watch(paths.pages)//watch changes
-            .on('add', buildPage)
+    async init() {
+        await this.app.init();
+        watch(this.$.config.paths.pages)//watch changes
+            .on('add', this.buildPage.bind(this))
             .on('unlink', path => {
-                $.map.delete(path.replace(paths.pages + "/", ""));
+                this.$.pageMap.delete(path.replace(this.$.config.paths.pages + "/", ""));
             });
-        $.externals.forEach(external =>//externals
-            server.use(`${libRelative}${external}`, express.static(join(paths.dist, libRelative, external))));
-        if (paths.static)
-            server.use(`${paths.static.substring(paths.static.lastIndexOf("/"))}`, express.static(paths.static));
+        this.$.cli.ok("Watching for file changes")
+        const server: express.Application = express();
+        this.$.renderer.param.externals.forEach(external =>//externals
+            server.get(`${this.$.rel.libRel}${external}`, (req, res) => {
+                res.end(this.$.outputFileSystem.readFileSync(req.url));
+            }));
+
+        if (this.$.config.paths.static)
+            server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
+
         server.use((req, res, next) => {
-            req.url = decodeURI(req.url);
-            if (req.url.startsWith(pageDataRelative))
-                getPageData(req, res);
-            else if (req.url.startsWith(libRelative))
-                getLib(req, res);
+            req.url = req.path;
+            if (req.url.startsWith("/" + this.$.rel.mapRel + "/"))
+                this.getPageMap(req, res);
+            else if (req.url.startsWith("/" + this.$.rel.libRel + "/"))
+                this.getLib(req, res);
             else
-                getPage(req, res)
+                this.getPage(req, res)
             next();
         });
-        server.listen(5000, _ => {
-            $.cli.ok("listening on port 5000");
+        server.listen(process.env.PORT || 5000, () => {
+            this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`);
         })
-    })
+    }
 
-    function getPageData(req: express.Request, res: express.Response) {
+    private getPageMap(req: express.Request, res: express.Response) {
         let found = false;
-        for (const mapComponent of $.map.values()) {
-            if ((found = mapComponent.paths.some(pagePath => {
-                if (req.url === `/${pagePath.MapPath}`) {
-                    res.end(`window.__MAP__=${JSON.stringify(pagePath.Map)}`);
-                    return true;
-                }
-            }))) break;
-        }
+        const path = req.url.substring(("/" + this.$.rel.mapRel).length, req.url.lastIndexOf(".map.js"));
+        for (const page of this.$.pageMap.values())
+            if ((found = page.plugin.paths.some(_path => path === _path))) {
+                (async () => {
+                    res.end(`window.__MAP__=${JSON.stringify({
+                        content: await page.plugin.getContent(path),
+                        chunks: page.chunkGroup.chunks
+                    })}`)
+                })()
+                break;
+            }
         if (!found)
             res.status(404);
     }
 
-    function getLib(req: express.Request, res: express.Response) {
+    private buildPage(page_path: string) {
+        const page = this.$.pageMap.get(page_path.substring((this.$.config.paths.pages + "/").length));
+        this.$.pageArchitect.buildDirect(page, () => {
+            page.chunkGroup.chunks.forEach(chunk => {
+                this.$.outputFileSystem.unlinkSync(`/${this.$.rel.libRel}/${chunk}`)
+            })
+            page.chunkGroup.chunks = [];//reinit chunks
+            this.$.cli.ok(`Successfully built page ${page.toString()}`);
+            page.plugin.initPaths();
+        }, err => {
+            this.$.cli.error(`Error while building page ${page.toString()}`, err);
+        });
+    }
+
+    private getLib(req: express.Request, res: express.Response) {
         let found = false;
-        let cleanUrl = "/" + req.url.substring(libRelative.length);
-        for (const mapComponent of $.map.values()) {
-            if ((found = mapComponent.memoryFileSystem.existsSync(cleanUrl))) {
-                res.end(mapComponent.memoryFileSystem.readFileSync(cleanUrl));
+        for (const page of this.$.pageMap.values()) {
+            if ((found = this.$.outputFileSystem.existsSync(req.url))) {
+                res.end(this.$.outputFileSystem.readFileSync(req.url));
                 break;
             }
         }
@@ -70,45 +90,25 @@ export default function (app: FireJS) {
             res.status(404);
     }
 
-    function getPage(req: express.Request, res: express.Response) {
+    private getPage(req: express.Request, res: express.Response) {
         let found = false;
-        for (const mapComponent of $.map.values()) {
-            if ((found = mapComponent.paths.some(pagePath => {
-                if (req.url === pagePath.Path || (join(req.url, "index") === pagePath.Path)) {
-                    res.end(staticArchitect.finalize(staticArchitect.render($.template, mapComponent.chunkGroup, pagePath, false)));
+        for (const page of this.$.pageMap.values()) {
+            if ((found = page.plugin.paths.some(path => {
+                if (req.url === path || (join(req.url, "index") === path)) {
+                    (async () => {
+                        await page.plugin.onRequest(req, res);
+                        res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)))
+                    })()
                     return true;
                 }
             }))) break;
         }
         if (!found) {
-            const _404_MapComponent = $.map.get($.config.pages["404"]);
-            if (_404_MapComponent.paths.length > 0)
-                res.end(staticArchitect.finalize(staticArchitect.render($.template, _404_MapComponent.chunkGroup, _404_MapComponent.paths[0], false)));
+            const page404 = this.$.pageMap.get(this.$.config.pages["404"]);
+            if (this.$.outputFileSystem.existsSync("/" + this.$.rel.libRel + "/" + page404.chunkGroup.chunks[0]))
+                res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page404, page404.plugin.paths[0], undefined)))
             else
                 res.end("Please Wait...")
         }
-    }
-
-    function buildPage(path: string) {
-        const rel_page = path.replace(paths.pages + "/", "")
-        let mapComponent: MapComponent = $.map.get(rel_page);
-        if (!mapComponent) {
-            mapComponent = new MapComponent(rel_page);
-            $.map.set(rel_page, mapComponent);
-        }
-        pageArchitect.buildDirect(mapComponent, () => {
-            $.cli.ok(`Successfully built page ${mapComponent.Page}`);
-            // @ts-ignore
-            if (!mapComponent.wasApplied) {
-                // @ts-ignore
-                mapComponent.wasApplied = true;
-                $.cli.log(`Applying plugin for page ${mapComponent.Page}`);
-                applyPlugin(mapComponent, $.rel, (pagePath: PagePath) => {
-                    $.cli.ok(`Data fetched for path ${pagePath.Path}`);
-                });
-            }
-        }, err => {
-            $.cli.error(`Error while building page ${mapComponent.Page}`, err);
-        });
     }
 }

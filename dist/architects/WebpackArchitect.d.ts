@@ -1,11 +1,10 @@
-import MapComponent from "../classes/MapComponent";
-import { $, WebpackConfig } from "../index";
+import { $, WebpackConfig } from "../FireJS";
+import Page from "../classes/Page";
 export default class {
     private readonly $;
-    constructor(globalData: $);
+    private readonly userConfig;
+    constructor(globalData: $, userConfig?: WebpackConfig);
     externals(): WebpackConfig;
-    getConfigBase(): WebpackConfig;
-    readUserConfig(): WebpackConfig;
-    babel(mapComponent: MapComponent, user_config: WebpackConfig): WebpackConfig;
-    direct(mapComponent: MapComponent, user_config: WebpackConfig): WebpackConfig;
+    babel(page: Page): WebpackConfig;
+    direct(page: Page): WebpackConfig;
 }

@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const fs_1 = require("fs");
 const lodash_1 = require("lodash");
-const PluginMapper_1 = require("./PluginMapper");
 function getArgs() {
     return require("arg")({
         //Types
@@ -13,11 +12,13 @@ function getArgs() {
         "--plain": Boolean,
         "--silent": Boolean,
         "--disable-plugins": Boolean,
+        "--help": Boolean,
         //Aliases
         "-p": "--pro",
         "-c": "--conf",
         "-v": "--verbose",
         "-s": "--silent",
+        "-h": "--help",
     });
 }
 exports.getArgs = getArgs;
@@ -74,15 +75,7 @@ class default_1 {
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
-        if (!this.args["--disable-plugins"]) {
-            this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            if (config.plugins)
-                config.plugins = PluginMapper_1.resolveCustomPlugins(config.plugins, config.paths.root);
-            else
-                config.plugins = [];
-            if (config.paths.plugins) //Only getPlugins when dir exists
-                config.plugins.push(...PluginMapper_1.getPlugins(config.paths.plugins));
-        }
+        this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
         //html template tags
         config.templateTags = config.templateTags || {};
         config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";

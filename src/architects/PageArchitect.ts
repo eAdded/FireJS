@@ -1,72 +1,77 @@
 import webpack = require("webpack");
-import MemoryFileSystem = require("memory-fs");
 import WebpackArchitect from "./WebpackArchitect";
-import {$, WebpackConfig, WebpackStat} from "../index";
-import MapComponent from "../classes/MapComponent";
+import {$, WebpackConfig, WebpackStat} from "../FireJS";
+import Page from "../classes/Page";
 
 export default class {
     private readonly $: $;
+    private readonly webpackArchitect: WebpackArchitect
+    public isOutputCustom: boolean
+    public isInputCustom: boolean
 
-    constructor(globalData: $) {
+    constructor(globalData: $, webpackArchitect, isOutputCustom: boolean, isInputCustom: boolean) {
         this.$ = globalData;
+        this.webpackArchitect = webpackArchitect;
+        this.isOutputCustom = isOutputCustom;
+        this.isInputCustom = isInputCustom;
     }
 
     buildExternals() {
-        return new Promise((resolve, reject) => {
-            this.build(new WebpackArchitect(this.$).externals(), undefined, stat => {
+        return new Promise<string[]>((resolve, reject) => {
+            this.build(this.webpackArchitect.externals(), stat => {
+                const externals = [];
                 stat.compilation.chunks.forEach(chunk => {
-                    this.$.externals.push(...chunk.files);
+                    externals.push(...chunk.files);
                 })
-                resolve();
+                resolve(externals);
             }, reject)
         })
     }
 
-    buildBabel(mapComponent: MapComponent, resolve: () => void, reject: (err: any | undefined) => void) {
-        this.build(new WebpackArchitect(this.$).babel(mapComponent, this.$.webpackConfig), undefined, stat => {
-            if (this.logStat(stat))//true if errors
-                reject(undefined);
-            else {
-                stat.compilation.chunks.forEach(chunk => {
-                    chunk.files.forEach(file => {
-                        if (file.startsWith("m")) {
-                            mapComponent.chunkGroup.babelChunk = file;
-                        } else //don't add babel main
-                            mapComponent.chunkGroup.chunks.push(file);
-                    })
-                });
-                resolve();
-            }
-        }, err => reject(err));
+    buildBabel(page: Page) {
+        return new Promise((resolve, reject) => {
+            this.build(this.webpackArchitect.babel(page), stat => {
+                if (this.logStat(stat))//true if errors
+                    reject();
+                else {
+                    stat.compilation.chunks.forEach(chunk => {
+                        chunk.files.forEach(file => {
+                            if (file.startsWith("m"))
+                                page.chunkGroup.babelChunk = file;
+                            else //don't add babel main
+                                page.chunkGroup.chunks.push(file);
+                        })
+                    });
+                    resolve();
+                }
+            }, reject);
+        })
     }
 
-    buildDirect(mapComponent: MapComponent, resolve: () => void, reject: (err: any | undefined) => void) {
-        const fileSystem = this.$.config.pro ? undefined : new MemoryFileSystem();
-        this.build(new WebpackArchitect(this.$).direct(mapComponent, this.$.webpackConfig), fileSystem, (stat) => {
-            if (!this.$.config.pro) {
-                mapComponent.chunkGroup.chunks = []; //re init for new chunks
-                mapComponent.memoryFileSystem = fileSystem;
-            }
+    buildDirect(page: Page, resolve: () => void, reject: (err: any | undefined) => void) {
+        this.build(this.webpackArchitect.direct(page), (stat) => {
             if (this.logStat(stat))//true if errors
                 reject(undefined);
             else {
+                resolve();
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
-                        if (file.startsWith("m")) {
-                            mapComponent.chunkGroup.chunks.unshift(file);//add main chunk to the top
-                        } else
-                            mapComponent.chunkGroup.chunks.push(file);
+                        if (file.startsWith("m"))
+                            page.chunkGroup.chunks.unshift(file)//add main chunk to the top
+                        else
+                            page.chunkGroup.chunks.push(file)
                     })
                 });
-                resolve();
             }
         }, reject);
     }
 
-    build(config: WebpackConfig, fileSystem: MemoryFileSystem | undefined, resolve: (stat) => void, reject: (err) => void) {
+    build(config: WebpackConfig, resolve: (stat) => void, reject: (err) => void) {
         const compiler = webpack(config);
-        if (fileSystem)
-            compiler.outputFileSystem = fileSystem;
+        if (this.isOutputCustom)
+            compiler.outputFileSystem = this.$.outputFileSystem;
+        if (this.isInputCustom)
+            compiler.inputFileSystem = this.$.inputFileSystem;
         if (config.watch)
             compiler.watch({}, (err, stat) => {
                 if (err)

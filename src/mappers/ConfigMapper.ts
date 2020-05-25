@@ -1,7 +1,6 @@
 import {isAbsolute, join, resolve} from "path"
 import {existsSync, mkdirSync} from "fs"
 import {cloneDeep} from "lodash"
-import {getPlugins, resolveCustomPlugins} from "./PluginMapper";
 import Cli from "../utils/Cli";
 
 export interface Config {
@@ -32,6 +31,7 @@ export interface Args {
     "--plain"?: boolean,            //Log without styling i.e colors and symbols
     "--silent"?: boolean,           //Log errors only
     "--disable-plugins"?: boolean   //Disable plugins
+    "--help"?: boolean              //Help
 }
 
 export interface ExplicitPages {
@@ -56,11 +56,13 @@ export function getArgs(): Args {
         "--plain": Boolean,
         "--silent": Boolean,
         "--disable-plugins": Boolean,
+        "--help": Boolean,
         //Aliases
         "-p": "--pro",
         "-c": "--conf",
         "-v": "--verbose",
         "-s": "--silent",
+        "-h": "--help",
     })
 }
 
@@ -113,15 +115,7 @@ export default class {
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins
-        if (!this.args["--disable-plugins"]) {
-            this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
-            if (config.plugins)
-                config.plugins = resolveCustomPlugins(config.plugins, config.paths.root);
-            else
-                config.plugins = [];
-            if (config.paths.plugins) //Only getPlugins when dir exists
-                config.plugins.push(...getPlugins(config.paths.plugins));
-        }
+        this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
         //html template tags
         config.templateTags = config.templateTags || {};
         config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";

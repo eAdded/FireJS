@@ -1,7 +1,3 @@
-import { $ } from "../index";
-export default class {
-    $: $;
-    constructor(globalData: $);
-    map(): Map<any, any>;
-    convertToMap(array: string[]): Map<any, any>;
-}
+import Page from "../classes/Page";
+export declare function createMap(path_to_pages: string, inputFileSystem: any): Map<string, Page>;
+export declare function convertToMap(array: string[]): Map<string, Page>;

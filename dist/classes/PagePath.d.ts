@@ -1,16 +1,15 @@
-import MapComponent from "./MapComponent";
 import { PathRelatives } from "../index";
-interface map {
+import Page from "./Page";
+export interface PageMap {
     chunks: string[];
     content: any;
 }
 export default class {
     private readonly path;
-    private readonly map;
     private readonly map_path;
-    constructor(mapComponent: MapComponent, path: string, content: any, rel: PathRelatives);
-    get Map(): map;
-    get MapPath(): string;
-    get Path(): string;
+    private readonly map;
+    constructor(mapComponent: Page, path: string, content: any, rel: PathRelatives);
+    getMap(): PageMap;
+    getPathToMap(): string;
+    getPath(): string;
 }
-export {};

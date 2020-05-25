@@ -1,110 +1,117 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const chokidar_1 = require("chokidar");
-const StaticArchitect_1 = require("./architects/StaticArchitect");
-const PageArchitect_1 = require("./architects/PageArchitect");
-const MapComponent_1 = require("./classes/MapComponent");
-const PluginMapper_1 = require("./mappers/PluginMapper");
+const MemoryFS = require("memory-fs");
 const express = require("express");
-const server = express();
-function default_1(app) {
-    const $ = app.Context;
-    const { config: { paths } } = $;
-    const staticArchitect = new StaticArchitect_1.default($);
-    const pageArchitect = new PageArchitect_1.default($);
-    const pageDataRelative = `/${path_1.relative(paths.dist, paths.map)}/`;
-    const libRelative = `/${path_1.relative(paths.dist, paths.lib)}/`;
-    app.mapPluginsAndBuildExternals().then(_ => {
-        chokidar_1.watch(paths.pages) //watch changes
-            .on('add', buildPage)
-            .on('unlink', path => {
-            $.map.delete(path.replace(paths.pages + "/", ""));
+class default_1 {
+    constructor(app) {
+        this.app = app;
+        this.$ = app.getContext();
+        this.$.outputFileSystem = new MemoryFS();
+        this.$.pageArchitect.isOutputCustom = true;
+    }
+    init() {
+        return __awaiter(this, void 0, void 0, function* () {
+            yield this.app.init();
+            chokidar_1.watch(this.$.config.paths.pages) //watch changes
+                .on('add', this.buildPage.bind(this))
+                .on('unlink', path => {
+                this.$.pageMap.delete(path.replace(this.$.config.paths.pages + "/", ""));
+            });
+            this.$.cli.ok("Watching for file changes");
+            const server = express();
+            this.$.renderer.param.externals.forEach(external => //externals
+             server.get(`${this.$.rel.libRel}${external}`, (req, res) => {
+                res.end(this.$.outputFileSystem.readFileSync(req.url));
+            }));
+            if (this.$.config.paths.static)
+                server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
+            server.use((req, res, next) => {
+                req.url = req.path;
+                if (req.url.startsWith("/" + this.$.rel.mapRel + "/"))
+                    this.getPageMap(req, res);
+                else if (req.url.startsWith("/" + this.$.rel.libRel + "/"))
+                    this.getLib(req, res);
+                else
+                    this.getPage(req, res);
+                next();
+            });
+            server.listen(process.env.PORT || 5000, () => {
+                this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`);
+            });
         });
-        $.externals.forEach(external => //externals
-         server.use(`${libRelative}${external}`, express.static(path_1.join(paths.dist, libRelative, external))));
-        if (paths.static)
-            server.use(`${paths.static.substring(paths.static.lastIndexOf("/"))}`, express.static(paths.static));
-        server.use((req, res, next) => {
-            req.url = decodeURI(req.url);
-            if (req.url.startsWith(pageDataRelative))
-                getPageData(req, res);
-            else if (req.url.startsWith(libRelative))
-                getLib(req, res);
-            else
-                getPage(req, res);
-            next();
-        });
-        server.listen(5000, _ => {
-            $.cli.ok("listening on port 5000");
-        });
-    });
-    function getPageData(req, res) {
+    }
+    getPageMap(req, res) {
         let found = false;
-        for (const mapComponent of $.map.values()) {
-            if ((found = mapComponent.paths.some(pagePath => {
-                if (req.url === `/${pagePath.MapPath}`) {
-                    res.end(`window.__MAP__=${JSON.stringify(pagePath.Map)}`);
-                    return true;
-                }
-            })))
+        const path = req.url.substring(("/" + this.$.rel.mapRel).length, req.url.lastIndexOf(".map.js"));
+        for (const page of this.$.pageMap.values())
+            if ((found = page.plugin.paths.some(_path => path === _path))) {
+                (() => __awaiter(this, void 0, void 0, function* () {
+                    res.end(`window.__MAP__=${JSON.stringify({
+                        content: yield page.plugin.getContent(path),
+                        chunks: page.chunkGroup.chunks
+                    })}`);
+                }))();
                 break;
-        }
+            }
         if (!found)
             res.status(404);
     }
-    function getLib(req, res) {
+    buildPage(page_path) {
+        const page = this.$.pageMap.get(page_path.substring((this.$.config.paths.pages + "/").length));
+        this.$.pageArchitect.buildDirect(page, () => {
+            page.chunkGroup.chunks.forEach(chunk => {
+                this.$.outputFileSystem.unlinkSync(`/${this.$.rel.libRel}/${chunk}`);
+            });
+            page.chunkGroup.chunks = []; //reinit chunks
+            this.$.cli.ok(`Successfully built page ${page.toString()}`);
+            page.plugin.initPaths();
+        }, err => {
+            this.$.cli.error(`Error while building page ${page.toString()}`, err);
+        });
+    }
+    getLib(req, res) {
         let found = false;
-        let cleanUrl = "/" + req.url.substring(libRelative.length);
-        for (const mapComponent of $.map.values()) {
-            if ((found = mapComponent.memoryFileSystem.existsSync(cleanUrl))) {
-                res.end(mapComponent.memoryFileSystem.readFileSync(cleanUrl));
+        for (const page of this.$.pageMap.values()) {
+            if ((found = this.$.outputFileSystem.existsSync(req.url))) {
+                res.end(this.$.outputFileSystem.readFileSync(req.url));
                 break;
             }
         }
         if (!found)
             res.status(404);
     }
-    function getPage(req, res) {
+    getPage(req, res) {
         let found = false;
-        for (const mapComponent of $.map.values()) {
-            if ((found = mapComponent.paths.some(pagePath => {
-                if (req.url === pagePath.Path || (path_1.join(req.url, "index") === pagePath.Path)) {
-                    res.end(staticArchitect.finalize(staticArchitect.render($.template, mapComponent.chunkGroup, pagePath, false)));
+        for (const page of this.$.pageMap.values()) {
+            if ((found = page.plugin.paths.some(path => {
+                if (req.url === path || (path_1.join(req.url, "index") === path)) {
+                    (() => __awaiter(this, void 0, void 0, function* () {
+                        yield page.plugin.onRequest(req, res);
+                        res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)));
+                    }))();
                     return true;
                 }
             })))
                 break;
         }
         if (!found) {
-            const _404_MapComponent = $.map.get($.config.pages["404"]);
-            if (_404_MapComponent.paths.length > 0)
-                res.end(staticArchitect.finalize(staticArchitect.render($.template, _404_MapComponent.chunkGroup, _404_MapComponent.paths[0], false)));
+            const page404 = this.$.pageMap.get(this.$.config.pages["404"]);
+            if (this.$.outputFileSystem.existsSync("/" + this.$.rel.libRel + "/" + page404.chunkGroup.chunks[0]))
+                res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page404, page404.plugin.paths[0], undefined)));
             else
                 res.end("Please Wait...");
         }
-    }
-    function buildPage(path) {
-        const rel_page = path.replace(paths.pages + "/", "");
-        let mapComponent = $.map.get(rel_page);
-        if (!mapComponent) {
-            mapComponent = new MapComponent_1.default(rel_page);
-            $.map.set(rel_page, mapComponent);
-        }
-        pageArchitect.buildDirect(mapComponent, () => {
-            $.cli.ok(`Successfully built page ${mapComponent.Page}`);
-            // @ts-ignore
-            if (!mapComponent.wasApplied) {
-                // @ts-ignore
-                mapComponent.wasApplied = true;
-                $.cli.log(`Applying plugin for page ${mapComponent.Page}`);
-                PluginMapper_1.applyPlugin(mapComponent, $.rel, (pagePath) => {
-                    $.cli.ok(`Data fetched for path ${pagePath.Path}`);
-                });
-            }
-        }, err => {
-            $.cli.error(`Error while building page ${mapComponent.Page}`, err);
-        });
     }
 }
 exports.default = default_1;
