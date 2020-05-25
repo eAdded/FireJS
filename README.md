@@ -6,7 +6,7 @@
  - 🗾 [Highly customizable](#configuration)
  - 🚀 Very fast builds (< 2s)
  - 🏁 [Very fast SSR](#rendering-on-the-fly)
- - 🔭 Dev Server (live reload)
+ - 🔭 [Dev Server](#hello-world)
  - 🤠 [Easy to use node interface](#node-interface)
  - 💯 [Plugins](#plugins)
 
