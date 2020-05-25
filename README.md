@@ -1,14 +1,14 @@
-# Firejs
+# Firejs 🔥
  Highly customizable no config react static site generator built on the principles of Gatsby, NextJs and create-react-app.    
     
 ## Features    
     
- - [Highly customizable](#configuration)
- - 🚀🚀🚀 Very fast builds (< 2s)
- - [Very fast SSR](#rendering-on-the-fly)
- - Dev Server (live reload)
- - [Easy to use node interface](#node-interface)
- - [Plugins](#plugins)
+ - 🗾 [Highly customizable](#configuration)
+ - 🚀 Very fast builds (< 2s)
+ - 🏁 [Very fast SSR](#rendering-on-the-fly)
+ - 🔭 Dev Server (live reload)
+ - 🤠 [Easy to use node interface](#node-interface)
+ - 💯 [Plugins](#plugins)
 🚀
 ## Why another React Static Site Gen... ?
  The need of this project ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **Firejs**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.js**.  
