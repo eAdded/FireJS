@@ -32,28 +32,28 @@ class default_1 {
             const server = express();
             this.$.renderer.param.externals.forEach(external => //externals
              server.get(`${this.$.rel.libRel}${external}`, (req, res) => {
-                res.end(this.$.outputFileSystem.readFileSync(req.url));
+                res.end(this.$.outputFileSystem.readFileSync(req.path));
             }));
             if (this.$.config.paths.static)
                 server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
             server.use((req, res, next) => {
-                req.url = req.path;
-                if (req.url.startsWith("/" + this.$.rel.mapRel + "/"))
-                    this.getPageMap(req, res);
-                else if (req.url.startsWith("/" + this.$.rel.libRel + "/"))
-                    this.getLib(req, res);
+                // @ts-ignore
+                const path = decodeURI(req._parsedUrl.pathname);
+                if (path.startsWith("/" + this.$.rel.mapRel + "/"))
+                    this.getPageMap(path, res, next);
+                else if (path.startsWith("/" + this.$.rel.libRel + "/"))
+                    this.getLib(path, res, next);
                 else
-                    this.getPage(req, res);
-                next();
+                    this.getPage(path, req, res, next);
             });
             server.listen(process.env.PORT || 5000, () => {
                 this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`);
             });
         });
     }
-    getPageMap(req, res) {
+    getPageMap(path, res, next) {
         let found = false;
-        const path = req.url.substring(("/" + this.$.rel.mapRel).length, req.url.lastIndexOf(".map.js"));
+        path = path.substring(("/" + this.$.rel.mapRel).length, path.lastIndexOf(".map.js"));
         for (const page of this.$.pageMap.values())
             if ((found = page.plugin.paths.some(_path => path === _path))) {
                 (() => __awaiter(this, void 0, void 0, function* () {
@@ -61,11 +61,14 @@ class default_1 {
                         content: yield page.plugin.getContent(path),
                         chunks: page.chunkGroup.chunks
                     })}`);
+                    next();
                 }))();
                 break;
             }
-        if (!found)
+        if (!found) {
             res.status(404);
+            next();
+        }
     }
     buildPage(page_path) {
         const page = this.$.pageMap.get(page_path.substring((this.$.config.paths.pages + "/").length));
@@ -80,25 +83,27 @@ class default_1 {
             this.$.cli.error(`Error while building page ${page.toString()}`, err);
         });
     }
-    getLib(req, res) {
+    getLib(path, res, next) {
         let found = false;
         for (const page of this.$.pageMap.values()) {
-            if ((found = this.$.outputFileSystem.existsSync(req.url))) {
-                res.end(this.$.outputFileSystem.readFileSync(req.url));
+            if ((found = this.$.outputFileSystem.existsSync(path))) {
+                res.end(this.$.outputFileSystem.readFileSync(path));
                 break;
             }
         }
         if (!found)
             res.status(404);
+        next();
     }
-    getPage(req, res) {
+    getPage(path, req, res, next) {
         let found = false;
         for (const page of this.$.pageMap.values()) {
-            if ((found = page.plugin.paths.some(path => {
-                if (req.url === path || (path_1.join(req.url, "index") === path)) {
+            if ((found = page.plugin.paths.some(_path => {
+                if (path === _path || (path_1.join(path, "index") === _path)) {
                     (() => __awaiter(this, void 0, void 0, function* () {
                         yield page.plugin.onRequest(req, res);
                         res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)));
+                        next();
                     }))();
                     return true;
                 }
@@ -111,6 +116,7 @@ class default_1 {
                 res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page404, page404.plugin.paths[0], undefined)));
             else
                 res.end("Please Wait...");
+            next();
         }
     }
 }
