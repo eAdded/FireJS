@@ -37,7 +37,7 @@ export default class {
             },
             output: {
                 path: this.$.config.pro ? this.$.config.paths.lib : `/${this.$.rel.libRel}`,
-                filename: "[name][contentHash].js",
+                filename: "e[contentHash].js",
                 library: "[name]",//make file as library so it can be imported for static generation
             }
         };

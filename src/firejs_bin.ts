@@ -20,7 +20,7 @@ import {join} from "path"
             }
             for (const page of $.pageMap.values())
                 map.pageMap[page.toString()] = page.chunks
-            $.outputFileSystem.writeFileSync(join($.config.paths.babel, "firejs.map.json"),
+            $.outputFileSystem.writeFileSync(join($.config.paths.dist, "firejs.map.json"),
                 JSON.stringify(map));
             $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
             if ($.config.paths.static)

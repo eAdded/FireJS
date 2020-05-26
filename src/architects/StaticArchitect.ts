@@ -10,7 +10,8 @@ export interface StaticConfig {
     tags: TemplateTags,
     externals: string[],
     explicitPages: ExplicitPages,
-    pathToLib: string
+    pathToLib: string,
+    template: string
 }
 
 export default class {
@@ -24,33 +25,17 @@ export default class {
         global.ReactDOM = require("react-dom");
         // @ts-ignore
         global.ReactHelmet = {Helmet};
-    }
-
-    render(template: string, page: Page, path: string, content: any) {
-        //set globals
-        template = this.addInnerHTML(template,
+        this.param.template = this.addInnerHTML(this.param.template,
             `<script>` +
-            `window.__PATH__="${path}";` +
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
             `window.__PAGES__={};` +
             `window.__PAGES__._404="/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}";` +
             `</script>`,
             "head");
-        //add map script
-        template = this.addChunk(template, join(this.param.rel.mapRel, path + ".map.js"), "", "head");
-        //add externals
-        this.param.externals.forEach(external => {//externals are same for all paths
-            template = this.addChunk(template, external);
-        });
-        //add main entry
-        page.chunks.forEach((chunk, index) => {
-            if (index == 0) {
-                template = this.addChunk(template, chunk);
-                template = this.addChunk(template, "bundle.js");
-            } else
-                template = this.addChunk(template, chunk);
-        });
+    }
+
+    render(template: string, page: Page, path: string, content: any) {
         template = template.replace(
             this.param.tags.static,
             `<div id='root'>${(() => {
@@ -58,12 +43,12 @@ export default class {
                 global.window = {
                     // @ts-ignore
                     __LIB_REL__: this.param.rel.libRel,
+                    __MAP_REL__: this.param.rel.mapRel,
                     __MAP__: {
                         content,
                         chunks: page.chunks
                     },
-                    __PATH__: path,
-                    __MAP_REL__: this.param.rel.mapRel,
+                    __EXTERNALS__: this.param.externals,
                     SSR: true
                 };
                 // @ts-ignore
@@ -82,20 +67,6 @@ export default class {
         for (let head_element in helmet)
             template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
         return template
-    }
-
-    addChunk(template: string, chunk: string, root: string | undefined = undefined, tag: string | undefined = undefined) {
-        root = root === undefined ? this.param.rel.libRel : root;
-        const href = join(root, chunk);
-        if (tag === "script" || chunk.endsWith(".js")) {
-            template = template.replace(this.param.tags.style, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
-            return template.replace(this.param.tags.script, `<script src="/${href}"></script>${this.param.tags.script}`);
-        } else if (tag === "style" || chunk.endsWith(".css"))
-            return template.replace(this.param.tags.style, `<link rel="stylesheet" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
-        else if (tag === "head")
-            return template.replace(this.param.tags.head, `<link href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
-        else
-            return template.replace(this.param.tags.unknown, `<link href="/${href}">${this.param.tags.unknown}`);
     }
 
     addInnerHTML(template: string, element: string, tag: string) {

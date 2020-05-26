@@ -31,7 +31,7 @@ const path_1 = require("path");
                 };
                 for (const page of $.pageMap.values())
                     map.pageMap[page.toString()] = page.chunks;
-                $.outputFileSystem.writeFileSync(path_1.join($.config.paths.babel, "firejs.map.json"), JSON.stringify(map));
+                $.outputFileSystem.writeFileSync(path_1.join($.config.paths.dist, "firejs.map.json"), JSON.stringify(map));
                 $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
                 if ($.config.paths.static)
                     $.cli.warn("Don't forget to copy the static folder to dist");

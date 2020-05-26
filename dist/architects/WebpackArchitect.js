@@ -25,7 +25,7 @@ class default_1 {
             },
             output: {
                 path: this.$.config.pro ? this.$.config.paths.lib : `/${this.$.rel.libRel}`,
-                filename: "[name][contentHash].js",
+                filename: "e[contentHash].js",
                 library: "[name]",
             }
         };
