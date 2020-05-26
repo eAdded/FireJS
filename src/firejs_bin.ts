@@ -19,7 +19,7 @@ import {join} from "path"
                 template: $.template
             }
             for (const page of $.pageMap.values())
-                map.pageMap[page.toString()] = page.chunkGroup
+                map.pageMap[page.toString()] = page.chunks
             $.outputFileSystem.writeFileSync(join($.config.paths.babel, "firejs.map.json"),
                 JSON.stringify(map));
             $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");

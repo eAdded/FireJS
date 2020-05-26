@@ -18,7 +18,7 @@ export default class {
 
     buildExternals() {
         return new Promise<string[]>((resolve, reject) => {
-            this.build(this.webpackArchitect.externals(), stat => {
+            this.build(this.webpackArchitect.forExternals(), stat => {
                 const externals = [];
                 stat.compilation.chunks.forEach(chunk => {
                     externals.push(...chunk.files);
@@ -28,40 +28,20 @@ export default class {
         })
     }
 
-    buildBabel(page: Page) {
-        return new Promise((resolve, reject) => {
-            this.build(this.webpackArchitect.babel(page), stat => {
-                if (this.logStat(stat))//true if errors
-                    reject();
-                else {
-                    stat.compilation.chunks.forEach(chunk => {
-                        chunk.files.forEach(file => {
-                            if (file.startsWith("m"))
-                                page.chunkGroup.babelChunk = file;
-                            else //don't add babel main
-                                page.chunkGroup.chunks.push(file);
-                        })
-                    });
-                    resolve();
-                }
-            }, reject);
-        })
-    }
-
-    buildDirect(page: Page, resolve: () => void, reject: (err: any | undefined) => void) {
-        this.build(this.webpackArchitect.direct(page), (stat) => {
+    buildPage(page: Page, resolve: () => void, reject: (err: any | undefined) => void) {
+        this.build(this.webpackArchitect.forPage(page), (stat) => {
             if (this.logStat(stat))//true if errors
                 reject(undefined);
             else {
-                resolve();
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
                         if (file.startsWith("m"))
-                            page.chunkGroup.chunks.unshift(file)//add main chunk to the top
+                            page.chunks.unshift(file)//add main chunk to the top
                         else
-                            page.chunkGroup.chunks.push(file)
+                            page.chunks.push(file)
                     })
                 });
+                resolve();
             }
         }, reject);
     }

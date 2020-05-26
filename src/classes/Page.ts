@@ -1,8 +1,7 @@
-import {ChunkGroup} from "../FireJS";
 import Plugin from "./Plugin";
 
 export default class {
-    public chunkGroup: ChunkGroup = {chunks: [], babelChunk: ""}
+    public chunks: string[] = [];
     public plugin: Plugin;
     private readonly name: string;
 

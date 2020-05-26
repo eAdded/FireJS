@@ -6,6 +6,12 @@ const path_1 = require("path");
 class default_1 {
     constructor(param) {
         this.param = param;
+        // @ts-ignore
+        global.React = require("react");
+        // @ts-ignore
+        global.ReactDOM = require("react-dom");
+        // @ts-ignore
+        global.ReactHelmet = { Helmet: react_helmet_1.Helmet };
     }
     render(template, page, path, content) {
         //set globals
@@ -23,45 +29,40 @@ class default_1 {
             template = this.addChunk(template, external);
         });
         //add main entry
-        page.chunkGroup.chunks.forEach(chunk => {
-            template = this.addChunk(template, chunk);
-        });
-        template = template.replace(this.param.tags.static, "<div id='root'>".concat((() => {
-            if (content) {
-                // @ts-ignore
-                global.window = {
-                    // @ts-ignore
-                    __LIB_REL__: this.param.rel.libRel,
-                    __MAP__: {
-                        content,
-                        chunks: page.chunkGroup.chunks
-                    },
-                    __PATH__: path,
-                    __MAP_REL__: this.param.rel.mapRel,
-                    SSR: true
-                };
-                // @ts-ignore
-                global.document = {};
-                // @ts-ignore
-                global.React = require("react");
-                // @ts-ignore
-                global.ReactDOM = require("react-dom");
-                // @ts-ignore
-                global.ReactHelmet = { Helmet: react_helmet_1.Helmet };
-                return server_1.renderToString(
-                // @ts-ignore
-                React.createElement(require(path_1.join(this.param.babelPath, page.chunkGroup.babelChunk)).default, 
-                // @ts-ignore
-                { content: window.__MAP__.content }, undefined));
+        page.chunks.forEach((chunk, index) => {
+            if (index == 0) {
+                template = this.addChunk(template, chunk);
+                template = this.addChunk(template, "bundle.js");
             }
             else
-                return "";
-        })(), "</div>"));
-        if (content) {
-            const helmet = react_helmet_1.Helmet.renderStatic();
-            for (let head_element in helmet)
-                template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
-        }
+                template = this.addChunk(template, chunk);
+        });
+        template = template.replace(this.param.tags.static, `<div id='root'>${(() => {
+            // @ts-ignore
+            global.window = {
+                // @ts-ignore
+                __LIB_REL__: this.param.rel.libRel,
+                __MAP__: {
+                    content,
+                    chunks: page.chunks
+                },
+                __PATH__: path,
+                __MAP_REL__: this.param.rel.mapRel,
+                SSR: true
+            };
+            // @ts-ignore
+            global.document = {};
+            // @ts-ignore
+            require(path_1.join(this.param.pathToLib, page.chunks[0]));
+            return server_1.renderToString(
+            // @ts-ignore
+            React.createElement(window.__FIREJS_APP__.default, 
+            // @ts-ignore
+            { content: window.__MAP__.content }, undefined));
+        })()}</div>`);
+        const helmet = react_helmet_1.Helmet.renderStatic();
+        for (let head_element in helmet)
+            template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
         return template;
     }
     addChunk(template, chunk, root = undefined, tag = undefined) {

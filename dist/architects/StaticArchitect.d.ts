@@ -6,7 +6,7 @@ export interface StaticConfig {
     tags: TemplateTags;
     externals: string[];
     explicitPages: ExplicitPages;
-    babelPath: string;
+    pathToLib: string;
 }
 export default class {
     param: StaticConfig;

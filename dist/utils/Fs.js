@@ -21,9 +21,9 @@ function writeFileRecursively(path, data, outputFileSystem) {
 exports.writeFileRecursively = writeFileRecursively;
 function moveChunks(mapComponent, $, outputFileSystem) {
     return new Promise((resolve, reject) => {
-        if (mapComponent.chunkGroup.chunks.length === 0)
+        if (mapComponent.chunks.length === 0)
             resolve();
-        mapComponent.chunkGroup.chunks.forEach(chunk => {
+        mapComponent.chunks.forEach(chunk => {
             const babel_abs_path = path_1.join($.config.paths.babel, chunk);
             outputFileSystem.exists(babel_abs_path, exists => {
                 if (exists) { //only copy if it exists because it might be already copied before for page having same chunk

@@ -59,7 +59,7 @@ class default_1 {
                 (() => __awaiter(this, void 0, void 0, function* () {
                     res.end(`window.__MAP__=${JSON.stringify({
                         content: yield page.plugin.getContent(path),
-                        chunks: page.chunkGroup.chunks
+                        chunks: page.chunks
                     })}`);
                     next();
                 }))();
@@ -72,11 +72,11 @@ class default_1 {
     }
     buildPage(page_path) {
         const page = this.$.pageMap.get(page_path.substring((this.$.config.paths.pages + "/").length));
-        this.$.pageArchitect.buildDirect(page, () => {
-            page.chunkGroup.chunks.forEach(chunk => {
+        this.$.pageArchitect.buildPage(page, () => {
+            page.chunks.forEach(chunk => {
                 this.$.outputFileSystem.unlinkSync(`/${this.$.rel.libRel}/${chunk}`);
             });
-            page.chunkGroup.chunks = []; //reinit chunks
+            page.chunks = []; //reinit chunks
             this.$.cli.ok(`Successfully built page ${page.toString()}`);
             page.plugin.initPaths();
         }, err => {
@@ -112,7 +112,7 @@ class default_1 {
         }
         if (!found) {
             const page404 = this.$.pageMap.get(this.$.config.pages["404"]);
-            if (this.$.outputFileSystem.existsSync("/" + this.$.rel.libRel + "/" + page404.chunkGroup.chunks[0]))
+            if (this.$.outputFileSystem.existsSync("/" + this.$.rel.libRel + "/" + page404.chunks[0]))
                 res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page404, page404.plugin.paths[0], undefined)));
             else
                 res.end("Please Wait...");

@@ -16,15 +16,15 @@ export default class {
     readonly template: string;
     readonly rel: PathRelatives;
 
-    constructor(pathToBabelDir: string, pathToPluginsDir: string | undefined = undefined, rootDir: string = process.cwd()) {
-        const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(rootDir, pathToBabelDir, "firejs.map.json")).toString());
-        firejs_map.staticConfig.babelPath = join(rootDir, pathToBabelDir);
+    constructor(pathToLibDir: string, pathToPluginsDir: string | undefined = undefined, rootDir: string = process.cwd()) {
+        const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(rootDir, pathToLibDir, "firejs.map.json")).toString());
+        firejs_map.staticConfig.pathToLib = join(rootDir, pathToLibDir);
         this.template = firejs_map.template;
         this.rel = firejs_map.staticConfig.rel
         this.renderer = new StaticArchitect(firejs_map.staticConfig);
         for (const __page in firejs_map.pageMap) {
             const page = new Page(__page);
-            page.chunkGroup = firejs_map.pageMap[__page];
+            page.chunks = firejs_map.pageMap[__page];
             this.map.set(__page, page);
         }
         if (pathToPluginsDir)
@@ -40,7 +40,7 @@ export default class {
                         this.renderer.render(this.template, page, path, content || {})),
                     map: `window.__MAP__=${JSON.stringify({
                         content,
-                        chunks: page.chunkGroup.chunks
+                        chunks: page.chunks
                     })}`
                 })
             }).catch(reject);
@@ -54,7 +54,7 @@ export default class {
                 this.renderer.render(this.template, page, path, content)),
             map: `window.__MAP__=${JSON.stringify({
                 content,
-                chunks: page.chunkGroup.chunks
+                chunks: page.chunks
             })}`
         }
     }

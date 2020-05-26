@@ -5,8 +5,9 @@ import {Configuration, Stats} from "webpack";
 import {join, relative} from "path";
 import {mapPlugins} from "./mappers/PluginMapper";
 import PageArchitect from "./architects/PageArchitect";
-import {moveChunks, writeFileRecursively} from "./utils/Fs";
+import {writeFileRecursively} from "./utils/Fs";
 import * as fs from "fs"
+import {copyFile, exists} from "fs"
 import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
 import {convertToMap, createMap} from "./mappers/PathMapper";
 import WebpackArchitect from "./architects/WebpackArchitect";
@@ -50,7 +51,7 @@ export interface Params {
 export interface FIREJS_MAP {
     staticConfig: StaticConfig,
     pageMap: {
-        [key: string]: ChunkGroup
+        [key: string]: string[]
     },
     template: string
 }
@@ -97,10 +98,22 @@ export default class {
         this.$.cli.log("Building Externals");
         this.$.renderer = new StaticArchitect({
             rel: this.$.rel,
-            babelPath: this.$.config.paths.babel,
+            pathToLib: this.$.config.paths.lib,
             externals: await this.$.pageArchitect.buildExternals(),
             explicitPages: this.$.config.pages,
             tags: this.$.config.templateTags,
+        })
+        this.$.cli.log("Copying index chunk")
+        const index_bundle_out_path = join(this.$.config.paths.lib, "bundle.js")
+        exists(index_bundle_out_path, exists => {
+            if (!exists)
+                copyFile(join(__dirname, "../web/bundle.js"), index_bundle_out_path, err => {
+                    if (err) {
+                        this.$.cli.error("error while copying index bundle")
+                        throw err
+                    }
+                    this.$.cli.log("copied index bundle")
+                })
         })
     }
 
@@ -111,28 +124,27 @@ export default class {
                 this.$.cli.log("Building Pages");
                 const promises = [];
                 for (const page of this.$.pageMap.values())
-                    promises.push(new Promise(async resolve => {
-                        await this.$.pageArchitect.buildBabel(page);
-                        await moveChunks(page, this.$, this.$.outputFileSystem)
-                        this.$.pageArchitect.buildDirect(page, async () => {
+                    promises.push(new Promise(resolve => {
+                        this.$.pageArchitect.buildPage(page, async () => {
                             this.$.cli.ok(`Successfully built page ${page.toString()}`)
                             await page.plugin.initPaths();
-                            await page.plugin.paths.forEach(path => {
-                                (async () => {
+                            const promises = [];
+                            page.plugin.paths.forEach(path => {
+                                promises.push((async () => {
                                     const content = await page.plugin.getContent(path)
                                     await Promise.all([
                                         writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
                                             content,
-                                            chunks: page.chunkGroup.chunks
+                                            chunks: page.chunks
                                         })}`, this.$.outputFileSystem),
                                         writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
                                             this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, content)),
                                             this.$.outputFileSystem
                                         )
                                     ]);
-                                    resolve();
-                                })()
+                                })())
                             })
+                            Promise.all(promises).then(resolve)
                         }, err => {
                             throw err;
                         })

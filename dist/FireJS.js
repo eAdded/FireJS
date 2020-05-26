@@ -16,6 +16,7 @@ const PluginMapper_1 = require("./mappers/PluginMapper");
 const PageArchitect_1 = require("./architects/PageArchitect");
 const Fs_1 = require("./utils/Fs");
 const fs = require("fs");
+const fs_1 = require("fs");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const PathMapper_1 = require("./mappers/PathMapper");
 const WebpackArchitect_1 = require("./architects/WebpackArchitect");
@@ -60,10 +61,22 @@ class default_1 {
             this.$.cli.log("Building Externals");
             this.$.renderer = new StaticArchitect_1.default({
                 rel: this.$.rel,
-                babelPath: this.$.config.paths.babel,
+                pathToLib: this.$.config.paths.lib,
                 externals: yield this.$.pageArchitect.buildExternals(),
                 explicitPages: this.$.config.pages,
                 tags: this.$.config.templateTags,
+            });
+            this.$.cli.log("Copying index chunk");
+            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "bundle.js");
+            fs_1.exists(index_bundle_out_path, exists => {
+                if (!exists)
+                    fs_1.copyFile(path_1.join(__dirname, "../web/bundle.js"), index_bundle_out_path, err => {
+                        if (err) {
+                            this.$.cli.error("error while copying index bundle");
+                            throw err;
+                        }
+                        this.$.cli.log("copied index bundle");
+                    });
             });
         });
     }
@@ -74,29 +87,28 @@ class default_1 {
             this.$.cli.log("Building Pages");
             const promises = [];
             for (const page of this.$.pageMap.values())
-                promises.push(new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
-                    yield this.$.pageArchitect.buildBabel(page);
-                    yield Fs_1.moveChunks(page, this.$, this.$.outputFileSystem);
-                    this.$.pageArchitect.buildDirect(page, () => __awaiter(this, void 0, void 0, function* () {
+                promises.push(new Promise(resolve => {
+                    this.$.pageArchitect.buildPage(page, () => __awaiter(this, void 0, void 0, function* () {
                         this.$.cli.ok(`Successfully built page ${page.toString()}`);
                         yield page.plugin.initPaths();
-                        yield page.plugin.paths.forEach(path => {
-                            (() => __awaiter(this, void 0, void 0, function* () {
+                        const promises = [];
+                        page.plugin.paths.forEach(path => {
+                            promises.push((() => __awaiter(this, void 0, void 0, function* () {
                                 const content = yield page.plugin.getContent(path);
                                 yield Promise.all([
                                     Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
                                         content,
-                                        chunks: page.chunkGroup.chunks
+                                        chunks: page.chunks
                                     })}`, this.$.outputFileSystem),
                                     Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, content)), this.$.outputFileSystem)
                                 ]);
-                                resolve();
-                            }))();
+                            }))());
                         });
+                        Promise.all(promises).then(resolve);
                     }), err => {
                         throw err;
                     });
-                })));
+                }));
             Promise.all(promises).then(resolve).catch(reject);
         });
     }

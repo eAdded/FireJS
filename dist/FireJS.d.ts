@@ -38,7 +38,7 @@ export interface Params {
 export interface FIREJS_MAP {
     staticConfig: StaticConfig;
     pageMap: {
-        [key: string]: ChunkGroup;
+        [key: string]: string[];
     };
     template: string;
 }

@@ -6,16 +6,16 @@ const path_1 = require("path");
 const PluginMapper_1 = require("./mappers/PluginMapper");
 const fs = require("fs");
 class default_1 {
-    constructor(pathToBabelDir, pathToPluginsDir = undefined, rootDir = process.cwd()) {
+    constructor(pathToLibDir, pathToPluginsDir = undefined, rootDir = process.cwd()) {
         this.map = new Map();
-        const firejs_map = JSON.parse(fs.readFileSync(path_1.join(rootDir, pathToBabelDir, "firejs.map.json")).toString());
-        firejs_map.staticConfig.babelPath = path_1.join(rootDir, pathToBabelDir);
+        const firejs_map = JSON.parse(fs.readFileSync(path_1.join(rootDir, pathToLibDir, "firejs.map.json")).toString());
+        firejs_map.staticConfig.pathToLib = path_1.join(rootDir, pathToLibDir);
         this.template = firejs_map.template;
         this.rel = firejs_map.staticConfig.rel;
         this.renderer = new StaticArchitect_1.default(firejs_map.staticConfig);
         for (const __page in firejs_map.pageMap) {
             const page = new Page_1.default(__page);
-            page.chunkGroup = firejs_map.pageMap[__page];
+            page.chunks = firejs_map.pageMap[__page];
             this.map.set(__page, page);
         }
         if (pathToPluginsDir)
@@ -29,7 +29,7 @@ class default_1 {
                     html: this.renderer.finalize(this.renderer.render(this.template, page, path, content || {})),
                     map: `window.__MAP__=${JSON.stringify({
                         content,
-                        chunks: page.chunkGroup.chunks
+                        chunks: page.chunks
                     })}`
                 });
             }).catch(reject);
@@ -41,7 +41,7 @@ class default_1 {
             html: this.renderer.finalize(this.renderer.render(this.template, page, path, content)),
             map: `window.__MAP__=${JSON.stringify({
                 content,
-                chunks: page.chunkGroup.chunks
+                chunks: page.chunks
             })}`
         };
     }

@@ -1,9 +1,8 @@
-import webpack = require("webpack");
-import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import {cloneDeep} from "lodash"
 import {$, WebpackConfig} from "../FireJS";
-import {join, resolve} from "path"
+import {join} from "path"
 import Page from "../classes/Page";
+import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 export default class {
     private readonly $: $;
@@ -19,6 +18,7 @@ export default class {
                 module: {
                     rules: []
                 },
+                externals: {},
                 plugins: [],
                 ...userWebpack
             }
@@ -26,14 +26,14 @@ export default class {
             throw new Error("Expected WebpackConfig Types [object] got" + typeof userWebpack);
     }
 
-    externals(): WebpackConfig {
+    forExternals(): WebpackConfig {
         return {
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
             entry: {
                 "React": "react",
                 "ReactDOM": "react-dom",
-                "ReactHelmet": "react-helmet"
+                "ReactHelmet": "react-helmet",
             },
             output: {
                 path: this.$.config.pro ? this.$.config.paths.lib : `/${this.$.rel.libRel}`,
@@ -43,11 +43,12 @@ export default class {
         };
     }
 
-    babel(page: Page): WebpackConfig {
+    forPage(page: Page): WebpackConfig {
         let mergedConfig: WebpackConfig = {
             //settings which can be changed by user
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
+            watch: !this.$.config.pro,
             //add config base to user config to prevent undefined errors
             ...cloneDeep(this.userConfig),
             //settings un-touchable by user
@@ -58,18 +59,11 @@ export default class {
                 },
                 usedExports: true,
                 minimize: true
-            },
+            }
         };
-        mergedConfig.externals = [];
-        mergedConfig.externals.push('react', 'react-dom', 'react-helmet');
-        mergedConfig.name = page.toString();
-        mergedConfig.entry = join(this.$.config.paths.pages, page.toString());
-        mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
-        mergedConfig.output.path = this.$.config.paths.babel;
-        mergedConfig.output.filename = `m[contentHash].js`;
-        mergedConfig.output.chunkFilename = "c[contentHash].js";
-        mergedConfig.output.globalObject = "this";
-        mergedConfig.output.libraryTarget = "commonjs2" //make file as library so it can be imported for static generation
+        mergedConfig.externals["react"] = 'React';
+        mergedConfig.externals["react-dom"] = "ReactDOM";
+        mergedConfig.externals["react-helmet"] = "ReactHelmet";
         mergedConfig.module.rules.push({
                 test: /\.js$/,
                 use: {
@@ -78,8 +72,7 @@ export default class {
                         presets: ["@babel/preset-react"]
                     }
                 },
-            },
-            {
+            }, {
                 test: /\.css$/i,
                 use: [MiniCssExtractPlugin.loader,
                     {
@@ -98,71 +91,14 @@ export default class {
                 filename: "c[contentHash].css"
             }),
         );
-        return mergedConfig;
-    }
-
-    direct(page: Page): WebpackConfig {
-        let mergedConfig: WebpackConfig = {
-            //settings which can be changed by user
-            target: 'web',
-            mode: this.$.config.pro ? "production" : "development",
-            watch: !this.$.config.pro,
-            //add config base to user config to prevent undefined errors
-            ...cloneDeep(this.userConfig),
-            //settings un-touchable by user
-            optimization: {
-                splitChunks: {
-                    chunks: 'all',
-                    minChunks: Infinity
-                },
-                usedExports: true,
-                minimize: true
-            }
-        };
-        mergedConfig.externals = {};
-        mergedConfig.externals["react"] = 'React';
-        mergedConfig.externals["react-dom"] = "ReactDOM";
-        mergedConfig.externals["react-helmet"] = "ReactHelmet";
-        if (!this.$.config.pro) {
-            mergedConfig.module.rules.push({
-                test: /\.js$/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ["@babel/preset-react"]
-                    }
-                },
-            });
-            mergedConfig.module.rules.push(
-                {
-                    test: /\.css$/i,
-                    use: ['style-loader', {
-                        loader: 'css-loader',
-                        options: {
-                            modules: {
-                                hashPrefix: 'hash',
-                            },
-                        },
-                    }],
-                }
-            );
-        }
-        const web_front_entry = resolve(__dirname, this.$.config.pro ? '../../web/index_pro.js' : '../../web/index_dev.js')
         mergedConfig.name = page.toString()
-        //path before file name is important cause it allows easy routing during development
+        mergedConfig.entry = join(this.$.config.paths.pages, mergedConfig.name);
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
         mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
-        if (this.$.config.pro) //only output in production because they'll be served from memory in dev mode
-            mergedConfig.output.path = this.$.config.paths.lib;
-        else
-            mergedConfig.output.path = mergedConfig.output.publicPath//in dev the content is served from memory
-        mergedConfig.entry = web_front_entry;
-        mergedConfig.plugins.push(
-            new webpack.ProvidePlugin({
-                App: this.$.config.pro ? join(this.$.config.paths.babel, page.chunkGroup.babelChunk) : join(this.$.config.paths.pages, page.toString())
-            }),
-        );
+        mergedConfig.output.path = this.$.config.pro ? this.$.config.paths.lib : mergedConfig.output.publicPath;
+        mergedConfig.output.library = "__FIREJS_APP__"
+        mergedConfig.output.libraryTarget = "window"
         return mergedConfig;
     }
 }

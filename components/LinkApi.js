@@ -14,7 +14,6 @@ export function preloadPage(url, callback) {
     map_script.onerror = _ => {
         document.head.removeChild(map_script);
         const _404 = document.createElement("script");
-        // @ts-ignore
         _404.src = getMapUrl(window.__PAGES__._404);//make preloaded js to execute
         _404.onload = map_script.onload;
         document.head.appendChild(_404);
@@ -22,15 +21,12 @@ export function preloadPage(url, callback) {
 }
 
 export function getMapUrl(url) {
-    // @ts-ignore
     return `/${window.__MAP_REL__}${url === "/" ? "/index" : url}.map.js`;
 }
 
 export function preloadChunks() {
-    // @ts-ignore
     window.__MAP__.chunks.forEach(chunk => {
         const preloadLink = document.createElement("link");
-        // @ts-ignore
         preloadLink.href = `/${window.__LIB_REL__}/` + chunk;
         preloadLink.rel = "preload";
         preloadLink.as = "script";//this preloads script before hand
@@ -39,10 +35,8 @@ export function preloadChunks() {
 }
 
 export function loadChunks() {
-    // @ts-ignore
     window.__MAP__.chunks.forEach(chunk => {
         const preloadedScript = document.createElement("script");
-        // @ts-ignore
         preloadedScript.src = `/${window.__LIB_REL__}/` + chunk;//make preloaded js to execute
         document.head.appendChild(preloadedScript);
     });
@@ -56,12 +50,10 @@ export function loadPage(url) {
     sc.onerror = _ => {
         document.head.removeChild(sc);
         const _404 = document.createElement("script");
-        // @ts-ignore
         _404.src = getMapUrl(window.__PAGES__._404);//make preloaded js to execute
         _404.onload = loadChunks;
         document.head.appendChild(_404);
     };
-    // @ts-ignore
     window.__PATH__ = url;
     window.history.pushState('', '', url);
 }

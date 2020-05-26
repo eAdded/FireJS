@@ -10,7 +10,7 @@ export interface StaticConfig {
     tags: TemplateTags,
     externals: string[],
     explicitPages: ExplicitPages,
-    babelPath: string,
+    pathToLib: string
 }
 
 export default class {
@@ -18,6 +18,12 @@ export default class {
 
     constructor(param: StaticConfig) {
         this.param = param;
+        // @ts-ignore
+        global.React = require("react");
+        // @ts-ignore
+        global.ReactDOM = require("react-dom");
+        // @ts-ignore
+        global.ReactHelmet = {Helmet};
     }
 
     render(template: string, page: Page, path: string, content: any) {
@@ -38,51 +44,43 @@ export default class {
             template = this.addChunk(template, external);
         });
         //add main entry
-        page.chunkGroup.chunks.forEach(chunk => {
-            template = this.addChunk(template, chunk);
+        page.chunks.forEach((chunk, index) => {
+            if (index == 0) {
+                template = this.addChunk(template, chunk);
+                template = this.addChunk(template, "bundle.js");
+            } else
+                template = this.addChunk(template, chunk);
         });
         template = template.replace(
             this.param.tags.static,
-            "<div id='root'>".concat((() => {
-                    if (content) {
+            `<div id='root'>${(() => {
+                // @ts-ignore
+                global.window = {
+                    // @ts-ignore
+                    __LIB_REL__: this.param.rel.libRel,
+                    __MAP__: {
+                        content,
+                        chunks: page.chunks
+                    },
+                    __PATH__: path,
+                    __MAP_REL__: this.param.rel.mapRel,
+                    SSR: true
+                };
+                // @ts-ignore
+                global.document = {};
+                // @ts-ignore
+                require(join(this.param.pathToLib, page.chunks[0]));
+                return renderToString(
+                    // @ts-ignore
+                    React.createElement(window.__FIREJS_APP__.default,
                         // @ts-ignore
-                        global.window = {
-                            // @ts-ignore
-                            __LIB_REL__: this.param.rel.libRel,
-                            __MAP__: {
-                                content,
-                                chunks: page.chunkGroup.chunks
-                            },
-                            __PATH__: path,
-                            __MAP_REL__: this.param.rel.mapRel,
-                            SSR: true
-                        };
-                        // @ts-ignore
-                        global.document = {};
-                        // @ts-ignore
-                        global.React = require("react");
-                        // @ts-ignore
-                        global.ReactDOM = require("react-dom");
-                        // @ts-ignore
-                        global.ReactHelmet = {Helmet};
-                        return renderToString(
-                            // @ts-ignore
-                            React.createElement(
-                                require(join(this.param.babelPath, page.chunkGroup.babelChunk)).default,
-                                // @ts-ignore
-                                {content: window.__MAP__.content},
-                                undefined)
-                        );
-                    } else
-                        return ""
-                })(),
-                "</div>"
-            ));
-        if (content) {
-            const helmet = Helmet.renderStatic();
-            for (let head_element in helmet)
-                template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
-        }
+                        {content: window.__MAP__.content},
+                        undefined)
+                )
+            })()}</div>`);
+        const helmet = Helmet.renderStatic();
+        for (let head_element in helmet)
+            template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
         return template
     }
 
