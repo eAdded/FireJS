@@ -34,7 +34,7 @@ class default_1 {
                 "\n\t\x1b[34m--silent, s\x1b[0m\n\t    Log errors only\n" +
                 "\n\t\x1b[34m--disable-plugins\x1b[0m\n\t    Disable plugins\n" +
                 "\n\t\x1b[34m--help, -h\x1b[0m\n\t    Help");
-            console.log("\n     \x1b[1mVersion :\x1b[0m 0.10.0");
+            console.log("\n     \x1b[1mVersion :\x1b[0m 0.10.1");
             console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n");
             process.exit(0);
         }
