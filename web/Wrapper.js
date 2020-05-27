@@ -4,7 +4,14 @@ import {join} from "path";
 export default class extends React.Component {
     constructor() {
         super();
-        this.state = {App: window.__FIREJS_APP__.default, map: window.__MAP__};
+        this.state = {
+            app: window.__FIREJS_APP__.default,
+            pre_chunks: window.__SSR__ ? window.__MAP__.chunks : [],
+        };
+        this.state.chunks = this.state.pre_chunks;
+        window.wrapper_context = this;
+        window.updateWrapperState = this.setState;
+
     }
 
     render() {
@@ -12,14 +19,15 @@ export default class extends React.Component {
             <div>
                 <Head>
                     {
-                        this.state.map.chunks.map(chunk => {
+                        this.state.pre_chunks.map(chunk => {
                             const href = join(`/${window.__LIB_REL__}/${chunk}`);
+                            console.log("pre_chunks", href, chunk.substring(chunk.lastIndexOf(".")));
                             switch (chunk.substring(chunk.lastIndexOf("."))) {
-                                case "js":
+                                case ".js":
                                     return (
                                         <link rel="preload" as="script" href={href} crossOrigin="anonymous"/>
                                     )
-                                case "css":
+                                case ".css":
                                     return (
                                         <link rel="preload" as="style" href={href} crossOrigin="anonymous"/>
                                     )
@@ -27,16 +35,20 @@ export default class extends React.Component {
                         })
                     }
                 </Head>
-                <App content={this.state.map.content}/>
                 {
-                    this.state.map.chunks.map(chunk => {
+                    console.log("app") &&
+                    React.createElement(this.state.app, window.__MAP__.content)
+                }
+                {
+                    this.state.chunks.map(chunk => {
                         const href = join(`/${window.__LIB_REL__}/${chunk}`);
+                        console.log("chunks", href, chunk.substring(chunk.lastIndexOf(".")));
                         switch (chunk.substring(chunk.lastIndexOf("."))) {
-                            case "js":
+                            case ".js":
                                 return (
                                     <script src={href} crossOrigin="anonymous"/>
                                 )
-                            case "css":
+                            case ".css":
                                 return (
                                     <link rel="stylesheet" href={href} crossOrigin="anonymous"/>
                                 )

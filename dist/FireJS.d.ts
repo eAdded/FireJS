@@ -19,7 +19,6 @@ export interface $ {
     config?: Config;
     pageMap?: Map<string, Page>;
     cli?: Cli;
-    template?: string;
     rel?: PathRelatives;
     outputFileSystem?: any;
     inputFileSystem?: any;
@@ -30,7 +29,6 @@ export interface Params {
     config?: Config;
     args?: Args;
     pages?: string[];
-    template?: string;
     webpackConfig?: WebpackConfig;
     outputFileSystem?: any;
     inputFileSystem?: any;
@@ -40,7 +38,6 @@ export interface FIREJS_MAP {
     pageMap: {
         [key: string]: string[];
     };
-    template: string;
 }
 export default class {
     private readonly $;

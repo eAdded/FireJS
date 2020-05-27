@@ -102,7 +102,7 @@ class default_1 {
                 if (path === _path || (path_1.join(path, "index") === _path)) {
                     (() => __awaiter(this, void 0, void 0, function* () {
                         yield page.plugin.onRequest(req, res);
-                        res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)));
+                        res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, undefined)));
                         next();
                     }))();
                     return true;
@@ -113,7 +113,7 @@ class default_1 {
         if (!found) {
             const page404 = this.$.pageMap.get(this.$.config.pages["404"]);
             if (this.$.outputFileSystem.existsSync("/" + this.$.rel.libRel + "/" + page404.chunks[0]))
-                res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page404, page404.plugin.paths[0], undefined)));
+                res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page404, page404.plugin.paths[0], undefined)));
             else
                 res.end("Please Wait...");
             next();

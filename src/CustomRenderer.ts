@@ -13,13 +13,11 @@ interface RenderReturn {
 export default class {
     readonly map: Map<string, Page> = new Map()
     readonly renderer: StaticArchitect;
-    readonly template: string;
     readonly rel: PathRelatives;
 
     constructor(pathToLibDir: string, pathToPluginsDir: string | undefined = undefined, rootDir: string = process.cwd()) {
         const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(rootDir, pathToLibDir, "firejs.map.json")).toString());
         firejs_map.staticConfig.pathToLib = join(rootDir, pathToLibDir);
-        this.template = firejs_map.template;
         this.rel = firejs_map.staticConfig.rel
         this.renderer = new StaticArchitect(firejs_map.staticConfig);
         for (const __page in firejs_map.pageMap) {
@@ -37,7 +35,7 @@ export default class {
             page.plugin.getContent(path).then(content => {
                 resolve({
                     html: this.renderer.finalize(
-                        this.renderer.render(this.template, page, path, content || {})),
+                        this.renderer.render(this.renderer.param.template, page, path, content || {})),
                     map: `window.__MAP__=${JSON.stringify({
                         content,
                         chunks: page.chunks
@@ -51,7 +49,7 @@ export default class {
         const page = this.map.get(__page);
         return {
             html: this.renderer.finalize(
-                this.renderer.render(this.template, page, path, content)),
+                this.renderer.render(this.renderer.param.template, page, path, content)),
             map: `window.__MAP__=${JSON.stringify({
                 content,
                 chunks: page.chunks

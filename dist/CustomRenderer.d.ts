@@ -8,7 +8,6 @@ interface RenderReturn {
 export default class {
     readonly map: Map<string, Page>;
     readonly renderer: StaticArchitect;
-    readonly template: string;
     readonly rel: PathRelatives;
     constructor(pathToLibDir: string, pathToPluginsDir?: string | undefined, rootDir?: string);
     renderWithPluginData(__page: string, path: string): Promise<RenderReturn>;

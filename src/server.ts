@@ -101,7 +101,7 @@ export default class {
                 if (path === _path || (join(path, "index") === _path)) {
                     (async () => {
                         await page.plugin.onRequest(req, res);
-                        res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, undefined)))
+                        res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, undefined)))
                         next();
                     })()
                     return true;
@@ -111,7 +111,7 @@ export default class {
         if (!found) {
             const page404 = this.$.pageMap.get(this.$.config.pages["404"]);
             if (this.$.outputFileSystem.existsSync("/" + this.$.rel.libRel + "/" + page404.chunks[0]))
-                res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.template, page404, page404.plugin.paths[0], undefined)))
+                res.end(this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page404, page404.plugin.paths[0], undefined)))
             else
                 res.end("Please Wait...")
             next();

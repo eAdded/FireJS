@@ -30,7 +30,6 @@ export interface $ {
     config?: Config,
     pageMap?: Map<string, Page>,
     cli?: Cli,
-    template?: string,
     rel?: PathRelatives,
     outputFileSystem?,
     inputFileSystem?,
@@ -42,7 +41,6 @@ export interface Params {
     config?: Config,
     args?: Args,
     pages?: string[],
-    template?: string,
     webpackConfig?: WebpackConfig
     outputFileSystem?,
     inputFileSystem?
@@ -53,7 +51,6 @@ export interface FIREJS_MAP {
     pageMap: {
         [key: string]: string[]
     },
-    template: string
 }
 
 export default class {
@@ -79,7 +76,6 @@ export default class {
         this.$.inputFileSystem = params.inputFileSystem || fs;
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper(this.$.cli, this.$.args).getConfig(params.config);
-        this.$.template = params.template || this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
         this.$.pageMap = params.pages ? convertToMap(params.pages) : createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
@@ -102,12 +98,13 @@ export default class {
             externals: await this.$.pageArchitect.buildExternals(),
             explicitPages: this.$.config.pages,
             tags: this.$.config.templateTags,
+            template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
         })
         this.$.cli.log("Copying index chunk")
-        const index_bundle_out_path = join(this.$.config.paths.lib, "bundle.js")
+        const index_bundle_out_path = join(this.$.config.paths.lib, "index.bundle.js")
         exists(index_bundle_out_path, exists => {
             if (!exists)
-                copyFile(join(__dirname, "../web/bundle.js"), index_bundle_out_path, err => {
+                copyFile(join(__dirname, "../web/dist/index.bundle.js"), index_bundle_out_path, err => {
                     if (err) {
                         this.$.cli.error("error while copying index bundle")
                         throw err
@@ -138,7 +135,7 @@ export default class {
                                             chunks: page.chunks
                                         })}`, this.$.outputFileSystem),
                                         writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                                            this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, content)),
+                                            this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)),
                                             this.$.outputFileSystem
                                         )
                                     ]);

@@ -47,8 +47,7 @@
   },
   "homepage": "https://github.com/eAdded/firejs#readme",
   "scripts": {
-    "Index": "cd web && webpack-cli --entry ./index.js -o ./dist/e[contentHash].js --output--filename  --mode production",
-    "Wrapper": "cd web && webpack-cli"
+    "Bundle": "cd web && webpack-cli"
   },
   "files": [
     "dist",

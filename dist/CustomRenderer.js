@@ -10,7 +10,6 @@ class default_1 {
         this.map = new Map();
         const firejs_map = JSON.parse(fs.readFileSync(path_1.join(rootDir, pathToLibDir, "firejs.map.json")).toString());
         firejs_map.staticConfig.pathToLib = path_1.join(rootDir, pathToLibDir);
-        this.template = firejs_map.template;
         this.rel = firejs_map.staticConfig.rel;
         this.renderer = new StaticArchitect_1.default(firejs_map.staticConfig);
         for (const __page in firejs_map.pageMap) {
@@ -26,7 +25,7 @@ class default_1 {
             const page = this.map.get(__page);
             page.plugin.getContent(path).then(content => {
                 resolve({
-                    html: this.renderer.finalize(this.renderer.render(this.template, page, path, content || {})),
+                    html: this.renderer.finalize(this.renderer.render(this.renderer.param.template, page, path, content || {})),
                     map: `window.__MAP__=${JSON.stringify({
                         content,
                         chunks: page.chunks
@@ -38,7 +37,7 @@ class default_1 {
     render(__page, path, content = {}) {
         const page = this.map.get(__page);
         return {
-            html: this.renderer.finalize(this.renderer.render(this.template, page, path, content)),
+            html: this.renderer.finalize(this.renderer.render(this.renderer.param.template, page, path, content)),
             map: `window.__MAP__=${JSON.stringify({
                 content,
                 chunks: page.chunks

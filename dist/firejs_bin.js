@@ -27,7 +27,6 @@ const path_1 = require("path");
                 const map = {
                     staticConfig: $.renderer.param,
                     pageMap: {},
-                    template: $.template
                 };
                 for (const page of $.pageMap.values())
                     map.pageMap[page.toString()] = page.chunks;

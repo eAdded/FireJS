@@ -36,6 +36,18 @@ export default class {
     }
 
     render(template: string, page: Page, path: string, content: any) {
+        //add map script
+        template = this.addChunk(template, join(this.param.rel.mapRel, path + ".map.js"), "", "head");
+        //add externals
+        this.param.externals.forEach(external => {
+            template = this.addChunk(template, external);
+        });
+
+        //add main entry
+        template = this.addChunk(template, page.chunks[0]);
+        template = this.addChunk(template, "index.bundle.js");
+        for (let i = 1; i < page.chunks.length; i++)
+            template = this.addChunk(template, page.chunks[i]);
         template = template.replace(
             this.param.tags.static,
             `<div id='root'>${(() => {
@@ -48,25 +60,37 @@ export default class {
                         content,
                         chunks: page.chunks
                     },
-                    __EXTERNALS__: this.param.externals,
-                    SSR: true
+                    __SSR__: true
+                };
+                // @ts-ignore
+                global.location = {
+                    pathname: path
                 };
                 // @ts-ignore
                 global.document = {};
-                // @ts-ignore
                 require(join(this.param.pathToLib, page.chunks[0]));
-                return renderToString(
-                    // @ts-ignore
-                    React.createElement(window.__FIREJS_APP__.default,
-                        // @ts-ignore
-                        {content: window.__MAP__.content},
-                        undefined)
-                )
+                // @ts-ignore
+                return renderToString(React.createElement(window.__FIREJS_APP__.default, {content: window.__MAP__.content}))
             })()}</div>`);
         const helmet = Helmet.renderStatic();
         for (let head_element in helmet)
             template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
         return template
+    }
+
+    addChunk(template, chunk, root = undefined, tag = undefined) {
+        root = root === undefined ? this.param.rel.libRel : root;
+        const href = join(root, chunk);
+        if (tag === "script" || chunk.endsWith(".js")) {
+            template = template.replace(this.param.tags.head, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
+            return template.replace(this.param.tags.script, `<script src="/${href}" crossorigin="anonymous"></script>${this.param.tags.script}`);
+        } else if (tag === "style" || chunk.endsWith(".css")) {
+            template = template.replace(this.param.tags.head, `<link rel="preload" as="style" href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
+            return template.replace(this.param.tags.style, `<link rel="stylesheet" type="text/css" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
+        } else if (tag === "head")
+            return template.replace(this.param.tags.head, `<link href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
+        else
+            return template.replace(this.param.tags.unknown, `<link href="/${href}" crossorigin="anonymous">${this.param.tags.unknown}`);
     }
 
     addInnerHTML(template: string, element: string, tag: string) {

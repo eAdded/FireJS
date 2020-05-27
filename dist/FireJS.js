@@ -42,7 +42,6 @@ class default_1 {
         this.$.inputFileSystem = params.inputFileSystem || fs;
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper_1.default(this.$.cli, this.$.args).getConfig(params.config);
-        this.$.template = params.template || this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
         this.$.pageMap = params.pages ? PathMapper_1.convertToMap(params.pages) : PathMapper_1.createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib),
@@ -65,12 +64,13 @@ class default_1 {
                 externals: yield this.$.pageArchitect.buildExternals(),
                 explicitPages: this.$.config.pages,
                 tags: this.$.config.templateTags,
+                template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
             });
             this.$.cli.log("Copying index chunk");
-            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "bundle.js");
+            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "index.bundle.js");
             fs_1.exists(index_bundle_out_path, exists => {
                 if (!exists)
-                    fs_1.copyFile(path_1.join(__dirname, "../web/bundle.js"), index_bundle_out_path, err => {
+                    fs_1.copyFile(path_1.join(__dirname, "../web/dist/index.bundle.js"), index_bundle_out_path, err => {
                         if (err) {
                             this.$.cli.error("error while copying index bundle");
                             throw err;
@@ -100,7 +100,7 @@ class default_1 {
                                         content,
                                         chunks: page.chunks
                                     })}`, this.$.outputFileSystem),
-                                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.template, page, path, content)), this.$.outputFileSystem)
+                                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)), this.$.outputFileSystem)
                                 ]);
                             }))());
                         });

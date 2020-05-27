@@ -1,12 +1,10 @@
-import {loadChunks, preloadPage} from "../components/LinkApi";
-import Wrapper from "./dist/wrapper.bundle";
+import {loadPage, preloadPage} from "../components/LinkApi";
 
-window.onpopstate = () => {
+window.onpopstate = function () {
     preloadPage(location.pathname, () => {
-        loadChunks()
+        loadPage(location.pathname)
     })
 }
-
-ReactDOM.hydrate(React.createElement(Wrapper),
+ReactDOM.hydrate(React.createElement(window.__FIREJS_APP__.default, {content: window.__MAP__.content}),
     document.getElementById("root")
 );

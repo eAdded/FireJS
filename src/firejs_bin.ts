@@ -16,7 +16,6 @@ import {join} from "path"
             const map: FIREJS_MAP = {
                 staticConfig: $.renderer.param,
                 pageMap: {},
-                template: $.template
             }
             for (const page of $.pageMap.values())
                 map.pageMap[page.toString()] = page.chunks
