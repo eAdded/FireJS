@@ -42,7 +42,6 @@ export default class {
         this.param.externals.forEach(external => {
             template = this.addChunk(template, external);
         });
-
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
         template = this.addChunk(template, "index.bundle.js");
@@ -58,7 +57,7 @@ export default class {
                     __MAP_REL__: this.param.rel.mapRel,
                     __MAP__: {
                         content,
-                        chunks: page.chunks
+                        chunks: []
                     },
                     __SSR__: true
                 };
@@ -69,8 +68,13 @@ export default class {
                 // @ts-ignore
                 global.document = {};
                 require(join(this.param.pathToLib, page.chunks[0]));
-                // @ts-ignore
-                return renderToString(React.createElement(window.__FIREJS_APP__.default, {content: window.__MAP__.content}))
+                return renderToString(
+                    // @ts-ignore
+                    React.createElement(require("../../web/dist/wrapper.bundle").default,
+                        // @ts-ignore
+                        {content: window.__MAP__.content},
+                        undefined)
+                )
             })()}</div>`);
         const helmet = Helmet.renderStatic();
         for (let head_element in helmet)
@@ -82,11 +86,11 @@ export default class {
         root = root === undefined ? this.param.rel.libRel : root;
         const href = join(root, chunk);
         if (tag === "script" || chunk.endsWith(".js")) {
-            template = template.replace(this.param.tags.head, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
+            template = template.replace(this.param.tags.style, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
             return template.replace(this.param.tags.script, `<script src="/${href}" crossorigin="anonymous"></script>${this.param.tags.script}`);
         } else if (tag === "style" || chunk.endsWith(".css")) {
-            template = template.replace(this.param.tags.head, `<link rel="preload" as="style" href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
-            return template.replace(this.param.tags.style, `<link rel="stylesheet" type="text/css" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
+            template = template.replace(this.param.tags.style, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
+            return template.replace(this.param.tags.style, `<link rel="stylesheet" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
         } else if (tag === "head")
             return template.replace(this.param.tags.head, `<link href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
         else

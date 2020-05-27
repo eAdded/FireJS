@@ -6,8 +6,8 @@ export function loadMap(url) {
 
 export function preloadPage(url, callback) {
     const map_script = loadMap(url);
-    map_script.onload = () => {
-        window.
+    map_script.onload = function () {
+        window.wrapper_context.setState({pre_chunks: window.__MAP__.chunks})
         callback();
     };
     map_script.onerror = function () {
@@ -22,21 +22,7 @@ export function preloadPage(url, callback) {
 export function loadPage(url) {
     const sc = loadMap(url);
     sc.onload = function () {
-        window.__MAP__.chunks.forEach(chunk => {
-            let ele;
-            switch (chunk.substring(chunk.lastIndexOf("."))) {
-                case ".js":
-                    ele = document.createElement("script");
-                    break;
-                default:
-                    ele = document.createElement("script");
-                case ".css":
-                    ele.rel = "stylesheet\" type=\"text/css\""
-            }
-            // @ts-ignore
-            preloadedScript.src = `/${window.__LIB_REL__}/` + chunk; //make preloaded js to execute
-            document.head.appendChild(preloadedScript);
-        });
+        window.wrapper_context.setState({chunks: window.__MAP__.chunks})
     }
     sc.onerror = _ => {
         document.head.removeChild(sc);
@@ -44,5 +30,5 @@ export function loadPage(url) {
         _404.onload = map_script.onload;
         document.head.appendChild(_404);
     };
-    document.head.appendChild(map_script);
+    document.head.appendChild(sc);
 }

@@ -102,8 +102,8 @@ export default class {
         })
         this.$.cli.log("Copying index chunk")
         const index_bundle_out_path = join(this.$.config.paths.lib, "index.bundle.js")
-        exists(index_bundle_out_path, exists => {
-            if (!exists)
+   //     exists(index_bundle_out_path, exists => {
+   //         if (!exists)
                 copyFile(join(__dirname, "../web/dist/index.bundle.js"), index_bundle_out_path, err => {
                     if (err) {
                         this.$.cli.error("error while copying index bundle")
@@ -111,7 +111,7 @@ export default class {
                     }
                     this.$.cli.log("copied index bundle")
                 })
-        })
+     //   })
     }
 
     buildPro() {

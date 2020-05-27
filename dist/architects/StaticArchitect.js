@@ -39,7 +39,7 @@ class default_1 {
                 __MAP_REL__: this.param.rel.mapRel,
                 __MAP__: {
                     content,
-                    chunks: page.chunks
+                    chunks: []
                 },
                 __SSR__: true
             };
@@ -50,8 +50,11 @@ class default_1 {
             // @ts-ignore
             global.document = {};
             require(path_1.join(this.param.pathToLib, page.chunks[0]));
+            return server_1.renderToString(
             // @ts-ignore
-            return server_1.renderToString(React.createElement(window.__FIREJS_APP__.default, { content: window.__MAP__.content }));
+            React.createElement(require("../../web/dist/wrapper.bundle").default, 
+            // @ts-ignore
+            { content: window.__MAP__.content }, undefined));
         })()}</div>`);
         const helmet = react_helmet_1.Helmet.renderStatic();
         for (let head_element in helmet)
@@ -62,12 +65,12 @@ class default_1 {
         root = root === undefined ? this.param.rel.libRel : root;
         const href = path_1.join(root, chunk);
         if (tag === "script" || chunk.endsWith(".js")) {
-            template = template.replace(this.param.tags.head, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
+            template = template.replace(this.param.tags.style, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
             return template.replace(this.param.tags.script, `<script src="/${href}" crossorigin="anonymous"></script>${this.param.tags.script}`);
         }
         else if (tag === "style" || chunk.endsWith(".css")) {
-            template = template.replace(this.param.tags.head, `<link rel="preload" as="style" href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
-            return template.replace(this.param.tags.style, `<link rel="stylesheet" type="text/css" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
+            template = template.replace(this.param.tags.style, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
+            return template.replace(this.param.tags.style, `<link rel="stylesheet" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
         }
         else if (tag === "head")
             return template.replace(this.param.tags.head, `<link href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);

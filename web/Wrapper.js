@@ -7,11 +7,10 @@ export default class extends React.Component {
         this.state = {
             app: window.__FIREJS_APP__.default,
             pre_chunks: window.__SSR__ ? window.__MAP__.chunks : [],
+            chunks: window.__SSR__ ? window.__MAP__.chunks : []
         };
-        this.state.chunks = this.state.pre_chunks;
         window.wrapper_context = this;
         window.updateWrapperState = this.setState;
-
     }
 
     render() {
@@ -35,14 +34,10 @@ export default class extends React.Component {
                         })
                     }
                 </Head>
+                <this.state.app content={window.__MAP__.content}/>
                 {
-                    console.log("app") &&
-                    React.createElement(this.state.app, window.__MAP__.content)
-                }
-                {
-                    this.state.chunks.map(chunk => {
+                    this.state.chunks.map((chunk, index) => {
                         const href = join(`/${window.__LIB_REL__}/${chunk}`);
-                        console.log("chunks", href, chunk.substring(chunk.lastIndexOf(".")));
                         switch (chunk.substring(chunk.lastIndexOf("."))) {
                             case ".js":
                                 return (

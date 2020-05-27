@@ -68,16 +68,16 @@ class default_1 {
             });
             this.$.cli.log("Copying index chunk");
             const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "index.bundle.js");
-            fs_1.exists(index_bundle_out_path, exists => {
-                if (!exists)
-                    fs_1.copyFile(path_1.join(__dirname, "../web/dist/index.bundle.js"), index_bundle_out_path, err => {
-                        if (err) {
-                            this.$.cli.error("error while copying index bundle");
-                            throw err;
-                        }
-                        this.$.cli.log("copied index bundle");
-                    });
+            //     exists(index_bundle_out_path, exists => {
+            //         if (!exists)
+            fs_1.copyFile(path_1.join(__dirname, "../web/dist/index.bundle.js"), index_bundle_out_path, err => {
+                if (err) {
+                    this.$.cli.error("error while copying index bundle");
+                    throw err;
+                }
+                this.$.cli.log("copied index bundle");
             });
+            //   })
         });
     }
     buildPro() {
