@@ -1,7 +1,7 @@
 export function loadMap(url) {
     const map_script = document.createElement("script");
     map_script.src = `/${window.__MAP_REL__}${url === "/" ? "/index" : url}.map.js`;
-    document.head.appendChild(sc);
+    document.head.appendChild(map_script);
     return map_script;
 }
 
@@ -17,7 +17,7 @@ export function preloadPage(url, callback) {
     };
 }
 
-export function loadPage(url) {
+export function loadPage(url, pushState = true) {
     const sc = loadMap(url);
     sc.onload = function () {
         const script = document.createElement("script");
@@ -26,5 +26,6 @@ export function loadPage(url) {
         script.onload = window.updateApp;
         document.body.appendChild(script);
     }
-    window.history.pushState(undefined, undefined, url);
+    if (pushState)
+        window.history.pushState(undefined, undefined, url);
 }
