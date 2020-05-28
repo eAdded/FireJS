@@ -41,7 +41,7 @@ class default_1 {
         this.$.inputFileSystem = params.inputFileSystem || fs;
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper_1.default(this.$.cli, this.$.args).getConfig(params.config);
-        this.$.pageMap = params.pages ? PathMapper_1.convertToMap(params.pages) : PathMapper_1.createMap(this.$.config.paths.pages, this.$.inputFileSystem);
+        this.$.pageMap = PathMapper_1.createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.map)
@@ -74,36 +74,28 @@ class default_1 {
                 });
         });
     }
-    buildPro() {
-        return new Promise((resolve, reject) => {
-            if (!this.$.config.pro)
-                throw new Error("Not in production mode. Make sure to pass [--pro, -p] flag");
-            this.$.cli.log("Building Pages");
-            const promises = [];
-            for (const page of this.$.pageMap.values())
-                promises.push(new Promise(resolve => {
-                    this.$.pageArchitect.buildPage(page, () => __awaiter(this, void 0, void 0, function* () {
-                        this.$.cli.ok(`Successfully built page ${page.toString()}`);
-                        yield page.plugin.initPaths();
-                        const promises = [];
-                        page.plugin.paths.forEach(path => {
-                            promises.push((() => __awaiter(this, void 0, void 0, function* () {
-                                const content = yield page.plugin.getContent(path);
-                                yield Promise.all([
-                                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
-                                        content,
-                                        chunks: page.chunks
-                                    })}`, this.$.outputFileSystem),
-                                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)), this.$.outputFileSystem)
-                                ]);
-                            }))());
-                        });
-                        Promise.all(promises).then(resolve);
-                    }), err => {
-                        throw err;
-                    });
-                }));
-            Promise.all(promises).then(resolve).catch(reject);
+    buildPage(page) {
+        return new Promise(resolve => {
+            this.$.pageArchitect.buildPage(page, () => __awaiter(this, void 0, void 0, function* () {
+                this.$.cli.ok(`Successfully built page ${page.toString()}`);
+                yield page.plugin.initPaths();
+                const promises = [];
+                page.plugin.paths.forEach(path => {
+                    promises.push((() => __awaiter(this, void 0, void 0, function* () {
+                        const content = yield page.plugin.getContent(path);
+                        yield Promise.all([
+                            Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
+                                content,
+                                chunks: page.chunks
+                            })}`, this.$.outputFileSystem),
+                            Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.config.pro ? content : undefined)), this.$.outputFileSystem)
+                        ]);
+                    }))());
+                });
+                Promise.all(promises).then(resolve);
+            }), err => {
+                throw err;
+            });
         });
     }
     getContext() {

@@ -10,10 +10,6 @@ export interface PathRelatives {
     libRel: string;
     mapRel: string;
 }
-export interface ChunkGroup {
-    babelChunk: string;
-    chunks: string[];
-}
 export interface $ {
     args?: Args;
     config?: Config;
@@ -28,7 +24,6 @@ export interface $ {
 export interface Params {
     config?: Config;
     args?: Args;
-    pages?: string[];
     webpackConfig?: WebpackConfig;
     outputFileSystem?: any;
     inputFileSystem?: any;
@@ -43,6 +38,6 @@ export default class {
     private readonly $;
     constructor(params?: Params);
     init(): Promise<void>;
-    buildPro(): Promise<any>;
+    buildPage(page: Page): Promise<any>;
     getContext(): $;
 }

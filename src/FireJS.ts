@@ -8,7 +8,7 @@ import PageArchitect from "./architects/PageArchitect";
 import {writeFileRecursively} from "./utils/Fs";
 import * as fs from "fs"
 import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
-import {convertToMap, createMap} from "./mappers/PathMapper";
+import {createMap} from "./mappers/PathMapper";
 import WebpackArchitect from "./architects/WebpackArchitect";
 
 export type WebpackConfig = Configuration;
@@ -17,11 +17,6 @@ export type WebpackStat = Stats;
 export interface PathRelatives {
     libRel: string,
     mapRel: string
-}
-
-export interface ChunkGroup {
-    babelChunk: string,
-    chunks: string[]
 }
 
 export interface $ {
@@ -39,7 +34,6 @@ export interface $ {
 export interface Params {
     config?: Config,
     args?: Args,
-    pages?: string[],
     webpackConfig?: WebpackConfig
     outputFileSystem?,
     inputFileSystem?
@@ -75,7 +69,7 @@ export default class {
         this.$.inputFileSystem = params.inputFileSystem || fs;
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper(this.$.cli, this.$.args).getConfig(params.config);
-        this.$.pageMap = params.pages ? convertToMap(params.pages) : createMap(this.$.config.paths.pages, this.$.inputFileSystem);
+        this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
@@ -108,39 +102,31 @@ export default class {
             })
     }
 
-    buildPro() {
-        return new Promise<any>((resolve, reject) => {
-                if (!this.$.config.pro)
-                    throw new Error("Not in production mode. Make sure to pass [--pro, -p] flag");
-                this.$.cli.log("Building Pages");
-                const promises = [];
-                for (const page of this.$.pageMap.values())
-                    promises.push(new Promise(resolve => {
-                        this.$.pageArchitect.buildPage(page, async () => {
-                            this.$.cli.ok(`Successfully built page ${page.toString()}`)
-                            await page.plugin.initPaths();
-                            const promises = [];
-                            page.plugin.paths.forEach(path => {
-                                promises.push((async () => {
-                                    const content = await page.plugin.getContent(path)
-                                    await Promise.all([
-                                        writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
-                                            content,
-                                            chunks: page.chunks
-                                        })}`, this.$.outputFileSystem),
-                                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                                            this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)),
-                                            this.$.outputFileSystem
-                                        )
-                                    ]);
-                                })())
-                            })
-                            Promise.all(promises).then(resolve)
-                        }, err => {
-                            throw err;
-                        })
-                    }))
-                Promise.all(promises).then(resolve).catch(reject);
+    buildPage(page: Page) {
+        return new Promise<any>(resolve => {
+                this.$.pageArchitect.buildPage(page, async () => {
+                    this.$.cli.ok(`Successfully built page ${page.toString()}`)
+                    await page.plugin.initPaths();
+                    const promises = [];
+                    page.plugin.paths.forEach(path => {
+                        promises.push((async () => {
+                            const content = await page.plugin.getContent(path)
+                            await Promise.all([
+                                writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
+                                    content,
+                                    chunks: page.chunks
+                                })}`, this.$.outputFileSystem),
+                                writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                                    this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.config.pro ? content : undefined)),
+                                    this.$.outputFileSystem
+                                )
+                            ]);
+                        })())
+                    })
+                    Promise.all(promises).then(resolve)
+                }, err => {
+                    throw err;
+                })
             }
         )
     }

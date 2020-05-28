@@ -24,7 +24,7 @@ class default_1 {
                 "ReactHelmet": "react-helmet",
             },
             output: {
-                path: this.$.config.pro ? this.$.config.paths.lib : `/${this.$.rel.libRel}`,
+                path: this.$.config.paths.lib,
                 filename: "e[contentHash].js",
                 library: "[name]",
             }
@@ -75,7 +75,7 @@ class default_1 {
         mergedConfig.output.filename = `m[contentHash].js`;
         mergedConfig.output.chunkFilename = "c[contentHash].js";
         mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
-        mergedConfig.output.path = this.$.config.pro ? this.$.config.paths.lib : mergedConfig.output.publicPath;
+        mergedConfig.output.path = this.$.config.paths.lib;
         mergedConfig.output.library = "__FIREJS_APP__";
         mergedConfig.output.libraryTarget = "window";
         return mergedConfig;

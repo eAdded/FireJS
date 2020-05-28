@@ -4,8 +4,5 @@ export default class {
     private readonly app;
     constructor(app: FireJS);
     init(): Promise<void>;
-    private getPageMap;
-    private buildPage;
-    private getLib;
-    private getPage;
+    private get;
 }

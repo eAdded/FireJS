@@ -33,12 +33,12 @@ export default class {
             if (this.logStat(stat))//true if errors
                 reject(undefined);
             else {
-                if (!this.$.config.pro) {
+                /*if (!this.$.config.pro) {
                     page.chunks.forEach(chunk => {
                         this.$.outputFileSystem.unlinkSync(`/${this.$.rel.libRel}/${chunk}`)
                     })
                     page.chunks = [];//reinit chunks
-                }
+                }*/
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
                         if (file.startsWith("m"))

@@ -11,9 +11,3 @@ function createMap(path_to_pages, inputFileSystem) {
     return map;
 }
 exports.createMap = createMap;
-function convertToMap(array) {
-    const map = new Map();
-    array.forEach(item => map.set(item, new Page_1.default(item)));
-    return map;
-}
-exports.convertToMap = convertToMap;

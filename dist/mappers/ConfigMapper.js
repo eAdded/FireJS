@@ -24,15 +24,6 @@ function getArgs() {
 exports.getArgs = getArgs;
 class default_1 {
     constructor(cli, args) {
-        this.makeAbsolute = (root, pathTo) => {
-            return path_1.isAbsolute(pathTo) ? pathTo : path_1.resolve(root, pathTo);
-        };
-        this.throwIfNotFound = (name, pathTo) => {
-            if (!fs_1.existsSync(pathTo)) {
-                this.cli.error(`${name} not found`, pathTo);
-                throw new Error();
-            }
-        };
         this.cli = cli;
         this.args = args;
     }
@@ -86,6 +77,15 @@ class default_1 {
         config.pages = config.pages || {};
         this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"));
         return config;
+    }
+    makeAbsolute(root, pathTo) {
+        return path_1.isAbsolute(pathTo) ? pathTo : path_1.resolve(root, pathTo);
+    }
+    throwIfNotFound(name, pathTo) {
+        if (!fs_1.existsSync(pathTo)) {
+            this.cli.error(`${name} not found`, pathTo);
+            throw new Error();
+        }
     }
     undefinedIfNotFound(object, property, pathRoot, name, msg) {
         if (object[property]) {

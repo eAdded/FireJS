@@ -127,11 +127,11 @@ export default class {
         return config;
     }
 
-    private makeAbsolute = (root: string, pathTo: string) => {
+    private makeAbsolute(root: string, pathTo: string) {
         return isAbsolute(pathTo) ? pathTo : resolve(root, pathTo);
     }
 
-    private throwIfNotFound = (name: string, pathTo: string) => {
+    private throwIfNotFound(name: string, pathTo: string) {
         if (!existsSync(pathTo)) {
             this.cli.error(`${name} not found`, pathTo);
             throw new Error();

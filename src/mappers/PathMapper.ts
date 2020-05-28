@@ -9,10 +9,3 @@ export function createMap(path_to_pages: string, inputFileSystem): Map<string, P
     })
     return map;
 }
-
-export function convertToMap(array: string[]): Map<string, Page> {
-    const map = new Map();
-    array.forEach(item =>
-        map.set(item, new Page(item)));
-    return map;
-}
