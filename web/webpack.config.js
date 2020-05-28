@@ -23,7 +23,7 @@ module.exports = [
         entry: "./index.js",
         mode: "production",
         output: {
-            filename: "index.bundle.js",
+            filename: "i[contentHash].js",
         },
         module: {
             rules: [

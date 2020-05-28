@@ -7,7 +7,6 @@ import {mapPlugins} from "./mappers/PluginMapper";
 import PageArchitect from "./architects/PageArchitect";
 import {writeFileRecursively} from "./utils/Fs";
 import * as fs from "fs"
-import {copyFile, exists} from "fs"
 import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
 import {convertToMap, createMap} from "./mappers/PathMapper";
 import WebpackArchitect from "./architects/WebpackArchitect";
@@ -101,17 +100,12 @@ export default class {
             template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
         })
         this.$.cli.log("Copying index chunk")
-        const index_bundle_out_path = join(this.$.config.paths.lib, "index.bundle.js")
-   //     exists(index_bundle_out_path, exists => {
-   //         if (!exists)
-                copyFile(join(__dirname, "../web/dist/index.bundle.js"), index_bundle_out_path, err => {
-                    if (err) {
-                        this.$.cli.error("error while copying index bundle")
-                        throw err
-                    }
-                    this.$.cli.log("copied index bundle")
-                })
-     //   })
+        const index_bundle_out_path = join(this.$.config.paths.lib, "i21345bb373762325b784.js")
+        if (this.$.config.pro)
+            this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
+                if (!exists)
+                    this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/i21345bb373762325b784.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+            })
     }
 
     buildPro() {

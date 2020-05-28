@@ -16,7 +16,6 @@ const PluginMapper_1 = require("./mappers/PluginMapper");
 const PageArchitect_1 = require("./architects/PageArchitect");
 const Fs_1 = require("./utils/Fs");
 const fs = require("fs");
-const fs_1 = require("fs");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const PathMapper_1 = require("./mappers/PathMapper");
 const WebpackArchitect_1 = require("./architects/WebpackArchitect");
@@ -67,17 +66,12 @@ class default_1 {
                 template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
             });
             this.$.cli.log("Copying index chunk");
-            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "index.bundle.js");
-            //     exists(index_bundle_out_path, exists => {
-            //         if (!exists)
-            fs_1.copyFile(path_1.join(__dirname, "../web/dist/index.bundle.js"), index_bundle_out_path, err => {
-                if (err) {
-                    this.$.cli.error("error while copying index bundle");
-                    throw err;
-                }
-                this.$.cli.log("copied index bundle");
-            });
-            //   })
+            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "i21345bb373762325b784.js");
+            if (this.$.config.pro)
+                this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
+                    if (!exists)
+                        this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/i21345bb373762325b784.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+                });
         });
     }
     buildPro() {
