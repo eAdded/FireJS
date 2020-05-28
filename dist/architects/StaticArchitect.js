@@ -20,6 +20,7 @@ class default_1 {
             `</script>`, "head");
     }
     render(template, page, path, content) {
+        template = this.addInnerHTML(template, `<script> window.__PATH__ = "${path}"</script>`, "head");
         //add map script
         template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
         //add externals

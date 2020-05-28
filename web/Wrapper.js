@@ -1,5 +1,6 @@
 import Head from "../components/Head";
 import {join} from "path";
+import {loadPage, preloadPage} from "../components/LinkApi";
 
 export default class extends React.Component {
     constructor() {

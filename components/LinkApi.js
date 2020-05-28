@@ -1,6 +1,7 @@
 export function loadMap(url) {
     const map_script = document.createElement("script");
     map_script.src = `/${window.__MAP_REL__}${url === "/" ? "/index" : url}.map.js`;
+    document.head.appendChild(sc);
     return map_script;
 }
 
@@ -12,11 +13,8 @@ export function preloadPage(url, callback) {
     };
     map_script.onerror = function () {
         document.head.removeChild(map_script);
-        const _404 = loadMap(window.__PAGES__._404);
-        _404.onload = map_script.onload;
-        document.head.appendChild(_404);
+        loadMap(window.__PAGES__._404).onload = map_script.onload;
     };
-    document.head.appendChild(map_script);
 }
 
 export function loadPage(url) {
@@ -28,5 +26,5 @@ export function loadPage(url) {
         script.onload = window.updateApp;
         document.body.appendChild(script);
     }
-    document.head.appendChild(sc);
+    window.history.pushState(undefined, undefined, url);
 }
