@@ -36,10 +36,6 @@ export default class {
     }
 
     render(template: string, page: Page, path: string, content: any) {
-        template = this.addInnerHTML(template,
-            `<script> window.__PATH__ = "${path}"</script>`,
-            "head");
-        //add map script
         template = this.addChunk(template, join(this.param.rel.mapRel, path + ".map.js"), "", "head");
         //add externals
         this.param.externals.forEach(external => {
