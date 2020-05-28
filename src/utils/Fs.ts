@@ -1,10 +1,7 @@
-import MapComponent from "../classes/Page";
-import {join} from "path";
-
 export function writeFileRecursively(path: string, data: string | Buffer, outputFileSystem) {
     return new Promise((resolve, reject) => {
         const dir = path.substr(0, path.lastIndexOf("/"));
-        outputFileSystem.mkdir(dir, {recursive: true}, err => {
+        outputFileSystem.mkdirp(dir, err => {
             if (err)
                 reject(err);
             else {
@@ -17,27 +14,6 @@ export function writeFileRecursively(path: string, data: string | Buffer, output
             }
         })
     })
-}
-
-export function moveChunks(mapComponent: MapComponent, $, outputFileSystem) {
-    return new Promise((resolve, reject) => {
-        if (mapComponent.chunks.length === 0)
-            resolve();
-        mapComponent.chunks.forEach(chunk => {//copy chunks to lib
-            const babel_abs_path = join($.config.paths.babel, chunk);
-            outputFileSystem.exists(babel_abs_path, exists => {
-                if (exists) {//only copy if it exists because it might be already copied before for page having same chunk
-                    outputFileSystem.rename(babel_abs_path, join($.config.paths.lib, chunk), err => {
-                        if (err)
-                            reject("Error moving chunk " + chunk);
-                        else
-                            resolve();
-                    });
-                } else
-                    resolve();
-            })
-        });
-    });
 }
 
 export function readDirRecursively(dir: string, inputFileSystem, callback) {

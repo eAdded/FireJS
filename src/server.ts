@@ -38,7 +38,9 @@ export default class {
             server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
 
         server.use(`/${this.$.rel.libRel}/i21345bb373762325b784.js`, express.static(join(__dirname, "../web/dist/i21345bb373762325b784.js")));
-        server.get('*', this.get.bind(this));
+        server.get(`/${this.$.rel.mapRel}/*`, this.get.bind(this))
+        server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this))
+        server.get('*', this.getPage.bind(this));
         server.listen(process.env.PORT || 5000, () => {
             this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`);
         })
@@ -47,9 +49,23 @@ export default class {
     private get(req: express.Request, res: express.Response) {
         // @ts-ignore
         const path = join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
+        console.log("get", path)
+        console.log(this.$.outputFileSystem.data.media.dedsec.Data.Projects.temp["fire-js-impl"].out.dist.lib)
         if (this.$.outputFileSystem.existsSync(path))
             res.end(this.$.outputFileSystem.readFileSync(path));
         else
             res.status(404);
+    }
+
+    private getPage(req: express.Request, res: express.Response) {
+        // @ts-ignore
+        let path = join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
+        console.log("getPage", path)
+        if (this.$.outputFileSystem.existsSync(join(path, "index.html")))
+            res.end(this.$.outputFileSystem.readFileSync(join(path, "index.html")));
+        else if (this.$.outputFileSystem.existsSync(path + ".html"))
+            res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
+        else
+            res.end(this.$.outputFileSystem.readFileSync(join(this.$.config.paths.dist, this.$.pageMap.get(this.$.config.pages["404"]).plugin.paths[0])+".html"));
     }
 }
