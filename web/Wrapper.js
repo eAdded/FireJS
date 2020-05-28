@@ -4,39 +4,66 @@ import {join} from "path";
 export default class extends React.Component {
     constructor() {
         super();
-        this.state = {
-            app: window.__FIREJS_APP__.default,
-            pre_chunks: window.__SSR__ ? window.__MAP__.chunks : [],
-            chunks: window.__SSR__ ? window.__MAP__.chunks : []
-        };
-        window.wrapper_context = this;
-        window.updateWrapperState = this.setState;
     }
 
     render() {
         return (
             <div>
-                <Head>
-                    {
-                        this.state.pre_chunks.map(chunk => {
-                            const href = join(`/${window.__LIB_REL__}/${chunk}`);
-                            console.log("pre_chunks", href, chunk.substring(chunk.lastIndexOf(".")));
-                            switch (chunk.substring(chunk.lastIndexOf("."))) {
-                                case ".js":
-                                    return (
-                                        <link rel="preload" as="script" href={href} crossOrigin="anonymous"/>
-                                    )
-                                case ".css":
-                                    return (
-                                        <link rel="preload" as="style" href={href} crossOrigin="anonymous"/>
-                                    )
-                            }
-                        })
-                    }
-                </Head>
-                <this.state.app content={window.__MAP__.content}/>
+                <WrapperHeadChunks/>
+                <WrapperBody/>
+                <WrapperBodyChunks/>
+            </div>
+        )
+    }
+}
+
+class WrapperHeadChunks extends React.Component {
+    constructor() {
+        super();
+        this.state = {init: window.__SSR__};
+        window.updatePreChunks = () => {
+            this.setState({init: true});
+        }
+    }
+
+    render() {
+        return (
+            <Head>
                 {
-                    this.state.chunks.map((chunk, index) => {
+                    window.__MAP__.chunks.map(chunk => {
+                        const href = join(`/${window.__LIB_REL__}/${chunk}`);
+                        console.log("pre_chunks", href, chunk.substring(chunk.lastIndexOf(".")));
+                        switch (chunk.substring(chunk.lastIndexOf("."))) {
+                            case ".js":
+                                return (
+                                    <link rel="preload" as="script" href={href} crossOrigin="anonymous"/>
+                                )
+                            case ".css":
+                                return (
+                                    <link rel="preload" as="style" href={href} crossOrigin="anonymous"/>
+                                )
+                        }
+                    })
+                }
+            </Head>
+        )
+    }
+}
+
+class WrapperBodyChunks extends React.Component {
+    constructor() {
+        super();
+        this.state = {init: window.__SSR__};
+        window.updateChunks = () => {
+            this.setState({init: true});
+        }
+    }
+
+    render() {
+        return (
+            <div>
+                {
+                    window.__MAP__.chunks.map(chunk => {
                         const href = join(`/${window.__LIB_REL__}/${chunk}`);
                         switch (chunk.substring(chunk.lastIndexOf("."))) {
                             case ".js":
@@ -55,6 +82,24 @@ export default class extends React.Component {
                     })
                 }
             </div>
+        )
+    }
+}
+
+class WrapperBody extends React.Component {
+    constructor() {
+        super();
+        this.state = {init: true};
+        window.updateApp = () => {
+            this.setState({init: true});
+        }
+    }
+
+    render() {
+        return (
+            <>
+                {this.state.init && <window.__FIREJS_APP__.default content={window.__MAP__.content}/>}
+            </>
         )
     }
 }

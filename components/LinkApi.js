@@ -7,7 +7,7 @@ export function loadMap(url) {
 export function preloadPage(url, callback) {
     const map_script = loadMap(url);
     map_script.onload = function () {
-        window.wrapper_context.setState({pre_chunks: window.__MAP__.chunks})
+        window.updatePreChunks()
         callback();
     };
     map_script.onerror = function () {
@@ -22,13 +22,11 @@ export function preloadPage(url, callback) {
 export function loadPage(url) {
     const sc = loadMap(url);
     sc.onload = function () {
-        window.wrapper_context.setState({chunks: window.__MAP__.chunks})
+        const script = document.createElement("script");
+        script.src = `/${window.__LIB_REL__}/${window.__MAP__.chunks.shift()}`
+        window.updateChunks();
+        script.onload = window.updateApp;
+        document.body.appendChild(script);
     }
-    sc.onerror = _ => {
-        document.head.removeChild(sc);
-        const _404 = loadMap(window.__PAGES__._404);
-        _404.onload = map_script.onload;
-        document.head.appendChild(_404);
-    };
     document.head.appendChild(sc);
 }
