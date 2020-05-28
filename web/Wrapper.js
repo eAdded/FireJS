@@ -1,18 +1,24 @@
 import Head from "../components/Head";
 import {join} from "path";
+import {loadPage, preloadPage} from "../components/LinkApi";
 
 export default class extends React.Component {
     constructor() {
         super();
+        window.onpopstate = function () {
+            preloadPage(location.pathname, () => {
+                loadPage(location.pathname, false)
+            })
+        }
     }
 
     render() {
         return (
-            <div>
+            <>
                 <WrapperHeadChunks/>
                 <WrapperBody/>
                 <WrapperBodyChunks/>
-            </div>
+            </>
         )
     }
 }
@@ -32,7 +38,6 @@ class WrapperHeadChunks extends React.Component {
                 {
                     window.__MAP__.chunks.map(chunk => {
                         const href = join(`/${window.__LIB_REL__}/${chunk}`);
-                        console.log("pre_chunks", href, chunk.substring(chunk.lastIndexOf(".")));
                         switch (chunk.substring(chunk.lastIndexOf("."))) {
                             case ".js":
                                 return (
@@ -61,7 +66,7 @@ class WrapperBodyChunks extends React.Component {
 
     render() {
         return (
-            <div>
+            <>
                 {
                     window.__MAP__.chunks.map(chunk => {
                         const href = join(`/${window.__LIB_REL__}/${chunk}`);
@@ -81,7 +86,7 @@ class WrapperBodyChunks extends React.Component {
                         }
                     })
                 }
-            </div>
+            </>
         )
     }
 }

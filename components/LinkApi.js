@@ -18,14 +18,11 @@ export function preloadPage(url, callback) {
 }
 
 export function loadPage(url, pushState = true) {
-    const sc = loadMap(url);
-    sc.onload = function () {
-        const script = document.createElement("script");
-        script.src = `/${window.__LIB_REL__}/${window.__MAP__.chunks.shift()}`
-        window.updateChunks();
-        script.onload = window.updateApp;
-        document.body.appendChild(script);
-    }
+    const script = document.createElement("script");
+    script.src = `/${window.__LIB_REL__}/${window.__MAP__.chunks.shift()}`
+    window.updateChunks();
+    script.onload = window.updateApp;
+    document.body.appendChild(script);
     if (pushState)
         window.history.pushState(undefined, undefined, url);
 }
