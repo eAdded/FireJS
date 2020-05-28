@@ -26,7 +26,8 @@ class default_1 {
             yield this.app.init();
             chokidar_1.watch(this.$.config.paths.pages) //watch changes
                 .on('add', path => {
-                const page = new Page_1.default(path.replace(this.$.config.paths.pages + "/", ""));
+                path = path.replace(this.$.config.paths.pages + "/", "");
+                const page = this.$.pageMap.get(path) || new Page_1.default(path);
                 this.$.pageMap.set(page.toString(), page);
                 this.app.buildPage(page);
             })

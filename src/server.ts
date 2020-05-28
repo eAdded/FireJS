@@ -20,7 +20,8 @@ export default class {
         await this.app.init();
         watch(this.$.config.paths.pages)//watch changes
             .on('add', path => {
-                const page = new Page(path.replace(this.$.config.paths.pages + "/", ""));
+                path = path.replace(this.$.config.paths.pages + "/", "");
+                const page = this.$.pageMap.get(path) || new Page(path);
                 this.$.pageMap.set(page.toString(), page);
                 this.app.buildPage(page);
             })
@@ -66,6 +67,6 @@ export default class {
         else if (this.$.outputFileSystem.existsSync(path + ".html"))
             res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
         else
-            res.end(this.$.outputFileSystem.readFileSync(join(this.$.config.paths.dist, this.$.pageMap.get(this.$.config.pages["404"]).plugin.paths[0])+".html"));
+            res.end(this.$.outputFileSystem.readFileSync(join(this.$.config.paths.dist, this.$.pageMap.get(this.$.config.pages["404"]).plugin.paths[0]) + ".html"));
     }
 }
