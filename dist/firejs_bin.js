@@ -21,7 +21,11 @@ const path_1 = require("path");
         if ($.config.pro) {
             try {
                 yield app.init();
-                yield app.buildPro();
+                const promises = [];
+                $.pageMap.forEach(page => {
+                    promises.push(app.buildPage(page));
+                });
+                yield Promise.all(promises);
                 $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
                 $.cli.log("Generating babel chunk map");
                 const map = {

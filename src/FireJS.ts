@@ -6,6 +6,7 @@ import {join, relative} from "path";
 import {mapPlugins} from "./mappers/PluginMapper";
 import PageArchitect from "./architects/PageArchitect";
 import {writeFileRecursively} from "./utils/Fs";
+import {mkdirp} from "fs-extra"
 import * as fs from "fs"
 import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
 import {createMap} from "./mappers/PathMapper";
@@ -66,7 +67,9 @@ export default class {
             console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n")
             process.exit(0);
         }
-        this.$.inputFileSystem = params.inputFileSystem || fs;
+        // @ts-ignore
+        fs.mkdirp = mkdirp;
+        this.$.inputFileSystem = params.inputFileSystem || fs
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper(this.$.cli, this.$.args).getConfig(params.config);
         this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);

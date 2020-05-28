@@ -15,6 +15,7 @@ const path_1 = require("path");
 const PluginMapper_1 = require("./mappers/PluginMapper");
 const PageArchitect_1 = require("./architects/PageArchitect");
 const Fs_1 = require("./utils/Fs");
+const fs_extra_1 = require("fs-extra");
 const fs = require("fs");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const PathMapper_1 = require("./mappers/PathMapper");
@@ -38,6 +39,8 @@ class default_1 {
             console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n");
             process.exit(0);
         }
+        // @ts-ignore
+        fs.mkdirp = fs_extra_1.mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs;
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper_1.default(this.$.cli, this.$.args).getConfig(params.config);

@@ -10,7 +10,11 @@ import {join} from "path"
     if ($.config.pro) {
         try {
             await app.init();
-            await app.buildPro();
+            const promises = []
+            $.pageMap.forEach(page => {
+                promises.push(app.buildPage(page));
+            })
+            await Promise.all(promises);
             $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
             $.cli.log("Generating babel chunk map");
             const map: FIREJS_MAP = {
