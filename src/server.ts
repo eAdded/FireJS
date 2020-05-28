@@ -50,8 +50,6 @@ export default class {
     private get(req: express.Request, res: express.Response) {
         // @ts-ignore
         const path = join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
-        console.log("get", path)
-        console.log(this.$.outputFileSystem.data.media.dedsec.Data.Projects.temp["fire-js-impl"].out.dist.lib)
         if (this.$.outputFileSystem.existsSync(path))
             res.end(this.$.outputFileSystem.readFileSync(path));
         else
@@ -61,7 +59,6 @@ export default class {
     private getPage(req: express.Request, res: express.Response) {
         // @ts-ignore
         let path = join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
-        console.log("getPage", path)
         if (this.$.outputFileSystem.existsSync(join(path, "index.html")))
             res.end(this.$.outputFileSystem.readFileSync(join(path, "index.html")));
         else if (this.$.outputFileSystem.existsSync(path + ".html"))
