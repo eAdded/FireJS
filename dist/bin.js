@@ -58,7 +58,7 @@ function initWebpackConfig(args) {
             });
         const $ = app.getContext();
         try {
-            if (args["--export"]) {
+            if (args["--export"] && args["--export-fly"]) {
                 const startTime = new Date().getTime();
                 yield app.init();
                 const promises = [];

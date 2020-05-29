@@ -53,7 +53,7 @@ export default class {
             path = resolve(process.cwd(), `firejs.yml`);
 
         if (this.inputFileSystem.existsSync(path))
-            return parseYaml(this.inputFileSystem.readFileSync(path, "utf8").toString());
+            return parseYaml(this.inputFileSystem.readFileSync(path, "utf8").toString()) || {};
         else if (wasGiven)
             throw new Error(`Config not found at ${path}`)
         else

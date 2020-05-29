@@ -17,7 +17,7 @@ class default_1 {
         else
             path = path_1.resolve(process.cwd(), `firejs.yml`);
         if (this.inputFileSystem.existsSync(path))
-            return yaml_1.parse(this.inputFileSystem.readFileSync(path, "utf8").toString());
+            return yaml_1.parse(this.inputFileSystem.readFileSync(path, "utf8").toString()) || {};
         else if (wasGiven)
             throw new Error(`Config not found at ${path}`);
         else
