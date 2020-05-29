@@ -2,6 +2,7 @@ import webpack = require("webpack");
 import WebpackArchitect from "./WebpackArchitect";
 import {$, WebpackConfig, WebpackStat} from "../FireJS";
 import Page from "../classes/Page";
+import {join} from "path";
 
 export default class {
     private readonly $: $;
@@ -34,7 +35,7 @@ export default class {
                 reject(undefined);
             else {
                 page.chunks.forEach(chunk => {
-                    this.$.outputFileSystem.unlinkSync(`/${this.$.rel.libRel}/${chunk}`)
+                    this.$.outputFileSystem.unlinkSync(join(this.$.config.paths.lib, chunk));
                 })
                 page.chunks = [];//reinit chunks
                 stat.compilation.chunks.forEach(chunk => {

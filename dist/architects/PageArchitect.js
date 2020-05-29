@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const webpack = require("webpack");
+const path_1 = require("path");
 class default_1 {
     constructor(globalData, webpackArchitect, isOutputCustom, isInputCustom) {
         this.$ = globalData;
@@ -25,7 +26,7 @@ class default_1 {
                 reject(undefined);
             else {
                 page.chunks.forEach(chunk => {
-                    this.$.outputFileSystem.unlinkSync(`/${this.$.rel.libRel}/${chunk}`);
+                    this.$.outputFileSystem.unlinkSync(path_1.join(this.$.config.paths.lib, chunk));
                 });
                 page.chunks = []; //reinit chunks
                 stat.compilation.chunks.forEach(chunk => {

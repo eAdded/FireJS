@@ -40,6 +40,9 @@ function initConfig(args: Args) {
         new FireJS({config}) :
         new FireJS({
             config,
+            webpackConfig : {
+                watch : true
+            },
             outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
         })
     const $ = app.getContext();

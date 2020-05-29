@@ -69,12 +69,18 @@ class default_1 {
     getPage(req, res, next) {
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
-        if (req.method === "GET") {
-            let path = path_1.join(this.$.config.paths.dist, pathname);
-            if (this.$.outputFileSystem.existsSync(path_1.join(path, "index.html")))
-                res.end(this.$.outputFileSystem.readFileSync(path_1.join(path, "index.html")));
-            else
-                res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
+        try {
+            if (req.method === "GET") {
+                let path = path_1.join(this.$.config.paths.dist, pathname);
+                if (this.$.outputFileSystem.existsSync(path_1.join(path, "index.html")))
+                    res.end(this.$.outputFileSystem.readFileSync(path_1.join(path, "index.html")));
+                else
+                    res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
+            }
+        }
+        catch (e) {
+            this.$.cli.error("Error serving " + pathname);
+            res.status(404);
         }
         next();
     }
