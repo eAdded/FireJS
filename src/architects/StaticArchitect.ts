@@ -67,8 +67,17 @@ export default class {
                     };
                     // @ts-ignore
                     global.document = {};
-                    require(join(this.param.pathToLib, page.chunks[0]));
-                    console.log(global.window, join(this.param.pathToLib, page.chunks[0]))
+                    // @ts-ignore
+                    if (page.cachedChunkName === page.chunks[0])
+                        // @ts-ignore
+                        window.__FIREJS_APP__ = page.cachedChunk;
+                    else {
+                        require(join(this.param.pathToLib, page.chunks[0]));
+                        // @ts-ignore
+                        page.cachedChunkName = page.chunks[0];
+                        // @ts-ignore
+                        page.cachedChunk = window.__FIREJS_APP__;
+                    }
                     return renderToString(
                         // @ts-ignore
                         React.createElement(require("../../web/dist/wrapper.bundle").default,

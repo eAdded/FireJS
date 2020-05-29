@@ -49,8 +49,17 @@ class default_1 {
                 };
                 // @ts-ignore
                 global.document = {};
-                require(path_1.join(this.param.pathToLib, page.chunks[0]));
-                console.log(global.window, path_1.join(this.param.pathToLib, page.chunks[0]));
+                // @ts-ignore
+                if (page.cachedChunkName === page.chunks[0])
+                    // @ts-ignore
+                    window.__FIREJS_APP__ = page.cachedChunk;
+                else {
+                    require(path_1.join(this.param.pathToLib, page.chunks[0]));
+                    // @ts-ignore
+                    page.cachedChunkName = page.chunks[0];
+                    // @ts-ignore
+                    page.cachedChunk = window.__FIREJS_APP__;
+                }
                 return server_1.renderToString(
                 // @ts-ignore
                 React.createElement(require("../../web/dist/wrapper.bundle").default, 
