@@ -14,8 +14,8 @@ const FireJS_1 = require("./FireJS");
 const server_1 = require("./server");
 const path_1 = require("path");
 const ArgsMapper_1 = require("./mappers/ArgsMapper");
-const MemoryFS = require("memory-fs");
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
+const MemoryFS = require("memory-fs");
 function printHelp() {
     console.log("\n\n    \x1b[1m Fire JS \x1b[0m - Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.");
     console.log("\n    \x1b[1m Flags \x1b[0m\n" +
@@ -49,7 +49,11 @@ function initConfig(args) {
             new FireJS_1.default({
                 config,
                 webpackConfig: {
-                    watch: true
+                    watch: true,
+                    output: {
+                        filename: "main[hash]",
+                        chunkFilename: "chunk[hash]"
+                    }
                 },
                 outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
             });

@@ -3,9 +3,9 @@ import FireJS, {FIREJS_MAP} from "./FireJS"
 import Server from "./server"
 import {join} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";
-import MemoryFS = require("memory-fs");
 
 import ConfigMapper from "./mappers/ConfigMapper";
+import MemoryFS = require("memory-fs");
 
 function printHelp() {
     console.log("\n\n    \x1b[1m Fire JS \x1b[0m - Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.");
@@ -40,8 +40,12 @@ function initConfig(args: Args) {
         new FireJS({config}) :
         new FireJS({
             config,
-            webpackConfig : {
-                watch : true
+            webpackConfig: {
+                watch: true,
+                output: {
+                    filename: "main[hash]",
+                    chunkFilename: "chunk[hash]"
+                }
             },
             outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
         })
@@ -56,7 +60,6 @@ function initConfig(args: Args) {
             })
             await Promise.all(promises);
             $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
-
             $.cli.log("Generating babel chunk map");
             const map: FIREJS_MAP = {
                 staticConfig: $.renderer.param,

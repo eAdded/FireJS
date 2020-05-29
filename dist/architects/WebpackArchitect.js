@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 class default_1 {
     constructor(globalData, userConfig = {}) {
         this.$ = globalData;
-        const userWebpack = userConfig || (this.$.config.paths.webpack ? require(this.$.config.paths.webpack) : {});
+        const userWebpack = Object.assign(Object.assign({}, userConfig), (this.$.config.paths.webpack ? require(this.$.config.paths.webpack) : {}));
         if (typeof userWebpack === "object")
             this.userConfig = Object.assign({ entry: {}, output: {}, module: {
                     rules: []
@@ -68,12 +68,12 @@ class default_1 {
             ],
         });
         mergedConfig.plugins.push(new MiniCssExtractPlugin({
-            filename: "c[contentHash].css"
+            filename: (mergedConfig.output.chunkFilename + ".css") || "c[contentHash].css"
         }));
         mergedConfig.name = page.toString();
         mergedConfig.entry = path_1.join(this.$.config.paths.pages, mergedConfig.name);
-        mergedConfig.output.filename = `m[contentHash].js`;
-        mergedConfig.output.chunkFilename = "c[contentHash].js";
+        mergedConfig.output.filename = (mergedConfig.output.filename + ".js") || `m[contentHash].js`;
+        mergedConfig.output.chunkFilename = (mergedConfig.output.chunkFilename + ".js") || "c[contentHash].js";
         mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         mergedConfig.output.path = this.$.config.paths.lib;
         mergedConfig.output.library = "__FIREJS_APP__";
