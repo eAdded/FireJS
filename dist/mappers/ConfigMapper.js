@@ -9,18 +9,19 @@ class default_1 {
         this.outputFileSystem = outputFileSystem;
     }
     getUserConfig(path) {
+        const wasGiven = !!path;
         if (path) { //tweak conf path
             if (!path_1.isAbsolute(path))
                 path = path_1.resolve(process.cwd(), path); //create absolute path
         }
         else
-            path = path_1.resolve(process.cwd(), `firejs.config.js`);
-        if (this.inputFileSystem.existsSync(path)) {
-            const config = yaml_1.parse(this.inputFileSystem.readFileSync(path));
-            return config.default || config;
-        }
-        else
+            path = path_1.resolve(process.cwd(), `firejs.yml`);
+        if (this.inputFileSystem.existsSync(path))
+            return yaml_1.parse(this.inputFileSystem.readFileSync(path, "utf8").toString());
+        else if (wasGiven)
             throw new Error(`Config not found at ${path}`);
+        else
+            return {};
     }
     getConfig(config = {}) {
         config.paths = config.paths || {};
@@ -28,8 +29,7 @@ class default_1 {
         this.throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.makeAbsolute(config.paths.root, config.paths.src) : path_1.join(config.paths.root, "src"));
         this.throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.makeAbsolute(config.paths.root, config.paths.pages) : path_1.join(config.paths.src, "pages"));
         //out
-        this.makeDirIfNotFound(config.paths.out = config.paths.out ? this.makeAbsolute(config.paths.root, config.paths.out) : path_1.join(config.paths.root, "out"));
-        this.makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.makeAbsolute(config.paths.root, config.paths.dist) : path_1.join(config.paths.out, "dist"));
+        this.makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.makeAbsolute(config.paths.root, config.paths.dist) : path_1.join(config.paths.root, "dist"));
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : path_1.resolve(__dirname, "../../web/template.html");
         this.makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.makeAbsolute(config.paths.root, config.paths.lib) : path_1.join(config.paths.dist, "lib"));
         this.makeDirIfNotFound(config.paths.map = config.paths.map ? this.makeAbsolute(config.paths.root, config.paths.map) : path_1.join(config.paths.lib, "map"));

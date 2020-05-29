@@ -11,8 +11,7 @@ export interface Config {
         root?: string,      //project root, default : process.cwd()
         src?: string,       //src dir, default : root/src
         pages?: string,     //pages dir, default : root/src/pages
-        out?: string,       //output dir, default : root/out
-        dist?: string,      //production dist, default : root/out/dist
+        dist?: string,      //production dist, default : root/dist
         template?: string,  //template file, default : inbuilt template file
         lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
         map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
@@ -47,17 +46,19 @@ export default class {
     }
 
     public getUserConfig(path: string): Config | never {
+        const wasGiven = !!path;
         if (path) {//tweak conf path
             if (!isAbsolute(path))
                 path = resolve(process.cwd(), path);//create absolute path
         } else
-            path = resolve(process.cwd(), `firejs.config.js`);
+            path = resolve(process.cwd(), `firejs.yml`);
 
-        if (this.inputFileSystem.existsSync(path)) {
-            const config = parseYaml(this.inputFileSystem.readFileSync(path));
-            return config.default || config;
-        } else
+        if (this.inputFileSystem.existsSync(path))
+            return parseYaml(this.inputFileSystem.readFileSync(path, "utf8").toString());
+        else if (wasGiven)
             throw new Error(`Config not found at ${path}`)
+        else
+            return {}
     }
 
     public getConfig(config: Config = {}): Config {
@@ -66,8 +67,7 @@ export default class {
         this.throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.makeAbsolute(config.paths.root, config.paths.src) : join(config.paths.root, "src"));
         this.throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.makeAbsolute(config.paths.root, config.paths.pages) : join(config.paths.src, "pages"));
         //out
-        this.makeDirIfNotFound(config.paths.out = config.paths.out ? this.makeAbsolute(config.paths.root, config.paths.out) : join(config.paths.root, "out"));
-        this.makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.makeAbsolute(config.paths.root, config.paths.dist) : join(config.paths.out, "dist"));
+        this.makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.makeAbsolute(config.paths.root, config.paths.dist) : join(config.paths.root, "dist"));
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : resolve(__dirname, "../../web/template.html")
         this.makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.makeAbsolute(config.paths.root, config.paths.lib) : join(config.paths.dist, "lib"));
         this.makeDirIfNotFound(config.paths.map = config.paths.map ? this.makeAbsolute(config.paths.root, config.paths.map) : join(config.paths.lib, "map"));

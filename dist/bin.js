@@ -15,31 +15,37 @@ const server_1 = require("./server");
 const path_1 = require("path");
 const ArgsMapper_1 = require("./mappers/ArgsMapper");
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
+function printHelp() {
+    console.log("\n\n    \x1b[1m Fire JS \x1b[0m - Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.");
+    console.log("\n    \x1b[1m Flags \x1b[0m\n" +
+        "\n\t\x1b[34m--pro, -p\x1b[0m\n\t    Production Mode\n" +
+        "\n\t\x1b[34m--conf, -c\x1b[0m\n\t    Path to Config file\n" +
+        "\n\t\x1b[34m--verbose, -v\x1b[0m\n\t    Log Webpack Stat\n" +
+        "\n\t\x1b[34m--plain\x1b[0m\n\t    Log without styling i.e colors and symbols\n" +
+        "\n\t\x1b[34m--silent, s\x1b[0m\n\t    Log errors only\n" +
+        "\n\t\x1b[34m--disable-plugins\x1b[0m\n\t    Disable plugins\n" +
+        "\n\t\x1b[34m--help, -h\x1b[0m\n\t    Help");
+    console.log("\n     \x1b[1mVersion :\x1b[0m 0.10.1");
+    console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n");
+    process.exit(0);
+}
+function initApp(args) {
+    const userConfig = new ConfigMapper_1.default().getUserConfig(args["--conf"]);
+    console.log(userConfig);
+    userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
+    userConfig.pro = args["--pro"] || !!userConfig.pro;
+    userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
+    userConfig.logMode = args["--plain"] ? "plain" : args["--silent"] ? "silent" : userConfig.logMode;
+    return new FireJS_1.default({ config: userConfig });
+}
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const args = ArgsMapper_1.getArgs();
-        if (args["--help"]) {
-            console.log("\n\n    \x1b[1m Fire JS \x1b[0m - Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.");
-            console.log("\n    \x1b[1m Flags \x1b[0m\n" +
-                "\n\t\x1b[34m--pro, -p\x1b[0m\n\t    Production Mode\n" +
-                "\n\t\x1b[34m--conf, -c\x1b[0m\n\t    Path to Config file\n" +
-                "\n\t\x1b[34m--verbose, -v\x1b[0m\n\t    Log Webpack Stat\n" +
-                "\n\t\x1b[34m--plain\x1b[0m\n\t    Log without styling i.e colors and symbols\n" +
-                "\n\t\x1b[34m--silent, s\x1b[0m\n\t    Log errors only\n" +
-                "\n\t\x1b[34m--disable-plugins\x1b[0m\n\t    Disable plugins\n" +
-                "\n\t\x1b[34m--help, -h\x1b[0m\n\t    Help");
-            console.log("\n     \x1b[1mVersion :\x1b[0m 0.10.1");
-            console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n");
-            return;
-        }
-        const userConfig = args["--conf"] ? new ConfigMapper_1.default().getUserConfig(args["--conf"]) : {};
-        userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
-        userConfig.pro = args["--pro"] || !!userConfig.pro;
-        userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
-        userConfig.logMode = args["--plain"] ? "plain" : args["--silent"] ? "silent" : userConfig.logMode;
-        const app = new FireJS_1.default({ config: userConfig });
-        const startTime = new Date().getTime();
+        if (args["--help"])
+            printHelp();
+        const app = initApp(args);
         const $ = app.getContext();
+        const startTime = new Date().getTime();
         if ($.config.pro) {
             try {
                 yield app.init();

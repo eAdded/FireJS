@@ -9,7 +9,6 @@ export interface Config {
         root?: string;
         src?: string;
         pages?: string;
-        out?: string;
         dist?: string;
         template?: string;
         lib?: string;
