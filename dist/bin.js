@@ -45,8 +45,8 @@ function initApp(args) {
             printHelp();
         const app = initApp(args);
         const $ = app.getContext();
-        const startTime = new Date().getTime();
         if ($.config.pro) {
+            const startTime = new Date().getTime();
             try {
                 yield app.init();
                 const promises = [];

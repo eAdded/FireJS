@@ -37,8 +37,8 @@ function initApp(args: Args) {
         printHelp();
     const app = initApp(args);
     const $ = app.getContext();
-    const startTime = new Date().getTime();
     if ($.config.pro) {
+        const startTime = new Date().getTime();
         try {
             await app.init();
             const promises = []
@@ -47,6 +47,7 @@ function initApp(args: Args) {
             })
             await Promise.all(promises);
             $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
+
             $.cli.log("Generating babel chunk map");
             const map: FIREJS_MAP = {
                 staticConfig: $.renderer.param,
