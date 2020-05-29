@@ -1,4 +1,4 @@
-import arg = require("arg");
+import args = require("args");
 
 export interface Args {
     "--webpack-conf"?: string,
@@ -27,40 +27,26 @@ export interface Args {
 }
 
 export function getArgs(): Args {
-    return arg({
-        //Types
-        "--webpack-conf": String,
-        "--export": Boolean,
-        "--export-fly": Boolean,
-        "--disk": Boolean,
-        "--pro": Boolean,
-        "--conf": String,
-        "--verbose": Boolean,
-        "--plain": Boolean,
-        "--silent": Boolean,
-        "--disable-plugins": Boolean,
-        "--help": Boolean,
-        //Aliases
-        "-w": "--webpack-conf",
-        "-e": "--export",
-        "-d": "--disk",
-        "-p": "--pro",
-        "-c": "--conf",
-        "-v": "--verbose",
-        "-s": "--silent",
-        "-h": "--help",
+    args.option("webpack-conf")
+        .option("export")
+        .option("disk")
+        .option("pro")
+        .option("conf")
+        .option("verbose")
+        .option("silent")
+        .option("disable-plugins")
         //paths
-        "--root": String,      //project root, default : process.cwd()
-        "--src": String,       //src dir, default : root/src
-        "--pages": String,     //pages dir, default : root/src/pages
-        "--out": String,       //production dist, default : root/out
-        "--dist": String,      //production dist, default : root/out/dist
-        "--cache": String,     //cache dir, default : root/out/.cache
-        "--fly": String,       //cache dir, default : root/out/fly
-        "--template": String,  //template file, default : inbuilt template file
-        "--lib": String,       //dir where chunks are exported, default : root/out/dist/lib
-        "--map": String,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
-        "--static": String,    //dir where page static elements are stored eg. images, default : root/src/static
-        "--plugins": String   //plugins dir, default : root/src/plugins
-    })
+        .option(["","root"], "project root, default : process.cwd()")
+        .option("src", "src dir, default : root/src")
+        .option("pages", "pages dir, default : root/src/pages")
+        .option("out", "production dist, default : root/out")
+        .option("dist", "production dist, default : root/out/dist")
+        .option("cache", "cache dir, default : root/out/.cache")
+        .option("fly", "cache dir, default : root/out/fly")
+        .option("template", "template file, default : inbuilt template file")
+        .option("lib", "dir where chunks are exported, default : root/out/dist/lib")
+        .option("map", "dir where chunk map and page data is exported, default : root/out/dist/lib/map")
+        .option("static", "dir where page static elements are stored eg. images, default : root/src/static")
+        .option("plugins", "plugins dir, default : root/src/plugins")
+    return args.parse(process.argv);
 }
