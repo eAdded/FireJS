@@ -29,7 +29,8 @@ class default_1 {
         this.throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.makeAbsolute(config.paths.root, config.paths.src) : path_1.join(config.paths.root, "src"));
         this.throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.makeAbsolute(config.paths.root, config.paths.pages) : path_1.join(config.paths.src, "pages"));
         //out
-        this.makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.makeAbsolute(config.paths.root, config.paths.dist) : path_1.join(config.paths.root, "dist"));
+        this.makeDirIfNotFound(config.paths.out = config.paths.out ? this.makeAbsolute(config.paths.root, config.paths.out) : path_1.join(config.paths.root, "out"));
+        this.makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.makeAbsolute(config.paths.root, config.paths.dist) : path_1.join(config.paths.out, "dist"));
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : path_1.resolve(__dirname, "../../web/template.html");
         this.makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.makeAbsolute(config.paths.root, config.paths.lib) : path_1.join(config.paths.dist, "lib"));
         this.makeDirIfNotFound(config.paths.map = config.paths.map ? this.makeAbsolute(config.paths.root, config.paths.map) : path_1.join(config.paths.lib, "map"));

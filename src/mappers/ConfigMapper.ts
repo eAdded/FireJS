@@ -11,7 +11,8 @@ export interface Config {
         root?: string,      //project root, default : process.cwd()
         src?: string,       //src dir, default : root/src
         pages?: string,     //pages dir, default : root/src/pages
-        dist?: string,      //production dist, default : root/dist
+        out?: string,       //production dist, default : root/out
+        dist?: string,      //production dist, default : root/out/dist
         template?: string,  //template file, default : inbuilt template file
         lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
         map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
@@ -66,7 +67,8 @@ export default class {
         this.throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.makeAbsolute(config.paths.root, config.paths.src) : join(config.paths.root, "src"));
         this.throwIfNotFound("pages dir", config.paths.pages = config.paths.pages ? this.makeAbsolute(config.paths.root, config.paths.pages) : join(config.paths.src, "pages"));
         //out
-        this.makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.makeAbsolute(config.paths.root, config.paths.dist) : join(config.paths.root, "dist"));
+        this.makeDirIfNotFound(config.paths.out = config.paths.out ? this.makeAbsolute(config.paths.root, config.paths.out) : join(config.paths.root, "out"));
+        this.makeDirIfNotFound(config.paths.dist = config.paths.dist ? this.makeAbsolute(config.paths.root, config.paths.dist) : join(config.paths.out, "dist"));
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : resolve(__dirname, "../../web/template.html")
         this.makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.makeAbsolute(config.paths.root, config.paths.lib) : join(config.paths.dist, "lib"));
         this.makeDirIfNotFound(config.paths.map = config.paths.map ? this.makeAbsolute(config.paths.root, config.paths.map) : join(config.paths.lib, "map"));
