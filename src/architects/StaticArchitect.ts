@@ -68,6 +68,7 @@ export default class {
                     // @ts-ignore
                     global.document = {};
                     require(join(this.param.pathToLib, page.chunks[0]));
+                    console.log(global.window, join(this.param.pathToLib, page.chunks[0]))
                     return renderToString(
                         // @ts-ignore
                         React.createElement(require("../../web/dist/wrapper.bundle").default,
