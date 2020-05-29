@@ -62,10 +62,8 @@ function initWebpackConfig(args) {
             yield app.init();
             if (args["--export"]) {
                 if (args["--export-fly"])
-                    if (!$.outputFileSystem.existsSync(args["--export-fly"] = path_1.join($.config.paths.root, args["--export-fly"]))) {
-                        $.cli.error("path value of [--export-fly] doesn't exist");
-                        return;
-                    }
+                    if (!$.outputFileSystem.existsSync(args["--export-fly"] = path_1.join($.config.paths.root, args["--export-fly"])))
+                        $.outputFileSystem.mkdirSync(args["--export-fly"]);
                 const startTime = new Date().getTime();
                 const promises = [];
                 $.pageMap.forEach(page => {
