@@ -98,11 +98,10 @@ export default class {
         })
         this.$.cli.log("Copying index chunk")
         const index_bundle_out_path = join(this.$.config.paths.lib, "i21345bb373762325b784.js")
-        if (this.$.config.pro)
-            this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
-                if (!exists)
-                    this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/i21345bb373762325b784.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
-            })
+        this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
+            if (!exists)
+                this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/i21345bb373762325b784.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+        })
     }
 
     buildPage(page: Page) {

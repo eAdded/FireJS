@@ -36,8 +36,7 @@ export default class {
         const server: express.Application = express();
         if (this.$.config.paths.static)
             server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
-        server.use(`/${this.$.rel.libRel}/i21345bb373762325b784.js`, express.static(join(__dirname, "../web/dist/i21345bb373762325b784.js")));
-        server.get(`/${this.$.rel.mapRel}/*`, this.getMap.bind(this))
+        server.use(`/${this.$.rel.mapRel}/*`, this.getMap.bind(this))
         server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this))
         server.get('*', this.getPage.bind(this));
         server.listen(process.env.PORT || 5000, () => {
@@ -67,18 +66,17 @@ export default class {
         res.end();
     }
 
-    private getPage(req: express.Request, res: express.Response) {
+    private getPage(req: express.Request, res: express.Response, next) {
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
         if (req.method === "GET") {
             let path = join(this.$.config.paths.dist, pathname);
             if (this.$.outputFileSystem.existsSync(join(path, "index.html")))
-                res.write(this.$.outputFileSystem.readFileSync(join(path, "index.html")));
+                res.end(this.$.outputFileSystem.readFileSync(join(path, "index.html")));
             else
-                res.write(this.$.outputFileSystem.readFileSync(path + ".html"));
+                res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
         }
-        this.searchPage(pathname).plugin.onRequest(req, res);
-        res.end();
+        next();
     }
 
 
