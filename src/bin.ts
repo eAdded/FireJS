@@ -22,7 +22,7 @@ import ConfigMapper from "./mappers/ConfigMapper";
         console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n")
         return;
     }
-    const userConfig = new ConfigMapper().getUserConfig(args["--conf"]);
+    const userConfig = args["--conf"] ? new ConfigMapper().getUserConfig(args["--conf"]) : {};
     userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
     userConfig.pro = args["--pro"] || !!userConfig.pro;
     userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
