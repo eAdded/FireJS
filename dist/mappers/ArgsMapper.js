@@ -5,6 +5,7 @@ function getArgs() {
     return arg({
         //Types
         "--export": Boolean,
+        "--disk": Boolean,
         "--pro": Boolean,
         "--conf": String,
         "--verbose": Boolean,
@@ -14,6 +15,7 @@ function getArgs() {
         "--help": Boolean,
         //Aliases
         "-e": "--export",
+        "-d": "--disk",
         "-p": "--pro",
         "-c": "--conf",
         "-v": "--verbose",

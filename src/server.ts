@@ -2,7 +2,6 @@ import {join} from "path"
 import {watch} from "chokidar"
 import FireJS, {$} from "./FireJS"
 import Page from "./classes/Page";
-import MemoryFS = require("memory-fs");
 import express = require("express");
 
 export default class {
@@ -12,8 +11,6 @@ export default class {
     constructor(app: FireJS) {
         this.app = app;
         this.$ = app.getContext();
-        this.$.outputFileSystem = new MemoryFS()
-        this.$.pageArchitect.isOutputCustom = true;
     }
 
     async init() {

@@ -12,14 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const chokidar_1 = require("chokidar");
 const Page_1 = require("./classes/Page");
-const MemoryFS = require("memory-fs");
 const express = require("express");
 class default_1 {
     constructor(app) {
         this.app = app;
         this.$ = app.getContext();
-        this.$.outputFileSystem = new MemoryFS();
-        this.$.pageArchitect.isOutputCustom = true;
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
