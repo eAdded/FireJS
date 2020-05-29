@@ -48,7 +48,6 @@ export default class {
             //settings which can be changed by user
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
-            watch: !this.$.config.pro,
             //add config base to user config to prevent undefined errors
             ...cloneDeep(this.userConfig),
             //settings un-touchable by user

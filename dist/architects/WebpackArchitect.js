@@ -33,7 +33,7 @@ class default_1 {
     forPage(page) {
         let mergedConfig = Object.assign(Object.assign({ 
             //settings which can be changed by user
-            target: 'web', mode: this.$.config.pro ? "production" : "development", watch: !this.$.config.pro }, lodash_1.cloneDeep(this.userConfig)), { 
+            target: 'web', mode: this.$.config.pro ? "production" : "development" }, lodash_1.cloneDeep(this.userConfig)), { 
             //settings un-touchable by user
             optimization: {
                 splitChunks: {
