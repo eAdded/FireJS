@@ -39,12 +39,12 @@ function initConfig(args) {
     return userConfig;
 }
 function initWebpackConfig(args) {
-    const webpackConfig = args["--webpack-conf"] ? require(args["--webpack-conf"]) : {};
+    const webpackConfig = args["--webpack-conf"] ? require(path_1.resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"]) {
         webpackConfig.watch = webpackConfig.watch || true;
         webpackConfig.output = webpackConfig.output || {};
-        webpackConfig.output.filename = webpackConfig.output.filename || "main[hash]";
-        webpackConfig.output.chunkFilename = webpackConfig.output.chunkFilename || "main[hash]";
+        webpackConfig.output.filename = webpackConfig.output.filename || "[name][hash]";
+        webpackConfig.output.chunkFilename = webpackConfig.output.chunkFilename || "[name][hash]";
     }
     return webpackConfig;
 }

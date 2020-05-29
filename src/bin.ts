@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import FireJS, {FIREJS_MAP} from "./FireJS"
 import Server from "./server"
-import {join} from "path"
+import {join, resolve} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";
 
 import ConfigMapper from "./mappers/ConfigMapper";
@@ -32,12 +32,12 @@ function initConfig(args: Args) {
 }
 
 function initWebpackConfig(args: Args) {
-    const webpackConfig = args["--webpack-conf"] ? require(args["--webpack-conf"]) : {};
+    const webpackConfig = args["--webpack-conf"] ? require(resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"]) {
         webpackConfig.watch = webpackConfig.watch || true;
         webpackConfig.output = webpackConfig.output || {};
-        webpackConfig.output.filename = webpackConfig.output.filename || "main[hash]";
-        webpackConfig.output.chunkFilename = webpackConfig.output.chunkFilename || "main[hash]";
+        webpackConfig.output.filename = webpackConfig.output.filename || "[name][hash]";
+        webpackConfig.output.chunkFilename = webpackConfig.output.chunkFilename || "[name][hash]";
     }
     return webpackConfig;
 }

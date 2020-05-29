@@ -81,13 +81,13 @@ export default class {
         );
         mergedConfig.plugins.push(
             new MiniCssExtractPlugin({
-                filename: (mergedConfig.output.chunkFilename + ".css") || "c[contentHash].css"
+                filename: "c" + ((mergedConfig.output.chunkFilename + ".css") || "c[contentHash].css")
             }),
         );
         mergedConfig.name = page.toString()
         mergedConfig.entry = join(this.$.config.paths.pages, mergedConfig.name);
-        mergedConfig.output.filename = (mergedConfig.output.filename + ".js") || `m[contentHash].js`;
-        mergedConfig.output.chunkFilename = (mergedConfig.output.chunkFilename + ".js") || "c[contentHash].js";
+        mergedConfig.output.filename = "m" + ((mergedConfig.output.filename + ".js") || `m[contentHash].js`);
+        mergedConfig.output.chunkFilename = "c" + ((mergedConfig.output.chunkFilename + ".js") || "c[contentHash].js");
         mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         mergedConfig.output.path = this.$.config.paths.lib;
         mergedConfig.output.library = "__FIREJS_APP__";

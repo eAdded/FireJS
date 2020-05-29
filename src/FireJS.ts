@@ -1,4 +1,4 @@
-import {Config} from "./mappers/ConfigMapper";
+import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
 import {Configuration, Stats} from "webpack";
@@ -53,7 +53,7 @@ export default class {
         fs.mkdirp = mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs
         this.$.outputFileSystem = params.outputFileSystem || fs;
-        this.$.config = params.config;
+        this.$.config = new ConfigMapper(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config)
         this.$.cli = new Cli(this.$.config.logMode);
         this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {

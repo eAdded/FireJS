@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const Cli_1 = require("./utils/Cli");
 const path_1 = require("path");
 const PluginMapper_1 = require("./mappers/PluginMapper");
@@ -26,7 +27,7 @@ class default_1 {
         fs.mkdirp = fs_extra_1.mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs;
         this.$.outputFileSystem = params.outputFileSystem || fs;
-        this.$.config = params.config;
+        this.$.config = new ConfigMapper_1.default(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config);
         this.$.cli = new Cli_1.default(this.$.config.logMode);
         this.$.pageMap = PathMapper_1.createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
