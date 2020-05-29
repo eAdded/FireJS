@@ -19,11 +19,11 @@ export default class {
     async init() {
         await this.app.init();
         watch(this.$.config.paths.pages)//watch changes
-            .on('add', path => {
+            .on('add', async path => {
                 path = path.replace(this.$.config.paths.pages + "/", "");
                 const page = this.$.pageMap.get(path) || new Page(path);
                 this.$.pageMap.set(page.toString(), page);
-                this.app.buildPage(page);
+                await this.app.buildPage(page);
             })
             .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));
@@ -34,12 +34,12 @@ export default class {
             });
         this.$.cli.ok("Watching for file changes")
         const server: express.Application = express();
-
         if (this.$.config.paths.static)
             server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
         server.use(`/${this.$.rel.libRel}/i21345bb373762325b784.js`, express.static(join(__dirname, "../web/dist/i21345bb373762325b784.js")));
+        server.get(`/${this.$.rel.mapRel}/*`, this.getMap.bind(this))
         server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this))
-        server.use('*', this.use.bind(this));
+        server.get('*', this.getPage.bind(this));
         server.listen(process.env.PORT || 5000, () => {
             this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`);
         })
@@ -47,28 +47,29 @@ export default class {
 
     private get(req: express.Request, res: express.Response) {
         // @ts-ignore
-        this.getFromFileSystem(join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname)), res)
+        this.getFromFileSystem(decodeURI(req._parsedUrl.pathname), res)
         res.end();
     }
 
-    private getFromFileSystem(path, res: express.Response) {
-        if (this.$.outputFileSystem.existsSync(path))
-            res.write(this.$.outputFileSystem.readFileSync(path));
+    private getFromFileSystem(pathname, res: express.Response) {
+        pathname = join(this.$.config.paths.dist, pathname);
+        if (this.$.outputFileSystem.existsSync(pathname))
+            res.write(this.$.outputFileSystem.readFileSync(pathname));
         else
             res.status(404);
     }
 
-    private use(req: express.Request, res: express.Response, next) {
+    private getMap(req: express.Request, res: express.Response) {
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
-        let page: Page;
-        if (pathname.startsWith(`/${this.$.rel.mapRel}/`)) {
-            this.getFromFileSystem(pathname, res)
-            page = this.searchPage(pathname.substring(0, pathname.lastIndexOf(".map.js")));
-        } else
-            page = this.searchPage(pathname);
-        this.$.cli.ok(page.toString())
-        page.plugin.onRequest(req, res);
+        this.getFromFileSystem(pathname, res)
+        this.searchPage(pathname.substring(0, pathname.lastIndexOf(".map.js"))).plugin.onRequest(req, res);
+        res.end();
+    }
+
+    private getPage(req: express.Request, res: express.Response) {
+        // @ts-ignore
+        const pathname = decodeURI(req._parsedUrl.pathname);
         if (req.method === "GET") {
             let path = join(this.$.config.paths.dist, pathname);
             if (this.$.outputFileSystem.existsSync(join(path, "index.html")))
@@ -76,15 +77,15 @@ export default class {
             else
                 res.write(this.$.outputFileSystem.readFileSync(path + ".html"));
         }
+        this.searchPage(pathname).plugin.onRequest(req, res);
         res.end();
-        next();
     }
 
+
     private searchPage(pathname: string): Page {
-        for (const page of this.$.pageMap.values()) {
+        for (const page of this.$.pageMap.values())
             if (page.plugin.paths.has(pathname) || page.plugin.paths.has(join(pathname, "index")))
                 return page;
-        }
         return this.$.pageMap.get(this.$.config.pages["404"])
     }
 }

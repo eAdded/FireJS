@@ -6,6 +6,7 @@ export default class {
     init(): Promise<void>;
     private get;
     private getFromFileSystem;
-    private use;
+    private getMap;
+    private getPage;
     private searchPage;
 }
