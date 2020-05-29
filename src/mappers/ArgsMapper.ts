@@ -1,7 +1,8 @@
 import arg = require("arg");
 
 export interface Args {
-    "--export"?: boolean,              //Production Mode
+    "--export"?: boolean,           //Export
+    "--disk"?: boolean,             //Write to disk instead of memory
     "--conf"?: string,              //Path to Config file
     "--verbose"?: boolean,          //Log Webpack Stat
     "--plain"?: boolean,            //Log without styling i.e colors and symbols

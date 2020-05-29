@@ -1,5 +1,6 @@
 export interface Args {
     "--export"?: boolean;
+    "--disk"?: boolean;
     "--conf"?: string;
     "--verbose"?: boolean;
     "--plain"?: boolean;

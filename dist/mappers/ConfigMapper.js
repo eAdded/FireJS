@@ -55,7 +55,7 @@ class default_1 {
         return path_1.isAbsolute(pathTo) ? pathTo : path_1.resolve(root, pathTo);
     }
     throwIfNotFound(name, pathTo) {
-        if (!this.outputFileSystem.existsSync(pathTo))
+        if (!this.inputFileSystem.existsSync(pathTo))
             throw new Error(`${name} not found. ${pathTo}`);
     }
     undefinedIfNotFound(object, property, pathRoot, name, msg) {
@@ -68,7 +68,8 @@ class default_1 {
     }
     makeDirIfNotFound(path) {
         if (!this.outputFileSystem.existsSync(path))
-            this.outputFileSystem.mkdirSync(path);
+            this.outputFileSystem.mkdirp(path, () => {
+            });
     }
 }
 exports.default = default_1;

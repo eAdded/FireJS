@@ -3,6 +3,7 @@ import FireJS, {FIREJS_MAP} from "./FireJS"
 import Server from "./server"
 import {join} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";
+import MemoryFS = require("memory-fs");
 
 import ConfigMapper from "./mappers/ConfigMapper";
 
@@ -21,25 +22,30 @@ function printHelp() {
     process.exit(0);
 }
 
-function initApp(args: Args) {
+function initConfig(args: Args) {
     const userConfig = new ConfigMapper().getUserConfig(args["--conf"])
-    console.log(userConfig);
     userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
-    userConfig.pro = args["--pro"] || !!userConfig.pro;
+    userConfig.pro = args["--export"] || args["--pro"] || !!userConfig.pro;
     userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
     userConfig.logMode = args["--plain"] ? "plain" : args["--silent"] ? "silent" : userConfig.logMode;
-    return new FireJS({config: userConfig});
+    return userConfig;
 }
 
 (async function () {
     const args = getArgs();
     if (args["--help"])
         printHelp();
-    const app = initApp(args);
+    const config = initConfig(args);
+    const app = args["--export"] ?
+        new FireJS({config}) :
+        new FireJS({
+            config,
+            outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
+        })
     const $ = app.getContext();
-    if ($.config.pro) {
-        const startTime = new Date().getTime();
-        try {
+    try {
+        if (args["--export"]) {
+            const startTime = new Date().getTime();
             await app.init();
             const promises = []
             $.pageMap.forEach(page => {
@@ -60,11 +66,11 @@ function initApp(args: Args) {
             $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
             if ($.config.paths.static)
                 $.cli.warn("Don't forget to copy the static folder to dist");
-        } catch (err) {
-            $.cli.error(err)
+        } else {
+            const server = new Server(app);
+            await server.init();
         }
-    } else {
-        const server = new Server(app);
-        await server.init();
+    } catch (err) {
+        $.cli.error(err)
     }
 })()

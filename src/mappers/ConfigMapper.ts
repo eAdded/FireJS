@@ -95,7 +95,7 @@ export default class {
     }
 
     private throwIfNotFound(name: string, pathTo: string) {
-        if (!this.outputFileSystem.existsSync(pathTo))
+        if (!this.inputFileSystem.existsSync(pathTo))
             throw new Error(`${name} not found. ${pathTo}`);
     }
 
@@ -110,6 +110,8 @@ export default class {
 
     private makeDirIfNotFound(path: string) {
         if (!this.outputFileSystem.existsSync(path))
-            this.outputFileSystem.mkdirSync(path);
+            this.outputFileSystem.mkdirp(path, () => {
+
+            });
     }
 }
