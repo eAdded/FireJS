@@ -6,14 +6,13 @@ function writeFileRecursively(path, data, outputFileSystem) {
         outputFileSystem.mkdirp(dir, err => {
             if (err)
                 reject(err);
-            else {
+            else
                 outputFileSystem.writeFile(path, data, err => {
                     if (err)
                         reject(err);
                     else
                         resolve();
                 });
-            }
         });
     });
 }

@@ -1,4 +1,4 @@
-import ConfigMapper, {Args, Config, getArgs} from "./mappers/ConfigMapper";
+import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
 import {Configuration, Stats} from "webpack";
@@ -21,7 +21,6 @@ export interface PathRelatives {
 }
 
 export interface $ {
-    args?: Args,
     config?: Config,
     pageMap?: Map<string, Page>,
     cli?: Cli,
@@ -34,7 +33,6 @@ export interface $ {
 
 export interface Params {
     config?: Config,
-    args?: Args,
     webpackConfig?: WebpackConfig
     outputFileSystem?,
     inputFileSystem?
@@ -50,28 +48,13 @@ export interface FIREJS_MAP {
 export default class {
     private readonly $: $ = {};
 
-    constructor(params: Params = {}) {
-        this.$.args = params.args || getArgs();
-        this.$.cli = new Cli(this.$.args["--plain"] ? "--plain" : this.$.args["--silent"] ? "--silent" : undefined);
-        if (this.$.args["--help"]) {
-            console.log("\n\n    \x1b[1m Fire JS \x1b[0m - Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.");
-            console.log("\n    \x1b[1m Flags \x1b[0m\n" +
-                "\n\t\x1b[34m--pro, -p\x1b[0m\n\t    Production Mode\n" +
-                "\n\t\x1b[34m--conf, -c\x1b[0m\n\t    Path to Config file\n" +
-                "\n\t\x1b[34m--verbose, -v\x1b[0m\n\t    Log Webpack Stat\n" +
-                "\n\t\x1b[34m--plain\x1b[0m\n\t    Log without styling i.e colors and symbols\n" +
-                "\n\t\x1b[34m--silent, s\x1b[0m\n\t    Log errors only\n" +
-                "\n\t\x1b[34m--disable-plugins\x1b[0m\n\t    Disable plugins\n" +
-                "\n\t\x1b[34m--help, -h\x1b[0m\n\t    Help")
-            console.log("\n     \x1b[1mVersion :\x1b[0m 0.10.1");
-            console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n")
-            process.exit(0);
-        }
+    constructor(params: Params) {
         // @ts-ignore
         fs.mkdirp = mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs
         this.$.outputFileSystem = params.outputFileSystem || fs;
-        this.$.config = new ConfigMapper(this.$.cli, this.$.args).getConfig(params.config);
+        this.$.config = new ConfigMapper(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config)
+        this.$.cli = new Cli(this.$.config.logMode);
         this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
@@ -82,7 +65,7 @@ export default class {
 
     async init() {
         this.$.cli.log("Mapping Plugins");
-        if (!this.$.args["--disable-plugins"])
+        if (!this.$.config.disablePlugins)
             if (this.$.config.paths.plugins)
                 mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
             else

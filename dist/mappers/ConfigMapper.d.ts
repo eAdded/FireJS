@@ -1,5 +1,10 @@
+/// <reference types="node" />
+import * as fs from "fs";
 export interface Config {
     pro?: boolean;
+    verbose?: boolean;
+    logMode?: "plain" | "silent";
+    disablePlugins?: boolean;
     paths?: {
         root?: string;
         src?: string;
@@ -13,18 +18,8 @@ export interface Config {
         static?: string;
         plugins?: string;
     };
-    plugins?: string[];
     templateTags?: TemplateTags;
     pages?: ExplicitPages;
-}
-export interface Args {
-    "--pro"?: boolean;
-    "--conf"?: string;
-    "--verbose"?: boolean;
-    "--plain"?: boolean;
-    "--silent"?: boolean;
-    "--disable-plugins"?: boolean;
-    "--help"?: boolean;
 }
 export interface ExplicitPages {
     "404"?: string;
@@ -36,13 +31,12 @@ export interface TemplateTags {
     style?: string;
     unknown?: string;
 }
-export declare function getArgs(): Args;
 export default class {
-    private readonly cli;
-    private readonly args;
-    constructor(cli: any, args: any);
-    getUserConfig(): any;
-    getConfig(userConfig?: Config | undefined): Config;
+    inputFileSystem: any;
+    outputFileSystem: any;
+    constructor(inputFileSystem?: typeof fs, outputFileSystem?: typeof fs);
+    getUserConfig(path: string): Config | never;
+    getConfig(config?: Config): Config;
     private makeAbsolute;
     private throwIfNotFound;
     private undefinedIfNotFound;

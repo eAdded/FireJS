@@ -32,7 +32,8 @@
     "react-dom": "^16.13.1",
     "react-helmet": "^6.0.0",
     "style-loader": "^1.2.1",
-    "webpack": "^4.43.0"
+    "webpack": "^4.43.0",
+    "yaml": "^1.10.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
@@ -41,7 +42,7 @@
     "@types/webpack": "^4.41.13"
   },
   "bin": {
-    "firejs": "./dist/firejs_bin.js"
+    "firejs": "./dist/bin.js"
   },
   "bugs": {
     "url": "https://github.com/eAdded/firejs/issues"
@@ -52,7 +53,8 @@
   },
   "files": [
     "dist",
-    "web",
+    "web/dist",
+    "web/template.html",
     "components"
   ]
 }

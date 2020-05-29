@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class default_1 {
     constructor(mode = undefined) {
         switch (mode) {
-            case "--silent":
+            case "silent":
                 this.normal = () => {
                 };
                 this.ok = () => {
@@ -16,7 +16,7 @@ class default_1 {
                 this.log = () => {
                 };
                 break;
-            case "--plain":
+            case "plain":
                 this.normal = this.ok = console.log;
                 this.error = console.error;
                 this.warn = console.warn;

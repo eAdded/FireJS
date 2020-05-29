@@ -1,55 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
-const fs_1 = require("fs");
-const lodash_1 = require("lodash");
-function getArgs() {
-    return require("arg")({
-        //Types
-        "--pro": Boolean,
-        "--conf": String,
-        "--verbose": Boolean,
-        "--plain": Boolean,
-        "--silent": Boolean,
-        "--disable-plugins": Boolean,
-        "--help": Boolean,
-        //Aliases
-        "-p": "--pro",
-        "-c": "--conf",
-        "-v": "--verbose",
-        "-s": "--silent",
-        "-h": "--help",
-    });
-}
-exports.getArgs = getArgs;
+const yaml_1 = require("yaml");
+const fs = require("fs");
 class default_1 {
-    constructor(cli, args) {
-        this.cli = cli;
-        this.args = args;
+    constructor(inputFileSystem = fs, outputFileSystem = fs) {
+        this.inputFileSystem = inputFileSystem;
+        this.outputFileSystem = outputFileSystem;
     }
-    getUserConfig() {
-        const wasGiven = this.args["--conf"]; //to store if user gave this arg so that log can be changed
-        if (this.args["--conf"]) { //tweak conf path
-            if (!path_1.isAbsolute(this.args["--conf"]))
-                this.args["--conf"] = path_1.resolve(process.cwd(), this.args["--conf"]); //create absolute path
+    getUserConfig(path) {
+        if (path) { //tweak conf path
+            if (!path_1.isAbsolute(path))
+                path = path_1.resolve(process.cwd(), path); //create absolute path
         }
         else
-            this.args["--conf"] = path_1.resolve(process.cwd(), `firejs.config.js`);
-        return fs_1.existsSync(this.args["--conf"]) ? (() => {
-            this.cli.log(`Loading config from ${this.args["--conf"]}`);
-            const config = require(this.args["--conf"]);
+            path = path_1.resolve(process.cwd(), `firejs.config.js`);
+        if (this.inputFileSystem.existsSync(path)) {
+            const config = yaml_1.parse(this.inputFileSystem.readFileSync(path));
             return config.default || config;
-        })() : (() => {
-            if (wasGiven)
-                this.cli.warn(`Config not found at ${this.args["--conf"]}. Loading defaults`);
-            return {};
-        })();
+        }
+        else
+            throw new Error(`Config not found at ${path}`);
     }
-    getConfig(userConfig = undefined) {
-        this.cli.log("Loading configs");
-        const config = userConfig ? lodash_1.cloneDeep(userConfig) : this.getUserConfig();
-        config.pro = this.args["--pro"] ? true : config.pro || false;
-        this.cli.log("mode : " + (config.pro ? "production" : "development"));
+    getConfig(config = {}) {
         config.paths = config.paths || {};
         this.throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
         this.throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.makeAbsolute(config.paths.root, config.paths.src) : path_1.join(config.paths.root, "src"));
@@ -82,22 +55,20 @@ class default_1 {
         return path_1.isAbsolute(pathTo) ? pathTo : path_1.resolve(root, pathTo);
     }
     throwIfNotFound(name, pathTo) {
-        if (!fs_1.existsSync(pathTo)) {
-            this.cli.error(`${name} not found`, pathTo);
-            throw new Error();
-        }
+        if (!this.outputFileSystem.existsSync(pathTo))
+            throw new Error(`${name} not found. ${pathTo}`);
     }
     undefinedIfNotFound(object, property, pathRoot, name, msg) {
         if (object[property]) {
             object[property] = this.makeAbsolute(pathRoot, object[property]);
             this.throwIfNotFound(msg, object[property]);
         }
-        else if (!fs_1.existsSync(object[property] = path_1.resolve(pathRoot, name)))
+        else if (!this.inputFileSystem.existsSync(object[property] = path_1.resolve(pathRoot, name)))
             object[property] = undefined;
     }
     makeDirIfNotFound(path) {
-        if (!fs_1.existsSync(path))
-            fs_1.mkdirSync(path);
+        if (!this.outputFileSystem.existsSync(path))
+            this.outputFileSystem.mkdirSync(path);
     }
 }
 exports.default = default_1;

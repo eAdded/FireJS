@@ -4,14 +4,13 @@ export function writeFileRecursively(path: string, data: string | Buffer, output
         outputFileSystem.mkdirp(dir, err => {
             if (err)
                 reject(err);
-            else {
+            else
                 outputFileSystem.writeFile(path, data, err => {
                     if (err)
                         reject(err);
                     else
                         resolve();
                 })
-            }
         })
     })
 }

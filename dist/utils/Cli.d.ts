@@ -4,5 +4,5 @@ export default class {
     ok: any;
     warn: any;
     log: any;
-    constructor(mode?: "--silent" | "--plain");
+    constructor(mode?: "silent" | "plain");
 }

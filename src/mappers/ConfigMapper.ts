@@ -1,10 +1,12 @@
 import {isAbsolute, join, resolve} from "path"
-import {existsSync, mkdirSync} from "fs"
-import {cloneDeep} from "lodash"
-import Cli from "../utils/Cli";
+import {parse as parseYaml} from "yaml";
+import * as fs from "fs"
 
 export interface Config {
     pro?: boolean,          //production mode when true, dev mode when false
+    verbose?: boolean,
+    logMode?: "plain" | "silent",
+    disablePlugins?: boolean,
     paths?: {               //paths absolute or relative to root
         root?: string,      //project root, default : process.cwd()
         src?: string,       //src dir, default : root/src
@@ -18,19 +20,8 @@ export interface Config {
         static?: string,    //dir where page static elements are stored eg. images, default : root/src/static
         plugins?: string,   //plugins dir, default : root/src/plugins
     },
-    plugins?: string[],     //plugins, default : []
     templateTags?: TemplateTags,
     pages?: ExplicitPages
-}
-
-export interface Args {
-    "--pro"?: boolean,              //Production Mode
-    "--conf"?: string,              //Path to Config file
-    "--verbose"?: boolean,          //Log Webpack Stat
-    "--plain"?: boolean,            //Log without styling i.e colors and symbols
-    "--silent"?: boolean,           //Log errors only
-    "--disable-plugins"?: boolean   //Disable plugins
-    "--help"?: boolean              //Help
 }
 
 export interface ExplicitPages {
@@ -46,58 +37,30 @@ export interface TemplateTags {
 
 }
 
-export function getArgs(): Args {
-    return require("arg")({
-        //Types
-        "--pro": Boolean,
-        "--conf": String,
-        "--verbose": Boolean,
-        "--plain": Boolean,
-        "--silent": Boolean,
-        "--disable-plugins": Boolean,
-        "--help": Boolean,
-        //Aliases
-        "-p": "--pro",
-        "-c": "--conf",
-        "-v": "--verbose",
-        "-s": "--silent",
-        "-h": "--help",
-    })
-}
-
 export default class {
-    private readonly cli: Cli;
-    private readonly args: Args;
+    inputFileSystem
+    outputFileSystem
 
-    constructor(cli, args) {
-        this.cli = cli;
-        this.args = args;
+    constructor(inputFileSystem = fs, outputFileSystem = fs) {
+        this.inputFileSystem = inputFileSystem;
+        this.outputFileSystem = outputFileSystem;
     }
 
-    getUserConfig() {
-        const wasGiven = this.args["--conf"];//to store if user gave this arg so that log can be changed
-        if (this.args["--conf"]) {//tweak conf path
-            if (!isAbsolute(this.args["--conf"]))
-                this.args["--conf"] = resolve(process.cwd(), this.args["--conf"]);//create absolute path
+    public getUserConfig(path: string): Config | never {
+        if (path) {//tweak conf path
+            if (!isAbsolute(path))
+                path = resolve(process.cwd(), path);//create absolute path
         } else
-            this.args["--conf"] = resolve(process.cwd(), `firejs.config.js`);
+            path = resolve(process.cwd(), `firejs.config.js`);
 
-        return existsSync(this.args["--conf"]) ? (() => {///check if config file exists
-            this.cli.log(`Loading config from ${this.args["--conf"]}`);
-            const config = require(this.args["--conf"]);
+        if (this.inputFileSystem.existsSync(path)) {
+            const config = parseYaml(this.inputFileSystem.readFileSync(path));
             return config.default || config;
-        })() : (() => {//if config does not exists just return args
-            if (wasGiven)
-                this.cli.warn(`Config not found at ${this.args["--conf"]}. Loading defaults`);
-            return {};
-        })()
+        } else
+            throw new Error(`Config not found at ${path}`)
     }
 
-    getConfig(userConfig: Config | undefined = undefined): Config {
-        this.cli.log("Loading configs");
-        const config: Config = userConfig ? cloneDeep(userConfig) : this.getUserConfig();
-        config.pro = this.args["--pro"] ? true : config.pro || false;
-        this.cli.log("mode : " + (config.pro ? "production" : "development"))
+    public getConfig(config: Config = {}): Config {
         config.paths = config.paths || {};
         this.throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
         this.throwIfNotFound("src dir", config.paths.src = config.paths.src ? this.makeAbsolute(config.paths.root, config.paths.src) : join(config.paths.root, "src"));
@@ -132,23 +95,21 @@ export default class {
     }
 
     private throwIfNotFound(name: string, pathTo: string) {
-        if (!existsSync(pathTo)) {
-            this.cli.error(`${name} not found`, pathTo);
-            throw new Error();
-        }
+        if (!this.outputFileSystem.existsSync(pathTo))
+            throw new Error(`${name} not found. ${pathTo}`);
     }
 
     private undefinedIfNotFound<T extends { [key: string]: string }, K extends keyof T>(object: T, property: K, pathRoot: string, name: string, msg: string) {
         if (object[property]) {
             object[property] = this.makeAbsolute(pathRoot, object[property]) as T[K];
             this.throwIfNotFound(msg, object[property])
-        } else if (!existsSync(object[property] = resolve(pathRoot, name) as T[K]))
+        } else if (!this.inputFileSystem.existsSync(object[property] = resolve(pathRoot, name) as T[K]))
             object[property] = undefined;
     }
 
 
     private makeDirIfNotFound(path: string) {
-        if (!existsSync(path))
-            mkdirSync(path);
+        if (!this.outputFileSystem.existsSync(path))
+            this.outputFileSystem.mkdirSync(path);
     }
 }

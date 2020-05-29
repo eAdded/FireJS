@@ -64,7 +64,7 @@ class default_1 {
             });
     }
     logStat(stat) {
-        if (this.$.args["--verbose"]) {
+        if (this.$.config.verbose) {
             this.$.cli.log("Stat");
             this.$.cli.normal(stat);
         }

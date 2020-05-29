@@ -7,9 +7,9 @@ export default class {
     warn;
     log;
 
-    constructor(mode: "--silent" | "--plain" = undefined) {
+    constructor(mode: "silent" | "plain" = undefined) {
         switch (mode) {
-            case "--silent":
+            case "silent":
                 this.normal = () => {
                 }
                 this.ok = () => {
@@ -21,7 +21,7 @@ export default class {
                 this.log = () => {
                 };
                 break;
-            case "--plain":
+            case "plain":
                 this.normal = this.ok = console.log;
                 this.error = console.error;
                 this.warn = console.warn;
