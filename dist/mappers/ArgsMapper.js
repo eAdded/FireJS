@@ -6,7 +6,7 @@ function getArgs() {
         //Types
         "--webpack-conf": String,
         "--export": Boolean,
-        "--export-fly": String,
+        "--export-fly": Boolean,
         "--disk": Boolean,
         "--pro": Boolean,
         "--conf": String,
@@ -23,7 +23,20 @@ function getArgs() {
         "-c": "--conf",
         "-v": "--verbose",
         "-s": "--silent",
-        "-h": "--help"
+        "-h": "--help",
+        //paths
+        "--root": String,
+        "--src": String,
+        "--pages": String,
+        "--out": String,
+        "--dist": String,
+        "--cache": String,
+        "--fly": String,
+        "--template": String,
+        "--lib": String,
+        "--map": String,
+        "--static": String,
+        "--plugins": String //plugins dir, default : root/src/plugins
     });
 }
 exports.getArgs = getArgs;

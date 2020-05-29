@@ -1,7 +1,7 @@
 export interface Args {
     "--webpack-conf"?: string;
     "--export"?: boolean;
-    "--export-fly"?: string;
+    "--export-fly"?: boolean;
     "--disk"?: boolean;
     "--conf"?: string;
     "--verbose"?: boolean;
@@ -9,6 +9,17 @@ export interface Args {
     "--silent"?: boolean;
     "--disable-plugins"?: boolean;
     "--help"?: boolean;
-    "--fly"?: boolean;
+    "--root"?: string;
+    "--src"?: string;
+    "--pages"?: string;
+    "--out"?: string;
+    "--dist"?: string;
+    "--cache"?: string;
+    "--fly"?: string;
+    "--template"?: string;
+    "--lib"?: string;
+    "--map"?: string;
+    "--static"?: string;
+    "--plugins"?: string;
 }
 export declare function getArgs(): Args;

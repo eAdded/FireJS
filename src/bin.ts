@@ -28,6 +28,21 @@ function initConfig(args: Args) {
     userConfig.pro = args["--export"] || args["--pro"] || !!userConfig.pro;
     userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
     userConfig.logMode = args["--plain"] ? "plain" : args["--silent"] ? "silent" : userConfig.logMode;
+    userConfig.paths = userConfig.paths || {}
+    userConfig.paths = {
+        fly: args["--fly"] || userConfig.paths.fly,
+        out: args["--out"] || userConfig.paths.out,
+        root: args["--root"] || userConfig.paths.root,
+        cache: args["--cache"] || userConfig.paths.cache,
+        dist: args["--dist"] || userConfig.paths.dist,
+        map: args["--map"] || userConfig.paths.map,
+        pages: args["--pages"] || userConfig.paths.pages,
+        template: args["--template"] || userConfig.paths.template,
+        src: args["--src"] || userConfig.paths.src,
+        static: args["--static"] || userConfig.paths.static,
+        plugins: args["--plugins"] || userConfig.paths.plugins,
+        lib: args["--lib"] || userConfig.paths.lib,
+    }
     return userConfig;
 }
 
@@ -54,10 +69,6 @@ function initWebpackConfig(args: Args) {
     try {
         await app.init();
         if (args["--export"]) {
-            if (args["--export-fly"])
-                if (!$.outputFileSystem.existsSync(args["--export-fly"] = join($.config.paths.root, args["--export-fly"])))
-                    $.outputFileSystem.mkdirSync(args["--export-fly"]);
-
             const startTime = new Date().getTime();
             const promises = []
             $.pageMap.forEach(page => {
@@ -65,34 +76,31 @@ function initWebpackConfig(args: Args) {
             })
             await Promise.all(promises);
             $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
+
             if (args["--export-fly"]) {
-                $.outputFileSystem.mkdirp(args["--export-fly"], (err) => {
-                    if (err)
-                        throw new Error("Error making dir " + args["--export-fly"]);
-                    $.cli.log("Exporting for on the fly builds");
-                    const map: FIREJS_MAP = {
-                        staticConfig: $.renderer.param,
-                        pageMap: {},
-                    }
-                    for (const page of $.pageMap.values()) {
-                        map.pageMap[page.toString()] = page.chunks;
-                        page.chunks.forEach(chunk => {
-                            if (chunk.endsWith(".js")) {//only js files are required
-                                const chunkPath = join($.config.paths.lib, chunk);
-                                $.outputFileSystem.exists(chunkPath, exists => {
-                                    if (exists) {//only copy if it exists because it might be already copied before for page having same chunk
-                                        $.outputFileSystem.rename(chunkPath, join(args["--export-fly"], chunk), err => {
-                                            if (err)
-                                                throw new Error(`Error while moving ${chunkPath} to ${args["--export-fly"]}`);
-                                        });
-                                    }
-                                });
-                            }
-                        })
-                    }
-                    $.outputFileSystem.writeFileSync(join(args["--export-fly"], "firejs.map.json"),
-                        JSON.stringify(map));
-                })
+                $.cli.log("Exporting for on the fly builds");
+                const map: FIREJS_MAP = {
+                    staticConfig: $.renderer.param,
+                    pageMap: {},
+                }
+                for (const page of $.pageMap.values()) {
+                    map.pageMap[page.toString()] = page.chunks;
+                    page.chunks.forEach(chunk => {
+                        if (chunk.endsWith(".js")) {//only js files are required
+                            const chunkPath = join($.config.paths.lib, chunk);
+                            $.outputFileSystem.exists(chunkPath, exists => {
+                                if (exists) {//only copy if it exists because it might be already copied before for page having same chunk
+                                    $.outputFileSystem.rename(chunkPath, join($.config.paths.fly, chunk), err => {
+                                        if (err)
+                                            throw new Error(`Error while moving ${chunkPath} to ${$.config.paths.fly}`);
+                                    });
+                                }
+                            });
+                        }
+                    })
+                }
+                $.outputFileSystem.writeFileSync(join($.config.paths.fly, "firejs.map.json"),
+                    JSON.stringify(map));
             }
             process.on('exit', () => {
                 $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");

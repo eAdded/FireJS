@@ -11,6 +11,8 @@ export interface Config {
         pages?: string;
         out?: string;
         dist?: string;
+        cache?: string;
+        fly?: string;
         template?: string;
         lib?: string;
         map?: string;
