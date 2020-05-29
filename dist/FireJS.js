@@ -74,7 +74,7 @@ class default_1 {
                     })}`, this.$.outputFileSystem).catch(err => {
                         throw err;
                     });
-                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.config.pro ? content : undefined)), this.$.outputFileSystem).catch(err => {
+                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.pageArchitect.isOutputCustom ? undefined : content)), this.$.outputFileSystem).catch(err => {
                         throw err;
                     });
                 }, resolve);

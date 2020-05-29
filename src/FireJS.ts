@@ -101,7 +101,7 @@ export default class {
                         throw err
                     });
                     writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                        this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.config.pro ? content : undefined)),
+                        this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.pageArchitect.isOutputCustom ? undefined : content)),
                         this.$.outputFileSystem
                     ).catch(err => {
                         throw err
