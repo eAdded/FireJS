@@ -38,6 +38,6 @@ export default class {
     private readonly $;
     constructor(params?: Params);
     init(): Promise<void>;
-    buildPage(page: Page): Promise<any>;
+    buildPage(page: Page): Promise<void>;
     getContext(): $;
 }

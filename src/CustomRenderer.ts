@@ -29,20 +29,27 @@ export default class {
             mapPlugins(fs, join(rootDir, pathToPluginsDir), this.map);
     }
 
-    renderWithPluginData(__page: string, path: string) {
-        return new Promise<RenderReturn>((resolve, reject) => {
-            const page = this.map.get(__page);
-            page.plugin.getContent(path).then(content => {
-                resolve({
-                    html: this.renderer.finalize(
-                        this.renderer.render(this.renderer.param.template, page, path, content || {})),
-                    map: `window.__MAP__=${JSON.stringify({
-                        content,
-                        chunks: page.chunks
-                    })}`
-                })
-            }).catch(reject);
-        })
+    refreshPluginData(__page: string): Promise<void> {
+        return new Promise<void>(resolve => {
+            const page = this.map.get(__page).plugin;
+            page.paths.clear();
+            page.onBuild((path, content) => {
+                page.paths.set(path, content);
+            }, resolve)
+        });
+    }
+
+    async renderWithPluginData(__page: string, path: string) {
+        const page = this.map.get(__page);
+        const content = page.plugin.paths.get(path);
+        return {
+            html: this.renderer.finalize(
+                this.renderer.render(this.renderer.param.template, page, path, content || {})),
+            map: `window.__MAP__=${JSON.stringify({
+                content,
+                chunks: page.chunks
+            })}`
+        }
     }
 
     render(__page: string, path: string, content: any = {}): RenderReturn {

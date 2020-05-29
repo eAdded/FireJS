@@ -78,27 +78,23 @@ class default_1 {
         });
     }
     buildPage(page) {
-        return new Promise(resolve => {
-            this.$.pageArchitect.buildPage(page, () => __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve, reject) => {
+            this.$.pageArchitect.buildPage(page, () => {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`);
-                yield page.plugin.initPaths();
-                const promises = [];
-                page.plugin.paths.forEach(path => {
-                    promises.push((() => __awaiter(this, void 0, void 0, function* () {
-                        const content = yield page.plugin.getContent(path);
-                        yield Promise.all([
-                            Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
-                                content,
-                                chunks: page.chunks
-                            })}`, this.$.outputFileSystem),
-                            Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.config.pro ? content : undefined)), this.$.outputFileSystem)
-                        ]);
-                    }))());
-                });
-                Promise.all(promises).then(resolve);
-            }), err => {
-                throw err;
-            });
+                page.plugin.paths.clear();
+                page.plugin.onBuild((path, content) => {
+                    page.plugin.paths.set(path, undefined);
+                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
+                        content,
+                        chunks: page.chunks
+                    })}`, this.$.outputFileSystem).catch(err => {
+                        throw err;
+                    });
+                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.config.pro ? content : undefined)), this.$.outputFileSystem).catch(err => {
+                        throw err;
+                    });
+                }, resolve);
+            }, reject);
         });
     }
     getContext() {

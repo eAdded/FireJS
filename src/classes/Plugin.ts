@@ -1,23 +1,16 @@
-import {Request, Response} from "express";
-
 export default class {
     page: string;
-    paths: string[] = []
+    paths = new Map<string, undefined>();
 
     constructor(page: string) {
         this.page = page;
     }
 
-    async initPaths(): Promise<void> {
-        this.paths = [
-            "/" + this.page.toString().substring(0, this.page.toString().lastIndexOf("."))
-        ]
+    onBuild(renderPage: (path: string, content: any) => void, callback: () => void) {
+        renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
+        callback();
     }
 
-    async getContent(path: string): Promise<any> {
-        return {}
-    }
-
-    async onRequest(req: Request, res: Response): Promise<void> {
+    onRequest(req: Express.Request, res: Express.Response) {
     }
 }

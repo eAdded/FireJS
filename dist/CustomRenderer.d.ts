@@ -10,7 +10,11 @@ export default class {
     readonly renderer: StaticArchitect;
     readonly rel: PathRelatives;
     constructor(pathToLibDir: string, pathToPluginsDir?: string | undefined, rootDir?: string);
-    renderWithPluginData(__page: string, path: string): Promise<RenderReturn>;
+    refreshPluginData(__page: string): Promise<void>;
+    renderWithPluginData(__page: string, path: string): Promise<{
+        html: string;
+        map: string;
+    }>;
     render(__page: string, path: string, content?: any): RenderReturn;
 }
 export {};

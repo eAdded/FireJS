@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const Page_1 = require("./classes/Page");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
@@ -20,18 +29,26 @@ class default_1 {
         if (pathToPluginsDir)
             PluginMapper_1.mapPlugins(fs, path_1.join(rootDir, pathToPluginsDir), this.map);
     }
+    refreshPluginData(__page) {
+        return new Promise(resolve => {
+            const page = this.map.get(__page).plugin;
+            page.paths.clear();
+            page.onBuild((path, content) => {
+                page.paths.set(path, content);
+            }, resolve);
+        });
+    }
     renderWithPluginData(__page, path) {
-        return new Promise((resolve, reject) => {
+        return __awaiter(this, void 0, void 0, function* () {
             const page = this.map.get(__page);
-            page.plugin.getContent(path).then(content => {
-                resolve({
-                    html: this.renderer.finalize(this.renderer.render(this.renderer.param.template, page, path, content || {})),
-                    map: `window.__MAP__=${JSON.stringify({
-                        content,
-                        chunks: page.chunks
-                    })}`
-                });
-            }).catch(reject);
+            const content = page.plugin.paths.get(path);
+            return {
+                html: this.renderer.finalize(this.renderer.render(this.renderer.param.template, page, path, content || {})),
+                map: `window.__MAP__=${JSON.stringify({
+                    content,
+                    chunks: page.chunks
+                })}`
+            };
         });
     }
     render(__page, path, content = {}) {
