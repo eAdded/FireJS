@@ -47,6 +47,7 @@ function initWebpackConfig(args) {
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const args = ArgsMapper_1.getArgs();
+        args["--export"] = !!args["--export-fly"];
         if (args["--help"])
             printHelp();
         const app = args["--export"] ?
@@ -58,26 +59,53 @@ function initWebpackConfig(args) {
             });
         const $ = app.getContext();
         try {
-            if (args["--export"] && args["--export-fly"]) {
+            yield app.init();
+            if (args["--export"]) {
+                if (args["--export-fly"])
+                    if (!$.outputFileSystem.existsSync(args["--export-fly"] = path_1.join($.config.paths.root, args["--export-fly"]))) {
+                        $.cli.error("path value of [--export-fly] doesn't exist");
+                        return;
+                    }
                 const startTime = new Date().getTime();
-                yield app.init();
                 const promises = [];
                 $.pageMap.forEach(page => {
                     promises.push(app.buildPage(page));
                 });
                 yield Promise.all(promises);
                 $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
-                $.cli.log("Generating babel chunk map");
-                const map = {
-                    staticConfig: $.renderer.param,
-                    pageMap: {},
-                };
-                for (const page of $.pageMap.values())
-                    map.pageMap[page.toString()] = page.chunks;
-                $.outputFileSystem.writeFileSync(path_1.join($.config.paths.dist, "firejs.map.json"), JSON.stringify(map));
-                $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
-                if ($.config.paths.static)
-                    $.cli.warn("Don't forget to copy the static folder to dist");
+                if (args["--export-fly"]) {
+                    $.outputFileSystem.mkdirp(args["--export-fly"], (err) => {
+                        if (err)
+                            throw new Error("Error making dir " + args["--export-fly"]);
+                        $.cli.log("Exporting for on the fly builds");
+                        const map = {
+                            staticConfig: $.renderer.param,
+                            pageMap: {},
+                        };
+                        for (const page of $.pageMap.values()) {
+                            map.pageMap[page.toString()] = page.chunks;
+                            page.chunks.forEach(chunk => {
+                                if (chunk.endsWith(".js")) { //only js files are required
+                                    const chunkPath = path_1.join($.config.paths.lib, chunk);
+                                    $.outputFileSystem.exists(chunkPath, exists => {
+                                        if (exists) { //only copy if it exists because it might be already copied before for page having same chunk
+                                            $.outputFileSystem.rename(chunkPath, path_1.join(args["--export-fly"], chunk), err => {
+                                                if (err)
+                                                    throw new Error(`Error while moving ${chunkPath} to ${args["--export-fly"]}`);
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                        $.outputFileSystem.writeFileSync(path_1.join(args["--export-fly"], "firejs.map.json"), JSON.stringify(map));
+                    });
+                }
+                process.on('exit', () => {
+                    $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
+                    if ($.config.paths.static)
+                        $.cli.warn("Don't forget to copy the static folder to dist");
+                });
             }
             else {
                 const server = new server_1.default(app);

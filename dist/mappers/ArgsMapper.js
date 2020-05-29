@@ -6,6 +6,7 @@ function getArgs() {
         //Types
         "--webpack-conf": String,
         "--export": Boolean,
+        "--export-fly": String,
         "--disk": Boolean,
         "--pro": Boolean,
         "--conf": String,

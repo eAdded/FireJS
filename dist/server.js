@@ -20,7 +20,6 @@ class default_1 {
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.app.init();
             chokidar_1.watch(this.$.config.paths.pages) //watch changes
                 .on('add', (path) => __awaiter(this, void 0, void 0, function* () {
                 path = path.replace(this.$.config.paths.pages + "/", "");

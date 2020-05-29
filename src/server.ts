@@ -14,7 +14,6 @@ export default class {
     }
 
     async init() {
-        await this.app.init();
         watch(this.$.config.paths.pages)//watch changes
             .on('add', async path => {
                 path = path.replace(this.$.config.paths.pages + "/", "");

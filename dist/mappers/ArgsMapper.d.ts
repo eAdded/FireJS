@@ -1,6 +1,7 @@
 export interface Args {
     "--webpack-conf"?: string;
     "--export"?: boolean;
+    "--export-fly"?: string;
     "--disk"?: boolean;
     "--conf"?: string;
     "--verbose"?: boolean;
