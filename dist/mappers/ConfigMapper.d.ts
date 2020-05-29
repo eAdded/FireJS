@@ -13,7 +13,6 @@ export interface Config {
         template?: string;
         lib?: string;
         map?: string;
-        webpack?: string;
         static?: string;
         plugins?: string;
     };

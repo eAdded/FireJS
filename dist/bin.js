@@ -38,23 +38,26 @@ function initConfig(args) {
     userConfig.logMode = args["--plain"] ? "plain" : args["--silent"] ? "silent" : userConfig.logMode;
     return userConfig;
 }
+function initWebpackConfig(args) {
+    const webpackConfig = args["--webpack-conf"] ? require(args["--webpack-conf"]) : {};
+    if (!args["--export"]) {
+        webpackConfig.watch = webpackConfig.watch || true;
+        webpackConfig.output = webpackConfig.output || {};
+        webpackConfig.output.filename = webpackConfig.output.filename || "main[hash]";
+        webpackConfig.output.chunkFilename = webpackConfig.output.chunkFilename || "main[hash]";
+    }
+    return webpackConfig;
+}
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const args = ArgsMapper_1.getArgs();
         if (args["--help"])
             printHelp();
-        const config = initConfig(args);
         const app = args["--export"] ?
-            new FireJS_1.default({ config }) :
+            new FireJS_1.default({ config: initConfig(args), webpackConfig: initWebpackConfig(args) }) :
             new FireJS_1.default({
-                config,
-                webpackConfig: {
-                    watch: true,
-                    output: {
-                        filename: "main[hash]",
-                        chunkFilename: "chunk[hash]"
-                    }
-                },
+                config: initConfig(args),
+                webpackConfig: initWebpackConfig(args),
                 outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
             });
         const $ = app.getContext();

@@ -4,6 +4,7 @@ const arg = require("arg");
 function getArgs() {
     return arg({
         //Types
+        "--webpack-conf": String,
         "--export": Boolean,
         "--disk": Boolean,
         "--pro": Boolean,

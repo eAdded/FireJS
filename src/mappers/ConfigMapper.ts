@@ -15,7 +15,6 @@ export interface Config {
         template?: string,  //template file, default : inbuilt template file
         lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
         map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
-        webpack?: string,   //webpack config file, default : root/webpack.config.ts
         static?: string,    //dir where page static elements are stored eg. images, default : root/src/static
         plugins?: string,   //plugins dir, default : root/src/plugins
     },
@@ -71,8 +70,6 @@ export default class {
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : resolve(__dirname, "../../web/template.html")
         this.makeDirIfNotFound(config.paths.lib = config.paths.lib ? this.makeAbsolute(config.paths.root, config.paths.lib) : join(config.paths.dist, "lib"));
         this.makeDirIfNotFound(config.paths.map = config.paths.map ? this.makeAbsolute(config.paths.root, config.paths.map) : join(config.paths.lib, "map"));
-        //configs
-        this.undefinedIfNotFound(config.paths, "webpack", config.paths.root, "webpack.config.ts", "webpack config");
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
         //plugins

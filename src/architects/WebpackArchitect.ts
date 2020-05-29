@@ -10,20 +10,14 @@ export default class {
 
     constructor(globalData: $, userConfig: WebpackConfig = {}) {
         this.$ = globalData;
-        const userWebpack = {...userConfig, ...(this.$.config.paths.webpack ? require(this.$.config.paths.webpack) : {})};
-        if (typeof userWebpack === "object")
-            this.userConfig = {
-                entry: {},
-                output: {},
-                module: {
-                    rules: []
-                },
-                externals: {},
-                plugins: [],
-                ...userWebpack
-            }
-        else
-            throw new Error("Expected WebpackConfig Types [object] got" + typeof userWebpack);
+        userConfig.entry = userConfig.entry || {};
+        userConfig.output = userConfig.output || {};
+        // @ts-ignore
+        userConfig.module = userConfig.module || {};
+        userConfig.module.rules = userConfig.module.rules || [];
+        userConfig.externals = userConfig.externals || {};
+        userConfig.plugins = userConfig.plugins || [];
+        this.userConfig = userConfig;
     }
 
     forExternals(): WebpackConfig {

@@ -1,4 +1,5 @@
 export interface Args {
+    "--webpack-conf"?: string;
     "--export"?: boolean;
     "--disk"?: boolean;
     "--conf"?: string;

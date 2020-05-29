@@ -31,22 +31,26 @@ function initConfig(args: Args) {
     return userConfig;
 }
 
+function initWebpackConfig(args: Args) {
+    const webpackConfig = args["--webpack-conf"] ? require(args["--webpack-conf"]) : {};
+    if (!args["--export"]) {
+        webpackConfig.watch = webpackConfig.watch || true;
+        webpackConfig.output = webpackConfig.output || {};
+        webpackConfig.output.filename = webpackConfig.output.filename || "main[hash]";
+        webpackConfig.output.chunkFilename = webpackConfig.output.chunkFilename || "main[hash]";
+    }
+    return webpackConfig;
+}
+
 (async function () {
     const args = getArgs();
     if (args["--help"])
         printHelp();
-    const config = initConfig(args);
     const app = args["--export"] ?
-        new FireJS({config}) :
+        new FireJS({config: initConfig(args), webpackConfig: initWebpackConfig(args)}) :
         new FireJS({
-            config,
-            webpackConfig: {
-                watch: true,
-                output: {
-                    filename: "main[hash]",
-                    chunkFilename: "chunk[hash]"
-                }
-            },
+            config: initConfig(args),
+            webpackConfig: initWebpackConfig(args),
             outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
         })
     const $ = app.getContext();

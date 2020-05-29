@@ -1,6 +1,7 @@
 import arg = require("arg");
 
 export interface Args {
+    "--webpack-conf"?: string,
     "--export"?: boolean,           //Export
     "--disk"?: boolean,             //Write to disk instead of memory
     "--conf"?: string,              //Path to Config file
@@ -15,6 +16,7 @@ export interface Args {
 export function getArgs(): Args {
     return arg({
         //Types
+        "--webpack-conf": String,
         "--export": Boolean,
         "--disk": Boolean,
         "--pro": Boolean,
