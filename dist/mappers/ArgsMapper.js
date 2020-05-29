@@ -15,6 +15,7 @@ function getArgs() {
         "--disable-plugins": Boolean,
         "--help": Boolean,
         //Aliases
+        "-w": "--webpack-conf",
         "-e": "--export",
         "-d": "--disk",
         "-p": "--pro",
