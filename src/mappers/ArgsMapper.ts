@@ -2,6 +2,7 @@ import Arg from "../utils/Arg"
 
 export interface Args {
     "--webpack-conf"?: string,
+    "--version"?: boolean,             //Print Help
     "--help"?: boolean,             //Print Help
     "--pro"?: boolean,              //Production mode
     "--export"?: boolean,           //Export
@@ -27,16 +28,20 @@ export interface Args {
     "--plugins"?: string,   //plugins dir, default : root/src/plugins
 }
 
-export function getArgs(): Arg<Args> {
-    return new Arg<Args>()
+export function getArgs(): Args {
+    return (new Arg<Args>()
+        .name("Fire JS")
+        .description("Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app")
+        .version("1.0.0")
         .option(["--webpack-conf"], String, "path to webpack config")
         .option(["-e", "--export"], Boolean, "export project")
         .option(["-d", "--disk"], Boolean, "store chunks in disk instead of memory in dev server")
         .option(["-p", "--pro"], Boolean, "production mode")
         .option(["-c", "--conf"], Boolean, "path to FireJS config file")
-        .option(["-v", "--verbose"], Boolean, "print webpack states")
+        .option(["-V", "--verbose"], Boolean, "print webpack stats")
         .option(["-s", "--silent"], Boolean, "only print errors")
         .option(["-h", "--help"], Boolean, "only print errors")
+        .option(["-v", "--version"], Boolean, "only print errors")
         .option(["--disable-plugins"], Boolean, "disable plugins")
         //paths
         .option(["--root"], String, "project root, default : process.cwd()")
@@ -50,5 +55,5 @@ export function getArgs(): Arg<Args> {
         .option(["--lib"], String, "dir where chunks are exported, default : root/out/dist/lib")
         .option(["--map"], String, "dir where chunk map and page data is exported, default : root/out/dist/lib/map")
         .option(["--static"], String, "dir where page static elements are stored eg. images, default : root/src/static")
-        .option(["--plugins"], String, "plugins dir, default : root/src/plugins");
+        .option(["--plugins"], String, "plugins dir, default : root/src/plugins")).smartParse();
 }

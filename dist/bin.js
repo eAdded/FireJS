@@ -49,10 +49,6 @@ function initWebpackConfig(args) {
     return __awaiter(this, void 0, void 0, function* () {
         const Arg = ArgsMapper_1.getArgs();
         const args = Arg.parse();
-        if (args["--help"]) {
-            Arg.help("Fire JS", " Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.", 1, 34);
-            process.exit(0);
-        }
         const app = (args["--export"] = !!args["--export-fly"]) ?
             new FireJS_1.default({ config: initConfig(args), webpackConfig: initWebpackConfig(args) }) :
             new FireJS_1.default({

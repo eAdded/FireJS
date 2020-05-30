@@ -1,6 +1,6 @@
-import Arg from "../utils/Arg";
 export interface Args {
     "--webpack-conf"?: string;
+    "--version"?: boolean;
     "--help"?: boolean;
     "--pro"?: boolean;
     "--export"?: boolean;
@@ -24,4 +24,4 @@ export interface Args {
     "--static"?: string;
     "--plugins"?: string;
 }
-export declare function getArgs(): Arg<Args>;
+export declare function getArgs(): Args;
