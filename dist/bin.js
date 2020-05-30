@@ -16,13 +16,6 @@ const path_1 = require("path");
 const ArgsMapper_1 = require("./mappers/ArgsMapper");
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const MemoryFS = require("memory-fs");
-function printHelp() {
-    console.log("\n\n    \x1b[1m Fire JS \x1b[0m - Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.");
-    console.log("");
-    console.log("\n     \x1b[1mVersion :\x1b[0m 0.10.1");
-    console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n");
-    process.exit(0);
-}
 function initConfig(args) {
     const userConfig = new ConfigMapper_1.default().getUserConfig(args["--conf"]);
     userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
@@ -54,12 +47,13 @@ function initWebpackConfig(args) {
 }
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
-        const args = ArgsMapper_1.getArgs();
-        console.log(args);
-        args["--export"] = !!args["--export-fly"];
-        if (args["--help"])
-            printHelp();
-        const app = args["--export"] ?
+        const Arg = ArgsMapper_1.getArgs();
+        const args = Arg.parse();
+        if (args["--help"]) {
+            Arg.help("Fire JS", " Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.", 1, 34);
+            process.exit(0);
+        }
+        const app = (args["--export"] = !!args["--export-fly"]) ?
             new FireJS_1.default({ config: initConfig(args), webpackConfig: initWebpackConfig(args) }) :
             new FireJS_1.default({
                 config: initConfig(args),

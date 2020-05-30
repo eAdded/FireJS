@@ -7,13 +7,6 @@ import {Args, getArgs} from "./mappers/ArgsMapper";
 import ConfigMapper from "./mappers/ConfigMapper";
 import MemoryFS = require("memory-fs");
 
-function printHelp() {
-    console.log("\n\n    \x1b[1m Fire JS \x1b[0m - Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.");
-    console.log("");
-    console.log("\n     \x1b[1mVersion :\x1b[0m 0.10.1");
-    console.log("\n     \x1b[1mVisit https://github.com/eAdded/FireJS for documentation\x1b[0m\n\n")
-    process.exit(0);
-}
 
 function initConfig(args: Args) {
     const userConfig = new ConfigMapper().getUserConfig(args["--conf"])
@@ -47,12 +40,13 @@ function initWebpackConfig(args: Args) {
 }
 
 (async function () {
-    const args = getArgs();
-    console.log(args);
-    args["--export"] = !!args["--export-fly"];
-    if (args["--help"])
-        printHelp();
-    const app = args["--export"] ?
+    const Arg = getArgs();
+    const args = Arg.parse();
+    if (args["--help"]) {
+        Arg.help("Fire JS", " Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app.", 1, 34);
+        process.exit(0)
+    }
+    const app = (args["--export"] = !!args["--export-fly"]) ?
         new FireJS({config: initConfig(args), webpackConfig: initWebpackConfig(args)}) :
         new FireJS({
             config: initConfig(args),
