@@ -18,7 +18,6 @@ const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const MemoryFS = require("memory-fs");
 function initConfig(args) {
     const userConfig = new ConfigMapper_1.default().getUserConfig(args["--conf"]);
-    console.log(userConfig);
     userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
     userConfig.pro = args["--export"] || args["--pro"] || !!userConfig.pro;
     userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
@@ -41,7 +40,7 @@ function initConfig(args) {
     return userConfig;
 }
 function initWebpackConfig(args) {
-    const webpackConfig = args["--webpack-conf"] ? require(path_1.resolve(process.cwd(), args["--webpack-conf"])) : {};
+    const webpackConfig = args["--webpack-conf"] ? require(path_1.isAbsolute(args["--webpack-conf"]) ? args["--webpack-conf"] : path_1.resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"])
         webpackConfig.watch = webpackConfig.watch || true;
     return webpackConfig;
@@ -54,7 +53,6 @@ function initWebpackConfig(args) {
         if (args["--disk"])
             config.paths.dist = config.paths.cache;
         const webpackConfig = initWebpackConfig(args);
-        console.log(webpackConfig);
         const app = args["--export"] ?
             new FireJS_1.default({ config, webpackConfig }) :
             new FireJS_1.default({

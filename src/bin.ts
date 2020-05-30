@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import FireJS, {FIREJS_MAP} from "./FireJS"
 import Server from "./server"
-import {join, resolve} from "path"
+import {isAbsolute, join, resolve} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";
 
 import ConfigMapper from "./mappers/ConfigMapper";
@@ -10,7 +10,6 @@ import MemoryFS = require("memory-fs");
 
 function initConfig(args: Args) {
     const userConfig = new ConfigMapper().getUserConfig(args["--conf"])
-    console.log(userConfig);
     userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
     userConfig.pro = args["--export"] || args["--pro"] || !!userConfig.pro;
     userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
@@ -34,7 +33,7 @@ function initConfig(args: Args) {
 }
 
 function initWebpackConfig(args: Args) {
-    const webpackConfig = args["--webpack-conf"] ? require(resolve(process.cwd(), args["--webpack-conf"])) : {};
+    const webpackConfig = args["--webpack-conf"] ? require(isAbsolute(args["--webpack-conf"]) ? args["--webpack-conf"] : resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"])
         webpackConfig.watch = webpackConfig.watch || true;
     return webpackConfig;
@@ -47,7 +46,6 @@ function initWebpackConfig(args: Args) {
     if (args["--disk"])
         config.paths.dist = config.paths.cache;
     const webpackConfig = initWebpackConfig(args);
-    console.log(webpackConfig);
     const app = args["--export"] ?
         new FireJS({config, webpackConfig}) :
         new FireJS({
