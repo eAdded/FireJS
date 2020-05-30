@@ -40,9 +40,7 @@ function initWebpackConfig(args: Args) {
 }
 
 (async function () {
-    const Arg = getArgs();
-    const args = Arg.parse();
-
+    const args = getArgs();
     const app = (args["--export"] = !!args["--export-fly"]) ?
         new FireJS({config: initConfig(args), webpackConfig: initWebpackConfig(args)}) :
         new FireJS({

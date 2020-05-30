@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/eAdded/firejs.git"
   },
-  "author": "AniketFuryRocks <prajapati.ani306@gmail.com>",
+  "author": "Aniket Prajapati <prajapati.ani306@gmail.com>",
   "private": false,
   "dependencies": {
     "@babel/core": "^7.9.6",
@@ -33,6 +33,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-helmet": "^6.0.0",
+    "smartarg": "^1.0.0",
     "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "yaml": "^1.10.0"

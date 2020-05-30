@@ -1,4 +1,4 @@
-import Arg from "../utils/Arg"
+import SmartArg from "smartarg/SmartArg";
 
 export interface Args {
     "--webpack-conf"?: string,
@@ -29,7 +29,7 @@ export interface Args {
 }
 
 export function getArgs(): Args {
-    return (new Arg<Args>()
+    return <Args>(new SmartArg<Args>()
         .name("Fire JS")
         .description("Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app")
         .version("1.0.0")

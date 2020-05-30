@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Arg_1 = require("../utils/Arg");
+const SmartArg_1 = require("smartarg/SmartArg");
 function getArgs() {
-    return (new Arg_1.default()
+    return (new SmartArg_1.default()
         .name("Fire JS")
         .description("Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app")
         .version("1.0.0")
