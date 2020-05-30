@@ -39,8 +39,8 @@ function initConfig(args) {
     };
     return userConfig;
 }
-function initWebpackConfig(args) {
-    const webpackConfig = args["--webpack-conf"] ? require(path_1.resolve(process.cwd(), args["--webpack-conf"])) : {};
+function initWebpackConfig(args, config) {
+    const webpackConfig = (args["--webpack-conf"] || config.paths.webpackConfig) ? require(path_1.resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"])
         webpackConfig.watch = webpackConfig.watch || true;
     return webpackConfig;
@@ -48,11 +48,13 @@ function initWebpackConfig(args) {
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const args = ArgsMapper_1.getArgs();
+        const config = initConfig(args);
+        const webpackConfig = initWebpackConfig(args, config);
         const app = (args["--export"] = !!args["--export-fly"]) ?
-            new FireJS_1.default({ config: initConfig(args), webpackConfig: initWebpackConfig(args) }) :
+            new FireJS_1.default({ config, webpackConfig }) :
             new FireJS_1.default({
-                config: initConfig(args),
-                webpackConfig: initWebpackConfig(args),
+                config,
+                webpackConfig,
                 outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
             });
         const $ = app.getContext();

@@ -4,7 +4,7 @@ import Server from "./server"
 import {join, resolve} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";
 
-import ConfigMapper from "./mappers/ConfigMapper";
+import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import MemoryFS = require("memory-fs");
 
 
@@ -32,8 +32,8 @@ function initConfig(args: Args) {
     return userConfig;
 }
 
-function initWebpackConfig(args: Args) {
-    const webpackConfig = args["--webpack-conf"] ? require(resolve(process.cwd(), args["--webpack-conf"])) : {};
+function initWebpackConfig(args: Args, config: Config) {
+    const webpackConfig = (args["--webpack-conf"] || config.paths.webpackConfig) ? require(resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"])
         webpackConfig.watch = webpackConfig.watch || true;
     return webpackConfig;
@@ -41,11 +41,13 @@ function initWebpackConfig(args: Args) {
 
 (async function () {
     const args = getArgs();
+    const config = initConfig(args);
+    const webpackConfig = initWebpackConfig(args, config);
     const app = (args["--export"] = !!args["--export-fly"]) ?
-        new FireJS({config: initConfig(args), webpackConfig: initWebpackConfig(args)}) :
+        new FireJS({config, webpackConfig}) :
         new FireJS({
-            config: initConfig(args),
-            webpackConfig: initWebpackConfig(args),
+            config,
+            webpackConfig,
             outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
         })
     const $ = app.getContext();

@@ -7,19 +7,20 @@ export interface Config {
     verbose?: boolean,
     logMode?: "plain" | "silent",
     disablePlugins?: boolean,
-    paths?: {               //paths absolute or relative to root
-        root?: string,      //project root, default : process.cwd()
-        src?: string,       //src dir, default : root/src
-        pages?: string,     //pages dir, default : root/src/pages
-        out?: string,       //production dist, default : root/out
-        dist?: string,      //production dist, default : root/out/dist
-        cache?: string,     //cache dir, default : root/out/.cache
-        fly?: string,       //cache dir, default : root/out/fly
-        template?: string,  //template file, default : inbuilt template file
-        lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
-        map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
-        static?: string,    //dir where page static elements are stored eg. images, default : root/src/static
-        plugins?: string,   //plugins dir, default : root/src/plugins
+    paths?: {                   //paths absolute or relative to root
+        root?: string,          //project root, default : process.cwd()
+        src?: string,           //src dir, default : root/src
+        pages?: string,         //pages dir, default : root/src/pages
+        out?: string,           //production dist, default : root/out
+        dist?: string,          //production dist, default : root/out/dist
+        cache?: string,         //cache dir, default : root/out/.cache
+        fly?: string,           //cache dir, default : root/out/fly
+        template?: string,      //template file, default : inbuilt template file
+        lib?: string,           //dir where chunks are exported, default : root/out/dist/lib
+        map?: string,           //dir where chunk map and page data is exported, default : root/out/dist/lib/map
+        static?: string,        //dir where page static elements are stored eg. images, default : root/src/static
+        plugins?: string,       //plugins dir, default : root/src/plugins
+        webpackConfig?: string  //path to webpack config
     },
     templateTags?: TemplateTags,
     pages?: ExplicitPages
@@ -115,7 +116,6 @@ export default class {
     private makeDirIfNotFound(path: string) {
         if (!this.outputFileSystem.existsSync(path))
             this.outputFileSystem.mkdirp(path, () => {
-
             });
     }
 }
