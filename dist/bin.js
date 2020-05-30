@@ -50,8 +50,11 @@ function initWebpackConfig(args) {
         const args = ArgsMapper_1.getArgs();
         args["--export"] = args["--export-fly"] ? true : args["--export"];
         const config = initConfig(args);
-        if (args["--disk"])
+        if (args["--disk"]) {
+            if (args["--export"])
+                throw new Error("flag --disk is redundant when exporting");
             config.paths.dist = config.paths.cache;
+        }
         const webpackConfig = initWebpackConfig(args);
         const app = args["--export"] ?
             new FireJS_1.default({ config, webpackConfig }) :
