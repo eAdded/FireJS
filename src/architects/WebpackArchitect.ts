@@ -57,8 +57,18 @@ export default class {
         mergedConfig.externals["react"] = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
         mergedConfig.externals["react-helmet"] = "ReactHelmet";
+        const cssLoaderUse = [MiniCssExtractPlugin.loader,
+            {
+                loader: 'css-loader',
+                options: {
+                    modules: {
+                        hashPrefix: 'hash',
+                    },
+                },
+            }
+        ];
         mergedConfig.module.rules.push({
-                test: /\.js$/,
+                test: /\.(js|jsx)$/,
                 use: {
                     loader: 'babel-loader',
                     options: {
@@ -66,17 +76,14 @@ export default class {
                     }
                 },
             }, {
+                test: /\.sass$/i,
+                loader: [...cssLoaderUse, 'sass-loader']
+            }, {
+                test: /\.less$/i,
+                loader: [...cssLoaderUse, 'less-loader']
+            }, {
                 test: /\.css$/i,
-                use: [MiniCssExtractPlugin.loader,
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            modules: {
-                                hashPrefix: 'hash',
-                            },
-                        },
-                    }
-                ],
+                use: cssLoaderUse
             }
         );
         mergedConfig.plugins.push(

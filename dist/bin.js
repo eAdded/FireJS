@@ -48,9 +48,10 @@ function initWebpackConfig(args, config) {
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const args = ArgsMapper_1.getArgs();
+        args["--export"] = args["--export-fly"] ? true : args["--export"];
         const config = initConfig(args);
         const webpackConfig = initWebpackConfig(args, config);
-        const app = (args["--export"] = !!args["--export-fly"]) ?
+        const app = args["--export"] ?
             new FireJS_1.default({ config, webpackConfig }) :
             new FireJS_1.default({
                 config,
