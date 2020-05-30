@@ -2,16 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const args = require("args");
 function getArgs() {
-    args.option("webpack-conf")
-        .option("export")
-        .option("disk")
-        .option("pro")
-        .option("conf")
-        .option("verbose")
-        .option("silent")
-        .option("disable-plugins")
+    args
+        .option("webpack-conf", "path to webpack config")
+        .option(["e", "export"], "export project")
+        .option(["d", "disk"], "store chunks in disk instead of memory in dev server")
+        .option(["p", "pro"], "production mode")
+        .option(["c", "conf"], "path to firejs config file")
+        .option(["v", "verbose"], "print webpack states")
+        .option(["s", "silent"], "only print errors")
+        .option("disable-plugins", "disable plugins")
         //paths
-        .option(["", "root"], "project root, default : process.cwd()")
+        .command("root", "project root, default : process.cwd()")
         .option("src", "src dir, default : root/src")
         .option("pages", "pages dir, default : root/src/pages")
         .option("out", "production dist, default : root/out")
