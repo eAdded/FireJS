@@ -4,12 +4,13 @@ import Server from "./server"
 import {join, resolve} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";
 
-import ConfigMapper, {Config} from "./mappers/ConfigMapper";
+import ConfigMapper from "./mappers/ConfigMapper";
 import MemoryFS = require("memory-fs");
 
 
 function initConfig(args: Args) {
     const userConfig = new ConfigMapper().getUserConfig(args["--conf"])
+    console.log(userConfig);
     userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
     userConfig.pro = args["--export"] || args["--pro"] || !!userConfig.pro;
     userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
@@ -27,13 +28,13 @@ function initConfig(args: Args) {
         src: args["--src"] || userConfig.paths.src,
         static: args["--static"] || userConfig.paths.static,
         plugins: args["--plugins"] || userConfig.paths.plugins,
-        lib: args["--lib"] || userConfig.paths.lib,
+        lib: args["--lib"] || userConfig.paths.lib
     }
     return userConfig;
 }
 
-function initWebpackConfig(args: Args, config: Config) {
-    const webpackConfig = (args["--webpack-conf"] || config.paths.webpackConfig) ? require(resolve(process.cwd(), args["--webpack-conf"])) : {};
+function initWebpackConfig(args: Args) {
+    const webpackConfig = args["--webpack-conf"] ? require(resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"])
         webpackConfig.watch = webpackConfig.watch || true;
     return webpackConfig;
@@ -43,7 +44,10 @@ function initWebpackConfig(args: Args, config: Config) {
     const args = getArgs();
     args["--export"] = args["--export-fly"] ? true : args["--export"]
     const config = initConfig(args);
-    const webpackConfig = initWebpackConfig(args, config);
+    if (args["--disk"])
+        config.paths.dist = config.paths.cache;
+    const webpackConfig = initWebpackConfig(args);
+    console.log(webpackConfig);
     const app = args["--export"] ?
         new FireJS({config, webpackConfig}) :
         new FireJS({

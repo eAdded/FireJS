@@ -12,7 +12,7 @@ function getArgs() {
         .option(["-d", "--disk"], Boolean, "store chunks to disk instead of memory while in dev server")
         .option(["-p", "--pro"], Boolean, "production mode")
         //conf
-        .option(["-c", "--conf"], Boolean, "path to FireJS config file")
+        .option(["-c", "--conf"], String, "path to FireJS config file")
         .option(["--webpack-conf"], String, "path to webpack config")
         //logging
         .option(["-V", "--verbose"], Boolean, "print webpack stats")
