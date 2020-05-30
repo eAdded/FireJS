@@ -36,7 +36,7 @@ export function getArgs(): Args {
         .version("1.0.0")
         //mode
         .option(["-e", "--export"], Boolean, "export project")
-        .option(["--export-fly"], Boolean, "export project for fly build")
+        .option(["--export-fly"], Boolean, "export project for distribution and for fly build")
         .option(["-d", "--disk"], Boolean, "store chunks to disk instead of memory while in dev server")
         .option(["-p", "--pro"], Boolean, "production mode")
         //conf

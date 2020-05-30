@@ -73,8 +73,12 @@ class default_1 {
                 let path = path_1.join(this.$.config.paths.dist, pathname);
                 if (this.$.outputFileSystem.existsSync(path_1.join(path, "index.html")))
                     res.end(this.$.outputFileSystem.readFileSync(path_1.join(path, "index.html")));
-                else
+                else if (this.$.outputFileSystem.existsSync(path + ".html"))
                     res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
+                else {
+                    const _404 = this.$.pageMap.get(this.$.config.pages["404"]).toString();
+                    res.end(this.$.outputFileSystem.readFileSync(path_1.join(this.$.config.paths.dist, _404.substring(0, _404.lastIndexOf(".")) + ".html")));
+                }
             }
         }
         catch (e) {

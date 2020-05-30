@@ -36,7 +36,7 @@ export default class {
     inputFileSystem: any;
     outputFileSystem: any;
     constructor(inputFileSystem?: typeof fs, outputFileSystem?: typeof fs);
-    getUserConfig(path: string): Config | never;
+    getUserConfig(path: string): Config | undefined | never;
     getConfig(config?: Config): Config;
     private makeAbsolute;
     private throwIfNotFound;

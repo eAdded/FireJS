@@ -70,11 +70,15 @@ export default class {
                 let path = join(this.$.config.paths.dist, pathname);
                 if (this.$.outputFileSystem.existsSync(join(path, "index.html")))
                     res.end(this.$.outputFileSystem.readFileSync(join(path, "index.html")));
-                else
-                    res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
+                else if (this.$.outputFileSystem.existsSync(path + ".html"))
+                    res.end(this.$.outputFileSystem.readFileSync(path + ".html"))
+                else {
+                    const _404 = this.$.pageMap.get(this.$.config.pages["404"]).toString();
+                    res.end(this.$.outputFileSystem.readFileSync(join(this.$.config.paths.dist, _404.substring(0, _404.lastIndexOf(".")) + ".html")));
+                }
             }
         } catch (e) {
-            this.$.cli.error("Error serving "+pathname);
+            this.$.cli.error("Error serving " + pathname);
             res.status(404);
         }
         next();

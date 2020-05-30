@@ -7,9 +7,12 @@ import {Args, getArgs} from "./mappers/ArgsMapper";
 import ConfigMapper from "./mappers/ConfigMapper";
 import MemoryFS = require("memory-fs");
 
+let customConfig = false;
 
 function initConfig(args: Args) {
-    const userConfig = new ConfigMapper().getUserConfig(args["--conf"])
+    let userConfig = new ConfigMapper().getUserConfig(args["--conf"])
+    customConfig = !!userConfig;
+    userConfig = userConfig || {};
     userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
     userConfig.pro = args["--export"] || args["--pro"] || !!userConfig.pro;
     userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
@@ -39,27 +42,43 @@ function initWebpackConfig(args: Args) {
     return webpackConfig;
 }
 
-(async function () {
+function init(): { app: FireJS, args: Args } {
     const args = getArgs();
     args["--export"] = args["--export-fly"] ? true : args["--export"]
     const config = initConfig(args);
-    if (args["--disk"]){
-        if(args["--export"])
+    if (args["--disk"]) {
+        if (args["--export"])
             throw new Error("flag --disk is redundant when exporting")
         config.paths.dist = config.paths.cache;
     }
     const webpackConfig = initWebpackConfig(args);
-    const app = args["--export"] ?
-        new FireJS({config, webpackConfig}) :
-        new FireJS({
-            config,
-            webpackConfig,
-            outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
-        })
+    return {
+        app: args["--export"] ?
+            new FireJS({config, webpackConfig}) :
+            new FireJS({
+                config,
+                webpackConfig,
+                outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
+            }),
+        args
+    }
+}
+
+(async function () {
+    const {app, args} = init();
     const $ = app.getContext();
+
+    $.cli.log(`mode : ${$.config.pro ? "production" : "development"}`);
+
+    if (customConfig)
+        $.cli.log("Using config from user")
+    else
+        $.cli.log("Using default config")
+
     try {
         await app.init();
         if (args["--export"]) {
+            $.cli.ok("Exporting");
             const startTime = new Date().getTime();
             const promises = []
             $.pageMap.forEach(page => {
@@ -69,7 +88,7 @@ function initWebpackConfig(args: Args) {
             $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
 
             if (args["--export-fly"]) {
-                $.cli.log("Exporting for on the fly builds");
+                $.cli.ok("Exporting for fly builds");
                 const map: FIREJS_MAP = {
                     staticConfig: $.renderer.param,
                     pageMap: {},
@@ -105,4 +124,4 @@ function initWebpackConfig(args: Args) {
     } catch (err) {
         $.cli.error(err)
     }
-})()
+})().catch(err => console.error(err));

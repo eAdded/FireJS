@@ -16,8 +16,11 @@ const path_1 = require("path");
 const ArgsMapper_1 = require("./mappers/ArgsMapper");
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const MemoryFS = require("memory-fs");
+let customConfig = false;
 function initConfig(args) {
-    const userConfig = new ConfigMapper_1.default().getUserConfig(args["--conf"]);
+    let userConfig = new ConfigMapper_1.default().getUserConfig(args["--conf"]);
+    customConfig = !!userConfig;
+    userConfig = userConfig || {};
     userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
     userConfig.pro = args["--export"] || args["--pro"] || !!userConfig.pro;
     userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
@@ -45,28 +48,40 @@ function initWebpackConfig(args) {
         webpackConfig.watch = webpackConfig.watch || true;
     return webpackConfig;
 }
-(function () {
-    return __awaiter(this, void 0, void 0, function* () {
-        const args = ArgsMapper_1.getArgs();
-        args["--export"] = args["--export-fly"] ? true : args["--export"];
-        const config = initConfig(args);
-        if (args["--disk"]) {
-            if (args["--export"])
-                throw new Error("flag --disk is redundant when exporting");
-            config.paths.dist = config.paths.cache;
-        }
-        const webpackConfig = initWebpackConfig(args);
-        const app = args["--export"] ?
+function init() {
+    const args = ArgsMapper_1.getArgs();
+    args["--export"] = args["--export-fly"] ? true : args["--export"];
+    const config = initConfig(args);
+    if (args["--disk"]) {
+        if (args["--export"])
+            throw new Error("flag --disk is redundant when exporting");
+        config.paths.dist = config.paths.cache;
+    }
+    const webpackConfig = initWebpackConfig(args);
+    return {
+        app: args["--export"] ?
             new FireJS_1.default({ config, webpackConfig }) :
             new FireJS_1.default({
                 config,
                 webpackConfig,
                 outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
-            });
+            }),
+        args
+    };
+}
+(function () {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { app, args } = init();
         const $ = app.getContext();
+        $.cli.log(`mode : ${$.config.pro ? "production" : "development"}`);
+        if (customConfig)
+            $.cli.log("Using config from user");
+        else
+            $.cli.log("Using default config");
         try {
             yield app.init();
             if (args["--export"]) {
+                $.cli.ok("Exporting");
                 const startTime = new Date().getTime();
                 const promises = [];
                 $.pageMap.forEach(page => {
@@ -75,7 +90,7 @@ function initWebpackConfig(args) {
                 yield Promise.all(promises);
                 $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
                 if (args["--export-fly"]) {
-                    $.cli.log("Exporting for on the fly builds");
+                    $.cli.ok("Exporting for fly builds");
                     const map = {
                         staticConfig: $.renderer.param,
                         pageMap: {},
@@ -113,4 +128,4 @@ function initWebpackConfig(args) {
             $.cli.error(err);
         }
     });
-})();
+})().catch(err => console.error(err));

@@ -20,8 +20,6 @@ class default_1 {
             return yaml_1.parse(this.inputFileSystem.readFileSync(path, "utf8").toString()) || {};
         else if (wasGiven)
             throw new Error(`Config not found at ${path}`);
-        else
-            return {};
     }
     getConfig(config = {}) {
         config.paths = config.paths || {};

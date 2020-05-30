@@ -47,7 +47,7 @@ export default class {
         this.outputFileSystem = outputFileSystem;
     }
 
-    public getUserConfig(path: string): Config | never {
+    public getUserConfig(path: string): Config | undefined | never {
         const wasGiven = !!path;
         if (path) {//tweak conf path
             if (!isAbsolute(path))
@@ -59,9 +59,8 @@ export default class {
             return parseYaml(this.inputFileSystem.readFileSync(path, "utf8").toString()) || {};
         else if (wasGiven)
             throw new Error(`Config not found at ${path}`)
-        else
-            return {}
     }
+
 
     public getConfig(config: Config = {}): Config {
         config.paths = config.paths || {};
