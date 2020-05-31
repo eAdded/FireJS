@@ -36,9 +36,9 @@ class default_1 {
         //template
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : path_1.resolve(__dirname, "../../web/template.html");
         //static dir
-        this.undefinedIfNotFound(config.paths, "static", config.paths.root, "static", "static dir");
+        this.undefinedIfNotFound(config.paths, "static", config.paths.root, config.paths.src, "static dir");
         //plugins
-        this.undefinedIfNotFound(config.paths, "plugins", config.paths.root, "plugins", "plugins dir");
+        this.undefinedIfNotFound(config.paths, "plugins", config.paths.root, config.paths.src, "plugins dir");
         //html template tags
         config.templateTags = config.templateTags || {};
         config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
@@ -58,12 +58,12 @@ class default_1 {
         if (!this.inputFileSystem.existsSync(pathTo))
             throw new Error(`${name} not found. ${pathTo}`);
     }
-    undefinedIfNotFound(object, property, pathRoot, name, msg) {
+    undefinedIfNotFound(object, property, pathRoot, defaultRoot, msg) {
         if (object[property]) {
             object[property] = this.makeAbsolute(pathRoot, object[property]);
             this.throwIfNotFound(msg, object[property]);
         }
-        else if (!this.inputFileSystem.existsSync(object[property] = path_1.resolve(pathRoot, name)))
+        else if (!this.inputFileSystem.existsSync(object[property] = path_1.resolve(defaultRoot, property)))
             object[property] = undefined;
     }
     makeDirIfNotFound(path) {

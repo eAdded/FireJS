@@ -77,9 +77,9 @@ export default class {
         //template
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : resolve(__dirname, "../../web/template.html")
         //static dir
-        this.undefinedIfNotFound(config.paths, "static", config.paths.root, "static", "static dir");
+        this.undefinedIfNotFound(config.paths, "static", config.paths.root, config.paths.src, "static dir");
         //plugins
-        this.undefinedIfNotFound(config.paths, "plugins", config.paths.root, "plugins", "plugins dir");
+        this.undefinedIfNotFound(config.paths, "plugins", config.paths.root, config.paths.src, "plugins dir");
         //html template tags
         config.templateTags = config.templateTags || {};
         config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
@@ -102,11 +102,11 @@ export default class {
             throw new Error(`${name} not found. ${pathTo}`);
     }
 
-    private undefinedIfNotFound<T extends { [key: string]: string }, K extends keyof T>(object: T, property: K, pathRoot: string, name: string, msg: string) {
+    private undefinedIfNotFound<T extends { [key: string]: string }, K extends keyof T>(object: T, property: K, pathRoot: string, defaultRoot: string, msg: string) {
         if (object[property]) {
             object[property] = this.makeAbsolute(pathRoot, object[property]) as T[K];
             this.throwIfNotFound(msg, object[property])
-        } else if (!this.inputFileSystem.existsSync(object[property] = resolve(pathRoot, name) as T[K]))
+        } else if (!this.inputFileSystem.existsSync(object[property] = resolve(defaultRoot, property as string) as T[K]))
             object[property] = undefined;
     }
 

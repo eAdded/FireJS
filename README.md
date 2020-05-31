@@ -1,59 +1,97 @@
-# Firejs 🔥
- Highly customizable no config react static site generator built on the principles of Gatsby, NextJs and create-react-app.    
-    
-## Features    
-    
- - 🗾 [Highly customizable](#configuration)
- - 🚀 Very fast builds (< 2s)
- - 🏁 [Very fast SSR](#rendering-on-the-fly)
- - 🔭 [Dev Server](#hello-world)
- - 🤠 [Easy to use node interface](#node-interface)
- - 💯 [Plugins](#plugins)
+# Fire JS 🔥
+A zero config, highly customizable, progressive react static site generator with blazingly fast SSR.
 
-## Why another React Static Site Gen... ?
-The need of this project ignited with the [requirement](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3) of very fast on the fly, highly customizable builds. We solved this issue with **Firejs**. You can change each and every dir with the help of **firejs.config.js** file. You can easily customize webpack with **webpack.config.ts**.  
-  
-## Install  
-~~~  
-yarn add @eadded/firejs  
-~~~    
+## Features
+
++ Fast webpages with smart preloading
++ Node interface for on the fly rendering (SSR)
++ Dev friendly CLI interface
++ Plugins for dynamic routes
++ Highly customizable project stucture and webpack 
++ Supports LESS, JSX, SASS, CSS out of the box.
+
+## Install
+
+install using **yarn** or **npm**
+
+**yarn**
+
+```bash
+$ yarn add @eadded/firejs react react-dom
+```
+
+**npm**
+
+```bash
+$ npm install @eadded/firejs react react-dom
+```
+
+## Hello world
+
+Make dir `src/pages` in project root. This dir will contain all of the pages for our brand new hello world website.
+
+Make a file **index.js** or **index.jsx** in the dir. This file will be the index page of our website.
+
+```jsx
+export default () => {  
+  return (
+    <div>  
+	    <p>Hello world</p>
+    </div>  
+  )
+}
+```
+
+Add the following **script(s)** to **package.json**
+
+```json 
+"scripts": {
+    "dev": "firejs",  
+}
+```
+
+Now run using **yarn** or **npm**
+
+**yarn**
+```bash
+$ yarn run dev
+```
+**npm**
+```bash
+$ npm run dev
+```
+Navigate to `http://localhost:5000`  and there it says `hello world`.
+
+*To change change server PORT set env variable PORT to the required value*
+
 ## Args  
-pass flag [-h, --help] to list all valid flags
-~~~    
-yarn run firejs -h
-~~~  
-## Hello World  
-Run the following command to start dev server. 
-~~~  
-yarn run firejs  
-~~~  
+
+Run firejs with flag [-h, --help] to list all valid args
+
 ## Project Structure
-This is a typical project structure which can be highly modified using firejs.config.js    
+This is a typical project structure which can be highly modified using firejs.yml  
 ```
 Project    
-└─── out                    //output dir
-|   └─── babel              //babel dir for on the fly builds
-│   └─── dist               //production output
-│       └─── lib            //chunks
-│           └─── map        //page dataa and chunks map
+└─── out                 
+│   └─── dist             
+│       └─── lib           
+│           └─── map    
 └─── src    
-│   └─── pages              //all project pages go here
-│       │   FireJS.ts    
+│   └─── pages        
+│       │   index.js      
 │       │   about.js
-│       │   404.js          //404.js is required for Link to work properly
+│       │   404.js          
 │       │   ...    
 │    
-│   └─── plugins            //all plugins go here
-│       │   plugin-name.js    
+│   └─── plugins          
+│       │   example.js    
 │       │   ...
 │
 │   └─── static             //all static files go here. eg : images
 │       │   example.png
-| firejs.config.js          //default config file
-| webpack.config.ts         //default webpack config file
+|
+| firejs.yml                //default config file
 ```
-
-*Note* During production static dir will not be copied.
 
 ## Components
 **Firejs** exports two components : Link and Head
@@ -77,7 +115,7 @@ export default () => {
 }
 ```
 ## Plugins
-A plugin can be used to provide dynamic routes and content.
+A plugin can be used to *paths* and *content* for dynamic pages or normal pages.
 
 Suppose that you have a page *[author]/[article].js*. A plugin can be used to provide path */aniket/react*, and a markdown as content.
     
