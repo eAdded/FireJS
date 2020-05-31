@@ -1,7 +1,7 @@
 {
   "name": "@eadded/firejs",
   "main": "dist/FireJS.js",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "license": "GPL",
   "description": "Highly customizable no config react static site generator",
   "keywords": [
