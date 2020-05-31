@@ -21,7 +21,7 @@ class default_1 {
         });
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "i21345bb373762325b784.js");
+        template = this.addChunk(template, "ib6e43e3d65addd01fa37.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(this.param.tags.static, `<div id='root'>${(() => {
