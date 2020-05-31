@@ -121,7 +121,7 @@ export default () => {
 ## Plugins
 A plugin can be used to supply **paths** and **content** for pages.
 
-Suppose that you have a page *[author]/[article].js*. A plugin can be used to provide path */aniket/react*, and a markdown as content.
+Suppose that you have a page *[author]/[article].js*. A plugin can be used to provide path */aniket/rust*, and a markdown as content.
     
 ~~~javascript    
 import Plugin from "@eadded/firejs/dist/classes/Plugin";
@@ -132,7 +132,7 @@ export default class extends Plugin {
     }
 
     async onBuild(renderPage, callback) {
-        renderPage("/aniket/rust", {name: "rust"})
+        renderPage("/aniket/rust", {md: "# Markdown as content"})
         callback();
     }
 
