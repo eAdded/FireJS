@@ -35,8 +35,8 @@ Make a file **index.js** or **index.jsx** in the dir. This file will be the inde
 ```jsx
 export default () => {  
   return (
-    <div>  
-	    <p>Hello world</p>
+    <div>
+        <p>Hello world</p>
     </div>  
   )
 }
@@ -62,7 +62,7 @@ $ npm run dev
 ```
 Navigate to `http://localhost:5000`  and there it says `hello world`.
 
-*To change change server PORT set env variable PORT to the required value*
+*To change server PORT set env variable PORT to the required value*
 
 ## Args  
 ```
@@ -73,7 +73,7 @@ Navigate to `http://localhost:5000`  and there it says `hello world`.
 Run firejs with flag [-h, --help] to list all valid args
 
 ## Project Structure
-This is a typical project structure which can be modified using firejs.yml  
+This is a typical project structure which can be modified using **firejs.yml**  
 ```
 Project    
 └─── out                 
@@ -123,7 +123,7 @@ A plugin can be used to supply **paths** and **content** for pages.
 
 Suppose that you have a page *[author]/[article].js*. A plugin can be used to provide path */aniket/react*, and a markdown as content.
     
-~~~    
+~~~javascript    
 import Plugin from "@eadded/firejs/dist/classes/Plugin";
 
 export default class extends Plugin {
@@ -143,12 +143,14 @@ export default class extends Plugin {
 ~~~    
 File `[author]/[article].js` which is found in pages dir, is used to create the route `/aniket/rust`.
 
+The *content* can be accessed from *prop*.
+
 ## Configuration
 Create a **firejs.yml** file in the root dir or specify a file using `[-c,--config]` flags.
 
 *Type Interface*
 
-```
+```typescript
 interface Config {
     pro?: boolean,              //production mode when true, dev mode when false
     verbose?: boolean,
