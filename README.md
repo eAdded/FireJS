@@ -143,7 +143,7 @@ export default class extends Plugin {
 ~~~    
 File `[author]/[article].js` which is found in pages dir, is used to create the route `/aniket/rust`.
 
-The *content* can be accessed from *prop*.
+Page **content** can be accessed from [prop](https://reactjs.org/docs/components-and-props.html).
 
 ## Configuration
 Create a **firejs.yml** file in the root dir or specify a file using `[-c,--config]` flags.
