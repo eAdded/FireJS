@@ -214,8 +214,8 @@ If you need to SSR (Server Side Render) your page, or if you want to do somethin
 
 First export your project using `--export-fly`. This will spit all the chunks required for SSR in the `out/fly` dir.
 
-*Rendering a page with custom data*
-~~~
+**Rendering a page with custom data**
+~~~javascript
 import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
 
 (async () => {
@@ -227,13 +227,13 @@ import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
 
 The **obj** variable is json of structure
 
-~~~
+~~~json
 {
     html : string,  //contains the statically rendered html
     map : string    //contains map for the page
 }
 ~~~
-The **map** property contains the page map and its content. It shall be served by the route */lib/map/[path].map.js*
+The **map** property contains the page map and its content. It shall be served by the route **/lib/map/[path].map.js**
 
 Make sure you serve the **map** by the correct route to ensure the correct functioning of **Link** component
 
@@ -243,7 +243,7 @@ of course, the route can be changed using *firejs.yml*
 
 **Rendering a page with data from plugins**
 
-~~~
+~~~javascript
 import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
 
 (async () => {
