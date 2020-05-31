@@ -104,7 +104,7 @@ Project
  - Head : Injects children to head element. A wrapper around react-helmet. Allows SSR.
 
 *Example*
-```
+```jsx
 import Link from "@eadded/firejs/components/Link"  
 import Head from "@eadded/firejs/components/Head";  
 export default () => {  
