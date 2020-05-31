@@ -1,3 +1,7 @@
+// @ts-ignore
+global.__MIN_PLUGIN_VERSION__ = "0.11.0";
+// @ts-ignore
+global.__FIREJS_VERSION__ = "0.11.0";
 import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
@@ -49,10 +53,6 @@ export default class {
     private readonly $: $ = {};
 
     constructor(params: Params) {
-        // @ts-ignore
-        global.__MIN_PLUGIN_VERSION__ = "10.0.5";
-        // @ts-ignore
-        global.__FIREJS_VERSION__ = "10.0.6";
         // @ts-ignore
         fs.mkdirp = mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs

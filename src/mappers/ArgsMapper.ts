@@ -33,9 +33,10 @@ export function getArgs(): Args {
     return <Args>new SmartArg<Args>()
         .name("Fire JS")
         .description("Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app")
-        .version("1.0.0")
+        // @ts-ignore
+        .version(global.__FIREJS_VERSION__)
         //mode
-        .option(["-e", "--export"], Boolean, "export project")
+        .option(["-e", "--export"], Boolean, "export project for distribution")
         .option(["--export-fly"], Boolean, "export project for distribution and for fly build")
         .option(["-d", "--disk"], Boolean, "store chunks to disk instead of memory while in dev server")
         .option(["-p", "--pro"], Boolean, "production mode")

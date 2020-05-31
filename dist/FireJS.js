@@ -9,6 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// @ts-ignore
+global.__MIN_PLUGIN_VERSION__ = "0.11.0";
+// @ts-ignore
+global.__FIREJS_VERSION__ = "0.11.0";
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const Cli_1 = require("./utils/Cli");
 const path_1 = require("path");
@@ -23,10 +27,6 @@ const WebpackArchitect_1 = require("./architects/WebpackArchitect");
 class default_1 {
     constructor(params) {
         this.$ = {};
-        // @ts-ignore
-        global.__MIN_PLUGIN_VERSION__ = "10.0.5";
-        // @ts-ignore
-        global.__FIREJS_VERSION__ = "10.0.6";
         // @ts-ignore
         fs.mkdirp = fs_extra_1.mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs;
