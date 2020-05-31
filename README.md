@@ -227,7 +227,7 @@ import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
 
 The **obj** variable is json of structure
 
-~~~json
+~~~
 {
     html : string,  //contains the statically rendered html
     map : string    //contains map for the page
