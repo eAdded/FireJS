@@ -84,10 +84,10 @@ export default class {
             template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
         })
         this.$.cli.log("Copying index chunk")
-        const index_bundle_out_path = join(this.$.config.paths.lib, "ib6e43e3d65addd01fa37.js")
+        const index_bundle_out_path = join(this.$.config.paths.lib, "if0076cb24f4199a75ef1.js")
         this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
             if (!exists)
-                this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/ib6e43e3d65addd01fa37.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+                this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/if0076cb24f4199a75ef1.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
         })
     }
 
