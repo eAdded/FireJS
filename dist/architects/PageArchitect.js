@@ -48,7 +48,7 @@ class default_1 {
         if (this.isInputCustom)
             compiler.inputFileSystem = this.$.inputFileSystem;
         if (config.watch)
-            compiler.watch({}, (err, stat) => {
+            compiler.watch(config.watchOptions, (err, stat) => {
                 if (err)
                     reject(err);
                 else
