@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class default_1 {
     constructor(page) {
-        this.version = "10.0.4";
+        this.version = "10.0.5";
         this.paths = new Map();
         this.page = page;
     }

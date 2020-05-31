@@ -1,6 +1,6 @@
 export default class {
     page: string;
-    public version: string = "10.0.4";
+    public version: string = "10.0.5";
     paths = new Map<string, undefined>();
 
     constructor(page: string) {

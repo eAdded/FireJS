@@ -36,9 +36,9 @@ class default_1 {
         //template
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : path_1.resolve(__dirname, "../../web/template.html");
         //static dir
-        this.undefinedIfNotFound(config.paths, "static", config.paths.src, "static", "static dir");
+        this.undefinedIfNotFound(config.paths, "static", config.paths.root, "static", "static dir");
         //plugins
-        this.undefinedIfNotFound(config.paths, "plugins", config.paths.src, "plugins", "plugins dir");
+        this.undefinedIfNotFound(config.paths, "plugins", config.paths.root, "plugins", "plugins dir");
         //html template tags
         config.templateTags = config.templateTags || {};
         config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
