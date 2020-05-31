@@ -72,8 +72,7 @@ export default class {
         if (!this.$.config.disablePlugins)
             if (this.$.config.paths.plugins)
                 mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
-            else
-                throw new Error("Plugins Dir Not found")
+
         this.$.cli.log("Building Externals");
         this.$.renderer = new StaticArchitect({
             rel: this.$.rel,

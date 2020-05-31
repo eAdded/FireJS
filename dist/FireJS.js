@@ -46,8 +46,6 @@ class default_1 {
             if (!this.$.config.disablePlugins)
                 if (this.$.config.paths.plugins)
                     PluginMapper_1.mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
-                else
-                    throw new Error("Plugins Dir Not found");
             this.$.cli.log("Building Externals");
             this.$.renderer = new StaticArchitect_1.default({
                 rel: this.$.rel,
