@@ -24,6 +24,10 @@ class default_1 {
     constructor(params) {
         this.$ = {};
         // @ts-ignore
+        global.__MIN_PLUGIN_VERSION__ = "10.0.5";
+        // @ts-ignore
+        global.__FIREJS_VERSION__ = "10.0.5";
+        // @ts-ignore
         fs.mkdirp = fs_extra_1.mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs;
         this.$.outputFileSystem = params.outputFileSystem || fs;
@@ -77,7 +81,9 @@ class default_1 {
                     Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.pageArchitect.isOutputCustom ? undefined : content)), this.$.outputFileSystem).catch(err => {
                         throw err;
                     });
-                }, resolve);
+                }, resolve).catch(err => {
+                    throw err;
+                });
             }, reject);
         });
     }

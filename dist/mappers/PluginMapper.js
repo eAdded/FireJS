@@ -6,6 +6,10 @@ function mapPlugins(inputFileSystem, pluginsPath, map) {
         if (pluginFile.endsWith(".ts"))
             return;
         const plugin = new (require(path_1.join(pluginsPath, pluginFile)).default)();
+        // @ts-ignore
+        if ((plugin.version || "") < global.__MIN_PLUGIN_VERSION__)
+            // @ts-ignore
+            throw new Error(`Plugin ${pluginFile} is not supported. Update plugin to v` + global.__MIN_PLUGIN_VERSION__);
         const page = map.get(plugin.page);
         if (page)
             page.plugin = plugin;

@@ -12,6 +12,8 @@ class default_1 {
             `window.__PAGES__={};` +
             `window.__PAGES__._404="/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}";` +
             `</script>`, "head");
+        // @ts-ignore
+        this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head");
     }
     render(template, page, path, content) {
         template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");

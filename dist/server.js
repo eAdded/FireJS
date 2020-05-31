@@ -62,7 +62,9 @@ class default_1 {
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
         this.getFromFileSystem(pathname, res);
-        this.searchPage(pathname.substring(0, pathname.lastIndexOf(".map.js"))).plugin.onRequest(req, res);
+        this.searchPage(pathname.substring(0, pathname.lastIndexOf(".map.js"))).plugin.onRequest(req, res).catch(ex => {
+            throw ex;
+        });
         res.end();
     }
     getPage(req, res, next) {

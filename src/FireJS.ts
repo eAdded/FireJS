@@ -50,6 +50,10 @@ export default class {
 
     constructor(params: Params) {
         // @ts-ignore
+        global.__MIN_PLUGIN_VERSION__ = "10.0.5";
+        // @ts-ignore
+        global.__FIREJS_VERSION__ = "10.0.5";
+        // @ts-ignore
         fs.mkdirp = mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs
         this.$.outputFileSystem = params.outputFileSystem || fs;
@@ -106,7 +110,9 @@ export default class {
                     ).catch(err => {
                         throw err
                     });
-                }, resolve)
+                }, resolve).catch(err => {
+                    throw err
+                })
             }, reject)
         })
     }
