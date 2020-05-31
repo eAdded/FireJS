@@ -35,7 +35,6 @@ export interface TemplateTags {
     head?: string,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
     style?: string,     //this is replaced by all page styles, default : "<%=STYLE=%>"
     unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
-
 }
 
 export default class {

@@ -65,11 +65,15 @@ Navigate to `http://localhost:5000`  and there it says `hello world`.
 *To change change server PORT set env variable PORT to the required value*
 
 ## Args  
-
+```
+-p, --pro       production mode
+-e, --export    export project for distribution
+--export-fly    export project for distribution and for fly build
+```
 Run firejs with flag [-h, --help] to list all valid args
 
 ## Project Structure
-This is a typical project structure which can be highly modified using firejs.yml  
+This is a typical project structure which can be modified using firejs.yml  
 ```
 Project    
 └─── out                 
@@ -115,127 +119,125 @@ export default () => {
 }
 ```
 ## Plugins
-A plugin can be used to *paths* and *content* for dynamic pages or normal pages.
+A plugin can be used to supply **paths** and **content** for pages.
 
 Suppose that you have a page *[author]/[article].js*. A plugin can be used to provide path */aniket/react*, and a markdown as content.
     
-**Sample Plugin In TypeScript**
 ~~~    
 import Plugin from "@eadded/firejs/dist/classes/Plugin";
 
 export default class extends Plugin {
     constructor() {
-        //pass page here
         super("[author]/[article].js");
     }
 
-    async initPaths(): Promise<void> {
-        //provide all possible paths here
-        //this.paths can be changed dynamically
-        this.paths = [
-            "/aniket/rust"
-        ]
+    async onBuild(renderPage, callback) {
+        renderPage("/aniket/rust", {name: "rust"})
+        callback();
     }
 
-    async getContent(path): Promise<any> {
-        //provide content for the provided path
-        return {
-            name: "Aniket"
-        }
-    }
-
-    async onRequest(req, res): Promise<void> {
-        //this method is called during dev mode
-        console.log(req.url)
+    async onRequest(req: Express.Request, res: Express.Response) {
+        //This func is called when the respcted page's map is requested
     }
 }
 ~~~    
 File `[author]/[article].js` which is found in pages dir, is used to create the route `/aniket/rust`.
 
 ## Configuration
-Create a *firejs.config.js* file or specify a file using ```[-c,--config]``` flags.
+Create a **firejs.yml** file in the root dir or specify a file using `[-c,--config]` flags.
 
 *Type Interface*
 
 ```
-{
-    pro?: boolean,          //production mode when true, dev mode when false
-    paths?: {               //paths absolute or relative to root
-        root?: string,      //project root, default : process.cwd()
-        src?: string,       //src dir, default : root/src
-        pages?: string,     //pages dir, default : root/src/pages
-        out?: string,       //output dir, default : root/out
-        dist?: string,      //production dist, default : root/out/dist
-        babel?: string,     //fire js production babel cache, default : root/out/babel
-        template?: string,  //template file, default : inbuilt template file
-        lib?: string,       //dir where chunks are exported, default : root/out/dist/lib
-        map?: string,       //dir where chunk map and page data is exported, default : root/out/dist/lib/map
-        webpack?: string,   //webpack config file, default : root/webpack.config.ts
-        static?: string,    //dir where page static elements are stored eg. images, default : root/src/static
-        plugins?: string,   //plugins dir, default : root/src/plugins
+interface Config {
+    pro?: boolean,              //production mode when true, dev mode when false
+    verbose?: boolean,
+    logMode?: "plain" | "silent",
+    disablePlugins?: boolean,
+    paths?: {                   //paths absolute or relative to root
+        root?: string,          //project root, default : process.cwd()
+        src?: string,           //src dir, default : root/src
+        pages?: string,         //pages dir, default : root/src/pages
+        out?: string,           //production dist, default : root/out
+        dist?: string,          //production dist, default : root/out/dist
+        cache?: string,         //cache dir, default : root/out/.cache
+        fly?: string,           //cache dir, default : root/out/fly
+        template?: string,      //template file, default : inbuilt template file
+        lib?: string,           //dir where chunks are exported, default : root/out/dist/lib
+        map?: string,           //dir where chunk map and page data is exported, default : root/out/dist/lib/map
+        static?: string,        //dir where page static elements are stored eg. images, default : root/src/static
+        plugins?: string,       //plugins dir, default : root/src/plugins
     },
-    templateTags?: {        //these tags need to exist if you pass custom template file
-        script?: string,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
-        static?: string,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
-        head?: string,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
-        style?: string,     //this is replaced by all page styles, default : "<%=STYLE=%>"
-        unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
-    },
-    pages?: {
-        404?: string       //404 page, default : 404.js
-    }
+    templateTags?: TemplateTags,
+    pages?: ExplicitPages
 }
+
+interface ExplicitPages {
+    "404"?: string       //404 page, default : 404.js
+}
+
+interface TemplateTags {
+    script?: string,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
+    static?: string,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
+    head?: string,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
+    style?: string,     //this is replaced by all page styles, default : "<%=STYLE=%>"
+    unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
+}
+```
+Example **firejs.yml**
+
+```yaml
+pro : true
+paths :
+  out : "./new out"
 ```
 
 ## Node Interface
-*Production build*
-~~~
-import FireJS from "@eadded/firejs/dist/FireJS";
+
+Building a specific page. Eg: index.js
+
+~~~javascript
+import FireJS from "@eadded/firejs"
 
 (async () => {
-    const app = new FireJS({args: {"--pro": true}});
+    const app = new FireJS({config: {pro: true}});
     await app.init();
-    await app.buildPro();
-    console.log("Build Complete")
-})()
-~~~
-
-*Building a specific pro page*
-~~~
-import FireJS from "@eadded/firejs/dist/FireJS";
-//here we are building page [author]/[article].js
-(async () => {
-    const app = new FireJS({args: {"--pro": true}, pages: ["[author]/[article].js"]});
-    await app.init();
-    await app.buildPro();
-    console.log("Build Complete")
+    await app.buildPage(app.getContext().pageMap.get("index.js"))
 })()
 ~~~
 
 ## Rendering On the fly
+
 If you need to SSR (Server Side Render) your page, or if you want to do something like [this](https://dev.to/aniketfuryrocks/dynamically-building-static-react-pages-upon-request-4pg3). We've got your back.
+
+First export your project using `--export-fly`. This will spit all the chunks required for SSR in the `out/fly` dir.
 
 *Rendering a page with custom data*
 ~~~
 import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
 
-//here we pass the path to babel and plugins dir
-const renderer = new CustomRenderer("./out/babel", "./src/plugins");
-const obj = renderer.render("[author]/[article].js", "/aniket/rust", {name: "Aniket"});
-console.log(obj);
+(async () => {
+    const renderer = new CustomRenderer("./out/fly", "./src/plugins");
+    const obj = await renderer.render("[author]/[article].js", "/aniket/rust",{name:"any content"})
+    console.log(obj);
+})()
 ~~~
+
 The **obj** variable is json of structure
+
 ~~~
 {
     html : string,  //contains the statically rendered html
     map : string    //contains map for the page
 }
 ~~~
-The **map** property contains the page chunks and its content. It shall be served by the route */lib/map/[path].map.js*
+The **map** property contains the page map and its content. It shall be served by the route */lib/map/[path].map.js*
 
 Make sure you serve the **map** by the correct route to ensure the correct functioning of **Link** component
 
 The map for path */aniket/rust* shall be served by the route */lib/map/aniket/rust.map.js*
+
+of course, the route can be changed using *firejs.yml*
 
 **Rendering a page with data from plugins**
 
@@ -249,17 +251,9 @@ import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
 })()
 ~~~
 
-**Points to keep in mind**
+**pageMap variable**
 
-1. Make sure to build in production mode before custom rendering your page.
-
-2. If you are rendering in a remote location, like in a s3 function. You need to have [babel dir and plugins dir] in the vicinity. Babel Dir is nothing, but a folder in the **out** dir. No other dir like the **src** dir shall be required.
-
-3. Make sure the path that you pass exists. i.e the path shall either provided by a plugin, or the path must be a [default path](#default-path).
-
-**Map variable**
-
-The map variable i.e app.map , maps all the pages, with its paths and plugins.
+The map variable i.e app.pageMap , maps all the pages, with its paths and plugins.
 ## Default Path
 
 When you don't provide a path for a page using a plugin then the path of the page will be used as its' path.
