@@ -136,7 +136,7 @@ export default class extends Plugin {
         callback();
     }
 
-    async onRequest(req: Express.Request, res: Express.Response) {
+    async onRequest(req, res) {
         //This func is called when the respcted page's map is requested
     }
 }
