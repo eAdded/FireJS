@@ -27,6 +27,8 @@ const WebpackArchitect_1 = require("./architects/WebpackArchitect");
 class default_1 {
     constructor(params) {
         this.$ = {};
+        if (params.config.paths.webpackConfig)
+            throw new Error("pass webpack config as params instead of passing it's path");
         // @ts-ignore
         fs.mkdirp = fs_extra_1.mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs;

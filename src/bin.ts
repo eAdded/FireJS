@@ -4,7 +4,7 @@ import Server from "./server"
 import {isAbsolute, join, resolve} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";
 
-import ConfigMapper from "./mappers/ConfigMapper";
+import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import MemoryFS = require("memory-fs");
 
 let customConfig = false;
@@ -30,22 +30,17 @@ function initConfig(args: Args) {
         src: args["--src"] || userConfig.paths.src,
         static: args["--static"] || userConfig.paths.static,
         plugins: args["--plugins"] || userConfig.paths.plugins,
-        lib: args["--lib"] || userConfig.paths.lib
+        lib: args["--lib"] || userConfig.paths.lib,
+        webpackConfig: args["--webpack-conf"] || userConfig.paths.webpackConfig
     }
     return userConfig;
 }
 
-function initWebpackConfig(args: Args) {
-    const webpackConfig: WebpackConfig = args["--webpack-conf"] ? require(isAbsolute(args["--webpack-conf"]) ? args["--webpack-conf"] : resolve(process.cwd(), args["--webpack-conf"])) : {};
-    if (!args["--export"]) {
-        webpackConfig.watch = webpackConfig.watch || true;
-        webpackConfig.output = webpackConfig.output || {};
-        webpackConfig.plugins = webpackConfig.plugins || [];
-        webpackConfig.plugins.push(
-
-        )
-    }
-    return webpackConfig;
+function initWebpackConfig(args: Args, {paths: {webpackConfig}}: Config): WebpackConfig {
+    const webpackConf: WebpackConfig = webpackConfig ? require(isAbsolute(webpackConfig) ? webpackConfig : resolve(process.cwd(), webpackConfig)) : {};
+    if (!args["--export"])
+        webpackConf.watch = webpackConf.watch || true;
+    return webpackConf;
 }
 
 function init(): { app: FireJS, args: Args } {
@@ -57,7 +52,8 @@ function init(): { app: FireJS, args: Args } {
             throw new Error("flag --disk is redundant when exporting")
         config.paths.dist = config.paths.cache || join(config.paths.out || "out", ".cache");
     }
-    const webpackConfig = initWebpackConfig(args);
+    const webpackConfig = initWebpackConfig(args, config);
+    config.paths.webpackConfig = undefined;
     return {
         app: args["--export"] ?
             new FireJS({config, webpackConfig}) :

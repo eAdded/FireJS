@@ -38,19 +38,16 @@ function initConfig(args) {
         src: args["--src"] || userConfig.paths.src,
         static: args["--static"] || userConfig.paths.static,
         plugins: args["--plugins"] || userConfig.paths.plugins,
-        lib: args["--lib"] || userConfig.paths.lib
+        lib: args["--lib"] || userConfig.paths.lib,
+        webpackConfig: args["--webpack-conf"] || userConfig.paths.webpackConfig
     };
     return userConfig;
 }
-function initWebpackConfig(args) {
-    const webpackConfig = args["--webpack-conf"] ? require(path_1.isAbsolute(args["--webpack-conf"]) ? args["--webpack-conf"] : path_1.resolve(process.cwd(), args["--webpack-conf"])) : {};
-    if (!args["--export"]) {
-        webpackConfig.watch = webpackConfig.watch || true;
-        webpackConfig.output = webpackConfig.output || {};
-        webpackConfig.plugins = webpackConfig.plugins || [];
-        webpackConfig.plugins.push();
-    }
-    return webpackConfig;
+function initWebpackConfig(args, { paths: { webpackConfig } }) {
+    const webpackConf = webpackConfig ? require(path_1.isAbsolute(webpackConfig) ? webpackConfig : path_1.resolve(process.cwd(), webpackConfig)) : {};
+    if (!args["--export"])
+        webpackConf.watch = webpackConf.watch || true;
+    return webpackConf;
 }
 function init() {
     const args = ArgsMapper_1.getArgs();
@@ -61,7 +58,8 @@ function init() {
             throw new Error("flag --disk is redundant when exporting");
         config.paths.dist = config.paths.cache || path_1.join(config.paths.out || "out", ".cache");
     }
-    const webpackConfig = initWebpackConfig(args);
+    const webpackConfig = initWebpackConfig(args, config);
+    config.paths.webpackConfig = undefined;
     return {
         app: args["--export"] ?
             new FireJS_1.default({ config, webpackConfig }) :

@@ -53,6 +53,8 @@ export default class {
     private readonly $: $ = {};
 
     constructor(params: Params) {
+        if(params.config.paths.webpackConfig)
+            throw new Error("pass webpack config as params instead of passing it's path");
         // @ts-ignore
         fs.mkdirp = mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs
