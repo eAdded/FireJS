@@ -35,7 +35,6 @@ function initConfig(args: Args) {
     return userConfig;
 }
 
-
 function initWebpackConfig(args: Args) {
     const webpackConfig: WebpackConfig = args["--webpack-conf"] ? require(isAbsolute(args["--webpack-conf"]) ? args["--webpack-conf"] : resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"]) {
@@ -56,7 +55,7 @@ function init(): { app: FireJS, args: Args } {
     if (args["--disk"]) {
         if (args["--export"])
             throw new Error("flag --disk is redundant when exporting")
-        config.paths.dist = config.paths.cache;
+        config.paths.dist = config.paths.cache || join(config.paths.out || "out", ".cache");
     }
     const webpackConfig = initWebpackConfig(args);
     return {

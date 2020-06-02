@@ -59,7 +59,7 @@ function init() {
     if (args["--disk"]) {
         if (args["--export"])
             throw new Error("flag --disk is redundant when exporting");
-        config.paths.dist = config.paths.cache;
+        config.paths.dist = config.paths.cache || path_1.join(config.paths.out || "out", ".cache");
     }
     const webpackConfig = initWebpackConfig(args);
     return {
