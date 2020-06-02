@@ -3,6 +3,7 @@ import {$, WebpackConfig} from "../FireJS";
 import {join} from "path"
 import Page from "../classes/Page";
 import MiniCssExtractPlugin = require('mini-css-extract-plugin');
+import CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
 
 export default class {
     private readonly $: $;
@@ -90,11 +91,12 @@ export default class {
             new MiniCssExtractPlugin({
                 filename: "c" + (mergedConfig.output.chunkFilename || "[contentHash]") + ".css"
             }),
+            new CleanObsoleteChunks()
         );
         mergedConfig.name = page.toString()
         mergedConfig.entry = join(this.$.config.paths.pages, mergedConfig.name);
-        mergedConfig.output.filename = "m" + (mergedConfig.output.filename || "[contentHash]") + ".js";
-        mergedConfig.output.chunkFilename = "c" + (mergedConfig.output.chunkFilename || "[contentHash]") + ".js";
+        mergedConfig.output.filename = mergedConfig.output.filename || "m[contentHash].js";
+        mergedConfig.output.chunkFilename = mergedConfig.output.chunkFilename || "c[contentHash].js";
         mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         mergedConfig.output.path = this.$.config.paths.lib;
         mergedConfig.output.library = "__FIREJS_APP__";

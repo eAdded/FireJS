@@ -47,11 +47,8 @@ function initWebpackConfig(args) {
     if (!args["--export"]) {
         webpackConfig.watch = webpackConfig.watch || true;
         webpackConfig.output = webpackConfig.output || {};
-        /*webpackConfig.output.filename = (pathData) => {
-            console.log("bunty", pathData);
-            throw pathData;
-        }*/
-        // webpackConfig.output.chunkFilename = webpackConfig.output.chunkFilename || "[name][hash]";
+        webpackConfig.plugins = webpackConfig.plugins || [];
+        webpackConfig.plugins.push();
     }
     return webpackConfig;
 }

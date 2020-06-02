@@ -56,10 +56,10 @@ class default_1 {
                 template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
             });
             this.$.cli.log("Copying index chunk");
-            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "if0076cb24f4199a75ef1.js");
+            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "i76405911ec32ed3ed8c9.js");
             this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
                 if (!exists)
-                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/if0076cb24f4199a75ef1.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/i76405911ec32ed3ed8c9.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
             });
         });
     }

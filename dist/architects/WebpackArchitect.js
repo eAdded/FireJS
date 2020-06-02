@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const lodash_1 = require("lodash");
 const path_1 = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CleanObsoleteChunks = require("webpack-clean-obsolete-chunks");
 class default_1 {
     constructor(globalData, userConfig = {}) {
         this.$ = globalData;
@@ -77,11 +78,11 @@ class default_1 {
         });
         mergedConfig.plugins.push(new MiniCssExtractPlugin({
             filename: "c" + (mergedConfig.output.chunkFilename || "[contentHash]") + ".css"
-        }));
+        }), new CleanObsoleteChunks());
         mergedConfig.name = page.toString();
         mergedConfig.entry = path_1.join(this.$.config.paths.pages, mergedConfig.name);
-        mergedConfig.output.filename = "m" + (mergedConfig.output.filename || "[contentHash]") + ".js";
-        mergedConfig.output.chunkFilename = "c" + (mergedConfig.output.chunkFilename || "[contentHash]") + ".js";
+        mergedConfig.output.filename = mergedConfig.output.filename || "m[contentHash].js";
+        mergedConfig.output.chunkFilename = mergedConfig.output.chunkFilename || "c[contentHash].js";
         mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         mergedConfig.output.path = this.$.config.paths.lib;
         mergedConfig.output.library = "__FIREJS_APP__";

@@ -35,16 +35,16 @@ function initConfig(args: Args) {
     return userConfig;
 }
 
+
 function initWebpackConfig(args: Args) {
     const webpackConfig: WebpackConfig = args["--webpack-conf"] ? require(isAbsolute(args["--webpack-conf"]) ? args["--webpack-conf"] : resolve(process.cwd(), args["--webpack-conf"])) : {};
     if (!args["--export"]) {
         webpackConfig.watch = webpackConfig.watch || true;
         webpackConfig.output = webpackConfig.output || {};
-        /*webpackConfig.output.filename = (pathData) => {
-            console.log("bunty", pathData);
-            throw pathData;
-        }*/
-       // webpackConfig.output.chunkFilename = webpackConfig.output.chunkFilename || "[name][hash]";
+        webpackConfig.plugins = webpackConfig.plugins || [];
+        webpackConfig.plugins.push(
+
+        )
     }
     return webpackConfig;
 }
