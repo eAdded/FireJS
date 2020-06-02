@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const webpack = require("webpack");
-const path_1 = require("path");
 class default_1 {
     constructor(globalData, webpackArchitect, isOutputCustom, isInputCustom) {
         this.$ = globalData;
@@ -25,13 +24,10 @@ class default_1 {
             if (this.logStat(stat)) //true if errors
                 reject(undefined);
             else {
-                page.chunks.forEach(chunk => {
-                    this.$.outputFileSystem.unlinkSync(path_1.join(this.$.config.paths.lib, chunk));
-                });
                 page.chunks = []; //reinit chunks
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
-                        if (file.startsWith("m"))
+                        if (chunk.name === "main")
                             page.chunks.unshift(file); //add main chunk to the top
                         else
                             page.chunks.push(file);

@@ -1,7 +1,7 @@
 import {renderToString} from "react-dom/server"
 import {Helmet} from "react-helmet"
 import {PathRelatives} from "../FireJS";
-import {join} from "path"
+import {join, resolve} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
 
@@ -82,7 +82,7 @@ export default class {
                     }
                     return renderToString(
                         // @ts-ignore
-                        React.createElement(require("../../web/dist/wrapper.bundle").default,
+                        React.createElement(require(resolve(__dirname, "../../web/dist/wrapper.bundle.js")).default,
                             // @ts-ignore
                             {content: window.__MAP__.content},
                             undefined)

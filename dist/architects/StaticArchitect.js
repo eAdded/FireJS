@@ -64,7 +64,7 @@ class default_1 {
                 }
                 return server_1.renderToString(
                 // @ts-ignore
-                React.createElement(require("../../web/dist/wrapper.bundle").default, 
+                React.createElement(require(path_1.resolve(__dirname, "../../web/dist/wrapper.bundle.js")).default, 
                 // @ts-ignore
                 { content: window.__MAP__.content }, undefined));
             }
