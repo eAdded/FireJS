@@ -34,6 +34,7 @@ export default class {
                 path: this.$.config.paths.lib,
                 filename: "e[contentHash].js",
                 library: "[name]",//make file as library so it can be imported for static generation
+                libraryTarget: "window"
             }
         };
     }

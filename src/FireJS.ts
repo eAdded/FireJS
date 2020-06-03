@@ -87,6 +87,8 @@ export default class {
         //load externals only when they are required
         if (!this.$.pageArchitect.isOutputCustom) {
             this.$.cli.log("Initializing externals")
+            // @ts-ignore
+            global.window = {};
             this.$.renderer.param.externals.forEach(external => {
                 require(join(this.$.config.paths.lib, external));
             });

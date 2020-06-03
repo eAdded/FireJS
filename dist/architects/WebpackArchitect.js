@@ -29,6 +29,7 @@ class default_1 {
                 path: this.$.config.paths.lib,
                 filename: "e[contentHash].js",
                 library: "[name]",
+                libraryTarget: "window"
             }
         };
     }

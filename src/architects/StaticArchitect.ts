@@ -46,16 +46,18 @@ export default class {
             `<div id='root'>${(() => {
                 if (content) {
                     // @ts-ignore
-                    global.window = {
-                        // @ts-ignore
-                        __LIB_REL__: this.param.rel.libRel,
-                        __MAP_REL__: this.param.rel.mapRel,
-                        __MAP__: {
-                            content,
-                            chunks: []
-                        },
-                        __SSR__: true
+                    global.window.__LIB_REL__ = this.param.rel.libRel;
+                    // @ts-ignore
+                    global.window.__LIB_REL__ = this.param.rel.libRel;
+                    // @ts-ignore
+                    global.window.__MAP_REL__ = this.param.rel.mapRel;
+                    // @ts-ignore
+                    global.window.__MAP__ = {
+                        content,
+                        chunks: []
                     };
+                    // @ts-ignore
+                    global.window.__SSR__ = true;
                     // @ts-ignore
                     global.location = {
                         pathname: path
@@ -77,7 +79,7 @@ export default class {
                         // @ts-ignore
                         React.createElement(window.__FIREJS_APP__.default,
                             // @ts-ignore
-                            {content: window.__MAP__.content})
+                            {content: window.__MAP__.content},undefined)
                     )
                 } else
                     return ""
