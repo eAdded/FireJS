@@ -38,7 +38,7 @@ export default class {
         });
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "i76405911ec32ed3ed8c9.js");
+        template = this.addChunk(template, "i7f5f638e7e4c31e0de4b.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(

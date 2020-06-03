@@ -70,6 +70,12 @@ class default_1 {
                 // @ts-ignore
                 global.ReactHelmet = global.window.ReactHelmet.Helmet;
             }
+            this.$.cli.log("Copying index chunk");
+            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "i7f5f638e7e4c31e0de4b.js");
+            this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
+                if (!exists)
+                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/i7f5f638e7e4c31e0de4b.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+            });
         });
     }
     buildPage(page) {
