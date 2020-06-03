@@ -1,7 +1,6 @@
 import {renderToString} from "react-dom/server"
-import {Helmet} from "react-helmet"
 import {PathRelatives} from "../FireJS";
-import {join, resolve} from "path"
+import {join} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
 
@@ -47,12 +46,6 @@ export default class {
             `<div id='root'>${(() => {
                 if (content) {
                     // @ts-ignore
-                    global.React = require("react");
-                    // @ts-ignore
-                    global.ReactDOM = require("react-dom");
-                    // @ts-ignore
-                    global.ReactHelmet = {Helmet};
-                    // @ts-ignore
                     global.window = {
                         // @ts-ignore
                         __LIB_REL__: this.param.rel.libRel,
@@ -82,16 +75,16 @@ export default class {
                     }
                     return renderToString(
                         // @ts-ignore
-                        React.createElement(require(resolve(__dirname, "../../web/dist/wrapper.bundle.js")).default,
+                        React.createElement(window.__FIREJS_APP__.default,
                             // @ts-ignore
-                            {content: window.__MAP__.content},
-                            undefined)
+                            {content: window.__MAP__.content})
                     )
                 } else
                     return ""
             })()}</div>`);
         if (content) {
-            const helmet = Helmet.renderStatic();
+            // @ts-ignore
+            const helmet = global.ReactHelmet.renderStatic();
             for (let head_element in helmet)
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
         }

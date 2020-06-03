@@ -53,7 +53,7 @@ export default class {
     private readonly $: $ = {};
 
     constructor(params: Params) {
-        if(params.config.paths.webpackConfig)
+        if (params.config.paths.webpackConfig)
             throw new Error("pass webpack config as params instead of passing it's path");
         // @ts-ignore
         fs.mkdirp = mkdirp;
@@ -84,12 +84,19 @@ export default class {
             tags: this.$.config.templateTags,
             template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
         })
-        this.$.cli.log("Copying index chunk")
-        const index_bundle_out_path = join(this.$.config.paths.lib, "i76405911ec32ed3ed8c9.js")
-        this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
-            if (!exists)
-                this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/i76405911ec32ed3ed8c9.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
-        })
+        //load externals only when they are required
+        if (!this.$.pageArchitect.isOutputCustom) {
+            this.$.cli.log("Initializing externals")
+            this.$.renderer.param.externals.forEach(external => {
+                require(join(this.$.config.paths.lib, external));
+            });
+            // @ts-ignore
+            global.React = global.window.React;
+            // @ts-ignore
+            global.ReactDOM = global.window.ReactDOM;
+            // @ts-ignore
+            global.ReactHelmet = global.window.ReactHelmet.Helmet;
+        }
     }
 
     buildPage(page: Page) {

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("react-dom/server");
-const react_helmet_1 = require("react-helmet");
 const path_1 = require("path");
 class default_1 {
     constructor(param) {
@@ -28,12 +27,6 @@ class default_1 {
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(this.param.tags.static, `<div id='root'>${(() => {
             if (content) {
-                // @ts-ignore
-                global.React = require("react");
-                // @ts-ignore
-                global.ReactDOM = require("react-dom");
-                // @ts-ignore
-                global.ReactHelmet = { Helmet: react_helmet_1.Helmet };
                 // @ts-ignore
                 global.window = {
                     // @ts-ignore
@@ -64,15 +57,16 @@ class default_1 {
                 }
                 return server_1.renderToString(
                 // @ts-ignore
-                React.createElement(require(path_1.resolve(__dirname, "../../web/dist/wrapper.bundle.js")).default, 
+                React.createElement(window.__FIREJS_APP__.default, 
                 // @ts-ignore
-                { content: window.__MAP__.content }, undefined));
+                { content: window.__MAP__.content }));
             }
             else
                 return "";
         })()}</div>`);
         if (content) {
-            const helmet = react_helmet_1.Helmet.renderStatic();
+            // @ts-ignore
+            const helmet = global.ReactHelmet.renderStatic();
             for (let head_element in helmet)
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
         }

@@ -1,12 +1,10 @@
-import {loadPage, preloadPage} from "./LinkApi"
-
 export default ({to, children, className}) => {
     let wasLoaded = false;
 
     function preLoad(event, callback) {
         if (wasLoaded)
             return;
-        preloadPage(to, callback || function () {
+        LinkApi.preloadPage(to, callback || function () {
             wasLoaded = true;
         });
     }
@@ -14,10 +12,10 @@ export default ({to, children, className}) => {
     function apply(event) {
         if (!wasLoaded)//there is no muse enter in mobile devices
             preLoad(undefined, () => {
-                loadPage(to);
+                LinkApi.loadPage(to);
             });
         else
-            loadPage(to);
+            LinkApi.loadPage(to);
         try {
             event.preventDefault();
         } catch (e) {
