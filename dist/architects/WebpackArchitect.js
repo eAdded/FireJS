@@ -78,12 +78,12 @@ class default_1 {
             use: cssLoaderUse
         });
         mergedConfig.plugins.push(new MiniCssExtractPlugin({
-            filename: "c" + (mergedConfig.output.chunkFilename || "[contentHash]") + ".css"
+            filename: (mergedConfig.output.chunkFilename || "c[contentHash]") + ".css"
         }), new CleanObsoleteChunks());
         mergedConfig.name = page.toString();
         mergedConfig.entry = path_1.join(this.$.config.paths.pages, mergedConfig.name);
-        mergedConfig.output.filename = mergedConfig.output.filename || "m[contentHash].js";
-        mergedConfig.output.chunkFilename = mergedConfig.output.chunkFilename || "c[contentHash].js";
+        mergedConfig.output.filename = (mergedConfig.output.filename || "m[contentHash]") + ".js";
+        mergedConfig.output.chunkFilename = (mergedConfig.output.chunkFilename || "c[contentHash]") + ".js";
         mergedConfig.output.publicPath = `/${this.$.rel.libRel}/`;
         mergedConfig.output.path = this.$.config.paths.lib;
         mergedConfig.output.library = "__FIREJS_APP__";
