@@ -65,18 +65,21 @@ class default_1 {
                 this.$.renderer.param.externals.forEach(external => {
                     require(path_1.join(this.$.config.paths.lib, external));
                 });
+                require("../components/LinkApi.js");
                 // @ts-ignore
                 global.React = global.window.React;
                 // @ts-ignore
                 global.ReactDOM = global.window.ReactDOM;
                 // @ts-ignore
-                global.ReactHelmet = global.window.ReactHelmet.Helmet;
+                global.ReactHelmet = global.window.ReactHelmet;
+                // @ts-ignore
+                global.LinkApi = global.window.LinkApi;
             }
             this.$.cli.log("Copying index chunk");
-            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "ice6f6836719d698c5661.js");
+            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "id31348b60ae137080540.js");
             this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
                 if (!exists)
-                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/ice6f6836719d698c5661.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/id31348b60ae137080540.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
             });
         });
     }

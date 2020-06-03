@@ -26,7 +26,7 @@ export default ({to, children, className}) => {
     return (
         // @ts-ignore
         <a href={to} className={className} onClick={apply.bind(this)} onMouseEnter={preLoad.bind(this)}>
-            {children}
+           {children}
         </a>
     )
 }

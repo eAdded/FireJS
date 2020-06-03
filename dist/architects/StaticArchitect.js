@@ -22,7 +22,7 @@ class default_1 {
         });
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "ice6f6836719d698c5661.js");
+        template = this.addChunk(template, "id31348b60ae137080540.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(this.param.tags.static, `<div id='root'>${(() => {
@@ -57,7 +57,7 @@ class default_1 {
         })()}</div>`);
         if (content) {
             // @ts-ignore
-            const helmet = global.ReactHelmet.renderStatic();
+            const helmet = global.ReactHelmet.Helmet.renderStatic();
             for (let head_element in helmet)
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
         }
