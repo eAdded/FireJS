@@ -93,11 +93,11 @@ export default class {
                 require(join(this.$.config.paths.lib, external));
             });
             // @ts-ignore
-            global.React = require("react");
+            global.React = global.window.React;
             // @ts-ignore
-            global.ReactDOM = require("react-dom");
+            global.ReactDOM = global.window.ReactDOM;
             // @ts-ignore
-            global.ReactHelmet = require("react-helmet").Helmet;
+            global.ReactHelmet = global.window.ReactHelmet.Helmet;
         }
         this.$.cli.log("Copying index chunk")
         const index_bundle_out_path = join(this.$.config.paths.lib, "ice6f6836719d698c5661.js")
