@@ -1,7 +1,7 @@
 // @ts-ignore
 global.__MIN_PLUGIN_VERSION__ = "0.11.0";
 // @ts-ignore
-global.__FIREJS_VERSION__ = "0.11.4";
+global.__FIREJS_VERSION__ = "0.12.0";
 import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
