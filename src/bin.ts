@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+//#!/usr/bin/env node
 import FireJS, {FIREJS_MAP, WebpackConfig} from "./FireJS"
 import Server from "./server"
 import {isAbsolute, join, resolve} from "path"

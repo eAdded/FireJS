@@ -26,7 +26,7 @@ window.LinkApi = {
             window.history.pushState(undefined, undefined, url);
     },
     runApp: function (func = ReactDOM.render) {
-        func(React.createElement(window.__FIREJS_APP__.default, window.__MAP__.content),
+        func(React.createElement(window.__FIREJS_APP__.default, {content: window.__MAP__.content}),
             document.getElementById("root")
         );
     },

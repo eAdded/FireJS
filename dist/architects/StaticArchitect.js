@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_1 = require("react-dom/server");
+const reactServer = require("react-dom/server");
 const path_1 = require("path");
 class default_1 {
     constructor(param) {
@@ -22,7 +22,7 @@ class default_1 {
         });
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "i7f5f638e7e4c31e0de4b.js");
+        template = this.addChunk(template, "ice6f6836719d698c5661.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(this.param.tags.static, `<div id='root'>${(() => {
@@ -46,22 +46,11 @@ class default_1 {
                 };
                 // @ts-ignore
                 global.document = {};
+                require(path_1.join(this.param.pathToLib, page.chunks[0]));
                 // @ts-ignore
-                if (page.cachedChunkName === page.chunks[0])
-                    // @ts-ignore
-                    window.__FIREJS_APP__ = page.cachedChunk;
-                else {
-                    require(path_1.join(this.param.pathToLib, page.chunks[0]));
-                    // @ts-ignore
-                    page.cachedChunkName = page.chunks[0];
-                    // @ts-ignore
-                    page.cachedChunk = window.__FIREJS_APP__;
-                }
-                return server_1.renderToString(
+                return reactServer.renderToString(
                 // @ts-ignore
-                React.createElement(window.__FIREJS_APP__.default, 
-                // @ts-ignore
-                { content: window.__MAP__.content }, undefined));
+                React.createElement(window.__FIREJS_APP__.default, { content: window.__MAP__.content }));
             }
             else
                 return "";

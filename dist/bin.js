@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -10,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+//#!/usr/bin/env node
 const FireJS_1 = require("./FireJS");
 const server_1 = require("./server");
 const path_1 = require("path");

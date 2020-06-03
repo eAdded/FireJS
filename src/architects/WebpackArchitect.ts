@@ -102,7 +102,6 @@ export default class {
         mergedConfig.output.path = this.$.config.paths.lib;
         mergedConfig.output.library = "__FIREJS_APP__";
         mergedConfig.output.libraryTarget = "window";
-
         return mergedConfig;
     }
 }

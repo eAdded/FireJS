@@ -1,4 +1,4 @@
-import {renderToString} from "react-dom/server"
+import reactServer = require("react-dom/server");
 import {PathRelatives} from "../FireJS";
 import {join} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
@@ -38,7 +38,7 @@ export default class {
         });
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "i7f5f638e7e4c31e0de4b.js");
+        template = this.addChunk(template, "ice6f6836719d698c5661.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(
@@ -64,34 +64,23 @@ export default class {
                     };
                     // @ts-ignore
                     global.document = {};
+                    require(join(this.param.pathToLib, page.chunks[0]))
                     // @ts-ignore
-                    if (page.cachedChunkName === page.chunks[0])
+                    return reactServer.renderToString(
                         // @ts-ignore
-                        window.__FIREJS_APP__ = page.cachedChunk;
-                    else {
-                        require(join(this.param.pathToLib, page.chunks[0]));
-                        // @ts-ignore
-                        page.cachedChunkName = page.chunks[0];
-                        // @ts-ignore
-                        page.cachedChunk = window.__FIREJS_APP__;
-                    }
-                    return renderToString(
-                        // @ts-ignore
-                        React.createElement(window.__FIREJS_APP__.default,
-                            // @ts-ignore
-                            {content: window.__MAP__.content},undefined)
-                    )
+                        React.createElement(window.__FIREJS_APP__.default, {content: window.__MAP__.content})
+                    );
                 } else
                     return ""
             })()}</div>`);
-        if (content) {
-            // @ts-ignore
+            if (content) {
+                // @ts-ignore
             const helmet = global.ReactHelmet.renderStatic();
             for (let head_element in helmet)
-                template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
-        }
-        return template
-    }
+            template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
+            }
+            return template
+            }
 
 
     addChunk(template, chunk, root = undefined, tag = undefined) {

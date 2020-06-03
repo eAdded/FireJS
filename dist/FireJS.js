@@ -66,17 +66,17 @@ class default_1 {
                     require(path_1.join(this.$.config.paths.lib, external));
                 });
                 // @ts-ignore
-                global.React = global.window.React;
+                global.React = require("react");
                 // @ts-ignore
-                global.ReactDOM = global.window.ReactDOM;
+                global.ReactDOM = require("react-dom");
                 // @ts-ignore
-                global.ReactHelmet = global.window.ReactHelmet.Helmet;
+                global.ReactHelmet = require("react-helmet").Helmet;
             }
             this.$.cli.log("Copying index chunk");
-            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "i7f5f638e7e4c31e0de4b.js");
+            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "ice6f6836719d698c5661.js");
             this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
                 if (!exists)
-                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/i7f5f638e7e4c31e0de4b.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/ice6f6836719d698c5661.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
             });
         });
     }
