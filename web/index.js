@@ -6,21 +6,21 @@ window.LinkApi = {
         return map_script;
     },
     preloadPage: function (url, callback) {
-        const map_script = loadMap(url);
-        map_script.onload = function () {
-            preloadChunks(window.__MAP__.chunks);
+        const map_script = this.loadMap(url);
+        map_script.onload = () => {
+            this.preloadChunks(window.__MAP__.chunks);
             callback();
         };
-        map_script.onerror = function () {
+        map_script.onerror = () => {
             document.head.removeChild(map_script);
-            loadMap(window.__PAGES__._404).onload = map_script.onload;
+            this.loadMap(window.__PAGES__._404).onload = map_script.onload;
         };
     },
     loadPage: function (url, pushState = true) {
         const script = document.createElement("script");
         script.src = `/${window.__LIB_REL__}/${window.__MAP__.chunks.shift()}`
-        loadChunks(window.__MAP__.chunks);
-        script.onload = runApp;
+        this.loadChunks(window.__MAP__.chunks);
+        script.onload = this.runApp;
         document.body.appendChild(script);
         if (pushState)
             window.history.pushState(undefined, undefined, url);
@@ -69,7 +69,7 @@ window.LinkApi = {
     }
 }
 window.onpopstate = function () {
-    LinkApi.preloadPage(location.pathname, () => {
+    LinkApi.preloadPage(location.pathname, function () {
         LinkApi.loadPage(location.pathname, false)
     })
 }
