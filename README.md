@@ -26,17 +26,17 @@ $ yarn add @eadded/firejs react react-dom
 $ npm install @eadded/firejs react react-dom
 ```
 
-## Hello world
+## Quick Start
 
 Make dir `src/pages` in project root. This dir will contain all of the pages for our brand new hello world website.
 
-Make a file **index.js** or **index.jsx** in the dir. This file will be the index page of our website.
+Make a file **404.js** or **404.jsx** in the dir. This file will be the 404 page of our website.
 
 ```jsx
 export default () => {  
   return (
     <div>
-        <p>Hello world</p>
+        <p>Welcome to 404</p>
     </div>  
   )
 }
@@ -60,9 +60,11 @@ $ yarn run dev
 ```bash
 $ npm run dev
 ```
-Navigate to `http://localhost:5000`  and there it says `hello world`.
+Navigate to `http://localhost:5000` and there it says `hello world`.
 
-*To change server PORT set env variable PORT to the required value*
+*To change server **PORT** set env variable **PORT** to the required value*
+
+**Note:** 404 page is mandatory
 
 ## Args  
 ```
@@ -264,6 +266,18 @@ When you don't provide a path for a page using a plugin then the path of the pag
 Eg. A page "index.js" will have a default path "/index".
 
 If you provide a blank plugin then default paths will not be applied.
+
+## Globals
+
+`window./__SSR/__` To check if page is being rendered on *Server* or on *Browser*
+
+`window./__HYDRATE/__` To check if page was [`hydrated`](https://reactjs.org/docs/react-dom.html#hydrate) or [`rendered`](https://reactjs.org/docs/react-dom.html#render)
+
+`window./__LIB_REL/__` Relative-Path to lib dir( dir where all of your js bundles will be exported). default : `lib`
+
+`window./__MAP_REL/__` Relative-Path to map dir( dir where all of your page maps will be exported). default : `lib/map`
+
+`window./__PAGES/__["404"]` Route to 404 page
 
 ## License & Copyright
 Copyright (C) 2020 Aniket Prajapati
