@@ -143,3 +143,6 @@ export default class {
         return this.$;
     }
 }
+
+module.exports.Link = require("../components/Link.jsx");
+module.exports.Head = require("../components/Head.jsx");
