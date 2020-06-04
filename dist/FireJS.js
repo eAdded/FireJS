@@ -115,5 +115,3 @@ class default_1 {
     }
 }
 exports.default = default_1;
-module.exports.Link = require("../components/Link.jsx");
-module.exports.Head = require("../components/Head.jsx");
