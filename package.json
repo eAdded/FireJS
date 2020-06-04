@@ -1,7 +1,7 @@
 {
   "name": "@eadded/firejs",
   "main": "dist/FireJS.js",
-  "version": "0.12.1",
+  "version": "0.0.0",
   "license": "GPL-3.0-or-later",
   "description": "Highly customizable no config react static site generator",
   "keywords": [
@@ -16,8 +16,8 @@
   "author": "Aniket Prajapati <prajapati.ani306@gmail.com>",
   "private": false,
   "dependencies": {
-    "@babel/preset-env": "^7.10.2",
     "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.10.2",
     "@babel/preset-react": "^7.9.4",
     "babel-loader": "^8.1.0",
     "chokidar": "^3.4.0",
@@ -28,15 +28,15 @@
     "lodash": "^4.17.15",
     "memory-fs": "^0.5.0",
     "mini-css-extract-plugin": "^0.9.0",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2",
     "react-helmet": "^6.0.0",
     "sass-loader": "^8.0.2",
     "smartarg": "^1.0.0",
     "style-loader": "^1.2.1",
     "webpack": "^4.43.0",
     "webpack-clean-obsolete-chunks": "^0.4.0",
-    "yaml": "^1.10.0",
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2"
+    "yaml": "^1.10.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.6",
