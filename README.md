@@ -17,13 +17,13 @@ install using **yarn** or **npm**
 **yarn**
 
 ```bash
-$ yarn add @eadded/firejs react react-dom
+$ yarn add @eadded/firejs
 ```
 
 **npm**
 
 ```bash
-$ npm install @eadded/firejs react react-dom
+$ npm install @eadded/firejs
 ```
 
 ## Quick Start

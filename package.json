@@ -1,13 +1,16 @@
 {
   "name": "@eadded/firejs",
   "main": "dist/FireJS.js",
-  "version": "0.0.0",
+  "version": "0.13.0",
   "license": "GPL-3.0-or-later",
   "description": "Highly customizable no config react static site generator",
   "keywords": [
     "react",
     "react-static",
-    "firejs"
+    "firejs",
+    "gatsby",
+    "nextjs",
+    "SSR"
   ],
   "repository": {
     "type": "git",
@@ -28,8 +31,8 @@
     "lodash": "^4.17.15",
     "memory-fs": "^0.5.0",
     "mini-css-extract-plugin": "^0.9.0",
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "react-helmet": "^6.0.0",
     "sass-loader": "^8.0.2",
     "smartarg": "^1.0.0",
