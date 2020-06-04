@@ -279,6 +279,8 @@ If you provide a blank plugin then default paths will not be applied.
 
 `window.__PAGES__["404"]` Route to 404 page
 
+## Issues
++ [React Hooks](https://github.com/eAdded/FireJS/issues/4)
 ## License & Copyright
 Copyright (C) 2020 Aniket Prajapati
 
