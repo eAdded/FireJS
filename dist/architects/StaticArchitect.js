@@ -30,6 +30,8 @@ class default_1 {
             // @ts-ignore
             global.window.__SSR__ = true;
             // @ts-ignore
+            global.window.__HYDRATE__ = true;
+            // @ts-ignore
             global.location = {
                 pathname: path
             };
@@ -46,7 +48,6 @@ class default_1 {
     }
     render(template, page, path, content) {
         const staticRender = this.renderStatic(page, path, content);
-        console.log(this.param.externals);
         //map
         template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
         //externals
@@ -65,7 +66,7 @@ class default_1 {
             template = this.addChunk(template, this.param.externals[2]);
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "id31348b60ae137080540.js");
+        template = this.addChunk(template, "i84d2d326114d13a4f07d.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(this.param.tags.static, `<div id='root'>${staticRender}</div>`);

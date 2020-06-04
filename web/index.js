@@ -5,7 +5,7 @@ window.onpopstate = function () {
     })
 }
 
-if (window.__SSR__)
+if (window.__HYDRATE__)
     LinkApi.runApp(ReactDOM.hydrate)
 else
     LinkApi.runApp()

@@ -46,6 +46,8 @@ export default class {
             // @ts-ignore
             global.window.__SSR__ = true;
             // @ts-ignore
+            global.window.__HYDRATE__  = true;
+            // @ts-ignore
             global.location = {
                 pathname: path
             };
@@ -63,7 +65,6 @@ export default class {
 
     render(template: string, page: Page, path: string, content: any) {
         const staticRender = this.renderStatic(page, path, content);
-        console.log(this.param.externals);
         //map
         template = this.addChunk(template, join(this.param.rel.mapRel, path + ".map.js"), "", "head");
         //externals
@@ -81,7 +82,7 @@ export default class {
             template = this.addChunk(template, this.param.externals[2]);
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "id31348b60ae137080540.js");
+        template = this.addChunk(template, "i84d2d326114d13a4f07d.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(

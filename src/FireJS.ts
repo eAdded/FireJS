@@ -106,10 +106,10 @@ export default class {
             global.LinkApi = global.window.LinkApi;
         }
         this.$.cli.log("Copying index chunk")
-        const index_bundle_out_path = join(this.$.config.paths.lib, "id31348b60ae137080540.js")
+        const index_bundle_out_path = join(this.$.config.paths.lib, "i84d2d326114d13a4f07d.js")
         this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
             if (!exists)
-                this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/id31348b60ae137080540.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+                this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/i84d2d326114d13a4f07d.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
         })
     }
 
