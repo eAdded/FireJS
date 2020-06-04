@@ -269,15 +269,15 @@ If you provide a blank plugin then default paths will not be applied.
 
 ## Globals
 
-`window./__SSR/__` To check if page is being rendered on *Server* or on *Browser*
+`window.__SSR__` To check if page is being rendered on *Server* or on *Browser*
 
-`window./__HYDRATE/__` To check if page was [`hydrated`](https://reactjs.org/docs/react-dom.html#hydrate) or [`rendered`](https://reactjs.org/docs/react-dom.html#render)
+`window.__HYDRATE__` To check if page was [`hydrated`](https://reactjs.org/docs/react-dom.html#hydrate) or [`rendered`](https://reactjs.org/docs/react-dom.html#render)
 
-`window./__LIB_REL/__` Relative-Path to lib dir( dir where all of your js bundles will be exported). default : `lib`
+`window.__LIB_REL__` Relative-Path to lib dir( dir where all of your js bundles will be exported). default : `lib`
 
-`window./__MAP_REL/__` Relative-Path to map dir( dir where all of your page maps will be exported). default : `lib/map`
+`window.__MAP_REL__` Relative-Path to map dir( dir where all of your page maps will be exported). default : `lib/map`
 
-`window./__PAGES/__["404"]` Route to 404 page
+`window.__PAGES__["404"]` Route to 404 page
 
 ## License & Copyright
 Copyright (C) 2020 Aniket Prajapati
