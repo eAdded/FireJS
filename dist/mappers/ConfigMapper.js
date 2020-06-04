@@ -48,15 +48,15 @@ class default_1 {
         config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         //pages
         config.pages = config.pages || {};
-        this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"));
+        this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"), "Make sure you have a 404 page");
         return config;
     }
     makeAbsolute(root, pathTo) {
         return path_1.isAbsolute(pathTo) ? pathTo : path_1.resolve(root, pathTo);
     }
-    throwIfNotFound(name, pathTo) {
+    throwIfNotFound(name, pathTo, extra = "") {
         if (!this.inputFileSystem.existsSync(pathTo))
-            throw new Error(`${name} not found. ${pathTo}`);
+            throw new Error(`${name} not found. ${pathTo}\n${extra}`);
     }
     undefinedIfNotFound(object, property, pathRoot, defaultRoot, msg) {
         if (object[property]) {

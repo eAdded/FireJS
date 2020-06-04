@@ -1,4 +1,4 @@
-import {join} from "path"
+import {join, relative} from "path"
 import {watch} from "chokidar"
 import FireJS, {$} from "./FireJS"
 import Page from "./classes/Page";
@@ -14,6 +14,12 @@ export default class {
     }
 
     async init() {
+        {
+            const p404 = relative(this.$.config.paths.pages,join(__dirname, "../web/404/404.jsx"))
+            if (this.$.config.pages["404"].toString() === p404)
+                await this.app.buildPage(this.$.pageMap.get(p404));
+        }
+
         watch(this.$.config.paths.pages)//watch changes
             .on('add', async path => {
                 path = path.replace(this.$.config.paths.pages + "/", "");

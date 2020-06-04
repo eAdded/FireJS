@@ -20,6 +20,11 @@ class default_1 {
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
+            {
+                const p404 = path_1.relative(this.$.config.paths.pages, path_1.join(__dirname, "../web/404/404.jsx"));
+                if (this.$.config.pages["404"].toString() === p404)
+                    yield this.app.buildPage(this.$.pageMap.get(p404));
+            }
             chokidar_1.watch(this.$.config.paths.pages) //watch changes
                 .on('add', (path) => __awaiter(this, void 0, void 0, function* () {
                 path = path.replace(this.$.config.paths.pages + "/", "");

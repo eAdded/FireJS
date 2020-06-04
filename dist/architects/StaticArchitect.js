@@ -14,53 +14,61 @@ class default_1 {
         // @ts-ignore
         this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head");
     }
+    renderStatic(page, path, content) {
+        if (content) {
+            // @ts-ignore
+            global.window.__LIB_REL__ = this.param.rel.libRel;
+            // @ts-ignore
+            global.window.__LIB_REL__ = this.param.rel.libRel;
+            // @ts-ignore
+            global.window.__MAP_REL__ = this.param.rel.mapRel;
+            // @ts-ignore
+            global.window.__MAP__ = {
+                content,
+                chunks: []
+            };
+            // @ts-ignore
+            global.window.__SSR__ = true;
+            // @ts-ignore
+            global.location = {
+                pathname: path
+            };
+            // @ts-ignore
+            global.document = {};
+            require(path_1.join(this.param.pathToLib, page.chunks[0]));
+            // @ts-ignore
+            return reactServer.renderToString(
+            // @ts-ignore
+            React.createElement(window.__FIREJS_APP__.default, { content: window.__MAP__.content }));
+        }
+        else
+            return "";
+    }
     render(template, page, path, content) {
+        const staticRender = this.renderStatic(page, path, content);
+        console.log(this.param.externals);
+        //map
         template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
-        //add externals
-        this.param.externals.forEach(external => {
-            template = this.addChunk(template, external);
-        });
+        //externals
+        template = this.addChunk(template, this.param.externals[0]); //react
+        template = this.addChunk(template, this.param.externals[1]); //react-dom
+        if (content) {
+            // @ts-ignore
+            const helmet = global.ReactHelmet.Helmet.renderStatic();
+            // @ts-ignore
+            if (window.__FIREJS_HELMET_USED__)
+                template = this.addChunk(template, this.param.externals[2]); //react helmet
+            for (let head_element in helmet)
+                template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
+        }
+        else
+            template = this.addChunk(template, this.param.externals[2]);
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
         template = this.addChunk(template, "id31348b60ae137080540.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
-        template = template.replace(this.param.tags.static, `<div id='root'>${(() => {
-            if (content) {
-                // @ts-ignore
-                global.window.__LIB_REL__ = this.param.rel.libRel;
-                // @ts-ignore
-                global.window.__LIB_REL__ = this.param.rel.libRel;
-                // @ts-ignore
-                global.window.__MAP_REL__ = this.param.rel.mapRel;
-                // @ts-ignore
-                global.window.__MAP__ = {
-                    content,
-                    chunks: []
-                };
-                // @ts-ignore
-                global.window.__SSR__ = true;
-                // @ts-ignore
-                global.location = {
-                    pathname: path
-                };
-                // @ts-ignore
-                global.document = {};
-                require(path_1.join(this.param.pathToLib, page.chunks[0]));
-                // @ts-ignore
-                return reactServer.renderToString(
-                // @ts-ignore
-                React.createElement(window.__FIREJS_APP__.default, { content: window.__MAP__.content }));
-            }
-            else
-                return "";
-        })()}</div>`);
-        if (content) {
-            // @ts-ignore
-            const helmet = global.ReactHelmet.Helmet.renderStatic();
-            for (let head_element in helmet)
-                template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
-        }
+        template = template.replace(this.param.tags.static, `<div id='root'>${staticRender}</div>`);
         return template;
     }
     addChunk(template, chunk, root = undefined, tag = undefined) {

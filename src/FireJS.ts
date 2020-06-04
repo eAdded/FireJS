@@ -62,6 +62,10 @@ export default class {
         this.$.config = new ConfigMapper(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config)
         this.$.cli = new Cli(this.$.config.logMode);
         this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);
+        if (!this.$.config.pages["404"]) {
+            this.$.config.pages["404"] = relative(this.$.config.paths.pages, join(__dirname, "../web/404/404.jsx"))
+            this.$.pageMap.set(this.$.config.pages["404"], new Page(this.$.config.pages["404"]));
+        }
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
@@ -74,7 +78,6 @@ export default class {
         if (!this.$.config.disablePlugins)
             if (this.$.config.paths.plugins)
                 mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
-
         this.$.cli.log("Building Externals");
         this.$.renderer = new StaticArchitect({
             rel: this.$.rel,

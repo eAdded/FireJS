@@ -89,7 +89,7 @@ export default class {
         config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         //pages
         config.pages = config.pages || {};
-        this.throwIfNotFound("404 page", join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"));
+        this.throwIfNotFound("404 page", join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"), "Make sure you have a 404 page");
         return config;
     }
 
@@ -97,9 +97,9 @@ export default class {
         return isAbsolute(pathTo) ? pathTo : resolve(root, pathTo);
     }
 
-    private throwIfNotFound(name: string, pathTo: string) {
+    private throwIfNotFound(name: string, pathTo: string, extra = "") {
         if (!this.inputFileSystem.existsSync(pathTo))
-            throw new Error(`${name} not found. ${pathTo}`);
+            throw new Error(`${name} not found. ${pathTo}\n${extra}`);
     }
 
     private undefinedIfNotFound<T extends { [key: string]: string }, K extends keyof T>(object: T, property: K, pathRoot: string, defaultRoot: string, msg: string) {
