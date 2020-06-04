@@ -70,7 +70,7 @@ class default_1 {
                 this.$.renderer.param.externals.forEach(external => {
                     require(path_1.join(this.$.config.paths.lib, external));
                 });
-                require("../components/LinkApi.js");
+                require("../web/LinkApi.js");
                 // @ts-ignore
                 global.React = global.window.React;
                 // @ts-ignore
@@ -81,10 +81,10 @@ class default_1 {
                 global.LinkApi = global.window.LinkApi;
             }
             this.$.cli.log("Copying index chunk");
-            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "i84d2d326114d13a4f07d.js");
+            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "i244ca8c4e9b1d7c62a82.js");
             this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
                 if (!exists)
-                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/i84d2d326114d13a4f07d.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/i244ca8c4e9b1d7c62a82.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
             });
         });
     }

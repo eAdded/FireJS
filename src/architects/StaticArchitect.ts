@@ -22,8 +22,7 @@ export default class {
             `<script>` +
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
-            `window.__PAGES__={};` +
-            `window.__PAGES__._404="/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}";` +
+            `window.__PAGES__={404:"/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}"};` +
             `</script>`,
             "head");
         // @ts-ignore
@@ -46,7 +45,7 @@ export default class {
             // @ts-ignore
             global.window.__SSR__ = true;
             // @ts-ignore
-            global.window.__HYDRATE__  = true;
+            global.window.__HYDRATE__ = true;
             // @ts-ignore
             global.location = {
                 pathname: path
@@ -82,7 +81,7 @@ export default class {
             template = this.addChunk(template, this.param.externals[2]);
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "i84d2d326114d13a4f07d.js");
+        template = this.addChunk(template, "i244ca8c4e9b1d7c62a82.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(

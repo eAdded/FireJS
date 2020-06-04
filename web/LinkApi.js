@@ -13,7 +13,7 @@ window.LinkApi = {
         };
         map_script.onerror = () => {
             document.head.removeChild(map_script);
-            this.loadMap(window.__PAGES__._404).onload = map_script.onload;
+            this.loadMap(window.__PAGES__["404"]).onload = map_script.onload;
         };
     },
     loadPage: function (url, pushState = true) {

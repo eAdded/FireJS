@@ -8,8 +8,7 @@ class default_1 {
         this.param.template = this.addInnerHTML(this.param.template, `<script>` +
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
-            `window.__PAGES__={};` +
-            `window.__PAGES__._404="/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}";` +
+            `window.__PAGES__={404:"/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}"};` +
             `</script>`, "head");
         // @ts-ignore
         this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head");
@@ -66,7 +65,7 @@ class default_1 {
             template = this.addChunk(template, this.param.externals[2]);
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "i84d2d326114d13a4f07d.js");
+        template = this.addChunk(template, "i244ca8c4e9b1d7c62a82.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(this.param.tags.static, `<div id='root'>${staticRender}</div>`);

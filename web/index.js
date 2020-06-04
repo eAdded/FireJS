@@ -1,4 +1,4 @@
-require("../components/LinkApi");
+require("./LinkApi");
 window.onpopstate = function () {
     LinkApi.preloadPage(location.pathname, function () {
         LinkApi.loadPage(location.pathname, false)
