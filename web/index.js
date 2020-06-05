@@ -1,4 +1,7 @@
 require("./LinkApi");
+window.React = require("react");
+window.ReactDOM = require("react-dom")
+
 window.onpopstate = function () {
     LinkApi.preloadPage(location.pathname, function () {
         LinkApi.loadPage(location.pathname, false)

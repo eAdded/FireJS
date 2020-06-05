@@ -15,7 +15,6 @@ global.__MIN_PLUGIN_VERSION__ = "0.11.0";
 global.__FIREJS_VERSION__ = "0.13.0";
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const Cli_1 = require("./utils/Cli");
-const Page_1 = require("./classes/Page");
 const path_1 = require("path");
 const PluginMapper_1 = require("./mappers/PluginMapper");
 const PageArchitect_1 = require("./architects/PageArchitect");
@@ -37,10 +36,6 @@ class default_1 {
         this.$.config = new ConfigMapper_1.default(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config);
         this.$.cli = new Cli_1.default(this.$.config.logMode);
         this.$.pageMap = PathMapper_1.createMap(this.$.config.paths.pages, this.$.inputFileSystem);
-        if (!this.$.config.pages["404"]) {
-            this.$.config.pages["404"] = path_1.relative(this.$.config.paths.pages, path_1.join(__dirname, "../web/404/404.jsx"));
-            this.$.pageMap.set(this.$.config.pages["404"], new Page_1.default(this.$.config.pages["404"]));
-        }
         this.$.rel = {
             libRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.map)
@@ -67,25 +62,26 @@ class default_1 {
                 this.$.cli.log("Initializing externals");
                 // @ts-ignore
                 global.window = {};
-                this.$.renderer.param.externals.forEach(external => {
-                    require(path_1.join(this.$.config.paths.lib, external));
-                });
+                require(path_1.join(this.$.config.paths.lib, this.$.renderer.param.externals[0]));
+                /*this.$.renderer.param.externals.forEach(external => {
+                    require(join(this.$.config.paths.lib, external));
+                });*/
                 require("../web/LinkApi.js");
                 // @ts-ignore
                 global.React = global.window.React;
                 // @ts-ignore
                 global.ReactDOM = global.window.ReactDOM;
-                // @ts-ignore
-                global.ReactHelmet = global.window.ReactHelmet;
+                /*// @ts-ignore
+                global.ReactHelmet = global.window.ReactHelmet;*/
                 // @ts-ignore
                 global.LinkApi = global.window.LinkApi;
             }
-            this.$.cli.log("Copying index chunk");
-            const index_bundle_out_path = path_1.join(this.$.config.paths.lib, "i244ca8c4e9b1d7c62a82.js");
+            /*this.$.cli.log("Copying index chunk")
+            const index_bundle_out_path = join(this.$.config.paths.lib, "i244ca8c4e9b1d7c62a82.js")
             this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
                 if (!exists)
-                    this.$.inputFileSystem.createReadStream(path_1.join(__dirname, "../web/dist/i244ca8c4e9b1d7c62a82.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
-            });
+                    this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/i244ca8c4e9b1d7c62a82.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
+            })*/
         });
     }
     buildPage(page) {

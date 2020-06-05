@@ -20,16 +20,10 @@ class default_1 {
         return {
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
-            entry: {
-                "React": "react",
-                "ReactDOM": "react-dom",
-                "ReactHelmet": "react-helmet",
-            },
+            entry: path_1.join(__dirname, "../../web/index.js"),
             output: {
                 path: this.$.config.paths.lib,
-                filename: "e[contentHash].js",
-                library: "[name]",
-                libraryTarget: "window"
+                filename: "i[contentHash].js",
             }
         };
     }
@@ -48,7 +42,9 @@ class default_1 {
             } });
         mergedConfig.externals["react"] = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
-        mergedConfig.externals["react-helmet"] = "ReactHelmet";
+        /*
+                mergedConfig.externals["react-helmet"] = "ReactHelmet";
+        */
         const cssLoaderUse = [MiniCssExtractPlugin.loader,
             {
                 loader: 'css-loader',

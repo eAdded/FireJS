@@ -62,10 +62,6 @@ export default class {
         this.$.config = new ConfigMapper(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config)
         this.$.cli = new Cli(this.$.config.logMode);
         this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);
-        if (!this.$.config.pages["404"]) {
-            this.$.config.pages["404"] = relative(this.$.config.paths.pages, join(__dirname, "../web/404/404.jsx"))
-            this.$.pageMap.set(this.$.config.pages["404"], new Page(this.$.config.pages["404"]));
-        }
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
@@ -92,25 +88,27 @@ export default class {
             this.$.cli.log("Initializing externals")
             // @ts-ignore
             global.window = {};
-            this.$.renderer.param.externals.forEach(external => {
+            require(join(this.$.config.paths.lib, this.$.renderer.param.externals[0]));
+
+            /*this.$.renderer.param.externals.forEach(external => {
                 require(join(this.$.config.paths.lib, external));
-            });
+            });*/
             require("../web/LinkApi.js")
             // @ts-ignore
             global.React = global.window.React;
             // @ts-ignore
             global.ReactDOM = global.window.ReactDOM;
-            // @ts-ignore
-            global.ReactHelmet = global.window.ReactHelmet;
+            /*// @ts-ignore
+            global.ReactHelmet = global.window.ReactHelmet;*/
             // @ts-ignore
             global.LinkApi = global.window.LinkApi;
         }
-        this.$.cli.log("Copying index chunk")
+        /*this.$.cli.log("Copying index chunk")
         const index_bundle_out_path = join(this.$.config.paths.lib, "i244ca8c4e9b1d7c62a82.js")
         this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
             if (!exists)
                 this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/i244ca8c4e9b1d7c62a82.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
-        })
+        })*/
     }
 
     buildPage(page: Page) {

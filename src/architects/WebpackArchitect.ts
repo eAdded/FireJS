@@ -25,16 +25,12 @@ export default class {
         return {
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
-            entry: {
-                "React": "react",
-                "ReactDOM":"react-dom",
-                "ReactHelmet": "react-helmet",
-            },
+            entry: join(__dirname, "../../web/index.js"),
             output: {
                 path: this.$.config.paths.lib,
-                filename: "e[contentHash].js",
-                library: "[name]",//make file as library so it can be imported for static generation
-                libraryTarget: "window"
+                filename: "i[contentHash].js",
+                /*library: "[name]",//make file as library so it can be imported for static generation
+                libraryTarget: "window"*/
             }
         };
     }
@@ -58,7 +54,9 @@ export default class {
         };
         mergedConfig.externals["react"] = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
-        mergedConfig.externals["react-helmet"] = "ReactHelmet";
+        /*
+                mergedConfig.externals["react-helmet"] = "ReactHelmet";
+        */
         const cssLoaderUse = [MiniCssExtractPlugin.loader,
             {
                 loader: 'css-loader',

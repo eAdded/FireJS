@@ -50,22 +50,23 @@ class default_1 {
         //map
         template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
         //externals
-        template = this.addChunk(template, this.param.externals[0]); //react
-        template = this.addChunk(template, this.param.externals[1]); //react-dom
+        //     template = this.addChunk(template, this.param.externals[0]);//react
+        /*template = this.addChunk(template, this.param.externals[1]);//react-dom*/
         if (content) {
             // @ts-ignore
             const helmet = global.ReactHelmet.Helmet.renderStatic();
             // @ts-ignore
-            if (window.__FIREJS_HELMET_USED__)
-                template = this.addChunk(template, this.param.externals[2]); //react helmet
+            /*if (window.__FIREJS_HELMET_USED__)
+                template = this.addChunk(template, this.param.externals[2]);//react helmet*/
             for (let head_element in helmet)
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
-        }
-        else
-            template = this.addChunk(template, this.param.externals[2]);
+        } /*else
+            template = this.addChunk(template, this.param.externals[2]);*/
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
-        template = this.addChunk(template, "i244ca8c4e9b1d7c62a82.js");
+        //externals
+        template = this.addChunk(template, this.param.externals[0]); //react
+        //template = this.addChunk(template, "i244ca8c4e9b1d7c62a82.js");
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(this.param.tags.static, `<div id='root'>${staticRender}</div>`);
