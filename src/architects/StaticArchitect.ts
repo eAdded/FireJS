@@ -28,9 +28,7 @@ export default class {
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
             `window.__PAGES__={404:"/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}"};` +
-            +(() => {
-                return param.static ? `window.__HYDRATE__ = true;` : "";
-            })() +
+            `${param.static ? `window.__HYDRATE__ = true;` : ""}` +
             `</script>`,
             "head");
         // @ts-ignore
