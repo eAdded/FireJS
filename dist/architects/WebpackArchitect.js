@@ -19,7 +19,7 @@ class default_1 {
     forExternals() {
         return {
             target: 'web',
-            mode: this.$.config.pro ? "production" : "development",
+            mode: process.env.NODE_ENV,
             entry: path_1.join(__dirname, "../../web/index.js"),
             output: {
                 path: this.$.config.paths.lib,
@@ -30,7 +30,7 @@ class default_1 {
     forPage(page) {
         let mergedConfig = Object.assign({ 
             //settings which can be changed by user
-            target: 'web', mode: this.$.config.pro ? "production" : "development", 
+            target: 'web', mode: process.env.NODE_ENV, 
             //add config base to user config to prevent undefined errors
             optimization: {
                 splitChunks: {

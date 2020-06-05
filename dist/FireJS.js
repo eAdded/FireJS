@@ -27,6 +27,7 @@ const WebpackArchitect_1 = require("./architects/WebpackArchitect");
 class default_1 {
     constructor(params) {
         this.$ = {};
+        process.env.NODE_ENV = params.config.pro ? 'production' : 'development';
         if (params.config.paths.webpackConfig)
             throw new Error("pass webpack config as params instead of passing it's path");
         // @ts-ignore
@@ -35,6 +36,7 @@ class default_1 {
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper_1.default(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config);
         this.$.cli = new Cli_1.default(this.$.config.logMode);
+        this.$.cli.log(`NODE_ENV : ${process.env.NODE_ENV}`);
         this.$.pageMap = PathMapper_1.createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib),
@@ -56,7 +58,7 @@ class default_1 {
                 explicitPages: this.$.config.pages,
                 tags: this.$.config.templateTags,
                 template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString(),
-                static: !this.$.pageArchitect.isOutputCustom
+                static: this.$.config.static
             });
         });
     }

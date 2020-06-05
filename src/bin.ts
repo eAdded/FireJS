@@ -33,6 +33,7 @@ function initConfig(args: Args) {
         lib: args["--lib"] || userConfig.paths.lib,
         webpackConfig: args["--webpack-conf"] || userConfig.paths.webpackConfig
     }
+    userConfig.static = args["--export"];
     return userConfig;
 }
 
@@ -69,8 +70,6 @@ function init(): { app: FireJS, args: Args } {
 (async function () {
     const {app, args} = init();
     const $ = app.getContext();
-
-    $.cli.log(`mode : ${$.config.pro ? "production" : "development"}`);
 
     if (customConfig)
         $.cli.log("Using config from user")

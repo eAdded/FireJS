@@ -41,6 +41,7 @@ function initConfig(args) {
         lib: args["--lib"] || userConfig.paths.lib,
         webpackConfig: args["--webpack-conf"] || userConfig.paths.webpackConfig
     };
+    userConfig.static = args["--export"];
     return userConfig;
 }
 function initWebpackConfig(args, { paths: { webpackConfig } }) {
@@ -75,7 +76,6 @@ function init() {
     return __awaiter(this, void 0, void 0, function* () {
         const { app, args } = init();
         const $ = app.getContext();
-        $.cli.log(`mode : ${$.config.pro ? "production" : "development"}`);
         if (customConfig)
             $.cli.log("Using config from user");
         else

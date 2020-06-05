@@ -53,6 +53,7 @@ export default class {
     private readonly $: $ = {};
 
     constructor(params: Params) {
+        process.env.NODE_ENV = params.config.pro ? 'production' : 'development';
         if (params.config.paths.webpackConfig)
             throw new Error("pass webpack config as params instead of passing it's path");
         // @ts-ignore
@@ -61,6 +62,7 @@ export default class {
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config)
         this.$.cli = new Cli(this.$.config.logMode);
+        this.$.cli.log(`NODE_ENV : ${process.env.NODE_ENV}`)
         this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
@@ -82,7 +84,7 @@ export default class {
             explicitPages: this.$.config.pages,
             tags: this.$.config.templateTags,
             template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString(),
-            static: !this.$.pageArchitect.isOutputCustom
+            static: this.$.config.static
         })
     }
 

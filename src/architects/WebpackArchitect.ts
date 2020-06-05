@@ -24,20 +24,20 @@ export default class {
     forExternals(): WebpackConfig {
         return {
             target: 'web',
-            mode: this.$.config.pro ? "production" : "development",
+            mode: process.env.NODE_ENV as "development" | "production" | "none",
             entry: join(__dirname, "../../web/index.js"),
             output: {
                 path: this.$.config.paths.lib,
                 filename: "i[contentHash].js"
             }
-        };
+        }
     }
 
     forPage(page: Page): WebpackConfig {
         let mergedConfig: WebpackConfig = {
             //settings which can be changed by user
             target: 'web',
-            mode: this.$.config.pro ? "production" : "development",
+            mode: process.env.NODE_ENV as "development" | "production" | "none",
             //add config base to user config to prevent undefined errors
             optimization: {
                 splitChunks: {
