@@ -55,23 +55,9 @@ class default_1 {
                 externals: yield this.$.pageArchitect.buildExternals(),
                 explicitPages: this.$.config.pages,
                 tags: this.$.config.templateTags,
-                template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
+                template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString(),
+                static: !this.$.pageArchitect.isOutputCustom
             });
-            //load externals only when they are required
-            if (!this.$.pageArchitect.isOutputCustom) {
-                this.$.cli.log("Initializing externals");
-                // @ts-ignore
-                global.window = { __SSR__: true };
-                this.$.renderer.param.externals.forEach(external => {
-                    require(path_1.join(this.$.config.paths.lib, external));
-                });
-                // @ts-ignore
-                global.React = global.window.React;
-                // @ts-ignore
-                global.ReactDOM = global.window.ReactDOM;
-                // @ts-ignore
-                global.LinkApi = global.window.LinkApi;
-            }
         });
     }
     buildPage(page) {
@@ -87,7 +73,7 @@ class default_1 {
                     })}`, this.$.outputFileSystem).catch(err => {
                         throw err;
                     });
-                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, this.$.pageArchitect.isOutputCustom ? undefined : content)), this.$.outputFileSystem).catch(err => {
+                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)), this.$.outputFileSystem).catch(err => {
                         throw err;
                     });
                 }, resolve).catch(err => {

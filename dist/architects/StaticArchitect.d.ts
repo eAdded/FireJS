@@ -8,6 +8,7 @@ export interface StaticConfig {
     explicitPages: ExplicitPages;
     pathToLib: string;
     template: string;
+    static: boolean;
 }
 export default class {
     param: StaticConfig;

@@ -1,54 +1,55 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const reactServer = require("react-dom/server");
 const path_1 = require("path");
 const react_helmet_1 = require("react-helmet");
 class default_1 {
     constructor(param) {
+        // @ts-ignore
+        global.window = global;
+        // @ts-ignore
+        global.__SSR__ = { __SSR__: param.static };
         this.param = param;
         this.param.template = this.addInnerHTML(this.param.template, `<script>` +
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
             `window.__PAGES__={404:"/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}"};` +
+            +(() => {
+                return param.static ? `window.__HYDRATE__ = true;` : "";
+            })() +
             `</script>`, "head");
         // @ts-ignore
         this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head");
     }
     renderStatic(page, path, content) {
-        if (content) {
-            // @ts-ignore
-            global.window.__LIB_REL__ = this.param.rel.libRel;
-            // @ts-ignore
-            global.window.__LIB_REL__ = this.param.rel.libRel;
-            // @ts-ignore
-            global.window.__MAP_REL__ = this.param.rel.mapRel;
-            // @ts-ignore
-            global.window.__MAP__ = {
-                content,
-                chunks: []
-            };
-            // @ts-ignore
-            global.window.__HYDRATE__ = true;
-            // @ts-ignore
-            global.location = {
-                pathname: path
-            };
-            // @ts-ignore
-            global.document = {};
-            require(path_1.join(this.param.pathToLib, page.chunks[0]));
-            // @ts-ignore
-            return reactServer.renderToString(
-            // @ts-ignore
-            React.createElement(window.__FIREJS_APP__.default, { content: window.__MAP__.content }));
-        }
-        else
-            return "";
+        this.param.externals.forEach(external => {
+            require(path_1.join(this.param.pathToLib, external));
+        });
+        // @ts-ignore
+        global.__LIB_REL__ = this.param.rel.libRel;
+        // @ts-ignore
+        global.__MAP_REL__ = this.param.rel.mapRel;
+        // @ts-ignore
+        global.__MAP__ = {
+            content,
+            chunks: []
+        };
+        // @ts-ignore
+        global.location = { pathname: path };
+        // @ts-ignore
+        global.document = {};
+        // @ts-ignore
+        require(path_1.join(this.param.pathToLib, page.chunks[0]));
+        // @ts-ignore
+        return ReactDOMServer.renderToString(
+        // @ts-ignore
+        React.createElement(window.__FIREJS_APP__.default, { content: window.__MAP__.content }));
     }
     render(template, page, path, content) {
-        const staticRender = this.renderStatic(page, path, content);
         //map
         template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
-        if (content) {
+        //static render
+        const staticRender = this.param.static ? this.renderStatic(page, path, content) : "";
+        if (this.param.static) {
             const helmet = react_helmet_1.Helmet.renderStatic();
             for (let head_element in helmet)
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
@@ -59,8 +60,10 @@ class default_1 {
         this.param.externals.forEach(external => {
             template = this.addChunk(template, external); //react
         });
+        //add rest of the chunks
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
+        //add static render
         template = template.replace(this.param.tags.static, `<div id='root'>${staticRender}</div>`);
         return template;
     }

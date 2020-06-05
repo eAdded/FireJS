@@ -30,7 +30,7 @@ $ npm install @eadded/firejs
 
 Make dir `src/pages` in project root. This dir will contain all of the pages for our brand new hello world website.
 
-Make a file **404.js** or **404.jsx** in the dir. This file will be the 404 page of our website.
+Make a file **404.js** or **404.js** in the dir. This file will be the 404 page of our website.
 
 ```jsx
 export default () => {  

@@ -15,7 +15,7 @@ export default class {
 
     async init() {
         {
-            const p404 = relative(this.$.config.paths.pages,join(__dirname, "../web/404/404.jsx"))
+            const p404 = relative(this.$.config.paths.pages,join(__dirname, "../web/404/404.js"))
             if (this.$.config.pages["404"].toString() === p404)
                 await this.app.buildPage(this.$.pageMap.get(p404));
         }

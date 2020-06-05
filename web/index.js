@@ -1,5 +1,7 @@
 window.React = require("react");
 window.ReactDOM = require("react-dom")
+if (window.__SSR__)
+    window.ReactDOMServer = require("react-dom/server")
 window.LinkApi = require("./LinkApi").default;
 
 window.onpopstate = function () {
@@ -7,7 +9,7 @@ window.onpopstate = function () {
         window.LinkApi.loadPage(location.pathname, false)
     })
 }
-if(!window.__SSR__) {
+if (!window.__SSR__) {
     if (window.__HYDRATE__)
         window.LinkApi.runApp(ReactDOM.hydrate)
     else

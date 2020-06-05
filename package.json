@@ -55,7 +55,7 @@
   },
   "homepage": "https://github.com/eAdded/firejs#readme",
   "scripts": {
-    "Bundle": "cd web && webpack-cli"
+    "Test": "cd test && ../dist/bin.js -d -p"
   },
   "files": [
     "dist",
