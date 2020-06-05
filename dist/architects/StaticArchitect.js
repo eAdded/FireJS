@@ -16,9 +16,10 @@ class default_1 {
             `</script>`, "head");
         // @ts-ignore
         this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head");
+        if (param.static)
+            require(path_1.join(this.param.pathToLib, this.param.externals[0]));
     }
     renderStatic(page, path, content) {
-        require(path_1.join(this.param.pathToLib, this.param.externals[0]));
         // @ts-ignore
         global.__LIB_REL__ = this.param.rel.libRel;
         // @ts-ignore
@@ -46,10 +47,11 @@ class default_1 {
         const staticRender = this.param.static ? this.renderStatic(page, path, content) : "";
         if (this.param.static) {
             // @ts-ignore
-            const helmet = window.__Helmet__.renderStatic();
-            for (let head_element in helmet) {
-                console.log(helmet[head_element].toString());
-                template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
+            if (window.__Helmet__) {
+                // @ts-ignore
+                const helmet = window.__Helmet__.renderStatic();
+                for (let head_element in helmet)
+                    template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
             }
         }
         //React
