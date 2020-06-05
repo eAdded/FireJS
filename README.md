@@ -1,5 +1,6 @@
 # Fire JS 🔥
-A zero config, highly customizable, progressive react static site generator with blazingly fast SSR.
+A zero config, highly customizable, progressive react static site generator with blazingly fast SSR. Built for fast on the fly builds and SSR.
+
 
 ## Features
 
@@ -17,13 +18,13 @@ install using **yarn** or **npm**
 **yarn**
 
 ```bash
-$ yarn add @eadded/firejs
+$ yarn add @eadded/firejs react react-dom
 ```
 
 **npm**
 
 ```bash
-$ npm install @eadded/firejs
+$ npm install @eadded/firejs react react-dom
 ```
 
 ## Quick Start
