@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
 global.__MIN_PLUGIN_VERSION__ = "0.11.0";
 // @ts-ignore
-global.__FIREJS_VERSION__ = "0.14.0";
+global.__FIREJS_VERSION__ = "0.14.1";
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const Cli_1 = require("./utils/Cli");
 const path_1 = require("path");
