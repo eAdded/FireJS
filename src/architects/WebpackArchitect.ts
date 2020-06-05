@@ -25,10 +25,13 @@ export default class {
         return {
             target: 'web',
             mode: process.env.NODE_ENV as "development" | "production" | "none",
-            entry: join(__dirname, "../../web/index.js"),
+            entry: {
+                "i": join(__dirname, "../../web/index.js"),
+                "r": join(__dirname, "../../web/renderer.js"),
+            },
             output: {
                 path: this.$.config.paths.lib,
-                filename: "i[contentHash].js"
+                filename: "[name][contentHash].js"
             }
         }
     }

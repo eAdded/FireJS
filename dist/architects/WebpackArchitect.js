@@ -20,10 +20,13 @@ class default_1 {
         return {
             target: 'web',
             mode: process.env.NODE_ENV,
-            entry: path_1.join(__dirname, "../../web/index.js"),
+            entry: {
+                "i": path_1.join(__dirname, "../../web/index.js"),
+                "r": path_1.join(__dirname, "../../web/renderer.js"),
+            },
             output: {
                 path: this.$.config.paths.lib,
-                filename: "i[contentHash].js"
+                filename: "[name][contentHash].js"
             }
         };
     }

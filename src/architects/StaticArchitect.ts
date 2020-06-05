@@ -35,9 +35,7 @@ export default class {
     }
 
     renderStatic(page: Page, path: string, content: any) {
-        this.param.externals.forEach(external => {
-            require(join(this.param.pathToLib, external));
-        });
+        require(join(this.param.pathToLib, this.param.externals[0]));
         // @ts-ignore
         global.__LIB_REL__ = this.param.rel.libRel;
         // @ts-ignore
@@ -73,12 +71,12 @@ export default class {
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
             }
         }
-        //add main entry
+        //React
+        template = this.addChunk(template, this.param.externals[0]);
+        //Main Chunk
         template = this.addChunk(template, page.chunks[0]);
-        //externals
-        this.param.externals.forEach(external => {
-            template = this.addChunk(template, external);//react
-        })
+        //Render Chunk
+        template = this.addChunk(template, this.param.externals[1]);
         //add rest of the chunks
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
