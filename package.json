@@ -59,8 +59,7 @@
   },
   "files": [
     "dist",
-    "web/dist",
-    "web/template.html",
+    "web",
     "components"
   ]
 }
