@@ -2,7 +2,6 @@ import {PathRelatives} from "../FireJS";
 import {join} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
-import {Helmet} from "react-helmet"
 
 export interface StaticConfig {
     rel: PathRelatives,
@@ -67,9 +66,12 @@ export default class {
         //static render
         const staticRender = this.param.static ? this.renderStatic(page, path, content) : "";
         if (this.param.static) {
-            const helmet = Helmet.renderStatic();
-            for (let head_element in helmet)
+            // @ts-ignore
+            const helmet = window.__Helmet__.renderStatic();
+            for (let head_element in helmet) {
+                console.log(helmet[head_element].toString());
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
+            }
         }
         //add main entry
         template = this.addChunk(template, page.chunks[0]);

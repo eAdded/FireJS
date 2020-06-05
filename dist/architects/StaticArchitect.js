@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
-const react_helmet_1 = require("react-helmet");
 class default_1 {
     constructor(param) {
         // @ts-ignore
@@ -48,9 +47,12 @@ class default_1 {
         //static render
         const staticRender = this.param.static ? this.renderStatic(page, path, content) : "";
         if (this.param.static) {
-            const helmet = react_helmet_1.Helmet.renderStatic();
-            for (let head_element in helmet)
+            // @ts-ignore
+            const helmet = window.__Helmet__.renderStatic();
+            for (let head_element in helmet) {
+                console.log(helmet[head_element].toString());
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
+            }
         }
         //add main entry
         template = this.addChunk(template, page.chunks[0]);

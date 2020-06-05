@@ -1,9 +1,9 @@
-import {Helmet} from "react-helmet"
+window.__Helmet__ = require("react-helmet").Helmet;
 
 export default ({children}) => {
     return (
-        <Helmet>
+        <window.__Helmet__>
             {children}
-        </Helmet>
+        </window.__Helmet__>
     )
 }
