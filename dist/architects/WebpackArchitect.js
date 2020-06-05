@@ -23,15 +23,15 @@ class default_1 {
             entry: path_1.join(__dirname, "../../web/index.js"),
             output: {
                 path: this.$.config.paths.lib,
-                filename: "i[contentHash].js",
+                filename: "i[contentHash].js"
             }
         };
     }
     forPage(page) {
-        let mergedConfig = Object.assign(Object.assign({ 
+        let mergedConfig = Object.assign({ 
             //settings which can be changed by user
-            target: 'web', mode: this.$.config.pro ? "production" : "development" }, lodash_1.cloneDeep(this.userConfig)), { 
-            //settings un-touchable by user
+            target: 'web', mode: this.$.config.pro ? "production" : "development", 
+            //add config base to user config to prevent undefined errors
             optimization: {
                 splitChunks: {
                     chunks: 'all',
@@ -39,12 +39,9 @@ class default_1 {
                 },
                 usedExports: true,
                 minimize: true
-            } });
+            } }, lodash_1.cloneDeep(this.userConfig));
         mergedConfig.externals["react"] = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
-        /*
-                mergedConfig.externals["react-helmet"] = "ReactHelmet";
-        */
         const cssLoaderUse = [MiniCssExtractPlugin.loader,
             {
                 loader: 'css-loader',

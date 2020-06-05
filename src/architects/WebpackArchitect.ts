@@ -28,9 +28,7 @@ export default class {
             entry: join(__dirname, "../../web/index.js"),
             output: {
                 path: this.$.config.paths.lib,
-                filename: "i[contentHash].js",
-                /*library: "[name]",//make file as library so it can be imported for static generation
-                libraryTarget: "window"*/
+                filename: "i[contentHash].js"
             }
         };
     }
@@ -41,8 +39,6 @@ export default class {
             target: 'web',
             mode: this.$.config.pro ? "production" : "development",
             //add config base to user config to prevent undefined errors
-            ...cloneDeep(this.userConfig),
-            //settings un-touchable by user
             optimization: {
                 splitChunks: {
                     chunks: 'all',
@@ -50,13 +46,14 @@ export default class {
                 },
                 usedExports: true,
                 minimize: true
-            }
+            },
+            ...cloneDeep(this.userConfig),
+            //settings un-touchable by user
         };
+
         mergedConfig.externals["react"] = 'React';
         mergedConfig.externals["react-dom"] = "ReactDOM";
-        /*
-                mergedConfig.externals["react-helmet"] = "ReactHelmet";
-        */
+
         const cssLoaderUse = [MiniCssExtractPlugin.loader,
             {
                 loader: 'css-loader',

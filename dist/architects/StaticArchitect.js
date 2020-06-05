@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const reactServer = require("react-dom/server");
 const path_1 = require("path");
+const react_helmet_1 = require("react-helmet");
 class default_1 {
     constructor(param) {
         this.param = param;
@@ -27,8 +28,6 @@ class default_1 {
                 chunks: []
             };
             // @ts-ignore
-            global.window.__SSR__ = true;
-            // @ts-ignore
             global.window.__HYDRATE__ = true;
             // @ts-ignore
             global.location = {
@@ -49,24 +48,17 @@ class default_1 {
         const staticRender = this.renderStatic(page, path, content);
         //map
         template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
-        //externals
-        //     template = this.addChunk(template, this.param.externals[0]);//react
-        /*template = this.addChunk(template, this.param.externals[1]);//react-dom*/
         if (content) {
-            // @ts-ignore
-            const helmet = global.ReactHelmet.Helmet.renderStatic();
-            // @ts-ignore
-            /*if (window.__FIREJS_HELMET_USED__)
-                template = this.addChunk(template, this.param.externals[2]);//react helmet*/
+            const helmet = react_helmet_1.Helmet.renderStatic();
             for (let head_element in helmet)
                 template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
-        } /*else
-            template = this.addChunk(template, this.param.externals[2]);*/
+        }
         //add main entry
         template = this.addChunk(template, page.chunks[0]);
         //externals
-        template = this.addChunk(template, this.param.externals[0]); //react
-        //template = this.addChunk(template, "i244ca8c4e9b1d7c62a82.js");
+        this.param.externals.forEach(external => {
+            template = this.addChunk(template, external); //react
+        });
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);
         template = template.replace(this.param.tags.static, `<div id='root'>${staticRender}</div>`);

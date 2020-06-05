@@ -1,8 +1,9 @@
-window.__FIREJS_HELMET_USED__ = true;
+import {Helmet} from "react-helmet"
+
 export default ({children}) => {
     return (
-        <ReactHelmet.Helmet>
+        <Helmet>
             {children}
-        </ReactHelmet.Helmet>
+        </Helmet>
     )
 }

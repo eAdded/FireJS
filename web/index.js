@@ -1,14 +1,15 @@
-require("./LinkApi");
 window.React = require("react");
 window.ReactDOM = require("react-dom")
+window.LinkApi = require("./LinkApi").default;
 
 window.onpopstate = function () {
-    LinkApi.preloadPage(location.pathname, function () {
-        LinkApi.loadPage(location.pathname, false)
+    window.LinkApi.preloadPage(location.pathname, function () {
+        window.LinkApi.loadPage(location.pathname, false)
     })
 }
-
-if (window.__HYDRATE__)
-    LinkApi.runApp(ReactDOM.hydrate)
-else
-    LinkApi.runApp()
+if(!window.__SSR__) {
+    if (window.__HYDRATE__)
+        window.LinkApi.runApp(ReactDOM.hydrate)
+    else
+        window.LinkApi.runApp()
+}

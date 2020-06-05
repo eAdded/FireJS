@@ -61,27 +61,17 @@ class default_1 {
             if (!this.$.pageArchitect.isOutputCustom) {
                 this.$.cli.log("Initializing externals");
                 // @ts-ignore
-                global.window = {};
-                require(path_1.join(this.$.config.paths.lib, this.$.renderer.param.externals[0]));
-                /*this.$.renderer.param.externals.forEach(external => {
-                    require(join(this.$.config.paths.lib, external));
-                });*/
-                require("../web/LinkApi.js");
+                global.window = { __SSR__: true };
+                this.$.renderer.param.externals.forEach(external => {
+                    require(path_1.join(this.$.config.paths.lib, external));
+                });
                 // @ts-ignore
                 global.React = global.window.React;
                 // @ts-ignore
                 global.ReactDOM = global.window.ReactDOM;
-                /*// @ts-ignore
-                global.ReactHelmet = global.window.ReactHelmet;*/
                 // @ts-ignore
                 global.LinkApi = global.window.LinkApi;
             }
-            /*this.$.cli.log("Copying index chunk")
-            const index_bundle_out_path = join(this.$.config.paths.lib, "i244ca8c4e9b1d7c62a82.js")
-            this.$.outputFileSystem.exists(index_bundle_out_path, exists => {
-                if (!exists)
-                    this.$.inputFileSystem.createReadStream(join(__dirname, "../web/dist/i244ca8c4e9b1d7c62a82.js")).pipe(this.$.outputFileSystem.createWriteStream(index_bundle_out_path));
-            })*/
         });
     }
     buildPage(page) {

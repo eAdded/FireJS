@@ -1,4 +1,4 @@
-window.LinkApi = {
+export default {
     loadMap: function (url) {
         const map_script = document.createElement("script");
         map_script.src = `/${window.__MAP_REL__}${url === "/" ? "/index" : url}.map.js`;
@@ -27,8 +27,8 @@ window.LinkApi = {
         if (pushState)
             window.history.pushState(undefined, undefined, url);
     },
-    runApp: function (func = ReactDOM.render) {
-        func(React.createElement(window.__FIREJS_APP__.default, {content: window.__MAP__.content}),
+    runApp: function (func = window.ReactDOM.render) {
+        func(window.React.createElement(window.__FIREJS_APP__.default, {content: window.__MAP__.content}),
             document.getElementById("root")
         );
     },
