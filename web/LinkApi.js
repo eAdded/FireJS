@@ -57,12 +57,12 @@ export default {
                     ele.src = `/${window.__LIB_REL__}/${chunk}`
                     break;
                 case ".css":
-                    ele = document.createElement("ele");
+                    ele = document.createElement("link");
                     ele.href = `/${window.__LIB_REL__}/${chunk}`
                     ele.rel = "stylesheet";
                     break;
                 default :
-                    ele = document.createElement("ele");
+                    ele = document.createElement("link");
                     ele.href = `/${window.__LIB_REL__}/${chunk}`
             }
             ele.crossOrigin = "anonymous";
