@@ -282,6 +282,8 @@ If you provide a blank plugin then default paths will not be applied.
 
 ## [Code Of Conduct](CODE_OF_CONDUCT.md)
 
+## [Contributing](CONTRIBUTING.md)
+
 ## License & Copyright
 
 Copyright (C) 2020 Aniket Prajapati
