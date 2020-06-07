@@ -280,6 +280,8 @@ If you provide a blank plugin then default paths will not be applied.
 
 `window.__PAGES__["404"]` Route to 404 page
 
+## [Code Of Conduct](CODE_OF_CONDUCT.md)
+
 ## License & Copyright
 
 Copyright (C) 2020 Aniket Prajapati
