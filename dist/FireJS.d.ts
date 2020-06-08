@@ -37,5 +37,7 @@ export default class {
     constructor(params: Params);
     init(): Promise<void>;
     buildPage(page: Page): Promise<void>;
+    export(): Promise<any[]>;
+    exportFly(): Promise<void>;
     getContext(): $;
 }
