@@ -4,7 +4,7 @@ const SmartArg_1 = require("smartarg/SmartArg");
 function getArgs() {
     return new SmartArg_1.default()
         .name("Fire JS")
-        .description("Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app")
+        .description("A zero config, highly customizable, progressive react static site generator with blazingly fast SSR and on the fly builds.")
         // @ts-ignore
         .version(global.__FIREJS_VERSION__)
         //mode

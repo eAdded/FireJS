@@ -3,7 +3,7 @@
   "main": "dist/FireJS.js",
   "version": "0.15.0",
   "license": "GPL-3.0-or-later",
-  "description": "Highly customizable no config react static site generator",
+  "description": "A zero config, highly customizable, progressive react static site generator with blazingly fast SSR and on the fly builds",
   "keywords": [
     "react",
     "react-static",

@@ -32,7 +32,7 @@ export interface Args {
 export function getArgs(): Args {
     return <Args>new SmartArg<Args>()
         .name("Fire JS")
-        .description("Highly customizable no config react static site generator built on the principles of gatsby, nextjs and create-react-app")
+        .description("A zero config, highly customizable, progressive react static site generator with blazingly fast SSR and on the fly builds.")
         // @ts-ignore
         .version(global.__FIREJS_VERSION__)
         //mode
