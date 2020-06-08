@@ -25,6 +25,8 @@ class default_1 {
         for (const __page in firejs_map.pageMap) {
             const page = new Page_1.default(__page);
             page.chunks = firejs_map.pageMap[__page];
+            // @ts-ignore
+            page.plugin.paths = new Map();
             this.map.set(__page, page);
         }
         if (pathToPluginsDir)
@@ -33,8 +35,10 @@ class default_1 {
     refreshPluginData(__page) {
         return __awaiter(this, void 0, void 0, function* () {
             const page = this.map.get(__page).plugin;
+            // @ts-ignore
             page.paths.clear();
             yield page.onBuild((path, content) => {
+                // @ts-ignore
                 page.paths.set(path, content);
             });
         });
@@ -42,6 +46,7 @@ class default_1 {
     renderWithPluginData(__page, path) {
         return __awaiter(this, void 0, void 0, function* () {
             const page = this.map.get(__page);
+            // @ts-ignore
             const content = page.plugin.paths.get(path);
             return {
                 html: this.renderer.finalize(this.renderer.render(this.renderer.param.template, page, path, content || {})),

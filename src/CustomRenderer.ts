@@ -24,6 +24,8 @@ export default class {
         for (const __page in firejs_map.pageMap) {
             const page = new Page(__page);
             page.chunks = firejs_map.pageMap[__page];
+            // @ts-ignore
+            page.plugin.paths = new Map<string, any>();
             this.map.set(__page, page);
         }
         if (pathToPluginsDir)
@@ -32,14 +34,17 @@ export default class {
 
     async refreshPluginData(__page: string) {
         const page = this.map.get(__page).plugin;
+        // @ts-ignore
         page.paths.clear();
         await page.onBuild((path, content) => {
+            // @ts-ignore
             page.paths.set(path, content);
         })
     }
 
     async renderWithPluginData(__page: string, path: string) {
         const page = this.map.get(__page);
+        // @ts-ignore
         const content = page.plugin.paths.get(path);
         return {
             html: this.renderer.finalize(
