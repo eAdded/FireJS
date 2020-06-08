@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require("./GlobalsSetter");
 const Page_1 = require("./classes/Page");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const path_1 = require("path");
