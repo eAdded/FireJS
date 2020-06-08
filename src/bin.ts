@@ -108,6 +108,8 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
                     staticConfig: $.renderer.param,
                     pageMap: {},
                 }
+                //replace template cause its been edited
+                map.staticConfig.template = $.inputFileSystem.readFileSync($.config.paths.template).toString();
                 const promises = [];
                 for (const page of $.pageMap.values()) {
                     map.pageMap[page.toString()] = page.chunks;
