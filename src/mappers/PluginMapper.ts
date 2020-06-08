@@ -8,7 +8,7 @@ export function mapPlugins(inputFileSystem, pluginsPath: string, map: Map<string
         for (const name in plugins) {
             const plugin: Plugin = new plugins[name](name);
             // @ts-ignore
-            if ((plugin.version || "") < global.__MIN_PLUGIN_VERSION__)
+            if ((plugin.version || 0) < global.__MIN_PLUGIN_VERSION__)
                 // @ts-ignore
                 throw new Error(`Plugin ${pluginFile} is not supported. Update plugin to v` + global.__MIN_PLUGIN_VERSION__);
             const page = map.get(name);
