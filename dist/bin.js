@@ -51,8 +51,16 @@ function initWebpackConfig(args, { paths: { webpackConfig } }) {
 }
 function init() {
     const args = ArgsMapper_1.getArgs();
+    //export fly
+    if (args["--export-fly"]) {
+        if (args["--export"])
+            throw new Error("flag --export is redundant when exporting for fly build");
+        if (args["--pro"])
+            throw new Error("flag --pro is redundant when exporting for fly build");
+        args["--pro"] = true;
+    }
     //export if export-fly
-    args["--export"] = args["--export-fly"] ? true : args["--export"];
+    args["--export"] = args["--export-fly"] || args["--export"];
     //check if log mode is valid
     if (args["--log-mode"])
         if (args["--log-mode"] !== "silent" && args["--log-mode"] !== "plain")

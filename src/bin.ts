@@ -44,8 +44,16 @@ function initWebpackConfig(args: Args, {paths: {webpackConfig}}: Config): Webpac
 
 function init(): { app: FireJS, args: Args, customConfig: boolean } {
     const args = getArgs();
+    //export fly
+    if (args["--export-fly"]) {
+        if (args["--export"])
+            throw new Error("flag --export is redundant when exporting for fly build");
+        if (args["--pro"])
+            throw new Error("flag --pro is redundant when exporting for fly build");
+        args["--pro"] = true;
+    }
     //export if export-fly
-    args["--export"] = args["--export-fly"] ? true : args["--export"]
+    args["--export"] = args["--export-fly"] || args["--export"]
     //check if log mode is valid
     if (args["--log-mode"])
         if (args["--log-mode"] !== "silent" && args["--log-mode"] !== "plain")
@@ -56,7 +64,7 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
     if (args["--disk"]) {
         if (args["--export"])
             throw new Error("flag --disk is redundant when exporting")
-        config.paths.dist = join(config.paths.cache||"out/.cache", "disk");
+        config.paths.dist = join(config.paths.cache || "out/.cache", "disk");
     }
     //get webpack config
     const webpackConfig = initWebpackConfig(args, config);
