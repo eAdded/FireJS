@@ -103,11 +103,9 @@ class default_1 {
     exportFly() {
         return new Promise((resolve) => {
             const map = {
-                staticConfig: this.$.renderer.param,
+                staticConfig: Object.assign(Object.assign({}, this.$.renderer.param), { template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString() }),
                 pageMap: {},
             };
-            //replace template cause its been edited
-            map.staticConfig.template = this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
             const promises = [];
             for (const page of this.$.pageMap.values()) {
                 promises.push(new Promise(resolve => {

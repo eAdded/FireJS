@@ -133,11 +133,12 @@ export default class {
     exportFly() {
         return new Promise((resolve) => {
             const map: FIREJS_MAP = {
-                staticConfig: this.$.renderer.param,
+                staticConfig: {
+                    ...this.$.renderer.param,
+                    template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
+                },
                 pageMap: {},
             }
-            //replace template cause its been edited
-            map.staticConfig.template = this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
             const promises = [];
             for (const page of this.$.pageMap.values()) {
                 promises.push(new Promise(resolve => {
