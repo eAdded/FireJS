@@ -12,11 +12,11 @@ class default_1 {
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
             `window.__PAGES__={404:"/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}"};` +
-            `${param.static ? `window.__HYDRATE__ = true;` : ""}` +
+            `${param.ssr ? `window.__HYDRATE__ = true;` : ""}` +
             `</script>`, "head");
         // @ts-ignore
         this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head");
-        if (param.static)
+        if (param.ssr)
             require(path_1.join(this.param.pathToLib, this.param.externals[0]));
     }
     renderStatic(page, path, content) {
@@ -44,8 +44,8 @@ class default_1 {
         //map
         template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
         //static render
-        const staticRender = this.param.static ? this.renderStatic(page, path, content) : "";
-        if (this.param.static) {
+        const staticRender = this.param.ssr ? this.renderStatic(page, path, content) : "";
+        if (this.param.ssr) {
             // @ts-ignore
             if (window.__Helmet__) {
                 // @ts-ignore

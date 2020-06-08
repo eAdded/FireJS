@@ -2,18 +2,18 @@ import SmartArg from "smartarg/SmartArg";
 
 export interface Args {
     //mode
-    "--pro": boolean,              //Production mode
-    "--export": boolean,           //Export
-    "--export-fly": boolean,       //Export path for on the fly builds
-    "--disk": boolean,             //Write to disk instead of memory
+    "--pro": boolean,                  //Production mode
+    "--export": boolean,               //Export
+    "--export-fly": boolean,           //Export path for on the fly builds
+    "--disk": boolean,                 //Write to disk instead of memory
+    "--ssr": boolean,                  //Server Side Render, Enabled when exporting
     //conf
     "--webpack-conf": string,
-    "--conf": string,              //Path to Config file
+    "--conf": string,                  //Path to Config file
     //log
-    "--verbose": boolean,          //Log Webpack Stat
-    "--plain": boolean,            //Log without styling i.e colors and symbols
-    "--silent": boolean,           //Log errors only
-    "--disable-plugins": boolean,  //Disable plugins
+    "--verbose": boolean,              //Log Webpack Stat
+    "--log-mode": "silent" | "plain",  //Log Mode. silent(log error only) | plain(Log without styling i.e colors and symbols)
+    "--disable-plugins": boolean,      //Disable plugins
     //path
     "--root": string,      //project root, default : process.cwd()
     "--src": string,       //src dir, default : root/src
@@ -36,17 +36,17 @@ export function getArgs(): Args {
         // @ts-ignore
         .version(global.__FIREJS_VERSION__)
         //mode
+        .option(["-p", "--pro"], Boolean, "use production chunks. NODE_ENV : production")
         .option(["-e", "--export"], Boolean, "export project for distribution")
-        .option(["--export-fly"], Boolean, "export project for distribution and for fly build")
         .option(["-d", "--disk"], Boolean, "store chunks to disk instead of memory while in dev server")
-        .option(["-p", "--pro"], Boolean, "production mode")
+        .option(["-s", "--ssr"], Boolean, "Server Side Render. Available only with -d and -e")
+        .option(["--export-fly"], Boolean, "export project for distribution and for fly build")
         //conf
         .option(["-c", "--conf"], String, "path to FireJS config file")
         .option(["--webpack-conf"], String, "path to webpack config")
         //logging
-        .option(["-V", "--verbose"], Boolean, "print webpack stats")
-        .option(["-s", "--silent"], Boolean, "only print errors")
-        .option(["--plain"], Boolean, "print without styling i.e colors and symbols")
+        .option(["--verbose"], Boolean, "print webpack stats on error")
+        .option(["-l", "--log-mode"], Boolean, "Log Mode. silent (log errors only) | plain (Log without styling i.e colors and symbols)")
         //plugins
         .option(["--disable-plugins"], Boolean, "disable plugins")
         //paths
@@ -62,5 +62,7 @@ export function getArgs(): Args {
         .option(["--map"], String, "path to dir where chunk map and page data is exported, default : root/out/dist/lib/map")
         .option(["--static"], String, "path to dir where static assets are stored eg. images, default : root/src/static")
         .option(["--plugins"], String, "path to plugins dir, default : root/src/plugins")
+        .example("firejs -esp", "export server side rendered production build")
+        .example("firejs -dsp", "write to disk when using dev server with server side rendered production build")
         .smartParse()
 }

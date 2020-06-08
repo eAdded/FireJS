@@ -3,11 +3,11 @@ export interface Args {
     "--export": boolean;
     "--export-fly": boolean;
     "--disk": boolean;
+    "--ssr": boolean;
     "--webpack-conf": string;
     "--conf": string;
     "--verbose": boolean;
-    "--plain": boolean;
-    "--silent": boolean;
+    "--log-mode": "silent" | "plain";
     "--disable-plugins": boolean;
     "--root": string;
     "--src": string;

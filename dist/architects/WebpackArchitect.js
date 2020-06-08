@@ -21,7 +21,7 @@ class default_1 {
             target: 'web',
             mode: process.env.NODE_ENV,
             entry: {
-                "i": path_1.join(__dirname, "../../web/index.js"),
+                "e": path_1.join(__dirname, "../../web/external_group.js"),
                 "r": path_1.join(__dirname, "../../web/renderer.js"),
             },
             output: {
@@ -60,6 +60,7 @@ class default_1 {
             use: {
                 loader: 'babel-loader',
                 options: {
+                    cacheDirectory: path_1.join(this.$.config.paths.cache, ".babelCache"),
                     presets: ["@babel/preset-env", "@babel/preset-react"]
                 }
             },

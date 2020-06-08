@@ -5,7 +5,7 @@ export interface Config {
     verbose?: boolean;
     logMode?: "plain" | "silent";
     disablePlugins?: boolean;
-    static?: boolean;
+    ssr?: boolean;
     paths?: {
         root?: string;
         src?: string;

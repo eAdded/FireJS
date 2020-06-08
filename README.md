@@ -85,7 +85,7 @@ Project
 │           └─── map    
 └─── src    
 │   └─── pages        
-│       │   index.js      
+│       │   external_group.js      
 │       │   about.js
 │       │   404.js          
 │       │   ...    
@@ -200,7 +200,7 @@ paths :
 
 ## Node Interface
 
-Building a specific page. Eg: index.js
+Building a specific page. Eg: external_group.js
 
 ~~~javascript
 import FireJS from "@eadded/firejs"
@@ -208,7 +208,7 @@ import FireJS from "@eadded/firejs"
 (async () => {
     const app = new FireJS({config: {pro: true}});
     await app.init();
-    await app.buildPage(app.getContext().pageMap.get("index.js"))
+    await app.buildPage(app.getContext().pageMap.get("external_group.js"))
 })()
 ~~~
 
@@ -264,7 +264,7 @@ The map variable i.e app.pageMap , maps all the pages, with its paths and plugin
 
 When you don't provide a path for a page using a plugin then the path of the page will be used as its' path.
 
-Eg. A page "index.js" will have a default path "/index".
+Eg. A page "external_group.js" will have a default path "/index".
 
 If you provide a blank plugin then default paths will not be applied.
 

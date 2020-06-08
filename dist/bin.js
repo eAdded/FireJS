@@ -16,15 +16,14 @@ const path_1 = require("path");
 const ArgsMapper_1 = require("./mappers/ArgsMapper");
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const MemoryFS = require("memory-fs");
-let customConfig = false;
 function initConfig(args) {
     let userConfig = new ConfigMapper_1.default().getUserConfig(args["--conf"]);
-    customConfig = !!userConfig;
+    const customConfig = !!userConfig;
     userConfig = userConfig || {};
-    userConfig.disablePlugins = args["--disable-plugins"] || !!userConfig.disablePlugins;
-    userConfig.pro = args["--export"] || args["--pro"] || !!userConfig.pro;
-    userConfig.verbose = args["--verbose"] || !!userConfig.verbose;
-    userConfig.logMode = args["--plain"] ? "plain" : args["--silent"] ? "silent" : userConfig.logMode;
+    userConfig.disablePlugins = args["--disable-plugins"] || userConfig.disablePlugins;
+    userConfig.pro = args["--pro"] || userConfig.pro;
+    userConfig.verbose = args["--verbose"] || userConfig.verbose;
+    userConfig.logMode = args["--log-mode"] || userConfig.logMode;
     userConfig.paths = userConfig.paths || {};
     userConfig.paths = {
         fly: args["--fly"] || userConfig.paths.fly,
@@ -41,8 +40,8 @@ function initConfig(args) {
         lib: args["--lib"] || userConfig.paths.lib,
         webpackConfig: args["--webpack-conf"] || userConfig.paths.webpackConfig
     };
-    userConfig.static = args["--export"];
-    return userConfig;
+    userConfig.ssr = args["--ssr"] || userConfig.ssr;
+    return [customConfig, userConfig];
 }
 function initWebpackConfig(args, { paths: { webpackConfig } }) {
     const webpackConf = webpackConfig ? require(path_1.isAbsolute(webpackConfig) ? webpackConfig : path_1.resolve(process.cwd(), webpackConfig)) : {};
@@ -52,15 +51,25 @@ function initWebpackConfig(args, { paths: { webpackConfig } }) {
 }
 function init() {
     const args = ArgsMapper_1.getArgs();
+    //export if export-fly
     args["--export"] = args["--export-fly"] ? true : args["--export"];
-    const config = initConfig(args);
+    //check if log mode is valid
+    if (args["--log-mode"])
+        if (args["--log-mode"] !== "silent" && args["--log-mode"] !== "plain")
+            throw new Error(`unknown log mode ${args["--log-mode"]}. Expected [ silent | plain ]`);
+    //init config acc to args
+    const [customConfig, config] = initConfig(args);
+    //config disk
     if (args["--disk"]) {
         if (args["--export"])
             throw new Error("flag --disk is redundant when exporting");
-        config.paths.dist = config.paths.cache || path_1.join(config.paths.out || "out", ".cache");
+        config.paths.dist = path_1.join(config.paths.cache || "out/.cache", "disk");
     }
+    //get webpack config
     const webpackConfig = initWebpackConfig(args, config);
+    //undefined cause it is not valid in the main app
     config.paths.webpackConfig = undefined;
+    //return acc to flags
     return {
         app: args["--export"] ?
             new FireJS_1.default({ config, webpackConfig }) :
@@ -69,12 +78,13 @@ function init() {
                 webpackConfig,
                 outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
             }),
-        args
+        args,
+        customConfig
     };
 }
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
-        const { app, args } = init();
+        const { app, args, customConfig } = init();
         const $ = app.getContext();
         if (customConfig)
             $.cli.log("Using config from user");

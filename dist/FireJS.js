@@ -58,7 +58,7 @@ class default_1 {
                 explicitPages: this.$.config.pages,
                 tags: this.$.config.templateTags,
                 template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString(),
-                static: this.$.config.static
+                ssr: this.$.config.ssr
             });
         });
     }

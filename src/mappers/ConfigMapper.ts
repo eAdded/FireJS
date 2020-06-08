@@ -7,7 +7,7 @@ export interface Config {
     verbose?: boolean,
     logMode?: "plain" | "silent",
     disablePlugins?: boolean,
-    static?: boolean,
+    ssr?: boolean,
     paths?: {                   //paths absolute or relative to root
         root?: string,          //project root, default : process.cwd()
         src?: string,           //src dir, default : root/src
