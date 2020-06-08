@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class default_1 {
     constructor(page) {
-        this.version = "0.16.0";
+        this.version = "1.0.0";
         this.page = page;
     }
     onBuild(renderPage) {

@@ -1,6 +1,6 @@
 export default class {
     page: string;
-    public version: string = "0.16.0";
+    public version: string = "1.0.0";
 
     constructor(page: string) {
         this.page = page;
