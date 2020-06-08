@@ -219,11 +219,11 @@ If you need to SSR (Server Side Render) your page, or if you want to do somethin
 First export your project using `--export-fly`. This will spit all the chunks required for SSR in the `out/fly` dir.
 
 **Rendering a page with custom data**
-~~~javascript
+~~~typescript
 import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
 
 (async () => {
-    const renderer = new CustomRenderer("./out/fly", "./src/plugins");
+    const renderer = new CustomRenderer("./out/fly");
     const obj = await renderer.render("[author]/[article].js", "/aniket/rust",{name:"any content"})
     console.log(obj);
 })()
@@ -247,11 +247,12 @@ of course, the route can be changed using *firejs.yml*
 
 **Rendering a page with data from plugins**
 
-~~~javascript
+~~~typescript
 import CustomRenderer from "@eadded/firejs/dist/CustomRenderer";
 
 (async () => {
-    const renderer = new CustomRenderer("./out/babel", "./src/plugins");
+    const renderer = new CustomRenderer("./out/fly", "./src/plugins");
+    await renderer.refreshPluginData("[author]/[article].js");
     const obj = await renderer.renderWithPluginData("[author]/[article].js", "/aniket/rust")
     console.log(obj);
 })()
