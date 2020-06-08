@@ -40,7 +40,7 @@ export function getArgs(): Args {
         .option(["-e", "--export"], Boolean, "export project for distribution")
         .option(["-d", "--disk"], Boolean, "store chunks to disk instead of memory while in dev server")
         .option(["-s", "--ssr"], Boolean, "Server Side Render. Available only with -d and -e")
-        .option(["--export-fly"], Boolean, "export project for distribution and for fly build")
+        .option(["-E","--export-fly"], Boolean, "export project for distribution and for fly build")
         //conf
         .option(["-c", "--conf"], String, "path to FireJS config file")
         .option(["--webpack-conf"], String, "path to webpack config")

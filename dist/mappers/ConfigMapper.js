@@ -49,6 +49,8 @@ class default_1 {
         //pages
         config.pages = config.pages || {};
         this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"), "Make sure you have a 404 page");
+        //ssr convert to boolean
+        config.ssr = !!config.ssr;
         return config;
     }
     makeAbsolute(root, pathTo) {

@@ -59,7 +59,8 @@ export default class {
         this.$.outputFileSystem = params.outputFileSystem || fs;
         this.$.config = new ConfigMapper(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config)
         this.$.cli = new Cli(this.$.config.logMode);
-        this.$.cli.log(`NODE_ENV : ${process.env.NODE_ENV}`)
+        this.$.cli.ok(`NODE_ENV : ${process.env.NODE_ENV}`)
+        this.$.cli.ok(`SSR : ${this.$.config.ssr}`)
         this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),

@@ -47,9 +47,12 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
     //export fly
     if (args["--export-fly"]) {
         if (args["--export"])
-            throw new Error("flag --export is redundant when exporting for fly build");
+            throw new Error("flag --export is redundant when exporting for fly build. Rerun after removing this flag");
         if (args["--pro"])
-            throw new Error("flag --pro is redundant when exporting for fly build");
+            throw new Error("flag --pro is redundant when exporting for fly build. Rerun after removing this flag");
+        if (args["--ssr"])
+            throw new Error("flag --ssr is redundant when exporting for fly build. Rerun after removing this flag");
+        args["--ssr"] = true;
         args["--pro"] = true;
     }
     //export if export-fly
