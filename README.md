@@ -60,7 +60,7 @@ $ yarn run dev
 ```bash
 $ npm run dev
 ```
-Navigate to `http://localhost:5000` and there it says `hello world`.
+Navigate to `http://localhost:5000` and there it says `Welcome to 404`.
 
 *To change server **PORT** set env variable **PORT** to the required value*
 
