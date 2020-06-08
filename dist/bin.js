@@ -115,23 +115,25 @@ function init() {
                         staticConfig: $.renderer.param,
                         pageMap: {},
                     };
+                    const promises = [];
                     for (const page of $.pageMap.values()) {
                         map.pageMap[page.toString()] = page.chunks;
-                        page.chunks.forEach(chunk => {
-                            if (chunk.endsWith(".js")) { //only js files are required
-                                const chunkPath = path_1.join($.config.paths.lib, chunk);
-                                $.outputFileSystem.exists(chunkPath, exists => {
-                                    if (exists) { //only copy if it exists because it might be already copied before for page having same chunk
-                                        $.outputFileSystem.rename(chunkPath, path_1.join($.config.paths.fly, chunk), err => {
-                                            if (err)
-                                                throw new Error(`Error while moving ${chunkPath} to ${$.config.paths.fly}`);
-                                        });
-                                    }
-                                });
-                            }
-                        });
+                        const chunkPath = path_1.join($.config.paths.lib, page.chunks[0]);
+                        promises.push(new Promise(resolve => {
+                            $.outputFileSystem.rename(chunkPath, path_1.join($.config.paths.fly, page.chunks[0]), err => {
+                                resolve();
+                                if (err)
+                                    throw new Error(`Error while moving ${chunkPath} to ${$.config.paths.fly}`);
+                            });
+                        }));
                     }
-                    $.outputFileSystem.writeFileSync(path_1.join($.config.paths.fly, "firejs.map.json"), JSON.stringify(map));
+                    const fullExternalName = map.staticConfig.externals[0].substr(map.staticConfig.externals[0].lastIndexOf("/") + 1);
+                    $.outputFileSystem.rename(path_1.join($.config.paths.lib, map.staticConfig.externals[0]), path_1.join($.config.paths.fly, fullExternalName), err => {
+                        if (err)
+                            throw new Error(`Error while moving ${fullExternalName} to ${$.config.paths.fly}`);
+                        map.staticConfig.externals[0] = fullExternalName;
+                        Promise.all(promises).then(() => $.outputFileSystem.writeFileSync(path_1.join($.config.paths.fly, "firejs.map.json"), JSON.stringify(map)));
+                    });
                 }
                 process.on('exit', () => {
                     $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
