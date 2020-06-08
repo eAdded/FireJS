@@ -44,7 +44,7 @@ class default_1 {
                 minimize: true
             } }, lodash_1.cloneDeep(this.userConfig));
         mergedConfig.externals["react"] = 'React';
-        mergedConfig.externals["react-dom"] = "ReactDOM";
+        mergedConfig.externals["react-dom"] = 'ReactDOM';
         const cssLoaderUse = [MiniCssExtractPlugin.loader,
             {
                 loader: 'css-loader',

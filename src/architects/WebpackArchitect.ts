@@ -55,7 +55,7 @@ export default class {
         };
 
         mergedConfig.externals["react"] = 'React';
-        mergedConfig.externals["react-dom"] = "ReactDOM";
+        mergedConfig.externals["react-dom"] = 'ReactDOM';
 
         const cssLoaderUse = [MiniCssExtractPlugin.loader,
             {
@@ -72,7 +72,7 @@ export default class {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        cacheDirectory : join(this.$.config.paths.cache,".babelCache"),
+                        cacheDirectory: join(this.$.config.paths.cache, ".babelCache"),
                         presets: ["@babel/preset-env", "@babel/preset-react"]
                     }
                 },
