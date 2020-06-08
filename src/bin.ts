@@ -113,7 +113,7 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
                     map.pageMap[page.toString()] = page.chunks;
                     const chunkPath = join($.config.paths.lib, page.chunks[0]);
                     promises.push(new Promise(resolve => {
-                        $.outputFileSystem.rename(chunkPath, join($.config.paths.fly, page.chunks[0]), err => {
+                        $.outputFileSystem.copyFile(chunkPath, join($.config.paths.fly, page.chunks[0]), err => {
                             resolve();
                             if (err)
                                 throw new Error(`Error while moving ${chunkPath} to ${$.config.paths.fly}`);

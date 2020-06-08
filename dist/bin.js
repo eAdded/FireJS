@@ -120,7 +120,7 @@ function init() {
                         map.pageMap[page.toString()] = page.chunks;
                         const chunkPath = path_1.join($.config.paths.lib, page.chunks[0]);
                         promises.push(new Promise(resolve => {
-                            $.outputFileSystem.rename(chunkPath, path_1.join($.config.paths.fly, page.chunks[0]), err => {
+                            $.outputFileSystem.copyFile(chunkPath, path_1.join($.config.paths.fly, page.chunks[0]), err => {
                                 resolve();
                                 if (err)
                                     throw new Error(`Error while moving ${chunkPath} to ${$.config.paths.fly}`);
