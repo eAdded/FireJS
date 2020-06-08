@@ -24,6 +24,7 @@ const WebpackArchitect_1 = require("./architects/WebpackArchitect");
 class default_1 {
     constructor(params) {
         this.$ = {};
+        params = this.constructParams(params);
         process.env.NODE_ENV = params.config.pro ? 'production' : 'development';
         if (params.config.paths.webpackConfig)
             throw new Error("pass webpack config as params instead of passing it's path");
@@ -41,6 +42,14 @@ class default_1 {
             mapRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.map)
         };
         this.$.pageArchitect = new PageArchitect_1.default(this.$, new WebpackArchitect_1.default(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
+    }
+    constructParams(params) {
+        params = params || {};
+        params.config = params.config || {};
+        params.config.paths = params.config.paths || {};
+        params.config.templateTags = params.config.templateTags || {};
+        params.webpackConfig = params.webpackConfig || {};
+        return params;
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -92,7 +101,7 @@ class default_1 {
         });
     }
     exportFly() {
-        return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => {
             const map = {
                 staticConfig: this.$.renderer.param,
                 pageMap: {},
@@ -101,13 +110,15 @@ class default_1 {
             map.staticConfig.template = this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
             const promises = [];
             for (const page of this.$.pageMap.values()) {
-                map.pageMap[page.toString()] = page.chunks;
-                const chunkPath = path_1.join(this.$.config.paths.lib, page.chunks[0]);
                 promises.push(new Promise(resolve => {
-                    this.$.outputFileSystem.copyFile(chunkPath, path_1.join(this.$.config.paths.fly, page.chunks[0]), err => {
-                        resolve();
-                        if (err)
-                            throw new Error(`Error while moving ${chunkPath} to ${this.$.config.paths.fly}`);
+                    this.buildPage(page).then(() => {
+                        map.pageMap[page.toString()] = page.chunks;
+                        const chunkPath = path_1.join(this.$.config.paths.lib, page.chunks[0]);
+                        this.$.outputFileSystem.copyFile(chunkPath, path_1.join(this.$.config.paths.fly, page.chunks[0]), err => {
+                            resolve();
+                            if (err)
+                                throw new Error(`Error while moving ${chunkPath} to ${this.$.config.paths.fly}`);
+                        });
                     });
                 }));
             }
@@ -116,7 +127,7 @@ class default_1 {
                 if (err)
                     throw new Error(`Error while moving ${fullExternalName} to ${this.$.config.paths.fly}`);
                 map.staticConfig.externals[0] = fullExternalName;
-                Promise.all(promises).then(() => this.$.outputFileSystem.writeFileSync(path_1.join(this.$.config.paths.fly, "firejs.map.json"), JSON.stringify(map)));
+                Promise.all(promises).then(() => this.$.outputFileSystem.writeFile(path_1.join(this.$.config.paths.fly, "firejs.map.json"), JSON.stringify(map), resolve));
             });
         });
     }

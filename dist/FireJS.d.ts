@@ -34,10 +34,11 @@ export interface FIREJS_MAP {
 }
 export default class {
     private readonly $;
+    private constructParams;
     constructor(params: Params);
     init(): Promise<void>;
     buildPage(page: Page): Promise<void>;
     export(): Promise<any[]>;
-    exportFly(): Promise<void>;
+    exportFly(): Promise<unknown>;
     getContext(): $;
 }

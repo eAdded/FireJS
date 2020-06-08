@@ -49,7 +49,17 @@ export interface FIREJS_MAP {
 export default class {
     private readonly $: $ = {};
 
+    private constructParams(params: Params): Params {
+        params = params || {}
+        params.config = params.config || {};
+        params.config.paths = params.config.paths || {};
+        params.config.templateTags = params.config.templateTags || {};
+        params.webpackConfig = params.webpackConfig || {};
+        return params;
+    }
+
     constructor(params: Params) {
+        params = this.constructParams(params);
         process.env.NODE_ENV = params.config.pro ? 'production' : 'development';
         if (params.config.paths.webpackConfig)
             throw new Error("pass webpack config as params instead of passing it's path");
@@ -86,7 +96,7 @@ export default class {
         })
     }
 
-    buildPage(page: Page) {
+    buildPage(page: Page): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             this.$.pageArchitect.buildPage(page, () => {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`)
@@ -120,33 +130,37 @@ export default class {
         return Promise.all(promises);
     }
 
-    async exportFly() {
-        const map: FIREJS_MAP = {
-            staticConfig: this.$.renderer.param,
-            pageMap: {},
-        }
-        //replace template cause its been edited
-        map.staticConfig.template = this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
-        const promises = [];
-        for (const page of this.$.pageMap.values()) {
-            map.pageMap[page.toString()] = page.chunks;
-            const chunkPath = join(this.$.config.paths.lib, page.chunks[0]);
-            promises.push(new Promise(resolve => {
-                this.$.outputFileSystem.copyFile(chunkPath, join(this.$.config.paths.fly, page.chunks[0]), err => {
-                    resolve();
-                    if (err)
-                        throw new Error(`Error while moving ${chunkPath} to ${this.$.config.paths.fly}`);
-                });
-            }))
-        }
-        const fullExternalName = map.staticConfig.externals[0].substr(map.staticConfig.externals[0].lastIndexOf("/") + 1);
-        this.$.outputFileSystem.rename(join(this.$.config.paths.lib, map.staticConfig.externals[0]), join(this.$.config.paths.fly, fullExternalName), err => {
-            if (err)
-                throw new Error(`Error while moving ${fullExternalName} to ${this.$.config.paths.fly}`);
-            map.staticConfig.externals[0] = fullExternalName;
-            Promise.all(promises).then(() =>
-                this.$.outputFileSystem.writeFileSync(join(this.$.config.paths.fly, "firejs.map.json"),
-                    JSON.stringify(map)))
+    exportFly() {
+        return new Promise((resolve) => {
+            const map: FIREJS_MAP = {
+                staticConfig: this.$.renderer.param,
+                pageMap: {},
+            }
+            //replace template cause its been edited
+            map.staticConfig.template = this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString();
+            const promises = [];
+            for (const page of this.$.pageMap.values()) {
+                promises.push(new Promise(resolve => {
+                    this.buildPage(page).then(() => {
+                        map.pageMap[page.toString()] = page.chunks;
+                        const chunkPath = join(this.$.config.paths.lib, page.chunks[0]);
+                        this.$.outputFileSystem.copyFile(chunkPath, join(this.$.config.paths.fly, page.chunks[0]), err => {
+                            resolve();
+                            if (err)
+                                throw new Error(`Error while moving ${chunkPath} to ${this.$.config.paths.fly}`);
+                        });
+                    });
+                }))
+            }
+            const fullExternalName = map.staticConfig.externals[0].substr(map.staticConfig.externals[0].lastIndexOf("/") + 1);
+            this.$.outputFileSystem.rename(join(this.$.config.paths.lib, map.staticConfig.externals[0]), join(this.$.config.paths.fly, fullExternalName), err => {
+                if (err)
+                    throw new Error(`Error while moving ${fullExternalName} to ${this.$.config.paths.fly}`);
+                map.staticConfig.externals[0] = fullExternalName;
+                Promise.all(promises).then(() =>
+                    this.$.outputFileSystem.writeFile(join(this.$.config.paths.fly, "firejs.map.json"),
+                        JSON.stringify(map), resolve))
+            })
         })
     }
 

@@ -96,15 +96,17 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
         $.cli.log("Using default config")
     try {
         await app.init();
-        if (args["--export"]) {
+        if (args["--export-fly"]) {
+            const startTime = new Date().getTime();
+            $.cli.ok("Exporting for fly builds");
+            await app.exportFly();
+            $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
+            if ($.config.paths.static)
+                $.cli.warn("Don't forget to copy the static folder to dist");
+        } else if (args["--export"]) {
             $.cli.ok("Exporting");
             const startTime = new Date().getTime();
             await app.export();
-            $.cli.ok("Build finished in", (new Date().getTime() - startTime) / 1000 + "s");
-            if (args["--export-fly"]) {
-                $.cli.ok("Exporting for fly builds");
-                await app.exportFly();
-            }
             $.cli.ok("Finished in", (new Date().getTime() - startTime) / 1000 + "s");
             if ($.config.paths.static)
                 $.cli.warn("Don't forget to copy the static folder to dist");
