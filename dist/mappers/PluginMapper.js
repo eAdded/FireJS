@@ -1,11 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = require("path");
+const Fs_1 = require("../utils/Fs");
 function mapPlugins(inputFileSystem, pluginsPath, map) {
-    inputFileSystem.readdirSync(pluginsPath).forEach(pluginFile => {
-        if (pluginFile.endsWith(".ts"))
-            return;
-        const plugin = new (require(path_1.join(pluginsPath, pluginFile)).default)();
+    Fs_1.readDirRecursively(pluginsPath, inputFileSystem, pluginFile => {
+        const plugin = new (require(pluginFile).default)();
         // @ts-ignore
         if ((plugin.version || "") < global.__MIN_PLUGIN_VERSION__)
             // @ts-ignore

@@ -1,12 +1,11 @@
 import {join} from "path";
 import Plugin from "../classes/Plugin";
 import Page from "../classes/Page";
+import {readDirRecursively} from "../utils/Fs";
 
 export function mapPlugins(inputFileSystem, pluginsPath: string, map: Map<string, Page>) {
-    inputFileSystem.readdirSync(pluginsPath).forEach(pluginFile => {
-        if (pluginFile.endsWith(".ts"))
-            return
-        const plugin: Plugin = new (require(join(pluginsPath, pluginFile)).default)();
+    readDirRecursively(pluginsPath, inputFileSystem, pluginFile => {
+        const plugin: Plugin = new (require(pluginFile).default)();
         // @ts-ignore
         if ((plugin.version || "") < global.__MIN_PLUGIN_VERSION__)
             // @ts-ignore
