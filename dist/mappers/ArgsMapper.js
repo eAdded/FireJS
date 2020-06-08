@@ -18,7 +18,7 @@ function getArgs() {
         .option(["--webpack-conf"], String, "path to webpack config")
         //logging
         .option(["--verbose"], Boolean, "print webpack stats on error")
-        .option(["-l", "--log-mode"], Boolean, "Log Mode. silent (log errors only) | plain (Log without styling i.e colors and symbols)")
+        .option(["-l", "--log-mode"], String, "Log Mode. silent (log errors only) | plain (Log without styling i.e colors and symbols)")
         //plugins
         .option(["--disable-plugins"], Boolean, "disable plugins")
         //paths
