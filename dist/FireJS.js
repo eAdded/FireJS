@@ -85,7 +85,7 @@ class default_1 {
                     Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)), this.$.outputFileSystem).catch(err => {
                         throw err;
                     });
-                }, resolve).catch(err => {
+                }).then(resolve).catch(err => {
                     throw err;
                 });
             }, reject);

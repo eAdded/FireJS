@@ -30,14 +30,12 @@ export default class {
             mapPlugins(fs, join(rootDir, pathToPluginsDir), this.map);
     }
 
-    refreshPluginData(__page: string): Promise<void> {
-        return new Promise<void>(resolve => {
-            const page = this.map.get(__page).plugin;
-            page.paths.clear();
-            page.onBuild((path, content) => {
-                page.paths.set(path, content);
-            }, resolve)
-        });
+    async refreshPluginData(__page: string) {
+        const page = this.map.get(__page).plugin;
+        page.paths.clear();
+        await page.onBuild((path, content) => {
+            page.paths.set(path, content);
+        })
     }
 
     async renderWithPluginData(__page: string, path: string) {

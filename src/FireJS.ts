@@ -115,7 +115,7 @@ export default class {
                     ).catch(err => {
                         throw err
                     });
-                }, resolve).catch(err => {
+                }).then(resolve).catch(err => {
                     throw err
                 })
             }, reject)

@@ -5,8 +5,5 @@ export default class {
     constructor(app: FireJS);
     init(): Promise<void>;
     private get;
-    private getFromFileSystem;
-    private getMap;
     private getPage;
-    private searchPage;
 }

@@ -20,17 +20,15 @@ class default_1 {
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            {
-                const p404 = path_1.relative(this.$.config.paths.pages, path_1.join(__dirname, "../web/404/404.js"));
-                if (this.$.config.pages["404"].toString() === p404)
-                    yield this.app.buildPage(this.$.pageMap.get(p404));
-            }
+            this.$.cli.ok("Watching for file changes");
+            const server = express();
             chokidar_1.watch(this.$.config.paths.pages) //watch changes
                 .on('add', (path) => __awaiter(this, void 0, void 0, function* () {
                 path = path.replace(this.$.config.paths.pages + "/", "");
                 const page = this.$.pageMap.get(path) || new Page_1.default(path);
                 this.$.pageMap.set(page.toString(), page);
                 yield this.app.buildPage(page);
+                yield page.plugin.initServer(server);
             }))
                 .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));
@@ -39,11 +37,9 @@ class default_1 {
                 });
                 this.$.pageMap.delete(path.replace(this.$.config.paths.pages + "/", ""));
             });
-            this.$.cli.ok("Watching for file changes");
-            const server = express();
             if (this.$.config.paths.static)
                 server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
-            server.use(`/${this.$.rel.mapRel}/*`, this.getMap.bind(this));
+            server.get(`/${this.$.rel.mapRel}/*`, this.get.bind(this));
             server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this));
             server.get('*', this.getPage.bind(this));
             server.listen(process.env.PORT || 5000, () => {
@@ -53,52 +49,31 @@ class default_1 {
     }
     get(req, res) {
         // @ts-ignore
-        this.getFromFileSystem(decodeURI(req._parsedUrl.pathname), res);
-        res.end();
-    }
-    getFromFileSystem(pathname, res) {
-        pathname = path_1.join(this.$.config.paths.dist, pathname);
+        const pathname = path_1.join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
         if (this.$.outputFileSystem.existsSync(pathname))
             res.write(this.$.outputFileSystem.readFileSync(pathname));
         else
             res.status(404);
-    }
-    getMap(req, res) {
-        // @ts-ignore
-        const pathname = decodeURI(req._parsedUrl.pathname);
-        this.getFromFileSystem(pathname, res);
-        this.searchPage(pathname.substring(0, pathname.lastIndexOf(".map.js"))).plugin.onRequest(req, res).catch(ex => {
-            throw ex;
-        });
         res.end();
     }
-    getPage(req, res, next) {
+    getPage(req, res) {
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
         try {
-            if (req.method === "GET") {
-                let path = path_1.join(this.$.config.paths.dist, pathname);
-                if (this.$.outputFileSystem.existsSync(path_1.join(path, "index.html")))
-                    res.end(this.$.outputFileSystem.readFileSync(path_1.join(path, "index.html")));
-                else if (this.$.outputFileSystem.existsSync(path + ".html"))
-                    res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
-                else {
-                    const _404 = this.$.pageMap.get(this.$.config.pages["404"]).toString();
-                    res.end(this.$.outputFileSystem.readFileSync(path_1.join(this.$.config.paths.dist, _404.substring(0, _404.lastIndexOf(".")) + ".html")));
-                }
+            let path = path_1.join(this.$.config.paths.dist, pathname);
+            if (this.$.outputFileSystem.existsSync(path_1.join(path, "index.html")))
+                res.end(this.$.outputFileSystem.readFileSync(path_1.join(path, "index.html")));
+            else if (this.$.outputFileSystem.existsSync(path + ".html"))
+                res.end(this.$.outputFileSystem.readFileSync(path + ".html"));
+            else {
+                const _404 = this.$.pageMap.get(this.$.config.pages["404"]).toString();
+                res.end(this.$.outputFileSystem.readFileSync(path_1.join(this.$.config.paths.dist, _404.substring(0, _404.lastIndexOf(".")) + ".html")));
             }
         }
         catch (e) {
             this.$.cli.error("Error serving " + pathname);
-            res.status(404);
+            res.status(500);
         }
-        next();
-    }
-    searchPage(pathname) {
-        for (const page of this.$.pageMap.values())
-            if (page.plugin.paths.has(pathname) || page.plugin.paths.has(path_1.join(pathname, "index")))
-                return page;
-        return this.$.pageMap.get(this.$.config.pages["404"]);
     }
 }
 exports.default = default_1;

@@ -11,19 +11,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 class default_1 {
     constructor(page) {
-        this.version = "0.11.0";
+        this.version = "0.16.0";
         this.paths = new Map();
         this.page = page;
     }
-    onBuild(renderPage, callback) {
+    onBuild(renderPage) {
         return __awaiter(this, void 0, void 0, function* () {
             renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {});
-            callback();
         });
     }
-    onRequest(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-        });
+    initServer(server) {
+        return __awaiter(this, void 0, void 0, function* () { });
     }
 }
 exports.default = default_1;

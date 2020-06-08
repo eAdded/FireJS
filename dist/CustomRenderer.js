@@ -31,12 +31,12 @@ class default_1 {
             PluginMapper_1.mapPlugins(fs, path_1.join(rootDir, pathToPluginsDir), this.map);
     }
     refreshPluginData(__page) {
-        return new Promise(resolve => {
+        return __awaiter(this, void 0, void 0, function* () {
             const page = this.map.get(__page).plugin;
             page.paths.clear();
-            page.onBuild((path, content) => {
+            yield page.onBuild((path, content) => {
                 page.paths.set(path, content);
-            }, resolve);
+            });
         });
     }
     renderWithPluginData(__page, path) {
