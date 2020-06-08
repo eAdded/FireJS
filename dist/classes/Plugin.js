@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class default_1 {
     constructor(page) {
         this.version = "0.16.0";
-        this.paths = new Map();
         this.page = page;
     }
     onBuild(renderPage) {
@@ -21,7 +20,8 @@ class default_1 {
         });
     }
     initServer(server) {
-        return __awaiter(this, void 0, void 0, function* () { });
+        return __awaiter(this, void 0, void 0, function* () {
+        });
     }
 }
 exports.default = default_1;

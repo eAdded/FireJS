@@ -100,9 +100,7 @@ export default class {
         return new Promise<void>((resolve, reject) => {
             this.$.pageArchitect.buildPage(page, () => {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`)
-                page.plugin.paths.clear();
                 page.plugin.onBuild((path, content) => {
-                    page.plugin.paths.set(path, undefined);
                     writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
                         content,
                         chunks: page.chunks

@@ -1,7 +1,6 @@
 export default class {
     page: string;
     public version: string = "0.16.0";
-    paths = new Map<string, undefined>();
 
     constructor(page: string) {
         this.page = page;
@@ -11,5 +10,6 @@ export default class {
         renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
     }
 
-    async initServer(server: Express.Application) {}
+    async initServer(server: Express.Application) {
+    }
 }

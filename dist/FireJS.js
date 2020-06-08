@@ -73,9 +73,7 @@ class default_1 {
         return new Promise((resolve, reject) => {
             this.$.pageArchitect.buildPage(page, () => {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`);
-                page.plugin.paths.clear();
                 page.plugin.onBuild((path, content) => {
-                    page.plugin.paths.set(path, undefined);
                     Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
                         content,
                         chunks: page.chunks
