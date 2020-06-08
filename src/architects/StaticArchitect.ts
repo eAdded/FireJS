@@ -74,11 +74,11 @@ export default class {
             }
         }
         //React
-        template = this.addChunk(template, this.param.externals[0]);
+        template = this.addChunk(template, this.param.externals[1]);
         //Main Chunk
         template = this.addChunk(template, page.chunks[0]);
         //Render Chunk
-        template = this.addChunk(template, this.param.externals[1]);
+        template = this.addChunk(template, this.param.externals[2]);
         //add rest of the chunks
         for (let i = 1; i < page.chunks.length; i++)
             template = this.addChunk(template, page.chunks[i]);

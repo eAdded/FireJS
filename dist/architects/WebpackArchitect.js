@@ -17,11 +17,11 @@ class default_1 {
         this.userConfig = userConfig;
     }
     forExternals() {
-        return {
+        const conf = {
             target: 'web',
             mode: process.env.NODE_ENV,
             entry: {
-                "e": path_1.join(__dirname, "../../web/external_group.js"),
+                "e": path_1.join(__dirname, "../../web/external_group_semi.js"),
                 "r": path_1.join(__dirname, "../../web/renderer.js"),
             },
             output: {
@@ -29,6 +29,8 @@ class default_1 {
                 filename: "[name][contentHash].js"
             }
         };
+        conf.entry[path_1.join(path_1.relative(this.$.config.paths.lib, this.$.config.paths.cache), "f")] = path_1.join(__dirname, "../../web/external_group_full.js");
+        return conf;
     }
     forPage(page) {
         let mergedConfig = Object.assign({ 

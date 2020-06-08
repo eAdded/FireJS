@@ -1,6 +1,6 @@
 import {cloneDeep} from "lodash"
 import {$, WebpackConfig} from "../FireJS";
-import {join} from "path"
+import {join, relative} from "path"
 import Page from "../classes/Page";
 import MiniCssExtractPlugin = require('mini-css-extract-plugin');
 import CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
@@ -22,18 +22,20 @@ export default class {
     }
 
     forExternals(): WebpackConfig {
-        return {
+        const conf: WebpackConfig = {
             target: 'web',
             mode: process.env.NODE_ENV as "development" | "production" | "none",
             entry: {
-                "e": join(__dirname, "../../web/external_group.js"),
+                "e": join(__dirname, "../../web/external_group_semi.js"),
                 "r": join(__dirname, "../../web/renderer.js"),
             },
             output: {
                 path: this.$.config.paths.lib,
                 filename: "[name][contentHash].js"
             }
-        }
+        };
+        conf.entry[join(relative(this.$.config.paths.lib, this.$.config.paths.cache), "f")] = join(__dirname, "../../web/external_group_full.js");
+        return conf;
     }
 
     forPage(page: Page): WebpackConfig {
