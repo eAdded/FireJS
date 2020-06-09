@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const Plugin_1 = require("./Plugin");
-class default_1 extends Plugin_1.default {
+class default_1 {
     constructor() {
-        super();
     }
     initServer(server) {
     }

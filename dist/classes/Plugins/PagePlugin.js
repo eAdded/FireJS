@@ -9,10 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Plugin_1 = require("./Plugin");
-class default_1 extends Plugin_1.default {
+class default_1 {
     constructor(page) {
-        super();
         this.page = page;
     }
     onBuild(renderPage) {

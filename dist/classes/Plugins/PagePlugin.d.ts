@@ -1,6 +1,5 @@
-import Plugin from "./Plugin";
 import { WebpackConfig } from "../../FireJS";
-export default class extends Plugin {
+export default class {
     page: string;
     constructor(page: string);
     onBuild(renderPage: (path: string, content: any) => void): Promise<void>;

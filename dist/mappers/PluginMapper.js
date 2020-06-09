@@ -7,11 +7,9 @@ function mapPlugin(pluginPath, $) {
     for (const rawPlugsKey in rawPlugs) {
         const rawPlug = new (rawPlugs[rawPlugsKey])();
         if (rawPlug instanceof PagePlugin_1.default)
-            // @ts-ignore
-            managePagePlugin(checkVersion(rawPlug, pluginPath, global.__MIN_PAGE_PLUGIN_VERSION__), pluginPath, $);
+            managePagePlugin(rawPlug, pluginPath, $);
         else if (rawPlug instanceof GlobalPlugin_1.default)
-            // @ts-ignore
-            manageGlobalPlugin(checkVersion(rawPlug, pluginPath, global.__MIN_GLOBAL_PLUGIN_VERSION__), pluginPath, $);
+            manageGlobalPlugin(rawPlug, pluginPath, $);
         else
             throw new Error(`Plugin ${pluginPath} is of unknown type ${typeof rawPlug}`);
     }
@@ -27,11 +25,4 @@ function managePagePlugin(plugin, pluginFile, $) {
 function manageGlobalPlugin(plugin, pluginFile, $) {
     plugin.initWebpack($.pageArchitect.webpackArchitect.defaultConfig);
     $.globalPlugins.push(plugin);
-}
-function checkVersion(plugin, pluginFile, version) {
-    // @ts-ignore
-    if (plugin.version < version)
-        // @ts-ignore
-        throw new Error(`Plugin ${pluginFile} is not supported. Update plugin to v` + version);
-    return plugin;
 }

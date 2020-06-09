@@ -1,11 +1,9 @@
-import Plugin from "./Plugin"
 import {WebpackConfig} from "../../FireJS";
 
-export default class extends Plugin {
+export default class {
     page: string;
 
     constructor(page: string) {
-        super();
         this.page = page;
     }
 
@@ -13,6 +11,6 @@ export default class extends Plugin {
         renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
     }
 
-    initWebpack(webpackConfig:WebpackConfig) {
+    initWebpack(webpackConfig: WebpackConfig) {
     }
 }
