@@ -1,5 +1,5 @@
 import {join} from "path";
-import Plugin from "../classes/Plugin";
+import Plugin from "../classes/Plugins";
 import Page from "../classes/Page";
 
 export function mapPlugins(inputFileSystem, pluginsPath: string, map: Map<string, Page>) {

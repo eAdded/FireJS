@@ -1,15 +1,14 @@
-export default class {
+import Plugin from "./Plugin"
+
+export default class extends Plugin {
     page: string;
-    public version: number = 1.0;
 
     constructor(page: string) {
+        super();
         this.page = page;
     }
 
     async onBuild(renderPage: (path: string, content: any) => void) {
         renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
-    }
-
-    async initServer(server: Express.Application) {
     }
 }
