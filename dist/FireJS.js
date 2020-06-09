@@ -26,37 +26,41 @@ class default_1 {
         this.$ = {};
         params = this.constructParams(params);
         process.env.NODE_ENV = params.config.pro ? 'production' : 'development';
-        if (params.config.paths.webpackConfig)
-            throw new Error("pass webpack config as params instead of passing it's path");
         // @ts-ignore
         fs.mkdirp = fs_extra_1.mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs;
         this.$.outputFileSystem = params.outputFileSystem || fs;
+        //config
         this.$.config = new ConfigMapper_1.default(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config);
+        //cli
         this.$.cli = new Cli_1.default(this.$.config.logMode);
+        //log
         this.$.cli.ok(`NODE_ENV : ${process.env.NODE_ENV}`);
         this.$.cli.ok(`SSR : ${this.$.config.ssr}`);
+        //pageMap
         this.$.pageMap = PathMapper_1.createMap(this.$.config.paths.pages, this.$.inputFileSystem);
+        //rel
         this.$.rel = {
             libRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: path_1.relative(this.$.config.paths.dist, this.$.config.paths.map)
         };
-        this.$.pageArchitect = new PageArchitect_1.default(this.$, new WebpackArchitect_1.default(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
+        //pageArchitect
+        this.$.pageArchitect = new PageArchitect_1.default(this.$, new WebpackArchitect_1.default(this.$), !!params.outputFileSystem, !!params.inputFileSystem);
+        //mapPlugins
+        if (this.$.config.plugins.length > 0) {
+            this.$.cli.log("Mapping Plugins");
+            this.$.config.plugins.forEach(plugin => PluginMapper_1.mapPlugin(plugin, this.$));
+        }
     }
     constructParams(params) {
         params = params || {};
         params.config = params.config || {};
         params.config.paths = params.config.paths || {};
         params.config.templateTags = params.config.templateTags || {};
-        params.webpackConfig = params.webpackConfig || {};
         return params;
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.$.cli.log("Mapping Plugins");
-            if (!this.$.config.disablePlugins)
-                if (this.$.config.paths.plugins)
-                    PluginMapper_1.mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
             this.$.cli.log("Building Externals");
             this.$.renderer = new StaticArchitect_1.default({
                 rel: this.$.rel,

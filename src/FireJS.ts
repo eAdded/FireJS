@@ -4,7 +4,7 @@ import Cli from "./utils/Cli";
 import Page from "./classes/Page";
 import {Configuration, Stats} from "webpack";
 import {join, relative} from "path";
-import {mapPlugins} from "./mappers/PluginMapper";
+import {mapPlugin} from "./mappers/PluginMapper";
 import PageArchitect from "./architects/PageArchitect";
 import {writeFileRecursively} from "./utils/Fs";
 import {mkdirp} from "fs-extra"
@@ -34,7 +34,6 @@ export interface $ {
 
 export interface Params {
     config?: Config,
-    webpackConfig?: WebpackConfig
     outputFileSystem?,
     inputFileSystem?
 }
@@ -54,36 +53,40 @@ export default class {
         params.config = params.config || {};
         params.config.paths = params.config.paths || {};
         params.config.templateTags = params.config.templateTags || {};
-        params.webpackConfig = params.webpackConfig || {};
         return params;
     }
 
     constructor(params: Params) {
         params = this.constructParams(params);
         process.env.NODE_ENV = params.config.pro ? 'production' : 'development';
-        if (params.config.paths.webpackConfig)
-            throw new Error("pass webpack config as params instead of passing it's path");
         // @ts-ignore
         fs.mkdirp = mkdirp;
         this.$.inputFileSystem = params.inputFileSystem || fs
         this.$.outputFileSystem = params.outputFileSystem || fs;
+        //config
         this.$.config = new ConfigMapper(this.$.inputFileSystem, this.$.outputFileSystem).getConfig(params.config)
+        //cli
         this.$.cli = new Cli(this.$.config.logMode);
+        //log
         this.$.cli.ok(`NODE_ENV : ${process.env.NODE_ENV}`)
         this.$.cli.ok(`SSR : ${this.$.config.ssr}`)
+        //pageMap
         this.$.pageMap = createMap(this.$.config.paths.pages, this.$.inputFileSystem);
+        //rel
         this.$.rel = {
             libRel: relative(this.$.config.paths.dist, this.$.config.paths.lib),
             mapRel: relative(this.$.config.paths.dist, this.$.config.paths.map)
         }
-        this.$.pageArchitect = new PageArchitect(this.$, new WebpackArchitect(this.$, params.webpackConfig), !!params.outputFileSystem, !!params.inputFileSystem);
+        //pageArchitect
+        this.$.pageArchitect = new PageArchitect(this.$, new WebpackArchitect(this.$), !!params.outputFileSystem, !!params.inputFileSystem);
+        //mapPlugins
+        if (this.$.config.plugins.length > 0) {
+            this.$.cli.log("Mapping Plugins");
+            this.$.config.plugins.forEach(plugin => mapPlugin(plugin, this.$))
+        }
     }
 
     async init() {
-        this.$.cli.log("Mapping Plugins");
-        if (!this.$.config.disablePlugins)
-            if (this.$.config.paths.plugins)
-                mapPlugins(this.$.inputFileSystem, this.$.config.paths.plugins, this.$.pageMap);
         this.$.cli.log("Building Externals");
         this.$.renderer = new StaticArchitect({
             rel: this.$.rel,
