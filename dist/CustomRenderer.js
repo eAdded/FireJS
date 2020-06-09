@@ -13,11 +13,12 @@ require("./GlobalsSetter");
 const Page_1 = require("./classes/Page");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const path_1 = require("path");
+const PluginMapper_1 = require("./mappers/PluginMapper");
 const fs = require("fs");
 class default_1 {
-    constructor(pathToLibDir, pathToPluginsDir = undefined, rootDir = process.cwd()) {
+    constructor(pathToLibDir, rootDir = process.cwd()) {
         this.map = new Map();
-        const firejs_map = JSON.parse(fs.readFileSync(path_1.join(rootDir, pathToLibDir, "firejs.map.json")).toString());
+        const firejs_map = JSON.parse(fs.readFileSync(path_1.join(this.rootDir = rootDir, pathToLibDir, "firejs.map.json")).toString());
         firejs_map.staticConfig.pathToLib = path_1.join(rootDir, pathToLibDir);
         this.rel = firejs_map.staticConfig.rel;
         this.renderer = new StaticArchitect_1.default(firejs_map.staticConfig);
@@ -28,12 +29,13 @@ class default_1 {
             page.plugin.paths = new Map();
             this.map.set(__page, page);
         }
-        if (pathToPluginsDir)
-            mapPlugins(fs, path_1.join(rootDir, pathToPluginsDir), this.map);
     }
-    refreshPluginData(__page) {
+    loadPagePlugin(pluginPath) {
+        PluginMapper_1.mapPlugin(pluginPath, { pageMap: this.map, rootPath: this.rootDir }, undefined);
+    }
+    cachePluginData(_page) {
         return __awaiter(this, void 0, void 0, function* () {
-            const page = this.map.get(__page).plugin;
+            const page = this.map.get(_page).plugin;
             // @ts-ignore
             page.paths.clear();
             yield page.onBuild((path, content) => {

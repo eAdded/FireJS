@@ -15,9 +15,10 @@ export default class {
     readonly map: Map<string, Page> = new Map()
     readonly renderer: StaticArchitect;
     readonly rel: PathRelatives;
+    readonly rootDir: string;
 
-    constructor(pathToLibDir: string, pathToPluginsDir: string | undefined = undefined, rootDir: string = process.cwd()) {
-        const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(rootDir, pathToLibDir, "firejs.map.json")).toString());
+    constructor(pathToLibDir: string, rootDir: string = process.cwd()) {
+        const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(this.rootDir = rootDir, pathToLibDir, "firejs.map.json")).toString());
         firejs_map.staticConfig.pathToLib = join(rootDir, pathToLibDir);
         this.rel = firejs_map.staticConfig.rel
         this.renderer = new StaticArchitect(firejs_map.staticConfig);
@@ -28,12 +29,14 @@ export default class {
             page.plugin.paths = new Map<string, any>();
             this.map.set(__page, page);
         }
-        if (pathToPluginsDir)
-            mapPlugins(fs, join(rootDir, pathToPluginsDir), this.map);
     }
 
-    async refreshPluginData(__page: string) {
-        const page = this.map.get(__page).plugin;
+    loadPagePlugin(pluginPath: string) {
+        mapPlugin(pluginPath, {pageMap: this.map, rootPath: this.rootDir}, undefined);
+    }
+
+    async cachePluginData(_page: string) {
+        const page = this.map.get(_page).plugin;
         // @ts-ignore
         page.paths.clear();
         await page.onBuild((path, content) => {

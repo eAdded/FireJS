@@ -9,8 +9,10 @@ export default class {
     readonly map: Map<string, Page>;
     readonly renderer: StaticArchitect;
     readonly rel: PathRelatives;
-    constructor(pathToLibDir: string, pathToPluginsDir?: string | undefined, rootDir?: string);
-    refreshPluginData(__page: string): Promise<void>;
+    readonly rootDir: string;
+    constructor(pathToLibDir: string, rootDir?: string);
+    loadPagePlugin(pluginPath: string): void;
+    cachePluginData(_page: string): Promise<void>;
     renderWithPluginData(__page: string, path: string): Promise<{
         html: string;
         map: string;
