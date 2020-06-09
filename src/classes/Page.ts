@@ -1,4 +1,4 @@
-import Plugin from "./Plugin";
+import Plugin from "./Plugins/PagePlugin";
 
 export default class {
     public chunks: string[] = [];
