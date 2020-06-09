@@ -37,8 +37,6 @@ class default_1 {
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : path_1.resolve(__dirname, "../../web/template.html");
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.root, config.paths.src, "static dir");
-        //plugins
-        this.undefinedIfNotFound(config.paths, "plugins", config.paths.root, config.paths.src, "plugins dir");
         //html template tags
         config.templateTags = config.templateTags || {};
         config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
@@ -51,6 +49,7 @@ class default_1 {
         this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"), "Make sure you have a 404 page");
         //ssr convert to boolean
         config.ssr = !!config.ssr;
+        config.plugins = config.disablePlugins ? config.plugins || [] : [];
         return config;
     }
     makeAbsolute(root, pathTo) {

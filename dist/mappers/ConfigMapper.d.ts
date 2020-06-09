@@ -18,9 +18,9 @@ export interface Config {
         lib?: string;
         map?: string;
         static?: string;
-        plugins?: string;
         webpackConfig?: string;
     };
+    plugins?: [];
     templateTags?: TemplateTags;
     pages?: ExplicitPages;
 }

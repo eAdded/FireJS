@@ -20,9 +20,9 @@ export interface Config {
         lib?: string,           //dir where chunks are exported, default : root/out/dist/lib
         map?: string,           //dir where chunk map and page data is exported, default : root/out/dist/lib/map
         static?: string,        //dir where page static elements are stored eg. images, default : root/src/static
-        plugins?: string,       //plugins dir, default : root/src/plugins
-        webpackConfig?: string,       //plugins dir, default : root/src/plugins
+        webpackConfig?: string, //plugins dir, default : root/src/plugins
     },
+    plugins?: [],
     templateTags?: TemplateTags,
     pages?: ExplicitPages
 }
@@ -79,8 +79,6 @@ export default class {
         config.paths.template = config.paths.template ? this.makeAbsolute(config.paths.root, config.paths.template) : resolve(__dirname, "../../web/template.html")
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.root, config.paths.src, "static dir");
-        //plugins
-        this.undefinedIfNotFound(config.paths, "plugins", config.paths.root, config.paths.src, "plugins dir");
         //html template tags
         config.templateTags = config.templateTags || {};
         config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
@@ -93,6 +91,7 @@ export default class {
         this.throwIfNotFound("404 page", join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"), "Make sure you have a 404 page");
         //ssr convert to boolean
         config.ssr = !!config.ssr;
+        config.plugins = config.disablePlugins ? config.plugins || [] : [];
         return config;
     }
 
