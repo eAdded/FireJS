@@ -22,7 +22,6 @@ export interface $ {
 }
 export interface Params {
     config?: Config;
-    webpackConfig?: WebpackConfig;
     outputFileSystem?: any;
     inputFileSystem?: any;
 }

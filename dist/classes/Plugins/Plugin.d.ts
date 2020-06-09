@@ -1,4 +1,4 @@
-export default class {
+export default abstract class {
     version: number;
-    constructor();
+    constructor(...args: any[]);
 }

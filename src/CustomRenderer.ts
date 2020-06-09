@@ -2,7 +2,7 @@ require("./GlobalsSetter")
 import Page from "./classes/Page";
 import StaticArchitect from "./architects/StaticArchitect";
 import {join} from "path";
-import {mapPlugins} from "./mappers/PluginMapper";
+import {mapPlugin} from "./mappers/PluginMapper";
 import {FIREJS_MAP, PathRelatives} from "./FireJS";
 import * as fs from "fs"
 

@@ -13,7 +13,6 @@ require("./GlobalsSetter");
 const Page_1 = require("./classes/Page");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const path_1 = require("path");
-const PluginMapper_1 = require("./mappers/PluginMapper");
 const fs = require("fs");
 class default_1 {
     constructor(pathToLibDir, pathToPluginsDir = undefined, rootDir = process.cwd()) {
@@ -30,7 +29,7 @@ class default_1 {
             this.map.set(__page, page);
         }
         if (pathToPluginsDir)
-            PluginMapper_1.mapPlugins(fs, path_1.join(rootDir, pathToPluginsDir), this.map);
+            mapPlugins(fs, path_1.join(rootDir, pathToPluginsDir), this.map);
     }
     refreshPluginData(__page) {
         return __awaiter(this, void 0, void 0, function* () {

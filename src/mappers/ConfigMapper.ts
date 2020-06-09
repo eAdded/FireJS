@@ -20,7 +20,6 @@ export interface Config {
         lib?: string,           //dir where chunks are exported, default : root/out/dist/lib
         map?: string,           //dir where chunk map and page data is exported, default : root/out/dist/lib/map
         static?: string,        //dir where page static elements are stored eg. images, default : root/src/static
-        webpackConfig?: string, //plugins dir, default : root/src/plugins
     },
     plugins?: [],
     templateTags?: TemplateTags,

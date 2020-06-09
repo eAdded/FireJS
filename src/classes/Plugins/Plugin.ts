@@ -1,6 +1,5 @@
-export default class {
+export default abstract class {
     public version: number = 1.0;
-
-    constructor() {
+    constructor(...args) {
     }
 }

@@ -28,7 +28,6 @@ class default_1 {
                 const page = this.$.pageMap.get(path) || new Page_1.default(path);
                 this.$.pageMap.set(page.toString(), page);
                 yield this.app.buildPage(page);
-                yield page.plugin.initServer(server);
             }))
                 .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));

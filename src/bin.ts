@@ -27,19 +27,10 @@ function initConfig(args: Args): [boolean, Config] {
         template: args["--template"] || userConfig.paths.template,
         src: args["--src"] || userConfig.paths.src,
         static: args["--static"] || userConfig.paths.static,
-        plugins: args["--plugins"] || userConfig.paths.plugins,
         lib: args["--lib"] || userConfig.paths.lib,
-        webpackConfig: args["--webpack-conf"] || userConfig.paths.webpackConfig
     }
     userConfig.ssr = args["--ssr"] || userConfig.ssr;
     return [customConfig, userConfig];
-}
-
-function initWebpackConfig(args: Args, {paths: {webpackConfig}}: Config): WebpackConfig {
-    const webpackConf: WebpackConfig = webpackConfig ? require(isAbsolute(webpackConfig) ? webpackConfig : resolve(process.cwd(), webpackConfig)) : {};
-    if (!args["--export"])
-        webpackConf.watch = webpackConf.watch || true;
-    return webpackConf;
 }
 
 function init(): { app: FireJS, args: Args, customConfig: boolean } {
@@ -69,17 +60,11 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
             throw new Error("flag --disk is redundant when exporting")
         config.paths.dist = join(config.paths.cache || "out/.cache", "disk");
     }
-    //get webpack config
-    const webpackConfig = initWebpackConfig(args, config);
-    //undefined cause it is not valid in the main app
-    config.paths.webpackConfig = undefined;
-    //return acc to flags
     return {
         app: args["--export"] ?
-            new FireJS({config, webpackConfig}) :
+            new FireJS({config}) :
             new FireJS({
                 config,
-                webpackConfig,
                 outputFileSystem: args["--disk"] ? undefined : new MemoryFS()
             }),
         args,

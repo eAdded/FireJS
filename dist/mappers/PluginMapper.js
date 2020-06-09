@@ -1,21 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = require("path");
-function mapPlugins(inputFileSystem, pluginsPath, map) {
-    inputFileSystem.readdirSync(pluginsPath).forEach(pluginFile => {
-        const plugins = require(path_1.join(pluginsPath, pluginFile));
-        for (const name in plugins) {
-            const plugin = new plugins[name](name);
-            // @ts-ignore
-            if ((plugin.version || 0) < global.__MIN_PLUGIN_VERSION__)
-                // @ts-ignore
-                throw new Error(`Plugin ${pluginFile} is not supported. Update plugin to v` + global.__MIN_PLUGIN_VERSION__);
-            const page = map.get(name);
-            if (page)
-                page.plugin = plugin;
-            else
-                throw new Error(`Page ${plugin.page} requested by plugin ${pluginFile} does not exist`);
+const PagePlugin_1 = require("../classes/Plugins/PagePlugin");
+const GlobalPlugin_1 = require("../classes/Plugins/GlobalPlugin");
+function mapPlugin(pluginPath, $) {
+    const rawPlugs = require(pluginPath);
+    for (const rawPlugsKey in rawPlugs) {
+        const rawPlug = rawPlugs[rawPlugsKey];
+        if (rawPlug instanceof PagePlugin_1.default) {
+            managePagePlugin(checkVersion(new rawPlug(name), pluginPath), pluginPath, $);
         }
-    });
+        else if (rawPlug instanceof GlobalPlugin_1.default) {
+            manageGlobalPlugin(checkVersion(new rawPlug(name), pluginPath), pluginPath, $);
+        }
+        else
+            throw new Error(`Plugin ${pluginPath} is of unknown type ${typeof rawPlug}`);
+    }
 }
-exports.mapPlugins = mapPlugins;
+exports.mapPlugin = mapPlugin;
+function managePagePlugin(plugin, pluginFile, $) {
+    const page = $.pageMap.get(name);
+    if (page)
+        page.plugin = plugin;
+    else
+        throw new Error(`Page ${plugin.page} requested by plugin ${pluginFile} does not exist`);
+}
+function manageGlobalPlugin(plugin, pluginFile, $) {
+}
+function checkVersion(plugin, pluginFile) {
+    // @ts-ignore
+    if ((plugin.version || 0) < global.__MIN_PLUGIN_VERSION__)
+        // @ts-ignore
+        throw new Error(`Plugin ${pluginFile} is not supported. Update plugin to v` + global.__MIN_PLUGIN_VERSION__);
+    return plugin;
+}

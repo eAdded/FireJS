@@ -11,4 +11,7 @@ export default class extends Plugin {
     async onBuild(renderPage: (path: string, content: any) => void) {
         renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
     }
+
+    configWebpack(webpackConfig) {
+    }
 }
