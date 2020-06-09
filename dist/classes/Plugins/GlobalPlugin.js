@@ -8,7 +8,6 @@ class default_1 extends Plugin_1.default {
     initServer(server) {
     }
     initWebpack(webpackConfig) {
-        return webpackConfig;
     }
 }
 exports.default = default_1;

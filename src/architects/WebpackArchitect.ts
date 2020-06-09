@@ -96,7 +96,7 @@ export default class {
         const mergedConfig = cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString()
         mergedConfig.entry = join(this.$.config.paths.pages, mergedConfig.name);
-        page.plugin.configWebpack(mergedConfig);
+        page.plugin.initWebpack(mergedConfig);
         return mergedConfig;
     }
 }

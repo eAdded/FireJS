@@ -1,4 +1,5 @@
 import Plugin from "./Plugin"
+import {WebpackConfig} from "../../FireJS";
 
 export default class extends Plugin {
     page: string;
@@ -12,6 +13,6 @@ export default class extends Plugin {
         renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
     }
 
-    configWebpack(webpackConfig) {
+    initWebpack(webpackConfig:WebpackConfig) {
     }
 }

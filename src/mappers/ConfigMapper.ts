@@ -90,7 +90,7 @@ export default class {
         this.throwIfNotFound("404 page", join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"), "Make sure you have a 404 page");
         //ssr convert to boolean
         config.ssr = !!config.ssr;
-        config.plugins = config.disablePlugins ? config.plugins || [] : [];
+        config.plugins = config.disablePlugins ? [] : config.plugins || [];
         return config;
     }
 

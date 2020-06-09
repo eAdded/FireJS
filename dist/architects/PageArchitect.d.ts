@@ -1,8 +1,9 @@
+import WebpackArchitect from "./WebpackArchitect";
 import { $, WebpackConfig, WebpackStat } from "../FireJS";
 import Page from "../classes/Page";
 export default class {
     private readonly $;
-    private readonly webpackArchitect;
+    readonly webpackArchitect: WebpackArchitect;
     isOutputCustom: boolean;
     isInputCustom: boolean;
     constructor(globalData: $, webpackArchitect: any, isOutputCustom: boolean, isInputCustom: boolean);

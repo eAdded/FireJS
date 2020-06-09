@@ -90,7 +90,7 @@ class default_1 {
         const mergedConfig = lodash_1.cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString();
         mergedConfig.entry = path_1.join(this.$.config.paths.pages, mergedConfig.name);
-        page.plugin.configWebpack(mergedConfig);
+        page.plugin.initWebpack(mergedConfig);
         return mergedConfig;
     }
 }

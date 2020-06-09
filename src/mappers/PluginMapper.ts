@@ -4,28 +4,28 @@ import PagePlugin from "../classes/Plugins/PagePlugin";
 import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
 
 export function mapPlugin(pluginPath: string, $: $) {
-    const rawPlugs: { [key: string]: typeof Plugin } = require(pluginPath);
+    const rawPlugs: { [key: string]: typeof Plugin } = require(require.resolve(pluginPath, {paths: [$.config.paths.root]}));
     for (const rawPlugsKey in rawPlugs) {
-        const rawPlug: typeof Plugin = rawPlugs[rawPlugsKey];
+        const rawPlug: Plugin = new (rawPlugs[rawPlugsKey])();
         if (rawPlug instanceof PagePlugin) {
-            managePagePlugin(checkVersion(new rawPlug(name), pluginPath), pluginPath, $);
+            managePagePlugin(checkVersion(rawPlug, pluginPath), pluginPath, $);
         } else if (rawPlug instanceof GlobalPlugin) {
-            manageGlobalPlugin(checkVersion(new rawPlug(name), pluginPath), pluginPath, $);
+            manageGlobalPlugin(checkVersion(rawPlug, pluginPath), pluginPath, $);
         } else
             throw new Error(`Plugin ${pluginPath} is of unknown type ${typeof rawPlug}`)
     }
 }
 
 function managePagePlugin(plugin: PagePlugin, pluginFile: string, $: $): void | never {
-    const page = $.pageMap.get(name);
+    const page = $.pageMap.get(plugin.page);
     if (page)
         page.plugin = plugin;
     else
         throw new Error(`Page ${plugin.page} requested by plugin ${pluginFile} does not exist`)
 }
 
-function manageGlobalPlugin(plugin: PagePlugin, pluginFile: string, $: $): void | never {
-
+function manageGlobalPlugin(plugin: GlobalPlugin, pluginFile: string, $: $): void | never {
+    plugin.initWebpack($.pageArchitect.webpackArchitect.defaultConfig);
 }
 
 function checkVersion(plugin, pluginFile: string): any | never {

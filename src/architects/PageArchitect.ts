@@ -5,7 +5,7 @@ import Page from "../classes/Page";
 
 export default class {
     private readonly $: $;
-    private readonly webpackArchitect: WebpackArchitect
+    public readonly webpackArchitect: WebpackArchitect
     public isOutputCustom: boolean
     public isInputCustom: boolean
 

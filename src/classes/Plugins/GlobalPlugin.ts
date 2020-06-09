@@ -10,7 +10,6 @@ export default class extends Plugin {
     initServer(server: Express.Application) {
     }
 
-    initWebpack(webpackConfig: WebpackConfig): WebpackConfig {
-        return webpackConfig;
+    initWebpack(webpackConfig: WebpackConfig) {
     }
 }

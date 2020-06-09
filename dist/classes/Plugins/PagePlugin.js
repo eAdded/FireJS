@@ -20,7 +20,7 @@ class default_1 extends Plugin_1.default {
             renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {});
         });
     }
-    configWebpack(webpackConfig) {
+    initWebpack(webpackConfig) {
     }
 }
 exports.default = default_1;
