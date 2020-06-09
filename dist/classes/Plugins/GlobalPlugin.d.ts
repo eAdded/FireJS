@@ -2,7 +2,7 @@
 import Plugin from "./Plugin";
 import { WebpackConfig } from "../../FireJS";
 export default class extends Plugin {
-    constructor(page: string);
+    constructor();
     initServer(server: Express.Application): void;
     initWebpack(webpackConfig: WebpackConfig): void;
 }

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Plugin_1 = require("./Plugin");
 class default_1 extends Plugin_1.default {
-    constructor(page) {
+    constructor() {
         super();
     }
     initServer(server) {

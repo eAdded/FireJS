@@ -26,6 +26,7 @@ function managePagePlugin(plugin: PagePlugin, pluginFile: string, $: $): void | 
 
 function manageGlobalPlugin(plugin: GlobalPlugin, pluginFile: string, $: $): void | never {
     plugin.initWebpack($.pageArchitect.webpackArchitect.defaultConfig);
+    $.globalPlugins.push(plugin);
 }
 
 function checkVersion(plugin, pluginFile: string): any | never {

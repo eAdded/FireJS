@@ -20,9 +20,13 @@ class default_1 {
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.$.cli.ok("Watching for file changes");
+            //init server
             const server = express();
-            chokidar_1.watch(this.$.config.paths.pages) //watch changes
+            //init plugins
+            this.$.globalPlugins.forEach(plugin => plugin.initServer(server));
+            //watch changes
+            this.$.cli.ok("Watching for file changes");
+            chokidar_1.watch(this.$.config.paths.pages)
                 .on('add', (path) => __awaiter(this, void 0, void 0, function* () {
                 path = path.replace(this.$.config.paths.pages + "/", "");
                 const page = this.$.pageMap.get(path) || new Page_1.default(path);
@@ -36,14 +40,14 @@ class default_1 {
                 });
                 this.$.pageMap.delete(path.replace(this.$.config.paths.pages + "/", ""));
             });
+            //routing
             if (this.$.config.paths.static)
                 server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
             server.get(`/${this.$.rel.mapRel}/*`, this.get.bind(this));
             server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this));
             server.get('*', this.getPage.bind(this));
-            server.listen(process.env.PORT || 5000, () => {
-                this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`);
-            });
+            //listen
+            server.listen(process.env.PORT || 5000, () => this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`));
         });
     }
     get(req, res) {

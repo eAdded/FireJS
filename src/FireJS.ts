@@ -1,3 +1,5 @@
+import GlobalPlugin from "./classes/Plugins/GlobalPlugin";
+
 require("./GlobalsSetter")
 import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
@@ -29,7 +31,8 @@ export interface $ {
     outputFileSystem?,
     inputFileSystem?,
     renderer?: StaticArchitect,
-    pageArchitect?: PageArchitect
+    pageArchitect?: PageArchitect,
+    globalPlugins?: GlobalPlugin[]
 }
 
 export interface Params {
@@ -46,18 +49,16 @@ export interface FIREJS_MAP {
 }
 
 export default class {
-    private readonly $: $ = {};
+    private readonly $: $ = {globalPlugins: []};
 
-    private constructParams(params: Params): Params {
-        params = params || {}
+    private constructParams(params: Params): void {
         params.config = params.config || {};
         params.config.paths = params.config.paths || {};
         params.config.templateTags = params.config.templateTags || {};
-        return params;
     }
 
-    constructor(params: Params) {
-        params = this.constructParams(params);
+    constructor(params: Params = {}) {
+        this.constructParams(params);
         process.env.NODE_ENV = params.config.pro ? 'production' : 'development';
         // @ts-ignore
         fs.mkdirp = mkdirp;

@@ -1,4 +1,4 @@
-import {join, relative} from "path"
+import {join} from "path"
 import {watch} from "chokidar"
 import FireJS, {$} from "./FireJS"
 import Page from "./classes/Page";
@@ -14,9 +14,13 @@ export default class {
     }
 
     async init() {
-        this.$.cli.ok("Watching for file changes")
+        //init server
         const server: express.Application = express();
-        watch(this.$.config.paths.pages)//watch changes
+        //init plugins
+        this.$.globalPlugins.forEach(plugin => plugin.initServer(server))
+        //watch changes
+        this.$.cli.ok("Watching for file changes")
+        watch(this.$.config.paths.pages)
             .on('add', async path => {
                 path = path.replace(this.$.config.paths.pages + "/", "");
                 const page = this.$.pageMap.get(path) || new Page(path);
@@ -30,14 +34,14 @@ export default class {
                 })
                 this.$.pageMap.delete(path.replace(this.$.config.paths.pages + "/", ""));
             });
+        //routing
         if (this.$.config.paths.static)
             server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
         server.get(`/${this.$.rel.mapRel}/*`, this.get.bind(this))
         server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this))
         server.get('*', this.getPage.bind(this));
-        server.listen(process.env.PORT || 5000, () => {
-            this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`);
-        })
+        //listen
+        server.listen(process.env.PORT || 5000, () => this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`))
     }
 
     private get(req: express.Request, res: express.Response) {

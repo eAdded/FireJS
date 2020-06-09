@@ -22,9 +22,9 @@ const StaticArchitect_1 = require("./architects/StaticArchitect");
 const PathMapper_1 = require("./mappers/PathMapper");
 const WebpackArchitect_1 = require("./architects/WebpackArchitect");
 class default_1 {
-    constructor(params) {
-        this.$ = {};
-        params = this.constructParams(params);
+    constructor(params = {}) {
+        this.$ = { globalPlugins: [] };
+        this.constructParams(params);
         process.env.NODE_ENV = params.config.pro ? 'production' : 'development';
         // @ts-ignore
         fs.mkdirp = fs_extra_1.mkdirp;
@@ -53,11 +53,9 @@ class default_1 {
         }
     }
     constructParams(params) {
-        params = params || {};
         params.config = params.config || {};
         params.config.paths = params.config.paths || {};
         params.config.templateTags = params.config.templateTags || {};
-        return params;
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {

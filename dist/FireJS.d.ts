@@ -1,3 +1,4 @@
+import GlobalPlugin from "./classes/Plugins/GlobalPlugin";
 import { Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
@@ -19,6 +20,7 @@ export interface $ {
     inputFileSystem?: any;
     renderer?: StaticArchitect;
     pageArchitect?: PageArchitect;
+    globalPlugins?: GlobalPlugin[];
 }
 export interface Params {
     config?: Config;
@@ -34,7 +36,7 @@ export interface FIREJS_MAP {
 export default class {
     private readonly $;
     private constructParams;
-    constructor(params: Params);
+    constructor(params?: Params);
     init(): Promise<void>;
     buildPage(page: Page): Promise<void>;
     export(): Promise<any[]>;
