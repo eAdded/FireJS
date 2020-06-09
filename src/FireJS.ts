@@ -83,11 +83,7 @@ export default class {
         //mapPlugins
         if (this.$.config.plugins.length > 0) {
             this.$.cli.log("Mapping Plugins");
-            this.$.config.plugins.forEach(plugin => mapPlugin(plugin, {
-                rootPath: this.$.config.paths.root,
-                $: this.$,
-                pageMap: this.$.pageMap
-            }))
+            this.$.config.plugins.forEach(plugin => mapPlugin(plugin, undefined, this.$))
         }
     }
 

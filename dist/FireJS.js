@@ -49,11 +49,7 @@ class default_1 {
         //mapPlugins
         if (this.$.config.plugins.length > 0) {
             this.$.cli.log("Mapping Plugins");
-            this.$.config.plugins.forEach(plugin => PluginMapper_1.mapPlugin(plugin, {
-                rootPath: this.$.config.paths.root,
-                $: this.$,
-                pageMap: this.$.pageMap
-            }));
+            this.$.config.plugins.forEach(plugin => PluginMapper_1.mapPlugin(plugin, undefined, this.$));
         }
     }
     constructParams(params) {
