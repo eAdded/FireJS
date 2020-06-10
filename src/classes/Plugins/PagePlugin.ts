@@ -1,9 +1,13 @@
 import {WebpackConfig} from "../../FireJS";
+import FireJSPlugin, {PluginCode} from "./FireJSPlugin";
 
-export default class {
+export const PagePlugMinVer = 0.1;
+
+export default abstract class extends FireJSPlugin {
     page: string;
 
-    constructor(page: string) {
+    protected constructor(page: string) {
+        super(0.1, PluginCode.PagePlugin);
         this.page = page;
     }
 

@@ -9,8 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-class default_1 {
+const FireJSPlugin_1 = require("./FireJSPlugin");
+exports.PagePlugMinVer = 0.1;
+class default_1 extends FireJSPlugin_1.default {
     constructor(page) {
+        super(0.1, FireJSPlugin_1.PluginCode.PagePlugin);
         this.page = page;
     }
     onBuild(renderPage) {
