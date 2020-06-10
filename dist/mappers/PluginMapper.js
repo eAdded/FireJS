@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const PagePlugin_1 = require("../classes/Plugins/PagePlugin");
 const GlobalPlugin_1 = require("../classes/Plugins/GlobalPlugin");
 function mapPlugin(pluginPath, pagePluginData = undefined, fullData) {
-    const rawPlugs = require(require.resolve(pluginPath, { paths: [pagePluginData.rootPath || fullData.config.paths.root] }));
+    const rawPlugs = require(require.resolve(pluginPath, { paths: [pagePluginData ? pagePluginData.rootPath : fullData.config.paths.root] }));
     for (const rawPlugsKey in rawPlugs) {
         const rawPlug = new (rawPlugs[rawPlugsKey])();
         if (rawPlug instanceof PagePlugin_1.default) {

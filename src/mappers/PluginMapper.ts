@@ -4,7 +4,7 @@ import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
 import Page from "../classes/Page";
 
 export function mapPlugin(pluginPath: string, pagePluginData: { rootPath: string, pageMap: Map<string, Page> } = undefined, fullData: $) {
-    const rawPlugs = require(require.resolve(pluginPath, {paths: [pagePluginData.rootPath || fullData.config.paths.root]}));
+    const rawPlugs = require(require.resolve(pluginPath, {paths: [pagePluginData ? pagePluginData.rootPath : fullData.config.paths.root]}));
     for (const rawPlugsKey in rawPlugs) {
         const rawPlug = new (rawPlugs[rawPlugsKey])();
         if (rawPlug instanceof PagePlugin) {
