@@ -1,6 +1,6 @@
 export declare enum PluginCode {
-    GlobalPlugin = 0,
-    PagePlugin = 1
+    GlobalPlugin = 1,
+    PagePlugin = 2
 }
 export default abstract class FireJSPlugin {
     readonly version: any;

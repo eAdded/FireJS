@@ -1,5 +1,5 @@
 export enum PluginCode {
-    GlobalPlugin,
+    GlobalPlugin = 1,
     PagePlugin
 }
 
