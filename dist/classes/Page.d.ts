@@ -1,7 +1,7 @@
-import Plugin from "./Plugins/PagePlugin";
+import PagePlugin from "./Plugins/PagePlugin";
 export default class {
     chunks: string[];
-    plugin: Plugin;
+    plugin: PagePlugin;
     private readonly name;
     constructor(page: string);
     toString(): string;

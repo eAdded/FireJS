@@ -5,6 +5,7 @@ class default_1 {
     constructor(page) {
         this.chunks = [];
         this.name = page;
+        // @ts-ignore
         this.plugin = new PagePlugin_1.default(this.name);
     }
     toString() {

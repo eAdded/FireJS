@@ -1,13 +1,14 @@
-import Plugin from "./Plugins/PagePlugin";
+import PagePlugin from "./Plugins/PagePlugin";
 
 export default class {
     public chunks: string[] = [];
-    public plugin: Plugin;
+    public plugin: PagePlugin;
     private readonly name: string;
 
     constructor(page: string) {
         this.name = page;
-        this.plugin = new Plugin(this.name);
+        // @ts-ignore
+        this.plugin = new PagePlugin(this.name);
     }
 
     toString(): string {
