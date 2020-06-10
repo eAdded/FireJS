@@ -10,22 +10,22 @@ export function mapPlugin(pluginPath: string, semiData: { rootPath: string, page
         if (rawPlugs.hasOwnProperty(rawPlugKey)) {
             const rawPlug = new (rawPlugs[rawPlugKey])() as FireJSPlugin;
             if (rawPlug.plugCode === PluginCode.PagePlugin) {
-                checkVer(rawPlug, PagePlugMinVer, rawPlugKey)
+                checkVer(rawPlug, PagePlugMinVer, rawPlugKey, pluginPath)
                 managePagePlugin(<PagePlugin>rawPlug, pluginPath, semiData ? semiData.pageMap : fullData.pageMap);
             } else if (rawPlug.plugCode === PluginCode.GlobalPlugin) {
                 if (fullData) {
-                    checkVer(rawPlug, GlobalPlugMinVer, rawPlugKey)
+                    checkVer(rawPlug, GlobalPlugMinVer, rawPlugKey, pluginPath)
                     manageGlobalPlugin(<GlobalPlugin>rawPlug, pluginPath, fullData);
                 }
             } else
-                throw new Error(`Plugin ${pluginPath} is of unknown type ${typeof rawPlug}`)
+                throw new Error(`unknown plugin ${rawPlugKey} in ${pluginPath}`)
         }
     }
 }
 
-function checkVer(rawPlug: FireJSPlugin, minVer: number, name: string) {
+function checkVer(rawPlug: FireJSPlugin, minVer: number, name: string, path: string) {
     if (rawPlug.version < minVer)
-        throw new Error(`PagePlugin [${name}] is outdated. Expected min version ${PagePlugMinVer} but found ${rawPlug.version}`)
+        throw new Error(`PagePlugin [${name}] in ${path} is outdated. Expected min version ${minVer} but found ${rawPlug.version}`)
 }
 
 function managePagePlugin(plugin: PagePlugin, pluginFile: string, pageMap: Map<string, Page>): void | never {
