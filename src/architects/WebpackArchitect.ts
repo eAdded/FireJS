@@ -9,8 +9,8 @@ export default class {
     private readonly $: $;
     public readonly defaultConfig: WebpackConfig;
 
-    constructor(globalData: $) {
-        this.$ = globalData;
+    constructor($: $) {
+        this.$ = $;
         const cssLoaderUse = [MiniCssExtractPlugin.loader,
             {
                 loader: 'css-loader',

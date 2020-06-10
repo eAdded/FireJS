@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import FireJS, {WebpackConfig} from "./FireJS"
+import FireJS from "./FireJS"
 import Server from "./server"
-import {isAbsolute, join, resolve} from "path"
+import {join} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";
 
 import ConfigMapper, {Config} from "./mappers/ConfigMapper";
@@ -52,7 +52,8 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
     if (args["--log-mode"])
         if (args["--log-mode"] !== "silent" && args["--log-mode"] !== "plain")
             throw new Error(`unknown log mode ${args["--log-mode"]}. Expected [ silent | plain ]`)
-    //init config acc to args
+    //init config acc to args        webpackConf.watch = webpackConf.watch || true;
+
     const [customConfig, config] = initConfig(args);
     //config disk
     if (args["--disk"]) {

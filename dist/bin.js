@@ -60,7 +60,7 @@ function init() {
     if (args["--log-mode"])
         if (args["--log-mode"] !== "silent" && args["--log-mode"] !== "plain")
             throw new Error(`unknown log mode ${args["--log-mode"]}. Expected [ silent | plain ]`);
-    //init config acc to args
+    //init config acc to args        webpackConf.watch = webpackConf.watch || true;
     const [customConfig, config] = initConfig(args);
     //config disk
     if (args["--disk"]) {

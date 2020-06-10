@@ -17,6 +17,7 @@ class default_1 {
     constructor(app) {
         this.app = app;
         this.$ = app.getContext();
+        this.$.pageArchitect.webpackArchitect.defaultConfig.watch = true;
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {

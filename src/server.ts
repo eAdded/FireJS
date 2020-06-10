@@ -11,6 +11,7 @@ export default class {
     constructor(app: FireJS) {
         this.app = app;
         this.$ = app.getContext();
+        this.$.pageArchitect.webpackArchitect.defaultConfig.watch = true;
     }
 
     async init() {

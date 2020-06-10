@@ -5,8 +5,8 @@ const path_1 = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CleanObsoleteChunks = require("webpack-clean-obsolete-chunks");
 class default_1 {
-    constructor(globalData) {
-        this.$ = globalData;
+    constructor($) {
+        this.$ = $;
         const cssLoaderUse = [MiniCssExtractPlugin.loader,
             {
                 loader: 'css-loader',
