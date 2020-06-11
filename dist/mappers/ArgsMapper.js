@@ -15,7 +15,6 @@ function getArgs() {
         .option(["-E", "--export-fly"], Boolean, "export project for distribution and for fly build")
         //conf
         .option(["-c", "--conf"], String, "path to FireJS config file")
-        .option(["--webpack-conf"], String, "path to webpack config")
         //logging
         .option(["--verbose"], Boolean, "print webpack stats on error")
         .option(["-l", "--log-mode"], String, "Log Mode. silent (log errors only) | plain (Log without styling i.e colors and symbols)")

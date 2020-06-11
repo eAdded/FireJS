@@ -4,7 +4,6 @@ export interface Args {
     "--export-fly": boolean;
     "--disk": boolean;
     "--ssr": boolean;
-    "--webpack-conf": string;
     "--conf": string;
     "--verbose": boolean;
     "--log-mode": "silent" | "plain";
