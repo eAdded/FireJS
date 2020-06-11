@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("./GlobalsSetter");
 const Page_1 = require("./classes/Page");
@@ -25,38 +16,11 @@ class default_1 {
         for (const __page in firejs_map.pageMap) {
             const page = new Page_1.default(__page);
             page.chunks = firejs_map.pageMap[__page];
-            // @ts-ignore
-            page.plugin.paths = new Map();
             this.map.set(__page, page);
         }
     }
     loadPagePlugin(pluginPath) {
         PluginMapper_1.mapPlugin(pluginPath, { pageMap: this.map, rootPath: this.rootDir }, undefined);
-    }
-    cachePluginData(_page) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const page = this.map.get(_page).plugin;
-            // @ts-ignore
-            page.paths.clear();
-            yield page.onBuild((path, content) => {
-                // @ts-ignore
-                page.paths.set(path, content);
-            });
-        });
-    }
-    renderWithPluginData(__page, path) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const page = this.map.get(__page);
-            // @ts-ignore
-            const content = page.plugin.paths.get(path);
-            return {
-                html: this.renderer.finalize(this.renderer.render(this.renderer.param.template, page, path, content || {})),
-                map: `window.__MAP__=${JSON.stringify({
-                    content,
-                    chunks: page.chunks
-                })}`
-            };
-        });
     }
     render(__page, path, content = {}) {
         const page = this.map.get(__page);

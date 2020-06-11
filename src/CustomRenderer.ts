@@ -6,11 +6,6 @@ import {mapPlugin} from "./mappers/PluginMapper";
 import {FIREJS_MAP, PathRelatives} from "./FireJS";
 import * as fs from "fs"
 
-interface RenderReturn {
-    html: string,
-    map: string
-}
-
 export default class {
     readonly map: Map<string, Page> = new Map()
     readonly renderer: StaticArchitect;
@@ -25,8 +20,6 @@ export default class {
         for (const __page in firejs_map.pageMap) {
             const page = new Page(__page);
             page.chunks = firejs_map.pageMap[__page];
-            // @ts-ignore
-            page.plugin.paths = new Map<string, any>();
             this.map.set(__page, page);
         }
     }
@@ -35,31 +28,10 @@ export default class {
         mapPlugin(pluginPath, {pageMap: this.map, rootPath: this.rootDir}, undefined);
     }
 
-    async cachePluginData(_page: string) {
-        const page = this.map.get(_page).plugin;
-        // @ts-ignore
-        page.paths.clear();
-        await page.onBuild((path, content) => {
-            // @ts-ignore
-            page.paths.set(path, content);
-        })
-    }
-
-    async renderWithPluginData(__page: string, path: string) {
-        const page = this.map.get(__page);
-        // @ts-ignore
-        const content = page.plugin.paths.get(path);
-        return {
-            html: this.renderer.finalize(
-                this.renderer.render(this.renderer.param.template, page, path, content || {})),
-            map: `window.__MAP__=${JSON.stringify({
-                content,
-                chunks: page.chunks
-            })}`
-        }
-    }
-
-    render(__page: string, path: string, content: any = {}): RenderReturn {
+    render(__page: string, path: string, content: any = {}): {
+        html: string,
+        map: string
+    } {
         const page = this.map.get(__page);
         return {
             html: this.renderer.finalize(
