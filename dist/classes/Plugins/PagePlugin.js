@@ -13,7 +13,7 @@ const FireJSPlugin_1 = require("./FireJSPlugin");
 exports.PagePlugMinVer = 0.1;
 class default_1 extends FireJSPlugin_1.default {
     constructor(page) {
-        super(0.1, FireJSPlugin_1.PluginCode.PagePlugin);
+        super(0.2, FireJSPlugin_1.PluginCode.PagePlugin);
         this.page = page;
     }
     onBuild(renderPage) {
