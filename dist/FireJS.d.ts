@@ -33,6 +33,10 @@ export interface FIREJS_MAP {
         [key: string]: string[];
     };
 }
+export interface CHUNK_MAP {
+    chunks: string[];
+    content: any;
+}
 export default class {
     private readonly $;
     private constructParams;

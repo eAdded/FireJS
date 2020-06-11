@@ -23,5 +23,7 @@ class default_1 extends FireJSPlugin_1.default {
     }
     initWebpack(webpackConfig) {
     }
+    initMap(map) {
+    }
 }
 exports.default = default_1;

@@ -11,4 +11,5 @@ export default abstract class FireJSPlugin {
         this.plugCode = plugCode;
         this.version = version;
     }
+
 }

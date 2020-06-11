@@ -1,4 +1,4 @@
-import {WebpackConfig} from "../../FireJS";
+import {CHUNK_MAP, WebpackConfig} from "../../FireJS";
 import FireJSPlugin, {PluginCode} from "./FireJSPlugin";
 
 export const PagePlugMinVer = 0.1;
@@ -16,5 +16,8 @@ export default abstract class extends FireJSPlugin {
     }
 
     initWebpack(webpackConfig: WebpackConfig) {
+    }
+
+    initMap(map: CHUNK_MAP) {
     }
 }

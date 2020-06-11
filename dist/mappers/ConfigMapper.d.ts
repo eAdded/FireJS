@@ -1,5 +1,4 @@
 /// <reference types="node" />
-/// <reference types="graceful-fs" />
 import * as fs from "fs";
 export interface Config {
     pro?: boolean;

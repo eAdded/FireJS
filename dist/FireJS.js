@@ -76,10 +76,12 @@ class default_1 {
             this.$.pageArchitect.buildPage(page, () => {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`);
                 page.plugin.onBuild((path, content) => {
-                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
+                    const chunkMap = {
                         content,
                         chunks: page.chunks
-                    })}`, this.$.outputFileSystem).catch(err => {
+                    };
+                    page.plugin.initMap(chunkMap);
+                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify(chunkMap)}`, this.$.outputFileSystem).catch(err => {
                         throw err;
                     });
                     Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)), this.$.outputFileSystem).catch(err => {
