@@ -13,17 +13,15 @@ const FireJSPlugin_1 = require("./FireJSPlugin");
 exports.PagePlugMinVer = 0.1;
 class default_1 extends FireJSPlugin_1.default {
     constructor(page) {
-        super(0.2, FireJSPlugin_1.PluginCode.PagePlugin);
+        super(0.3, FireJSPlugin_1.PluginCode.PagePlugin);
         this.page = page;
     }
-    onBuild(renderPage) {
+    onBuild(renderPage, ...extra) {
         return __awaiter(this, void 0, void 0, function* () {
             renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {});
         });
     }
     initWebpack(webpackConfig) {
-    }
-    preMapExport(path, chunkMap) {
     }
 }
 exports.default = default_1;

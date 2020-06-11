@@ -48,11 +48,6 @@ export interface FIREJS_MAP {
     },
 }
 
-export interface CHUNK_MAP {
-    chunks: string[],
-    content: any
-}
-
 export default class {
     private readonly $: $ = {globalPlugins: []};
 
@@ -116,14 +111,11 @@ export default class {
                     ).catch(err => {
                         throw err
                     });
-                    //render first because content is a shallow copy
-                    const chunkMap: CHUNK_MAP = {
-                        content,
-                        chunks: page.chunks
-                    }
-                    page.plugin.preMapExport(path, chunkMap);
                     writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
-                        `window.__MAP__=${JSON.stringify(chunkMap)}`,
+                        `window.__MAP__=${JSON.stringify({
+                            content,
+                            chunks: page.chunks
+                        })}`,
                         this.$.outputFileSystem
                     ).catch(err => {
                         throw err
