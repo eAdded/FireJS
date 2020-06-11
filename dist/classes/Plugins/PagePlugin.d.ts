@@ -6,5 +6,5 @@ export default abstract class extends FireJSPlugin {
     protected constructor(page: string);
     onBuild(renderPage: (path: string, content: any) => void): Promise<void>;
     initWebpack(webpackConfig: WebpackConfig): void;
-    initChunkMap(chunkMap: CHUNK_MAP): void;
+    preMapExport(path: string, chunkMap: CHUNK_MAP): void;
 }

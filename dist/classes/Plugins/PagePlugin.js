@@ -23,7 +23,7 @@ class default_1 extends FireJSPlugin_1.default {
     }
     initWebpack(webpackConfig) {
     }
-    initChunkMap(chunkMap) {
+    preMapExport(path, chunkMap) {
     }
 }
 exports.default = default_1;

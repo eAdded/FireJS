@@ -110,19 +110,20 @@ export default class {
             this.$.pageArchitect.buildPage(page, () => {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`)
                 page.plugin.onBuild((path, content) => {
-                    const chunkMap: CHUNK_MAP = {
-                        content,
-                        chunks: page.chunks
-                    }
-                    page.plugin.initChunkMap(chunkMap);
-                    writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
-                        `window.__MAP__=${JSON.stringify(chunkMap)}`,
+                    writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                        this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)),
                         this.$.outputFileSystem
                     ).catch(err => {
                         throw err
                     });
-                    writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                        this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)),
+                    //render first because content is a shallow copy
+                    const chunkMap: CHUNK_MAP = {
+                        content,
+                        chunks: page.chunks
+                    }
+                    page.plugin.preMapExport(path, chunkMap);
+                    writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
+                        `window.__MAP__=${JSON.stringify(chunkMap)}`,
                         this.$.outputFileSystem
                     ).catch(err => {
                         throw err

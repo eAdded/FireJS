@@ -11,13 +11,13 @@ export default abstract class extends FireJSPlugin {
         this.page = page;
     }
 
-    async onBuild(renderPage: (path: string, content: any) => void) {
+    async onBuild(renderPage: (path: string, content: any) => void): Promise<void> {
         renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
     }
 
     initWebpack(webpackConfig: WebpackConfig) {
     }
 
-    initChunkMap(chunkMap: CHUNK_MAP) {
+    preMapExport(path: string, chunkMap: CHUNK_MAP) {
     }
 }
