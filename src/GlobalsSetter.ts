@@ -1,2 +1,2 @@
 // @ts-ignore
-global.__FIREJS_VERSION__ = "0.17.2-beta";
+global.__FIREJS_VERSION__ = "0.17.2";
