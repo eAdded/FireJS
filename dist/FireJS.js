@@ -80,7 +80,7 @@ class default_1 {
                         content,
                         chunks: page.chunks
                     };
-                    page.plugin.initMap(chunkMap);
+                    page.plugin.initChunkMap(chunkMap);
                     Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify(chunkMap)}`, this.$.outputFileSystem).catch(err => {
                         throw err;
                     });

@@ -114,7 +114,7 @@ export default class {
                         content,
                         chunks: page.chunks
                     }
-                    page.plugin.initMap(chunkMap);
+                    page.plugin.initChunkMap(chunkMap);
                     writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
                         `window.__MAP__=${JSON.stringify(chunkMap)}`,
                         this.$.outputFileSystem

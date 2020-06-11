@@ -18,6 +18,6 @@ export default abstract class extends FireJSPlugin {
     initWebpack(webpackConfig: WebpackConfig) {
     }
 
-    initMap(map: CHUNK_MAP) {
+    initChunkMap(chunkMap: CHUNK_MAP) {
     }
 }
