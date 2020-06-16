@@ -1,5 +1,5 @@
 import FireJSPlugin from "./FireJSPlugin";
-export declare const PagePlugMinVer = 0.2;
+export declare const PagePlugMinVer = 0.1;
 export default abstract class extends FireJSPlugin {
     page: string;
     protected constructor(page: string);
