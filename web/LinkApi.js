@@ -27,7 +27,7 @@ window.LinkApi = {
     },
     runApp: function (func = window.ReactDOM.render) {
         func(window.React.createElement(window.__FIREJS_APP__.default, {content: window.__MAP__.content}),
-            document.getElementById("root")
+            document.getElementById("firejs-root")
         );
     },
     preloadChunks: function (chunks) {

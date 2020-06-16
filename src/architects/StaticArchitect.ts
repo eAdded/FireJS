@@ -4,7 +4,6 @@ import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
 import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
 import {JSDOM} from "jsdom"
-import {preloadChunks, loadChunks, loadMap} from "../../web/LinkApi.js";
 
 export interface StaticConfig {
     rel: PathRelatives,
@@ -31,6 +30,8 @@ export default class {
             `</script>`,
             "head");
         // @ts-ignore
+        global.window = {};
+        require("../../web/LinkApi");
         this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head")
         if (param.ssr)
             require(join(this.param.pathToLib, this.param.externals[0]));
@@ -46,12 +47,12 @@ export default class {
         )*/
     }
 
-    private renderStatic(page: Page, path: string, content: any) {
-
-    }
-
     render(page: Page, path: string, content: any) {
         const dom = new JSDOM(this.param.template);
+        dom.window.LinkApi = global.window.LinkApi;
+        dom.window.React = global.window.React
+        dom.window.ReactDOM = global.window.ReactDOM
+        dom.window.ReactDOMServer = global.window.ReactDOMServer
         global.window = dom.window;
         global.document = global.window.document;
         global.location = global.window.location;
@@ -74,20 +75,20 @@ export default class {
             );
         }
         //map
-        loadMap(path);
+        global.window.LinkApi.loadMap(path);
         //React
-        preloadChunks([this.param.externals[1]]);
-        loadChunks([this.param.externals[1]]);
+        global.window.LinkApi.preloadChunks([this.param.externals[1]]);
+        global.window.LinkApi.loadChunks([this.param.externals[1]]);
         //Main Chunk
-        preloadChunks([page.chunks[0]]);
-        loadChunks([page.chunks[0]]);
+        global.window.LinkApi.preloadChunks([page.chunks[0]]);
+        global.window.LinkApi.loadChunks([page.chunks[0]]);
         //Render Chunk
-        preloadChunks([this.param.externals[2]]);
-        loadChunks([this.param.externals[2]]);
+        global.window.LinkApi.preloadChunks([this.param.externals[2]]);
+        global.window.LinkApi.loadChunks([this.param.externals[2]]);
         //add rest of the chunks
         for (let i = 1; i < page.chunks.length; i++) {
-            preloadChunks([page.chunks[i]]);
-            loadChunks([page.chunks[i]]);
+            global.window.LinkApi.preloadChunks([page.chunks[i]]);
+            global.window.LinkApi.loadChunks([page.chunks[i]]);
         }
 
         /*page.plugin.onRender(callback =>

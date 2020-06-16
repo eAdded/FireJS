@@ -12,7 +12,14 @@ declare module NodeJS {
                 default: any
             },
             React: any,
-            ReactDOMServer: any
-        }
+            ReactDOM: any,
+            ReactDOMServer: any,
+            LinkApi: {
+                loadMap: (url: string) => void,
+                preloadChunks: (chunks: string[]) => void,
+                loadChunks: (chunks: string[]) => void
+            }
+        },
+        __FIREJS_VERSION__: string;
     }
 }
