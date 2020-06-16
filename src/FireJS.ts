@@ -112,7 +112,7 @@ export default class {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`)
                 page.plugin.onBuild((path, content) => {
                     writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                        this.$.renderer.finalize(this.$.renderer.render(this.$.renderer.param.template, page, path, content)),
+                        this.$.renderer.render(page, path, content),
                         this.$.outputFileSystem
                     ).catch(err => {
                         throw err

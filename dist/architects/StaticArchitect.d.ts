@@ -15,9 +15,7 @@ export default class {
     param: StaticConfig;
     constructor(param: StaticConfig);
     renderGlobalPlugin(globalPlugin: GlobalPlugin): void;
-    renderStatic(page: Page, path: string, content: any): any;
-    render(template: string, page: Page, path: string, content: any): string;
-    addChunk(template: string, chunk: string, root?: string, tag?: keyof TemplateTags): string;
+    private renderStatic;
+    render(page: Page, path: string, content: any): string;
     addInnerHTML(template: string, element: string, tag: keyof TemplateTags): string;
-    finalize(template: string): string;
 }

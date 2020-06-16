@@ -1,17 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
+const jsdom_1 = require("jsdom");
+const LinkApi_js_1 = require("../../web/LinkApi.js");
 class default_1 {
     constructor(param) {
-        // @ts-ignore
-        global.window = global;
-        // @ts-ignore
-        global.__SSR__ = { __SSR__: param.static };
         this.param = param;
         this.param.template = this.addInnerHTML(this.param.template, `<script>` +
             `window.__LIB_REL__="${this.param.rel.libRel}";` +
             `window.__MAP_REL__="${this.param.rel.mapRel}";` +
             `window.__PAGES__={404:"/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}"};` +
+            `window.__SSR__=` +
             `${param.ssr ? `window.__HYDRATE__ = true;` : ""}` +
             `</script>`, "head");
         // @ts-ignore
@@ -20,81 +19,61 @@ class default_1 {
             require(path_1.join(this.param.pathToLib, this.param.externals[0]));
     }
     renderGlobalPlugin(globalPlugin) {
-        globalPlugin.onRender(callback => this.param.template = callback(this.param.template), (chunk, tag, root) => this.param.template = this.addChunk(this.param.template, chunk, root, tag), (element, tag) => this.param.template = this.addInnerHTML(this.param.template, element, tag));
+        /*globalPlugin.onRender(callback =>
+                this.param.template = callback(this.param.template),
+            (chunk, tag, root) =>
+                this.param.template = this.addChunk(this.param.template, chunk, root, tag),
+            (element, tag) =>
+                this.param.template = this.addInnerHTML(this.param.template, element, tag)
+        )*/
     }
     renderStatic(page, path, content) {
-        // @ts-ignore
-        global.__LIB_REL__ = this.param.rel.libRel;
-        // @ts-ignore
-        global.__MAP_REL__ = this.param.rel.mapRel;
-        // @ts-ignore
-        global.__MAP__ = {
+    }
+    render(page, path, content) {
+        const dom = new jsdom_1.JSDOM(this.param.template);
+        global.window = dom.window;
+        global.document = global.window.document;
+        global.location = global.window.location;
+        //globals
+        global.window.__LIB_REL__ = this.param.rel.libRel;
+        global.window.__MAP_REL__ = this.param.rel.mapRel;
+        global.window.__MAP__ = {
             content,
             chunks: []
         };
-        // @ts-ignore
-        global.location = { pathname: path };
-        // @ts-ignore
-        global.document = {};
-        // @ts-ignore
-        require(path_1.join(this.param.pathToLib, page.chunks[0]));
-        // @ts-ignore
-        return ReactDOMServer.renderToString(
-        // @ts-ignore
-        React.createElement(window.__FIREJS_APP__.default, { content: window.__MAP__.content }));
-    }
-    render(template, page, path, content) {
-        //map
-        template = this.addChunk(template, path_1.join(this.param.rel.mapRel, path + ".map.js"), "", "head");
+        global.window.location.pathname = path;
         //static render
-        const staticRender = this.param.ssr ? this.renderStatic(page, path, content) : "";
-        if (this.param.ssr) {
-            // @ts-ignore
-            if (window.__Helmet__) {
-                // @ts-ignore
-                const helmet = window.__Helmet__.renderStatic();
-                for (let head_element in helmet)
-                    template = this.addInnerHTML(template, helmet[head_element].toString(), "head");
-            }
+        if ((global.window.__SSR__ = this.param.ssr)) {
+            require(path_1.join(this.param.pathToLib, page.chunks[0]));
+            document.getElementById("firejs-root").innerHTML = global.window.ReactDOMServer.renderToString(global.window.React.createElement(global.window.__FIREJS_APP__.default, { content: global.window.__MAP__.content }));
         }
+        //map
+        LinkApi_js_1.loadMap(path);
         //React
-        template = this.addChunk(template, this.param.externals[1]);
+        LinkApi_js_1.preloadChunks([this.param.externals[1]]);
+        LinkApi_js_1.loadChunks([this.param.externals[1]]);
         //Main Chunk
-        template = this.addChunk(template, page.chunks[0]);
+        LinkApi_js_1.preloadChunks([page.chunks[0]]);
+        LinkApi_js_1.loadChunks([page.chunks[0]]);
         //Render Chunk
-        template = this.addChunk(template, this.param.externals[2]);
+        LinkApi_js_1.preloadChunks([this.param.externals[2]]);
+        LinkApi_js_1.loadChunks([this.param.externals[2]]);
         //add rest of the chunks
-        for (let i = 1; i < page.chunks.length; i++)
-            template = this.addChunk(template, page.chunks[i]);
-        //add static render
-        template = template.replace(this.param.tags.static, `<div id='root'>${staticRender}</div>`);
-        page.plugin.onRender(callback => template = callback(template), (chunk, tag, root) => template = this.addChunk(template, chunk, root, tag), (element, tag) => template = this.addInnerHTML(template, element, tag));
-        return template;
-    }
-    addChunk(template, chunk, root = undefined, tag = undefined) {
-        root = root === undefined ? this.param.rel.libRel : root;
-        const href = path_1.join(root, chunk);
-        if (tag === "script" || chunk.endsWith(".js")) {
-            template = template.replace(this.param.tags.style, `<link rel = "preload" as = "script"href = "/${href}"crossorigin = "anonymous" >${this.param.tags.style}`);
-            return template.replace(this.param.tags.script, ` <script src = "/${href}" crossorigin = "anonymous" > </script>${this.param.tags.script}`);
+        for (let i = 1; i < page.chunks.length; i++) {
+            LinkApi_js_1.preloadChunks([page.chunks[i]]);
+            LinkApi_js_1.loadChunks([page.chunks[i]]);
         }
-        else if (tag === "style" || chunk.endsWith(".css")) {
-            template = template.replace(this.param.tags.style, `<link rel="preload" as="script" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
-            return template.replace(this.param.tags.style, `<link rel="stylesheet" href="/${href}" crossorigin="anonymous">${this.param.tags.style}`);
-        }
-        else if (tag === "head")
-            return template.replace(this.param.tags.head, `<link href="/${href}" crossorigin="anonymous">${this.param.tags.head}`);
-        else
-            return template.replace(this.param.tags.unknown, `<link href="/${href}" crossorigin="anonymous">${this.param.tags.unknown}`);
+        /*page.plugin.onRender(callback =>
+                template = callback(template),
+            (chunk, tag, root) =>
+                template = this.addChunk(template, chunk, root, tag),
+            (element, tag) =>
+                template = this.addInnerHTML(template, element, tag)
+        )*/
+        return window.document.documentElement.outerHTML;
     }
     addInnerHTML(template, element, tag) {
         return template.replace(this.param.tags[tag], `${element}${this.param.tags[tag]}`);
-    }
-    finalize(template) {
-        Object.keys(this.param.tags).forEach(tag => {
-            template = template.replace(this.param.tags[tag], "");
-        });
-        return template;
     }
 }
 exports.default = default_1;

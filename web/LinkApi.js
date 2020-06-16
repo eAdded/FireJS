@@ -1,4 +1,4 @@
-export default {
+window.LinkApi = {
     loadMap: function (url) {
         const map_script = document.createElement("script");
         map_script.src = `/${window.__MAP_REL__}${url === "/" ? "/index" : url}.map.js`;
@@ -20,9 +20,7 @@ export default {
         const script = document.createElement("script");
         script.src = `/${window.__LIB_REL__}/${window.__MAP__.chunks.shift()}`
         this.loadChunks(window.__MAP__.chunks);
-        script.onload = () => {
-            this.runApp();
-        }
+        script.onload = this.runApp;
         document.body.appendChild(script);
         if (pushState)
             window.history.pushState(undefined, undefined, url);
