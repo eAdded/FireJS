@@ -155,12 +155,16 @@ export default class {
                 promises.push(new Promise(resolve => {
                     this.buildPage(page).then(() => {
                         map.pageMap[page.toString()] = page.chunks;
-                        const chunkPath = join(this.$.config.paths.lib, page.chunks[0]);
-                        this.$.outputFileSystem.copyFile(chunkPath, join(this.$.config.paths.fly, page.chunks[0]), err => {
-                            resolve();
-                            if (err)
-                                throw new Error(`Error while moving ${chunkPath} to ${this.$.config.paths.fly}`);
-                        });
+                        page.chunks.forEach(chunk => {
+                            if (chunk.endsWith(".js")) {
+                                const chunkPath = join(this.$.config.paths.lib, chunk);
+                                this.$.outputFileSystem.copyFile(chunkPath, join(this.$.config.paths.fly, chunk), err => {
+                                    resolve();
+                                    if (err)
+                                        throw new Error(`Error while moving ${chunkPath} to ${this.$.config.paths.fly}`);
+                                });
+                            }
+                        })
                     });
                 }))
             }

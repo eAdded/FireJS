@@ -29,7 +29,7 @@ class default_1 {
     render(page, path, content = {}) {
         const _page = this.pageMap.get(page);
         return {
-            html: this.renderer.finalize(this.renderer.render(this.renderer.param.template, _page, path, content)),
+            html: this.renderer.render(_page, path, content),
             map: `window.__MAP__=${JSON.stringify({
                 content,
                 chunks: _page.chunks
