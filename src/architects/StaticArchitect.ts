@@ -55,7 +55,7 @@ export default class {
         dom.window.React = global.window.React
         dom.window.ReactDOM = global.window.ReactDOM
         dom.window.ReactDOMServer = global.window.ReactDOMServer
-        for (const domKey of ["document", "window", "location", "React", "ReactDOM"])
+        for (const domKey of ["document", "window", "location", "React", "ReactDOM","LinkApi"])
             global[domKey] = dom.window[domKey];
         //globals
         global.window.__LIB_REL__ = this.param.rel.libRel;
