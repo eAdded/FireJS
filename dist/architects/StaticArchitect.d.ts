@@ -15,6 +15,6 @@ export default class {
     param: StaticConfig;
     constructor(param: StaticConfig);
     renderGlobalPlugin(globalPlugin: GlobalPlugin): void;
-    render(page: Page, path: string, content: any): string;
+    render(page: Page, path: string, content: any): any;
     addInnerHTML(template: string, element: string, tag: keyof TemplateTags): string;
 }

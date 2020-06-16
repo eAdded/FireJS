@@ -48,14 +48,15 @@ export default class {
     }
 
     render(page: Page, path: string, content: any) {
-        const dom = new JSDOM(this.param.template);
+        const dom = new JSDOM(this.param.template, {
+            url: "https://localhost:5000" + path,
+        });
         dom.window.LinkApi = global.window.LinkApi;
         dom.window.React = global.window.React
         dom.window.ReactDOM = global.window.ReactDOM
         dom.window.ReactDOMServer = global.window.ReactDOMServer
-        global.window = dom.window;
-        global.document = global.window.document;
-        global.location = global.window.location;
+        for (const domKey of ["document", "window", "location", "React", "ReactDOM"])
+            global[domKey] = dom.window[domKey];
         //globals
         global.window.__LIB_REL__ = this.param.rel.libRel;
         global.window.__MAP_REL__ = this.param.rel.mapRel;
@@ -63,10 +64,13 @@ export default class {
             content,
             chunks: []
         };
-        global.window.location.pathname = path;
         //static render
         if ((global.window.__SSR__ = this.param.ssr)) {
-            require(join(this.param.pathToLib, page.chunks[0]));
+            page.chunks.forEach(chunk => {
+                if (chunk.endsWith(".js"))
+                    require(join(this.param.pathToLib, chunk));
+            })
+
             document.getElementById("firejs-root").innerHTML = global.window.ReactDOMServer.renderToString(
                 global.window.React.createElement(
                     global.window.__FIREJS_APP__.default,
@@ -98,7 +102,7 @@ export default class {
             (element, tag) =>
                 template = this.addInnerHTML(template, element, tag)
         )*/
-        return window.document.documentElement.outerHTML;
+        return dom.serialize();
     }
 
     addInnerHTML(template: string, element: string, tag: keyof TemplateTags) {
