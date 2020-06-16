@@ -1,4 +1,4 @@
-export default ({to, children, className}) => {
+export default ({to, children, className, style}) => {
     let wasLoaded = false;
 
     function preLoad(event, callback) {
@@ -25,8 +25,8 @@ export default ({to, children, className}) => {
 
     return (
         // @ts-ignore
-        <a href={to} className={className} onClick={apply.bind(this)} onMouseEnter={preLoad.bind(this)}>
-           {children}
+        <a href={to} style={style} className={className} onClick={apply.bind(this)} onMouseEnter={preLoad.bind(this)}>
+            {children}
         </a>
     )
 }

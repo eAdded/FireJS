@@ -1,7 +1,6 @@
-import {WebpackConfig} from "../../FireJS";
 import FireJSPlugin, {PluginCode} from "./FireJSPlugin";
 
-export const GlobalPlugMinVer = 0.1;
+export const GlobalPlugMinVer = 0.2;
 
 export default class extends FireJSPlugin {
 
@@ -10,8 +9,5 @@ export default class extends FireJSPlugin {
     }
 
     initServer(server: Express.Application) {
-    }
-
-    initWebpack(webpackConfig: WebpackConfig) {
     }
 }

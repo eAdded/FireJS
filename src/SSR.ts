@@ -1,4 +1,6 @@
 require("./GlobalsSetter")
+
+import GlobalPlugin from "./classes/Plugins/GlobalPlugin";
 import Page from "./classes/Page";
 import StaticArchitect from "./architects/StaticArchitect";
 import {join} from "path";
@@ -7,10 +9,11 @@ import {FIREJS_MAP, PathRelatives} from "./FireJS";
 import * as fs from "fs"
 
 export default class {
-    readonly map: Map<string, Page> = new Map()
+    readonly pageMap: Map<string, Page> = new Map()
     readonly renderer: StaticArchitect;
     readonly rel: PathRelatives;
     readonly rootDir: string;
+    readonly globalPlugins: GlobalPlugin[] = [];
 
     constructor(pathToLibDir: string, rootDir: string = process.cwd()) {
         const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(this.rootDir = rootDir, pathToLibDir, "firejs.map.json")).toString());
@@ -20,25 +23,28 @@ export default class {
         for (const __page in firejs_map.pageMap) {
             const page = new Page(__page);
             page.chunks = firejs_map.pageMap[__page];
-            this.map.set(__page, page);
+            this.pageMap.set(__page, page);
         }
     }
 
-    loadPagePlugin(pluginPath: string) {
-        mapPlugin(pluginPath, {pageMap: this.map, rootPath: this.rootDir}, undefined);
+    loadPlugin(pluginPath: string) {
+        const gp: GlobalPlugin[] = [];
+        mapPlugin(pluginPath, {pageMap: this.pageMap, rootPath: this.rootDir, globalPlugins: gp});
+        gp.forEach(plug => this.renderer.renderGlobalPlugin(plug))
+        this.globalPlugins.push(...gp);
     }
 
-    render(__page: string, path: string, content: any = {}): {
+    render(page: string, path: string, content: any = {}): {
         html: string,
         map: string
     } {
-        const page = this.map.get(__page);
+        const _page = this.pageMap.get(page);
         return {
             html: this.renderer.finalize(
-                this.renderer.render(this.renderer.param.template, page, path, content)),
+                this.renderer.render(this.renderer.param.template, _page, path, content)),
             map: `window.__MAP__=${JSON.stringify({
                 content,
-                chunks: page.chunks
+                chunks: _page.chunks
             })}`
         }
     }

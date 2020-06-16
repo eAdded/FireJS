@@ -1,7 +1,6 @@
-import {WebpackConfig} from "../../FireJS";
 import FireJSPlugin, {PluginCode} from "./FireJSPlugin";
 
-export const PagePlugMinVer = 0.1;
+export const PagePlugMinVer = 0.2;
 
 export default abstract class extends FireJSPlugin {
     page: string;
@@ -13,8 +12,5 @@ export default abstract class extends FireJSPlugin {
 
     async onBuild(renderPage: (path: string, content: any) => void, ...extra: any): Promise<void> {
         renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
-    }
-
-    initWebpack(webpackConfig: WebpackConfig) {
     }
 }

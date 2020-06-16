@@ -1,6 +1,6 @@
-import GlobalPlugin from "./classes/Plugins/GlobalPlugin";
-
 require("./GlobalsSetter")
+
+import GlobalPlugin from "./classes/Plugins/GlobalPlugin";
 import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
@@ -83,7 +83,12 @@ export default class {
         //mapPlugins
         if (this.$.config.plugins.length > 0) {
             this.$.cli.log("Mapping Plugins");
-            this.$.config.plugins.forEach(plugin => mapPlugin(plugin, undefined, this.$))
+            this.$.config.plugins.forEach(plugin => mapPlugin(plugin, {
+                globalPlugins: this.$.globalPlugins,
+                webpackArchitect: this.$.pageArchitect.webpackArchitect,
+                pageMap: this.$.pageMap,
+                rootPath: this.$.config.paths.root
+            }))
         }
     }
 
@@ -96,8 +101,9 @@ export default class {
             explicitPages: this.$.config.pages,
             tags: this.$.config.templateTags,
             template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString(),
-            ssr: this.$.config.ssr
-        })
+            ssr: this.$.config.ssr,
+        });
+        this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
     }
 
     buildPage(page: Page): Promise<void> {

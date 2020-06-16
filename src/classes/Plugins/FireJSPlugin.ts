@@ -1,3 +1,6 @@
+import {WebpackConfig} from "../../FireJS";
+import {TemplateTags} from "../../mappers/ConfigMapper";
+
 export enum PluginCode {
     GlobalPlugin = 1,
     PagePlugin
@@ -12,4 +15,13 @@ export default abstract class FireJSPlugin {
         this.version = version;
     }
 
+    initWebpack(webpackConfig: WebpackConfig) {
+    }
+
+
+    onRender(
+        setTemplate: (callback: (template: string) => string) => void,
+        addChunk: (chunk: string, tag: keyof TemplateTags, root?: string) => void,
+        addInnerHtml: (element: string, tag: keyof TemplateTags) => void) {
+    }
 }

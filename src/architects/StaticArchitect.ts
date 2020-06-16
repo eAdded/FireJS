@@ -2,6 +2,7 @@ import {PathRelatives} from "../FireJS";
 import {join} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
+import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
 
 export interface StaticConfig {
     rel: PathRelatives,
@@ -10,7 +11,7 @@ export interface StaticConfig {
     explicitPages: ExplicitPages,
     pathToLib: string,
     template: string,
-    ssr: boolean
+    ssr: boolean,
 }
 
 export default class {
@@ -34,6 +35,16 @@ export default class {
         this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head")
         if (param.ssr)
             require(join(this.param.pathToLib, this.param.externals[0]));
+    }
+
+    renderGlobalPlugin(globalPlugin: GlobalPlugin) {
+        globalPlugin.onRender(callback =>
+                this.param.template = callback(this.param.template),
+            (chunk, tag, root) =>
+                this.param.template = this.addChunk(this.param.template, chunk, root, tag),
+            (element, tag) =>
+                this.param.template = this.addInnerHTML(this.param.template, element, tag)
+        )
     }
 
     renderStatic(page: Page, path: string, content: any) {
@@ -86,11 +97,19 @@ export default class {
         template = template.replace(
             this.param.tags.static,
             `<div id='root'>${staticRender}</div>`);
+
+        page.plugin.onRender(callback =>
+                template = callback(template),
+            (chunk, tag, root) =>
+                template = this.addChunk(template, chunk, root, tag),
+            (element, tag) =>
+                template = this.addInnerHTML(template, element, tag)
+        )
         return template
     }
 
 
-    addChunk(template, chunk, root = undefined, tag = undefined) {
+    addChunk(template: string, chunk: string, root: string = undefined, tag: keyof TemplateTags = undefined) {
         root = root === undefined ? this.param.rel.libRel : root;
         const href = join(root, chunk);
         if (tag === "script" || chunk.endsWith(".js")) {
@@ -105,7 +124,7 @@ export default class {
             return template.replace(this.param.tags.unknown, `<link href="/${href}" crossorigin="anonymous">${this.param.tags.unknown}`);
     }
 
-    addInnerHTML(template: string, element: string, tag: string) {
+    addInnerHTML(template: string, element: string, tag: keyof TemplateTags) {
         return template.replace(this.param.tags[tag], `${element}${this.param.tags[tag]}`)
     }
 

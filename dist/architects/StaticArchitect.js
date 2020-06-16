@@ -19,6 +19,9 @@ class default_1 {
         if (param.ssr)
             require(path_1.join(this.param.pathToLib, this.param.externals[0]));
     }
+    renderGlobalPlugin(globalPlugin) {
+        globalPlugin.onRender(callback => this.param.template = callback(this.param.template), (chunk, tag, root) => this.param.template = this.addChunk(this.param.template, chunk, root, tag), (element, tag) => this.param.template = this.addInnerHTML(this.param.template, element, tag));
+    }
     renderStatic(page, path, content) {
         // @ts-ignore
         global.__LIB_REL__ = this.param.rel.libRel;
@@ -65,6 +68,7 @@ class default_1 {
             template = this.addChunk(template, page.chunks[i]);
         //add static render
         template = template.replace(this.param.tags.static, `<div id='root'>${staticRender}</div>`);
+        page.plugin.onRender(callback => template = callback(template), (chunk, tag, root) => template = this.addChunk(template, chunk, root, tag), (element, tag) => template = this.addInnerHTML(template, element, tag));
         return template;
     }
     addChunk(template, chunk, root = undefined, tag = undefined) {

@@ -10,5 +10,9 @@ class FireJSPlugin {
         this.plugCode = plugCode;
         this.version = version;
     }
+    initWebpack(webpackConfig) {
+    }
+    onRender(setTemplate, addChunk, addInnerHtml) {
+    }
 }
 exports.default = FireJSPlugin;
