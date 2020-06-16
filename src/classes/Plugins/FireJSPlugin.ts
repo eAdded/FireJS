@@ -18,10 +18,6 @@ export default abstract class FireJSPlugin {
     initWebpack(webpackConfig: WebpackConfig) {
     }
 
-
-    onRender(
-        setTemplate: (callback: (template: string) => string) => void,
-        addChunk: (chunk: string, tag: keyof TemplateTags, root?: string) => void,
-        addInnerHtml: (element: string, tag: keyof TemplateTags) => void) {
+    onRender(){
     }
 }

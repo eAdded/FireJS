@@ -30,7 +30,9 @@ export default class {
     loadPlugin(pluginPath: string) {
         const gp: GlobalPlugin[] = [];
         mapPlugin(pluginPath, {pageMap: this.pageMap, rootPath: this.rootDir, globalPlugins: gp});
+/*
         gp.forEach(plug => this.renderer.renderGlobalPlugin(plug))
+*/
         this.globalPlugins.push(...gp);
     }
 

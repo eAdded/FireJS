@@ -23,7 +23,9 @@ class default_1 {
     loadPlugin(pluginPath) {
         const gp = [];
         PluginMapper_1.mapPlugin(pluginPath, { pageMap: this.pageMap, rootPath: this.rootDir, globalPlugins: gp });
-        gp.forEach(plug => this.renderer.renderGlobalPlugin(plug));
+        /*
+                gp.forEach(plug => this.renderer.renderGlobalPlugin(plug))
+        */
         this.globalPlugins.push(...gp);
     }
     render(page, path, content = {}) {

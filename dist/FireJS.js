@@ -71,10 +71,12 @@ class default_1 {
                 externals: yield this.$.pageArchitect.buildExternals(),
                 explicitPages: this.$.config.pages,
                 tags: this.$.config.templateTags,
-                template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString(),
+                template: this.$.inputFileSystem.readFileSync(path_1.join(__dirname, "../web/template.html")).toString(),
                 ssr: this.$.config.ssr,
             });
-            this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
+            /*
+                    this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
+            */
         });
     }
     buildPage(page) {
@@ -109,7 +111,7 @@ class default_1 {
     exportFly() {
         return new Promise((resolve) => {
             const map = {
-                staticConfig: Object.assign(Object.assign({}, this.$.renderer.param), { template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString() }),
+                staticConfig: Object.assign(Object.assign({}, this.$.renderer.param), { template: this.$.inputFileSystem.readFileSync(path_1.join(__dirname, "../web/template.html")).toString() }),
                 pageMap: {},
             };
             const promises = [];

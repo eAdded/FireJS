@@ -2,7 +2,6 @@ import {PathRelatives} from "../FireJS";
 import {join} from "path"
 import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
-import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
 import {JSDOM} from "jsdom"
 
 export interface StaticConfig {
@@ -35,16 +34,6 @@ export default class {
         this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head")
         if (param.ssr)
             require(join(this.param.pathToLib, this.param.externals[0]));
-    }
-
-    renderGlobalPlugin(globalPlugin: GlobalPlugin) {
-        /*globalPlugin.onRender(callback =>
-                this.param.template = callback(this.param.template),
-            (chunk, tag, root) =>
-                this.param.template = this.addChunk(this.param.template, chunk, root, tag),
-            (element, tag) =>
-                this.param.template = this.addInnerHTML(this.param.template, element, tag)
-        )*/
     }
 
     render(page: Page, path: string, content: any) {

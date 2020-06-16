@@ -14,7 +14,6 @@ export interface Config {
         dist?: string;
         cache?: string;
         fly?: string;
-        template?: string;
         lib?: string;
         map?: string;
         static?: string;

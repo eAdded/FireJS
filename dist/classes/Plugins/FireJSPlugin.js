@@ -12,7 +12,7 @@ class FireJSPlugin {
     }
     initWebpack(webpackConfig) {
     }
-    onRender(setTemplate, addChunk, addInnerHtml) {
+    onRender() {
     }
 }
 exports.default = FireJSPlugin;

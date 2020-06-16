@@ -19,15 +19,6 @@ class default_1 {
         if (param.ssr)
             require(path_1.join(this.param.pathToLib, this.param.externals[0]));
     }
-    renderGlobalPlugin(globalPlugin) {
-        /*globalPlugin.onRender(callback =>
-                this.param.template = callback(this.param.template),
-            (chunk, tag, root) =>
-                this.param.template = this.addChunk(this.param.template, chunk, root, tag),
-            (element, tag) =>
-                this.param.template = this.addInnerHTML(this.param.template, element, tag)
-        )*/
-    }
     render(page, path, content) {
         const dom = new jsdom_1.JSDOM(this.param.template, {
             url: "https://localhost:5000" + path,

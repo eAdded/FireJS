@@ -100,10 +100,12 @@ export default class {
             externals: await this.$.pageArchitect.buildExternals(),
             explicitPages: this.$.config.pages,
             tags: this.$.config.templateTags,
-            template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString(),
+            template: this.$.inputFileSystem.readFileSync(join(__dirname, "../web/template.html")).toString(),
             ssr: this.$.config.ssr,
         });
-        this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
+        /*
+                this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
+        */
     }
 
     buildPage(page: Page): Promise<void> {
@@ -146,7 +148,7 @@ export default class {
             const map: FIREJS_MAP = {
                 staticConfig: {
                     ...this.$.renderer.param,
-                    template: this.$.inputFileSystem.readFileSync(this.$.config.paths.template).toString()
+                    template: this.$.inputFileSystem.readFileSync(join(__dirname, "../web/template.html")).toString()
                 },
                 pageMap: {},
             }
