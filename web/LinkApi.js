@@ -8,7 +8,7 @@ window.LinkApi = {
     preloadPage: function (url, callback) {
         const map_script = this.loadMap(url);
         map_script.onload = () => {
-            this.preloadChunks(window.__MAP__.chunks);
+            this.preloadChunks(window.__MAP__.chunks, "prefetch");
             callback();
         };
         map_script.onerror = () => {
@@ -17,6 +17,7 @@ window.LinkApi = {
         };
     },
     loadPage: function (url, pushState = true) {
+        window.webpackJsonp_FIREJS_APP_ = undefined
         const script = document.createElement("script");
         script.src = `/${window.__LIB_REL__}/${window.__MAP__.chunks.shift()}`
         this.loadChunks(window.__MAP__.chunks);
@@ -32,10 +33,10 @@ window.LinkApi = {
             document.getElementById("firejs-root")
         );
     },
-    preloadChunks: function (chunks) {
+    preloadChunks: function (chunks, rel = "preload") {
         chunks.forEach(chunk => {
             const ele = document.createElement("link");
-            ele.rel = "preload";
+            ele.rel = rel;
             ele.href = `/${window.__LIB_REL__}/${chunk}`;
             ele.crossOrigin = "anonymous";
             switch (chunk.substring(chunk.lastIndexOf("."))) {
