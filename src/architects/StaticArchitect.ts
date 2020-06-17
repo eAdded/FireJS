@@ -56,6 +56,7 @@ export default class {
     }
 
     render(page: Page, path: string, content: any) {
+        //template serialize to prevent overwriting
         const dom = new JSDOM(this.config.template.serialize(), {
             url: "https://localhost:5000" + path,
         });
@@ -104,8 +105,9 @@ export default class {
             global.window.LinkApi.preloadChunks([page.chunks[i]]);
             global.window.LinkApi.loadChunks([page.chunks[i]]);
         }
-
+        //call plugin
         page.plugin.onRender(dom);
+        //serialize i.e get html
         return dom.serialize();
     }
 }
