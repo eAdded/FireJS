@@ -8,6 +8,7 @@ declare module NodeJS {
                 chunks: string[]
             },
             __SSR__: boolean,
+            __HYDRATE__: boolean,
             __FIREJS_APP__: {
                 default: any
             },
