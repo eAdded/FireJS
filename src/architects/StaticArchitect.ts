@@ -66,9 +66,17 @@ export default class {
             dom.window.React = global.window.React
             dom.window.ReactDOM = global.window.ReactDOM
             dom.window.ReactDOMServer = global.window.ReactDOMServer
+            dom.window.FireJS_Require = global.window.FireJS_Require;
             //load stuff from dom.window to global
             for (const domKey of ["document", "window", "location", "React", "ReactDOM", "LinkApi"])
                 global[domKey] = dom.window[domKey];
+            //globals
+            global.window.__LIB_REL__ = this.config.rel.libRel;
+            global.window.__MAP_REL__ = this.config.rel.mapRel;
+            global.window.__MAP__ = {
+                content,
+                chunks: []
+            };
             //chunks
             {
                 //map
@@ -88,13 +96,6 @@ export default class {
                     global.window.LinkApi.loadChunks([page.chunks[i]]);
                 }
             }
-            //globals
-            global.window.__LIB_REL__ = this.config.rel.libRel;
-            global.window.__MAP_REL__ = this.config.rel.mapRel;
-            global.window.__MAP__ = {
-                content,
-                chunks: []
-            };
             global.window.finish = () => {
                 //call plugin
                 page.plugin.onRender(dom);
@@ -103,7 +104,6 @@ export default class {
             }
             //static render
             if ((global.window.__SSR__ = this.config.ssr)) {
-                require("../../web/FireJS_Require.js")
                 page.chunks.forEach(chunk => {
                     if (chunk.endsWith(".js"))
                         require(join(this.config.pathToLib, chunk));

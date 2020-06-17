@@ -20,6 +20,7 @@ declare module NodeJS {
                 loadChunks: (chunks: string[]) => void
             },
             finish: () => void
+            FireJS_Require: (chunkPromise: Promise<{ default: any }>, id: string, options: any, children: any) => void
         },
         __FIREJS_VERSION__: string;
     }
