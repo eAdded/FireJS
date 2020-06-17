@@ -66,8 +66,9 @@ export default class {
             dom.window.ReactDOM = global.window.ReactDOM
             dom.window.ReactDOMServer = global.window.ReactDOMServer
             dom.window.FireJS_Require = global.window.FireJS_Require;
+            dom.window.__COUNT__ = global.window.__COUNT__ = 0;
             //load stuff from dom.window to global
-            for (const domKey of ["document", "window", "location", "React", "ReactDOM", "LinkApi"])
+            for (const domKey of ["document", "window", "location", "React", "ReactDOM", "LinkApi","FireJS_Require","__COUNT__"])
                 global[domKey] = dom.window[domKey];
             //globals
             global.window.__LIB_REL__ = this.config.rel.libRel;
@@ -113,6 +114,8 @@ export default class {
                         {content: global.window.__MAP__.content}
                     )
                 );
+                if (global.window.__COUNT__ === 0)
+                    global.window.finish();
             } else
                 global.window.finish();
         });

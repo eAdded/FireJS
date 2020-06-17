@@ -22,6 +22,7 @@ declare module NodeJS {
             },
             finish: () => void
             FireJS_Require: (chunkPromise: Promise<{ default: any }>, id: string, options: any, children: any) => void
+            __COUNT__: number
         },
         __FIREJS_VERSION__: string;
     }
