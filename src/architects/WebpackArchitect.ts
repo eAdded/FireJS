@@ -48,7 +48,7 @@ export default class {
                         loader: 'babel-loader',
                         options: {
                             cacheDirectory: join(this.$.config.paths.cache, ".babelCache"),
-                            presets: ["@babel/preset-env", "@babel/preset-react"]
+                            presets: ["@babel/preset-env", "@babel/preset-react"],
                         }
                     },
                 }, {

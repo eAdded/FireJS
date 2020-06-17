@@ -18,5 +18,5 @@ export default class {
     config: StaticData;
     constructor(param: StaticConfig);
     renderGlobalPlugin(globalPlugin: GlobalPlugin): void;
-    render(page: Page, path: string, content: any): any;
+    render(page: Page, path: string, content: any): Promise<string>;
 }

@@ -109,12 +109,14 @@ export default class {
             this.$.pageArchitect.buildPage(page, () => {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`)
                 page.plugin.onBuild((path, content) => {
-                    writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                        this.$.renderer.render(page, path, content),
-                        this.$.outputFileSystem
-                    ).catch(err => {
-                        throw err
-                    });
+                    this.$.renderer.render(page, path, content).then(html => {
+                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                            html,
+                            this.$.outputFileSystem
+                        ).catch(err => {
+                            throw err
+                        });
+                    })
                     writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
                         `window.__MAP__=${JSON.stringify({
                             content,

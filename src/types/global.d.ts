@@ -18,7 +18,8 @@ declare module NodeJS {
                 loadMap: (url: string) => void,
                 preloadChunks: (chunks: string[]) => void,
                 loadChunks: (chunks: string[]) => void
-            }
+            },
+            finish: () => void
         },
         __FIREJS_VERSION__: string;
     }
