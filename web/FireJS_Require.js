@@ -6,7 +6,7 @@
         chunkPromise.then(chunk => {
             (window.__HYDRATE__ ? ReactDOM.hydrate : ReactDOM.render)
             (React.createElement(chunk.default, options, children), document.getElementById(id));
-            if (window.__SSR__ && ++done === window.__COUNT__ )
+            if (window.__SSR__ && ++done === window.__COUNT__)
                 window.finish();
         })
     }
