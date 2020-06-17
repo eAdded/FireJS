@@ -39,13 +39,10 @@ window.LinkApi = {
             ele.rel = rel;
             ele.href = `/${window.__LIB_REL__}/${chunk}`;
             ele.crossOrigin = "anonymous";
-            switch (chunk.substring(chunk.lastIndexOf("."))) {
-                case ".js":
-                    ele.as = "script";
-                    break;
-                case ".css":
-                    ele.as = "style";
-            }
+            if (chunk.endsWith(".js"))
+                ele.setAttribute("as", "script");
+            else if (chunk.endsWith(".css"))
+                ele.setAttribute("as", "style");
             document.head.appendChild(ele);
         })
     },
