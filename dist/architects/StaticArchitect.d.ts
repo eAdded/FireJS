@@ -8,7 +8,7 @@ export interface StaticConfig {
     externals: string[];
     explicitPages: ExplicitPages;
     pathToLib: string;
-    template: string;
+    template: string | any;
     ssr: boolean;
 }
 export interface StaticData extends StaticConfig {

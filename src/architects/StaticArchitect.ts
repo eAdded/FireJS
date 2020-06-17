@@ -10,7 +10,7 @@ export interface StaticConfig {
     externals: string[],
     explicitPages: ExplicitPages,
     pathToLib: string,
-    template: string,
+    template: string | any,
     ssr: boolean,
 }
 
@@ -68,7 +68,7 @@ export default class {
             dom.window.FireJS_Require = global.window.FireJS_Require;
             dom.window.__COUNT__ = global.window.__COUNT__ = 0;
             //load stuff from dom.window to global
-            for (const domKey of ["document", "window", "location", "React", "ReactDOM", "LinkApi","FireJS_Require","__COUNT__"])
+            for (const domKey of ["document", "window", "location", "React", "ReactDOM", "LinkApi", "FireJS_Require", "__COUNT__"])
                 global[domKey] = dom.window[domKey];
             //globals
             global.window.__LIB_REL__ = this.config.rel.libRel;
