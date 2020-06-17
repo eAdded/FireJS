@@ -19,18 +19,10 @@ export interface Config {
         static?: string;
     };
     plugins?: [];
-    templateTags?: TemplateTags;
     pages?: ExplicitPages;
 }
 export interface ExplicitPages {
     "404"?: string;
-}
-export interface TemplateTags {
-    script?: string;
-    static?: string;
-    head?: string;
-    style?: string;
-    unknown?: string;
 }
 export default class {
     inputFileSystem: any;

@@ -1,18 +1,22 @@
 import { PathRelatives } from "../FireJS";
-import { ExplicitPages, TemplateTags } from "../mappers/ConfigMapper";
+import { ExplicitPages } from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
+import { JSDOM } from "jsdom";
+import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
 export interface StaticConfig {
     rel: PathRelatives;
-    tags: TemplateTags;
     externals: string[];
     explicitPages: ExplicitPages;
     pathToLib: string;
     template: string;
     ssr: boolean;
 }
+export interface StaticData extends StaticConfig {
+    template: JSDOM;
+}
 export default class {
-    param: StaticConfig;
+    config: StaticData;
     constructor(param: StaticConfig);
+    renderGlobalPlugin(globalPlugin: GlobalPlugin): void;
     render(page: Page, path: string, content: any): any;
-    addInnerHTML(template: string, element: string, tag: keyof TemplateTags): string;
 }

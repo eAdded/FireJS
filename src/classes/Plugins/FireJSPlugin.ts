@@ -1,5 +1,5 @@
 import {WebpackConfig} from "../../FireJS";
-import {TemplateTags} from "../../mappers/ConfigMapper";
+import {JSDOM} from "jsdom"
 
 export enum PluginCode {
     GlobalPlugin = 1,
@@ -18,6 +18,6 @@ export default abstract class FireJSPlugin {
     initWebpack(webpackConfig: WebpackConfig) {
     }
 
-    onRender(){
+    onRender(dom: JSDOM) {
     }
 }

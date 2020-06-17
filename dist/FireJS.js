@@ -60,7 +60,6 @@ class default_1 {
     constructParams(params) {
         params.config = params.config || {};
         params.config.paths = params.config.paths || {};
-        params.config.templateTags = params.config.templateTags || {};
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -70,13 +69,10 @@ class default_1 {
                 pathToLib: this.$.config.paths.lib,
                 externals: yield this.$.pageArchitect.buildExternals(),
                 explicitPages: this.$.config.pages,
-                tags: this.$.config.templateTags,
                 template: this.$.inputFileSystem.readFileSync(path_1.join(__dirname, "../web/template.html")).toString(),
                 ssr: this.$.config.ssr,
             });
-            /*
-                    this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
-            */
+            this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
         });
     }
     buildPage(page) {
@@ -111,7 +107,7 @@ class default_1 {
     exportFly() {
         return new Promise((resolve) => {
             const map = {
-                staticConfig: Object.assign(Object.assign({}, this.$.renderer.param), { template: this.$.inputFileSystem.readFileSync(path_1.join(__dirname, "../web/template.html")).toString() }),
+                staticConfig: Object.assign(Object.assign({}, this.$.renderer.config), { template: this.$.inputFileSystem.readFileSync(path_1.join(__dirname, "../web/template.html")).toString() }),
                 pageMap: {},
             };
             const promises = [];

@@ -1,12 +1,12 @@
 import {PathRelatives} from "../FireJS";
 import {join} from "path"
-import {ExplicitPages, TemplateTags} from "../mappers/ConfigMapper";
+import {ExplicitPages} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
 import {JSDOM} from "jsdom"
+import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
 
 export interface StaticConfig {
     rel: PathRelatives,
-    tags: TemplateTags,
     externals: string[],
     explicitPages: ExplicitPages,
     pathToLib: string,
@@ -14,50 +14,67 @@ export interface StaticConfig {
     ssr: boolean,
 }
 
+export interface StaticData extends StaticConfig {
+    template: JSDOM
+}
+
 export default class {
-    param: StaticConfig
+    config: StaticData
 
     constructor(param: StaticConfig) {
-        this.param = param;
-        this.param.template = this.addInnerHTML(this.param.template,
-            `<script>` +
-            `window.__LIB_REL__="${this.param.rel.libRel}";` +
-            `window.__MAP_REL__="${this.param.rel.mapRel}";` +
-            `window.__PAGES__={404:"/${this.param.explicitPages["404"].substring(0, this.param.explicitPages["404"].lastIndexOf("."))}"};` +
-            `window.__SSR__=` +
-            `${param.ssr ? `window.__HYDRATE__ = true;` : ""}` +
-            `</script>`,
-            "head");
-        // @ts-ignore
+        this.config = param;
+        //init JSDOM
+        this.config.template = new JSDOM(param.template);
+        //init template
+        {
+            const script = this.config.template.window.document.createElement("script");
+            script.innerHTML =
+                `window.__LIB_REL__="${this.config.rel.libRel}";` +
+                `window.__MAP_REL__="${this.config.rel.mapRel}";` +
+                `window.__PAGES__={404:"/${this.config.explicitPages["404"].substring(0, this.config.explicitPages["404"].lastIndexOf("."))}"};` +
+                `window.__SSR__=` +
+                `${param.ssr ? `window.__HYDRATE__ = true;` : ""}`;
+            this.config.template.window.document.head.appendChild(script);
+        }
+        {
+            const meta = this.config.template.window.document.createElement("script");
+            meta.content = `@eadded/firejs v${global.__FIREJS_VERSION__}`;
+            meta.name = "generator";
+            this.config.template.window.document.head.appendChild(meta);
+        }
+        //@ts-ignore
         global.window = {};
-        require("../../web/LinkApi");
-        this.param.template = this.addInnerHTML(this.param.template, `<meta content="@eadded/firejs v${global.__FIREJS_VERSION__}" name="generator"/>`, "head")
+        //if ssr then load react,react dom,LinkApi,ReactDOMServer chunks
         if (param.ssr)
-            require(join(this.param.pathToLib, this.param.externals[0]));
+            require(join(this.config.pathToLib, this.config.externals[0]));
+    }
+
+    renderGlobalPlugin(globalPlugin: GlobalPlugin) {
+        globalPlugin.onRender(this.config.template);
     }
 
     render(page: Page, path: string, content: any) {
-        const dom = new JSDOM(this.param.template, {
+        const dom = new JSDOM(this.config.template.serialize(), {
             url: "https://localhost:5000" + path,
         });
         dom.window.LinkApi = global.window.LinkApi;
         dom.window.React = global.window.React
         dom.window.ReactDOM = global.window.ReactDOM
         dom.window.ReactDOMServer = global.window.ReactDOMServer
-        for (const domKey of ["document", "window", "location", "React", "ReactDOM","LinkApi"])
+        for (const domKey of ["document", "window", "location", "React", "ReactDOM", "LinkApi"])
             global[domKey] = dom.window[domKey];
         //globals
-        global.window.__LIB_REL__ = this.param.rel.libRel;
-        global.window.__MAP_REL__ = this.param.rel.mapRel;
+        global.window.__LIB_REL__ = this.config.rel.libRel;
+        global.window.__MAP_REL__ = this.config.rel.mapRel;
         global.window.__MAP__ = {
             content,
             chunks: []
         };
         //static render
-        if ((global.window.__SSR__ = this.param.ssr)) {
+        if ((global.window.__SSR__ = this.config.ssr)) {
             page.chunks.forEach(chunk => {
                 if (chunk.endsWith(".js"))
-                    require(join(this.param.pathToLib, chunk));
+                    require(join(this.config.pathToLib, chunk));
             })
 
             document.getElementById("firejs-root").innerHTML = global.window.ReactDOMServer.renderToString(
@@ -70,31 +87,21 @@ export default class {
         //map
         global.window.LinkApi.loadMap(path);
         //React
-        global.window.LinkApi.preloadChunks([this.param.externals[1]]);
-        global.window.LinkApi.loadChunks([this.param.externals[1]]);
+        global.window.LinkApi.preloadChunks([this.config.externals[1]]);
+        global.window.LinkApi.loadChunks([this.config.externals[1]]);
         //Main Chunk
         global.window.LinkApi.preloadChunks([page.chunks[0]]);
         global.window.LinkApi.loadChunks([page.chunks[0]]);
         //Render Chunk
-        global.window.LinkApi.preloadChunks([this.param.externals[2]]);
-        global.window.LinkApi.loadChunks([this.param.externals[2]]);
+        global.window.LinkApi.preloadChunks([this.config.externals[2]]);
+        global.window.LinkApi.loadChunks([this.config.externals[2]]);
         //add rest of the chunks
         for (let i = 1; i < page.chunks.length; i++) {
             global.window.LinkApi.preloadChunks([page.chunks[i]]);
             global.window.LinkApi.loadChunks([page.chunks[i]]);
         }
 
-        /*page.plugin.onRender(callback =>
-                template = callback(template),
-            (chunk, tag, root) =>
-                template = this.addChunk(template, chunk, root, tag),
-            (element, tag) =>
-                template = this.addInnerHTML(template, element, tag)
-        )*/
+        page.plugin.onRender(dom);
         return dom.serialize();
-    }
-
-    addInnerHTML(template: string, element: string, tag: keyof TemplateTags) {
-        return template.replace(this.param.tags[tag], `${element}${this.param.tags[tag]}`)
     }
 }

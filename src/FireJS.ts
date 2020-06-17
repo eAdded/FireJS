@@ -54,7 +54,6 @@ export default class {
     private constructParams(params: Params): void {
         params.config = params.config || {};
         params.config.paths = params.config.paths || {};
-        params.config.templateTags = params.config.templateTags || {};
     }
 
     constructor(params: Params = {}) {
@@ -99,13 +98,10 @@ export default class {
             pathToLib: this.$.config.paths.lib,
             externals: await this.$.pageArchitect.buildExternals(),
             explicitPages: this.$.config.pages,
-            tags: this.$.config.templateTags,
             template: this.$.inputFileSystem.readFileSync(join(__dirname, "../web/template.html")).toString(),
             ssr: this.$.config.ssr,
         });
-        /*
-                this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
-        */
+        this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
     }
 
     buildPage(page: Page): Promise<void> {
@@ -147,7 +143,7 @@ export default class {
         return new Promise((resolve) => {
             const map: FIREJS_MAP = {
                 staticConfig: {
-                    ...this.$.renderer.param,
+                    ...this.$.renderer.config,
                     template: this.$.inputFileSystem.readFileSync(join(__dirname, "../web/template.html")).toString()
                 },
                 pageMap: {},

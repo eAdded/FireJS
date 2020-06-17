@@ -35,13 +35,6 @@ class default_1 {
         this.makeDirIfNotFound(config.paths.map = config.paths.map ? this.makeAbsolute(config.paths.root, config.paths.map) : path_1.join(config.paths.lib, "map"));
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.root, config.paths.src, "static dir");
-        //html template tags
-        config.templateTags = config.templateTags || {};
-        config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
-        config.templateTags.static = config.templateTags.static || "<%=STATIC=%>";
-        config.templateTags.head = config.templateTags.head || "<%=HEAD=%>";
-        config.templateTags.style = config.templateTags.style || "<%=STYLE=%>";
-        config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         //pages
         config.pages = config.pages || {};
         this.throwIfNotFound("404 page", path_1.join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"), "Make sure you have a 404 page");

@@ -21,20 +21,11 @@ export interface Config {
         static?: string,        //dir where page static elements are stored eg. images, default : root/src/static
     },
     plugins?: [],
-    templateTags?: TemplateTags,
     pages?: ExplicitPages
 }
 
 export interface ExplicitPages {
     "404"?: string       //404 page, default : 404.js
-}
-
-export interface TemplateTags {
-    script?: string,    //this is replaced by all page scripts, default : "<%=SCRIPT=%>"
-    static?: string,    //this is replaced by static content enclosed in <div id="root"></div>, default : "<%=STATIC=%>"
-    head?: string,      //this is replaced by static head tags i.e tags in Head Component, default : "<%=HEAD=%>"
-    style?: string,     //this is replaced by all page styles, default : "<%=STYLE=%>"
-    unknown?: string    //files imported in pages other than [js,css] go here. Make sure you use a webpack loader for these files, default : "<%=UNKNOWN=%>"
 }
 
 export default class {
@@ -75,13 +66,6 @@ export default class {
         this.makeDirIfNotFound(config.paths.map = config.paths.map ? this.makeAbsolute(config.paths.root, config.paths.map) : join(config.paths.lib, "map"));
         //static dir
         this.undefinedIfNotFound(config.paths, "static", config.paths.root, config.paths.src, "static dir");
-        //html template tags
-        config.templateTags = config.templateTags || {};
-        config.templateTags.script = config.templateTags.script || "<%=SCRIPT=%>";
-        config.templateTags.static = config.templateTags.static || "<%=STATIC=%>";
-        config.templateTags.head = config.templateTags.head || "<%=HEAD=%>";
-        config.templateTags.style = config.templateTags.style || "<%=STYLE=%>";
-        config.templateTags.unknown = config.templateTags.unknown || "<%=UNKNOWN=%>";
         //pages
         config.pages = config.pages || {};
         this.throwIfNotFound("404 page", join(config.paths.pages, config.pages["404"] = config.pages["404"] || "404.js"), "Make sure you have a 404 page");
