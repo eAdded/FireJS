@@ -32,7 +32,6 @@ export default class {
                 `window.__LIB_REL__="${this.config.rel.libRel}";` +
                 `window.__MAP_REL__="${this.config.rel.mapRel}";` +
                 `window.__PAGES__={404:"/${this.config.explicitPages["404"].substring(0, this.config.explicitPages["404"].lastIndexOf("."))}"};` +
-                `window.__SSR__=` +
                 `${param.ssr ? `window.__HYDRATE__ = true;` : ""}`;
             this.config.template.window.document.head.appendChild(script);
         }
