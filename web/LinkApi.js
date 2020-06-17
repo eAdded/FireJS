@@ -49,19 +49,14 @@ window.LinkApi = {
     loadChunks: function (chunks) {
         chunks.forEach(chunk => {
             let ele;
-            switch (chunk.substring(chunk.lastIndexOf("."))) {
-                case ".js":
-                    ele = document.createElement("script");
-                    ele.src = `/${window.__LIB_REL__}/${chunk}`
-                    break;
-                case ".css":
-                    ele = document.createElement("link");
-                    ele.href = `/${window.__LIB_REL__}/${chunk}`
+            if (chunk.endsWith(".js")) {
+                ele = document.createElement("script");
+                ele.src = `/${window.__LIB_REL__}/${chunk}`
+            } else {
+                ele = document.createElement("link");
+                ele.href = `/${window.__LIB_REL__}/${chunk}`
+                if (chunk.endsWith(".css"))
                     ele.rel = "stylesheet";
-                    break;
-                default :
-                    ele = document.createElement("link");
-                    ele.href = `/${window.__LIB_REL__}/${chunk}`
             }
             ele.crossOrigin = "anonymous";
             document.body.appendChild(ele);

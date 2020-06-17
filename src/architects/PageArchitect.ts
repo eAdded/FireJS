@@ -46,7 +46,7 @@ export default class {
                             page.chunks.push(file)
                     })
                 });
-                page.chunks.unshift(...css, mainChunk);
+                page.chunks.unshift(mainChunk, ...css);
                 resolve();
             }
         }, reject);

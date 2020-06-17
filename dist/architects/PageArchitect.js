@@ -37,7 +37,7 @@ class default_1 {
                             page.chunks.push(file);
                     });
                 });
-                page.chunks.unshift(...css, mainChunk);
+                page.chunks.unshift(mainChunk, ...css);
                 resolve();
             }
         }, reject);

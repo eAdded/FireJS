@@ -83,10 +83,13 @@ export default class {
             {
                 let index;
                 //css
-                for (index = 0; ; index++) {
-                    if (!page.chunks[index].startsWith("m")) {
-                        global.window.LinkApi.preloadChunks([page.chunks[index]]);
-                        global.window.LinkApi.loadChunks([page.chunks[index]]);
+                for (index = 1; ; index++) {
+                    if (!page.chunks[index].endsWith(".js")) {
+                        const cssLink = document.createElement("link");
+                        cssLink.href = `/${this.config.rel.libRel}/${page.chunks[index]}`;
+                        cssLink.rel = "stylesheet";
+                        cssLink.crossOrigin = "anonymous";
+                        document.head.appendChild(cssLink);
                     } else
                         break;
                 }
@@ -96,11 +99,10 @@ export default class {
                 global.window.LinkApi.preloadChunks([this.config.externals[1]]);
                 global.window.LinkApi.loadChunks([this.config.externals[1]]);
                 //Main Chunk
-                global.window.LinkApi.preloadChunks([page.chunks[index]]);
-                global.window.LinkApi.loadChunks([page.chunks[index]]);
+                global.window.LinkApi.preloadChunks([page.chunks[0]]);
+                global.window.LinkApi.loadChunks([page.chunks[0]]);
                 if (this.config.ssr)
-                    requireUncached(join(this.config.pathToLib, page.chunks[index]));
-                index++;
+                    requireUncached(join(this.config.pathToLib, page.chunks[0]));
                 //Render Chunk
                 global.window.LinkApi.preloadChunks([this.config.externals[2]]);
                 global.window.LinkApi.loadChunks([this.config.externals[2]]);
