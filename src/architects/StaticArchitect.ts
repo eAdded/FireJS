@@ -59,11 +59,12 @@ export default class {
         const dom = new JSDOM(this.config.template.serialize(), {
             url: "https://localhost:5000" + path,
         });
-        console.log(global.window)
+        //transfer pointers loaded in constructor
         dom.window.LinkApi = global.window.LinkApi;
         dom.window.React = global.window.React
         dom.window.ReactDOM = global.window.ReactDOM
         dom.window.ReactDOMServer = global.window.ReactDOMServer
+        //load stuff from dom.window to global
         for (const domKey of ["document", "window", "location", "React", "ReactDOM", "LinkApi"])
             global[domKey] = dom.window[domKey];
         //globals
