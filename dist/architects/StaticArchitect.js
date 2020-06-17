@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const jsdom_1 = require("jsdom");
+const Require_1 = require("../utils/Require");
 class default_1 {
     constructor(param) {
         this.config = param;
@@ -55,7 +56,7 @@ class default_1 {
             global.window.__MAP_REL__ = this.config.rel.mapRel;
             global.window.__MAP__ = {
                 content,
-                chunks: []
+                chunks: page.chunks
             };
             //chunks
             {
@@ -86,7 +87,7 @@ class default_1 {
             if ((global.window.__SSR__ = this.config.ssr)) {
                 page.chunks.forEach(chunk => {
                     if (chunk.endsWith(".js"))
-                        require(path_1.join(this.config.pathToLib, chunk));
+                        Require_1.requireUncached(path_1.join(this.config.pathToLib, chunk));
                 });
                 document.getElementById("firejs-root").innerHTML = global.window.ReactDOMServer.renderToString(global.window.React.createElement(global.window.__FIREJS_APP__.default, { content: global.window.__MAP__.content }));
                 if (global.window.__COUNT__ === 0)

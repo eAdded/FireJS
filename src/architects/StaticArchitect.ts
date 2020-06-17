@@ -4,6 +4,7 @@ import {ExplicitPages} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
 import {JSDOM} from "jsdom"
 import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
+import {requireUncached} from "../utils/Require";
 
 export interface StaticConfig {
     rel: PathRelatives,
@@ -75,7 +76,7 @@ export default class {
             global.window.__MAP_REL__ = this.config.rel.mapRel;
             global.window.__MAP__ = {
                 content,
-                chunks: []
+                chunks: page.chunks
             };
             //chunks
             {
@@ -106,7 +107,7 @@ export default class {
             if ((global.window.__SSR__ = this.config.ssr)) {
                 page.chunks.forEach(chunk => {
                     if (chunk.endsWith(".js"))
-                        require(join(this.config.pathToLib, chunk));
+                        requireUncached(join(this.config.pathToLib, chunk));
                 })
                 document.getElementById("firejs-root").innerHTML = global.window.ReactDOMServer.renderToString(
                     global.window.React.createElement(
