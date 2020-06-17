@@ -34,14 +34,13 @@ export default class {
         this.globalPlugins.push(...gp);
     }
 
-    render(page: string, path: string, content: any = {}): {
+    async render(page: string, path: string, content: any = {}): Promise<{
         html: string,
         map: string
-    } {
+    }> {
         const _page = this.pageMap.get(page);
         return {
-            html:
-                this.renderer.render(_page, path, content),
+            html: await this.renderer.render(_page, path, content),
             map: `window.__MAP__=${JSON.stringify({
                 content,
                 chunks: _page.chunks
