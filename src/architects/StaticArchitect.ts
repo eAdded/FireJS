@@ -78,23 +78,38 @@ export default class {
                 content,
                 chunks: page.chunks
             };
+            global.window.__SSR__ = this.config.ssr;
             //chunks
             {
+                let index;
+                //css
+                for (index = 0; ; index++) {
+                    if (!page.chunks[index].startsWith("m")) {
+                        global.window.LinkApi.preloadChunks([page.chunks[index]]);
+                        global.window.LinkApi.loadChunks([page.chunks[index]]);
+                    } else
+                        break;
+                }
                 //map
                 global.window.LinkApi.loadMap(path);
                 //React
                 global.window.LinkApi.preloadChunks([this.config.externals[1]]);
                 global.window.LinkApi.loadChunks([this.config.externals[1]]);
                 //Main Chunk
-                global.window.LinkApi.preloadChunks([page.chunks[0]]);
-                global.window.LinkApi.loadChunks([page.chunks[0]]);
+                global.window.LinkApi.preloadChunks([page.chunks[index]]);
+                global.window.LinkApi.loadChunks([page.chunks[index]]);
+                if (this.config.ssr)
+                    requireUncached(join(this.config.pathToLib, page.chunks[index]));
+                index++;
                 //Render Chunk
                 global.window.LinkApi.preloadChunks([this.config.externals[2]]);
                 global.window.LinkApi.loadChunks([this.config.externals[2]]);
                 //add rest of the chunks
-                for (let i = 1; i < page.chunks.length; i++) {
-                    global.window.LinkApi.preloadChunks([page.chunks[i]]);
-                    global.window.LinkApi.loadChunks([page.chunks[i]]);
+                for (; index < page.chunks.length; index++) {
+                    global.window.LinkApi.preloadChunks([page.chunks[index]]);
+                    global.window.LinkApi.loadChunks([page.chunks[index]]);
+                    if (this.config.ssr)
+                        requireUncached(join(this.config.pathToLib, page.chunks[index]));
                 }
             }
             global.window.finish = () => {
@@ -105,10 +120,6 @@ export default class {
             }
             //static render
             if ((global.window.__SSR__ = this.config.ssr)) {
-                page.chunks.forEach(chunk => {
-                    if (chunk.endsWith(".js"))
-                        requireUncached(join(this.config.pathToLib, chunk));
-                })
                 document.getElementById("firejs-root").innerHTML = global.window.ReactDOMServer.renderToString(
                     global.window.React.createElement(
                         global.window.__FIREJS_APP__.default,

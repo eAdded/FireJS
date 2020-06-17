@@ -24,15 +24,20 @@ class default_1 {
             if (this.logStat(stat)) //true if errors
                 reject(undefined);
             else {
-                page.chunks = []; //reinit chunks
+                page.chunks = []; //re-init chunks
+                const css = [];
+                let mainChunk;
                 stat.compilation.chunks.forEach(chunk => {
                     chunk.files.forEach(file => {
-                        if (chunk.name === "main")
-                            page.chunks.unshift(file); //add main chunk to the top
+                        if (file.endsWith(".css")) //prevent FOUC
+                            css.push(file);
+                        else if (chunk.name === "main")
+                            mainChunk = file;
                         else
                             page.chunks.push(file);
                     });
                 });
+                page.chunks.unshift(...css, mainChunk);
                 resolve();
             }
         }, reject);
