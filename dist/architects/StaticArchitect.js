@@ -29,6 +29,8 @@ class default_1 {
         //if ssr then load react,react dom,LinkApi,ReactDOMServer chunks
         if (param.ssr)
             require(path_1.join(this.config.pathToLib, this.config.externals[0]));
+        else //just load LinkApi
+            require("../../web/LinkApi");
     }
     renderGlobalPlugin(globalPlugin) {
         globalPlugin.onRender(this.config.template);
@@ -37,6 +39,7 @@ class default_1 {
         const dom = new jsdom_1.JSDOM(this.config.template.serialize(), {
             url: "https://localhost:5000" + path,
         });
+        console.log(global.window);
         dom.window.LinkApi = global.window.LinkApi;
         dom.window.React = global.window.React;
         dom.window.ReactDOM = global.window.ReactDOM;
