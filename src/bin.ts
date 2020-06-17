@@ -37,11 +37,11 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
     //export fly
     if (args["--export-fly"]) {
         if (args["--export"])
-            throw new Error("flag --export is redundant when exporting for fly build. Rerun after removing this flag");
+            throw new Error("flag [-e, --export] are redundant when exporting for fly build. Rerun after removing this flag");
         if (args["--pro"])
-            throw new Error("flag --pro is redundant when exporting for fly build. Rerun after removing this flag");
+            throw new Error("flag [-p, --pro] are redundant when exporting for fly build. Rerun after removing this flag");
         if (args["--ssr"])
-            throw new Error("flag --ssr is redundant when exporting for fly build. Rerun after removing this flag");
+            throw new Error("flag [-s, --ssr] are redundant when exporting for fly build. Rerun after removing this flag");
         args["--ssr"] = true;
         args["--pro"] = true;
     }
@@ -51,15 +51,19 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
     if (args["--log-mode"])
         if (args["--log-mode"] !== "silent" && args["--log-mode"] !== "plain")
             throw new Error(`unknown log mode ${args["--log-mode"]}. Expected [ silent | plain ]`)
-    //init config acc to args        webpackConf.watch = webpackConf.watch || true;
-
+    //init config acc to args
     const [customConfig, config] = initConfig(args);
     //config disk
     if (args["--disk"]) {
         if (args["--export"])
-            throw new Error("flag --disk is redundant when exporting")
+            throw new Error("flags [-d, --disk] are redundant when exporting")
         config.paths.dist = join(config.paths.cache || "out/.cache", "disk");
     }
+
+    if (args["--ssr"])
+        if (!(args["--disk"] || args["--export"]))
+            throw new Error("flags [-s, --ssr] should be accompanied either by flags [-e,--export] or flags [-d, --disk]")
+
     return {
         app: args["--export"] ?
             new FireJS({config}) :
