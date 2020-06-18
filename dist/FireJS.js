@@ -85,7 +85,7 @@ class default_1 {
                             throw err;
                         });
                     });
-                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `window.__MAP__=${JSON.stringify({
+                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `FireJS.map=${JSON.stringify({
                         content,
                         chunks: page.chunks
                     })}`, this.$.outputFileSystem).catch(err => {

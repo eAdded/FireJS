@@ -4,27 +4,20 @@ export default ({to, children, className, style}) => {
     function preLoad(event, callback) {
         if (wasLoaded)
             return;
-        LinkApi.preloadPage(to, callback || function () {
+        FireJS.linkApi.preloadPage(to, callback || function () {
             wasLoaded = true;
         });
     }
 
     function apply(event) {
+        event.preventDefault();
         if (!wasLoaded)//there is no muse enter in mobile devices
-            preLoad(undefined, () => {
-                LinkApi.loadPage(to);
-            });
+            preLoad(undefined, () => FireJS.linkApi.loadPage(to));
         else
-            LinkApi.loadPage(to);
-        try {
-            event.preventDefault();
-        } catch (e) {
-            console.log(e);
-        }
+            FireJS.linkApi.loadPage(to);
     }
 
     return (
-        // @ts-ignore
         <a href={to} style={style} className={className} onClick={apply.bind(this)} onMouseEnter={preLoad.bind(this)}>
             {children}
         </a>

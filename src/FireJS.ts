@@ -118,7 +118,7 @@ export default class {
                         });
                     })
                     writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
-                        `window.__MAP__=${JSON.stringify({
+                        `FireJS.map=${JSON.stringify({
                             content,
                             chunks: page.chunks
                         })}`,

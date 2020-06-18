@@ -12,10 +12,12 @@ class default_1 {
         {
             const script = this.config.template.window.document.createElement("script");
             script.innerHTML =
-                `window.__LIB_REL__="${this.config.rel.libRel}";` +
-                    `window.__MAP_REL__="${this.config.rel.mapRel}";` +
-                    `window.__PAGES__={404:"/${this.config.explicitPages["404"].substring(0, this.config.explicitPages["404"].lastIndexOf("."))}"};` +
-                    `${param.ssr ? `window.__HYDRATE__ = true;` : ""}`;
+                `window.FireJS={` +
+                    `libRel:"${this.config.rel.libRel}",` +
+                    `mapRel:"${this.config.rel.mapRel}",` +
+                    `pages:{404:"/${this.config.explicitPages["404"].substring(0, this.config.explicitPages["404"].lastIndexOf("."))}"}` +
+                    `${param.ssr ? `,isHydrated:true` : ""}` +
+                    "}";
             this.config.template.window.document.head.appendChild(script);
         }
         {
@@ -24,8 +26,15 @@ class default_1 {
             meta.name = "generator";
             this.config.template.window.document.head.appendChild(meta);
         }
-        //@ts-ignore
-        global.window = {};
+        // @ts-ignore
+        global.window = {
+            FireJS: {
+                isSSR: param.ssr,
+                libRel: this.config.rel.libRel,
+                mapRel: this.config.rel.mapRel
+            }
+        };
+        global.FireJS = global.window.FireJS;
         //if ssr then load react,react dom,LinkApi,ReactDOMServer chunks
         if (param.ssr)
             require(path_1.join(this.config.pathToLib, this.config.externals[0]));
@@ -42,23 +51,20 @@ class default_1 {
                 url: "https://localhost:5000" + path,
             });
             //transfer pointers loaded in constructor
-            dom.window.LinkApi = global.window.LinkApi;
             dom.window.React = global.window.React;
             dom.window.ReactDOM = global.window.ReactDOM;
             dom.window.ReactDOMServer = global.window.ReactDOMServer;
-            dom.window.FireJS_Require = global.window.FireJS_Require;
-            dom.window.__COUNT__ = global.window.__COUNT__ = 0;
+            dom.window.FireJS = global.window.FireJS;
             //load stuff from dom.window to global
-            for (const domKey of ["document", "window", "location", "React", "ReactDOM", "LinkApi", "FireJS_Require", "__COUNT__"])
+            for (const domKey of ["document", "window", "location", "React", "ReactDOM", "FireJS"])
                 global[domKey] = dom.window[domKey];
             //globals
-            global.window.__LIB_REL__ = this.config.rel.libRel;
-            global.window.__MAP_REL__ = this.config.rel.mapRel;
-            global.window.__MAP__ = {
+            global.FireJS.map = {
                 content,
                 chunks: page.chunks
             };
-            global.window.__SSR__ = this.config.ssr;
+            //reset lazy count
+            global.FireJS.lazyCount = 0;
             //chunks
             {
                 let index;
@@ -75,40 +81,38 @@ class default_1 {
                         break;
                 }
                 //map
-                global.window.LinkApi.loadMap(path);
+                global.FireJS.linkApi.loadMap(path);
                 //React
-                global.window.LinkApi.preloadChunks([this.config.externals[1]]);
-                global.window.LinkApi.loadChunks([this.config.externals[1]]);
+                global.FireJS.linkApi.preloadChunks([this.config.externals[1]]);
+                global.FireJS.linkApi.loadChunks([this.config.externals[1]]);
                 //Main Chunk
-                global.window.LinkApi.preloadChunks([page.chunks[0]]);
-                global.window.LinkApi.loadChunks([page.chunks[0]]);
+                global.FireJS.linkApi.preloadChunks([page.chunks[0]]);
+                global.FireJS.linkApi.loadChunks([page.chunks[0]]);
                 if (this.config.ssr)
                     Require_1.requireUncached(path_1.join(this.config.pathToLib, page.chunks[0]));
                 //Render Chunk
-                global.window.LinkApi.preloadChunks([this.config.externals[2]]);
-                global.window.LinkApi.loadChunks([this.config.externals[2]]);
+                global.FireJS.linkApi.preloadChunks([this.config.externals[2]]);
+                global.FireJS.linkApi.loadChunks([this.config.externals[2]]);
                 //add rest of the chunks
                 for (; index < page.chunks.length; index++) {
-                    global.window.LinkApi.preloadChunks([page.chunks[index]]);
-                    global.window.LinkApi.loadChunks([page.chunks[index]]);
+                    global.FireJS.linkApi.preloadChunks([page.chunks[index]]);
+                    global.FireJS.linkApi.loadChunks([page.chunks[index]]);
                     if (this.config.ssr)
                         Require_1.requireUncached(path_1.join(this.config.pathToLib, page.chunks[index]));
                 }
             }
-            global.window.finish = () => {
-                //call plugin
-                page.plugin.onRender(dom);
-                //serialize i.e get html
-                return resolve(dom.serialize());
+            global.FireJS.finishRender = () => {
+                page.plugin.onRender(dom); //call plugin
+                resolve(dom.serialize()); //serialize i.e get html
             };
             //static render
-            if ((global.window.__SSR__ = this.config.ssr)) {
-                document.getElementById("firejs-root").innerHTML = global.window.ReactDOMServer.renderToString(global.window.React.createElement(global.window.__FIREJS_APP__.default, { content: global.window.__MAP__.content }));
-                if (global.window.__COUNT__ === 0)
-                    global.window.finish();
+            if ((global.FireJS.isSSR = this.config.ssr)) {
+                document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(global.window.React.createElement(global.window.__FIREJS_APP__.default, { content: global.FireJS.map.content }));
+                if (global.FireJS.lazyCount === 0)
+                    global.FireJS.finishRender();
             }
             else
-                global.window.finish();
+                global.FireJS.finishRender();
         });
     }
 }

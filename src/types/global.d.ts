@@ -1,29 +1,36 @@
 declare module NodeJS {
     interface Global {
-        window: {
-            __LIB_REL__: string,
-            __MAP_REL__: string,
-            __MAP__: {
+        window: Global,
+        FireJS: {
+            libRel?: string,
+            mapRel?: string,
+            map?: {
                 content: any,
                 chunks: string[]
             },
-            __SSR__: boolean,
-            __HYDRATE__: boolean,
-            __FIREJS_APP__: {
-                default: any
-            },
-            React: any,
-            ReactDOM: any,
-            ReactDOMServer: any,
-            LinkApi: {
+            isSSR?: boolean,
+            isHydrated?: boolean,
+            linkApi?: {
                 loadMap: (url: string) => void,
+                preloadPage: (url: string, callback: () => void) => void,
+                loadPage: (url: string, pushState?: boolean) => void,
+                runApp: (el: any, root: Element) => void,
                 preloadChunks: (chunks: string[]) => void,
                 loadChunks: (chunks: string[]) => void
             },
-            finish: () => void
-            FireJS_Require: (chunkPromise: Promise<{ default: any }>, id: string, options: any, children: any) => void
-            __COUNT__: number
+            lazyLoad?: (chunkPromise: Promise<{ default: any }>, id: string, options: any, children: any) => void,
+            finishRender?: () => void,
+            lazyCount?: number,
+            pages?: {
+                404: string
+            }
         },
+        __FIREJS_APP__?: {
+            default: any
+        },
+        React?: any,
+        ReactDOM?: any,
+        ReactDOMServer?: any,
         __FIREJS_VERSION__: string;
     }
 }
