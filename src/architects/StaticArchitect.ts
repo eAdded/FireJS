@@ -96,12 +96,21 @@ export default class {
                         cssLink.href = `/${this.config.rel.libRel}/${page.chunks[index]}`;
                         cssLink.rel = "stylesheet";
                         cssLink.crossOrigin = "anonymous";
-                        document.head.appendChild(cssLink);
+                        document.head.prepend(cssLink);
                     } else
                         break;
                 }
-                //map
-                global.FireJS.linkApi.loadMap(path);
+                //map preload and load
+                {
+                    const link = document.createElement("link");
+                    const script = document.createElement("script");
+                    script.src = link.href = global.FireJS.linkApi.getMapUrl(path);
+                    link.rel = "preload";
+                    script.crossOrigin = link.crossOrigin = "anonymous";
+                    link.setAttribute("as", "script");
+                    document.head.appendChild(link);
+                    document.body.appendChild(script);
+                }
                 //React
                 global.FireJS.linkApi.preloadChunks([this.config.externals[1]]);
                 global.FireJS.linkApi.loadChunks([this.config.externals[1]]);

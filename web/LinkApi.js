@@ -1,7 +1,10 @@
 FireJS.linkApi = {
+    getMapUrl: function (url) {
+        return `/${FireJS.mapRel}${url === "/" ? "/index" : url}.map.js`;
+    },
     loadMap: function (url) {
         const map_script = document.createElement("script");
-        map_script.src = `/${FireJS.mapRel}${url === "/" ? "/index" : url}.map.js`;
+        map_script.src = this.getMapUrl(url);
         document.head.appendChild(map_script);
         return map_script;
     },
@@ -32,6 +35,7 @@ FireJS.linkApi = {
         func(React.createElement(window.__FIREJS_APP__.default, {content: FireJS.map.content}),
             document.getElementById("root")
         );
+        FireJS.isHydrated = false;
     },
     preloadChunks: function (chunks, rel = "preload") {
         chunks.forEach(chunk => {

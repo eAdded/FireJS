@@ -11,7 +11,8 @@ declare module NodeJS {
             isSSR?: boolean,
             isHydrated?: boolean,
             linkApi?: {
-                loadMap: (url: string) => void,
+                getMapUrl: (url: string) => string,
+                loadMap: (url: string) => Element,
                 preloadPage: (url: string, callback: () => void) => void,
                 loadPage: (url: string, pushState?: boolean) => void,
                 runApp: (el?: any) => void,
