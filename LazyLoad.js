@@ -1,4 +1,4 @@
-export default (chunk, {ssr, script, delay = 200, placeHolder = (<></>)}) => {
+export default (chunk, {ssr, script, delay = 200, placeHolder = ""}) => {
     if (script && ssr)
         throw new Error("Scripts can't be rendered. Set either script or ssr to false");
     if (FireJS.isSSR)

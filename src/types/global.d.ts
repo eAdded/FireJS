@@ -19,7 +19,6 @@ declare module NodeJS {
                 preloadChunks: (chunks: string[]) => void,
                 loadChunks: (chunks: string[]) => void
             },
-            lazyLoad?: (chunkPromise: Promise<{ default: any }>, id?: string, options?: any, children?: any) => void,
             finishRender?: () => void,
             lazyCount?: number,
             lazyDone?: number,
