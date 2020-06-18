@@ -65,11 +65,12 @@ class default_1 {
             };
             //reset lazy count
             global.FireJS.lazyCount = 0;
+            global.FireJS.lazyDone = 0;
             //chunks
             {
                 let index;
                 //css
-                for (index = 1;; index++) {
+                for (index = 1; index < page.chunks.length; index++) {
                     if (!page.chunks[index].endsWith(".js")) {
                         const cssLink = document.createElement("link");
                         cssLink.href = `/${this.config.rel.libRel}/${page.chunks[index]}`;

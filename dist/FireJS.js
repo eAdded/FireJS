@@ -80,7 +80,9 @@ class default_1 {
             this.$.pageArchitect.buildPage(page, () => {
                 this.$.cli.ok(`Successfully built page ${page.toString()}`);
                 page.plugin.onBuild((path, content) => {
+                    this.$.cli.log(`Rendering path ${path}`);
                     this.$.renderer.render(page, path, content).then(html => {
+                        this.$.cli.ok(`Successfully rendered path ${path}`);
                         Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), html, this.$.outputFileSystem).catch(err => {
                             throw err;
                         });

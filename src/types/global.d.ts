@@ -14,13 +14,14 @@ declare module NodeJS {
                 loadMap: (url: string) => void,
                 preloadPage: (url: string, callback: () => void) => void,
                 loadPage: (url: string, pushState?: boolean) => void,
-                runApp: (el: any, root: Element) => void,
+                runApp: (el?: any) => void,
                 preloadChunks: (chunks: string[]) => void,
                 loadChunks: (chunks: string[]) => void
             },
-            lazyLoad?: (chunkPromise: Promise<{ default: any }>, id: string, options: any, children: any) => void,
+            lazyLoad?: (chunkPromise: Promise<{ default: any }>, id?: string, options?: any, children?: any) => void,
             finishRender?: () => void,
             lazyCount?: number,
+            lazyDone?: number,
             pages?: {
                 404: string
             }

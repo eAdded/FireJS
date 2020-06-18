@@ -18,6 +18,8 @@ FireJS.linkApi = {
     },
     loadPage: function (url, pushState = true) {
         window.webpackJsonp_FIREJS_APP_ = undefined
+        FireJS.lazyCount = 0;
+        FireJS.lazyDone = 0;
         const script = document.createElement("script");
         script.src = `/${FireJS.libRel}/${FireJS.map.chunks.shift()}`
         this.loadChunks(FireJS.map.chunks);
