@@ -70,6 +70,9 @@ Navigate to `http://localhost:5000` and there it says `Welcome to 404`.
 
 Documentation is available at the official [FireJS Github Wiki](https://github.com/eAdded/FireJS/wiki)
 
+**NOTE** `v0.18.0` is currently in `beta` testing and has incomplete docs. The release has been planned for 18th / 19th July.
+This release brings a brand-new mechanism of SSR lazy components using `FireJS_Require`. No more FOUC. Small bundle sizes and a full featured dom.
+
 ## Code of conduct
 
 Code of conduct can be found at [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
