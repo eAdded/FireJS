@@ -1,4 +1,4 @@
-import GlobalPlugin from "./classes/Plugins/GlobalPlugin";
+import GlobalPlugin from "./Plugins/GlobalPlugin";
 import { Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";

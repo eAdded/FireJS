@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const PagePlugin_1 = require("../classes/Plugins/PagePlugin");
-const GlobalPlugin_1 = require("../classes/Plugins/GlobalPlugin");
-const FireJSPlugin_1 = require("../classes/Plugins/FireJSPlugin");
+const PagePlugin_1 = require("../Plugins/PagePlugin");
+const GlobalPlugin_1 = require("../Plugins/GlobalPlugin");
+const FireJSPlugin_1 = require("../Plugins/FireJSPlugin");
 function mapPlugin(pluginPath, { rootPath, pageMap, webpackArchitect, globalPlugins }) {
     const rawPlugs = require(require.resolve(pluginPath, { paths: [rootPath] }));
     for (const rawPlugKey in rawPlugs) {

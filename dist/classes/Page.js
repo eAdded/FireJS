@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const PagePlugin_1 = require("./Plugins/PagePlugin");
+const PagePlugin_1 = require("../Plugins/PagePlugin");
 class default_1 {
     constructor(page) {
         this.chunks = [];

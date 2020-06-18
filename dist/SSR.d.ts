@@ -1,4 +1,4 @@
-import GlobalPlugin from "./classes/Plugins/GlobalPlugin";
+import GlobalPlugin from "./Plugins/GlobalPlugin";
 import Page from "./classes/Page";
 import StaticArchitect from "./architects/StaticArchitect";
 import { PathRelatives } from "./FireJS";

@@ -3,7 +3,7 @@ import {join} from "path"
 import {ExplicitPages} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
 import {JSDOM} from "jsdom"
-import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
+import GlobalPlugin from "../Plugins/GlobalPlugin";
 import {requireUncached} from "../utils/Require";
 
 export interface StaticConfig {

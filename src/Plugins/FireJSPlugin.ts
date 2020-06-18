@@ -1,4 +1,4 @@
-import {WebpackConfig} from "../../FireJS";
+import {WebpackConfig} from "../FireJS";
 import {JSDOM} from "jsdom"
 
 export enum PluginCode {

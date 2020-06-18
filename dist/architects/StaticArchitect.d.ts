@@ -2,7 +2,7 @@ import { PathRelatives } from "../FireJS";
 import { ExplicitPages } from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
 import { JSDOM } from "jsdom";
-import GlobalPlugin from "../classes/Plugins/GlobalPlugin";
+import GlobalPlugin from "../Plugins/GlobalPlugin";
 export interface StaticConfig {
     rel: PathRelatives;
     externals: string[];

@@ -1,7 +1,7 @@
-import PagePlugin, {PagePlugMinVer} from "../classes/Plugins/PagePlugin";
-import GlobalPlugin, {GlobalPlugMinVer} from "../classes/Plugins/GlobalPlugin";
+import PagePlugin, {PagePlugMinVer} from "../Plugins/PagePlugin";
+import GlobalPlugin, {GlobalPlugMinVer} from "../Plugins/GlobalPlugin";
 import Page from "../classes/Page";
-import FireJSPlugin, {PluginCode} from "../classes/Plugins/FireJSPlugin";
+import FireJSPlugin, {PluginCode} from "../Plugins/FireJSPlugin";
 import WebpackArchitect from "../architects/WebpackArchitect";
 
 interface gParam {
