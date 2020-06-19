@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "../FireJS-Deploy",
+    "outDir": "../dist",
     "target": "es6",
     "declaration": true,
     "lib": [

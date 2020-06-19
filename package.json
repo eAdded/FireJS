@@ -1,8 +1,6 @@
 {
     "private": true,
     "workspaces": [
-        "FireJS",
-        "FireJS-Deploy",
-        "FireJS-Impl"
+        "code"
     ]
 }
