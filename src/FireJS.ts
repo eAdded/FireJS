@@ -98,7 +98,7 @@ export default class {
             pathToLib: this.$.config.paths.lib,
             externals: await this.$.pageArchitect.buildExternals(),
             explicitPages: this.$.config.pages,
-            template: this.$.inputFileSystem.readFileSync(join(__dirname, "../web/template.html")).toString(),
+            template: this.$.inputFileSystem.readFileSync(join(__dirname, "./web/template.html")).toString(),
             ssr: this.$.config.ssr,
         });
         this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
@@ -148,7 +148,7 @@ export default class {
             const map: FIREJS_MAP = {
                 staticConfig: {
                     ...this.$.renderer.config,
-                    template: this.$.inputFileSystem.readFileSync(join(__dirname, "../web/template.html")).toString()
+                    template: this.$.inputFileSystem.readFileSync(join(__dirname, "./web/template.html")).toString()
                 },
                 pageMap: {},
             }

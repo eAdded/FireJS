@@ -86,15 +86,15 @@ export default class {
             target: 'web',
             mode: process.env.NODE_ENV as "development" | "production" | "none",
             entry: {
-                "e": join(__dirname, "../../web/external_group_semi.js"),
-                "r": join(__dirname, "../../web/renderer.js"),
+                "e": join(__dirname, "../web/external_group_semi.js"),
+                "r": join(__dirname, "../web/renderer.js"),
             },
             output: {
                 path: this.$.config.paths.lib,
                 filename: "[name][contentHash].js"
             }
         };
-        conf.entry[join(relative(this.$.config.paths.lib, this.$.config.paths.cache), "f")] = join(__dirname, "../../web/external_group_full.js");
+        conf.entry[join(relative(this.$.config.paths.lib, this.$.config.paths.cache), "f")] = join(__dirname, "../web/external_group_full.js");
         return conf;
     }
 

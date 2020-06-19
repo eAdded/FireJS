@@ -57,7 +57,7 @@ export default class {
         if (param.ssr)
             require(join(this.config.pathToLib, this.config.externals[0]));
         else //just load LinkApi
-            require("../../web/LinkApi")
+            require("../web/LinkApi")
     }
 
     renderGlobalPlugin(globalPlugin: GlobalPlugin) {
