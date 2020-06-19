@@ -38,5 +38,3 @@ rsync -vr src/web/*.html $FOLDER/web || error "Error syncing web/*.html files to
 
 clr_scr "Syncing package.json"
 rsync -v package.json $FOLDER || error "Error syncing package.json files to $FOLDER"
-clr_scr "Copying README.md"
-rsync -v README.md $FOLDER || error "Error syncing README.md files to $FOLDER"
