@@ -28,7 +28,7 @@ sh scripts/sync.sh || error "Error Syncing to $FOLDER"
 clr_scr "Syncing package.json"
 cp -v package.json $FOLDER/package.json || error "Error copying package.json to $FOLDER"
 clr_scr "Publishing"
-cd ../dist || error "Error moving to $FOLDER"
+cd $FOLDER || error "Error moving to $FOLDER"
 if [ -z "$1" ]; then
   clr_scr "Publishing to latest branch"
   yarn publish --access public || error "Error publishing" "rm"
@@ -38,7 +38,4 @@ else
 fi
 clr_scr "Package.json"
 rm package.json
-clr_scr "Installing deps"
-cd ..
-yarn install || error "Error ReInstalling packages to $FOLDER"
 clr_scr "     DONE (ﾉ◕ヮ◕)ﾉ*:・ﾟ✧"
