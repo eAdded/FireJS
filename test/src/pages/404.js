@@ -1,4 +1,5 @@
-import LazyLoad from "firejs-dist/LazyLoad.js"
+import Head from "../../../dist/Head.js";
+import LazyLoad from "../../../dist/LazyLoad.js";
 
 export default () => {
     const Markdown = LazyLoad(import("markdown-to-jsx"));
@@ -6,6 +7,9 @@ export default () => {
 
     return (
         <div>
+            <Head>
+                <title>hello</title>
+            </Head>
             <Markdown>
                 # hello
                 `this is a pre`
