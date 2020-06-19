@@ -1,6 +1,6 @@
 {
   "name": "@eadded/firejs",
-  "main": "dist/FireJS.js",
+  "main": "FireJS.js",
   "version": "0.18.0-beta.4",
   "license": "GPL-3.0-or-later",
   "description": "A zero config, highly customizable, progressive react static site generator with blazingly fast SSR and on the fly builds",
@@ -53,16 +53,16 @@
     "react-dom": "^16.13.1"
   },
   "bin": {
-    "firejs": "./dist/bin.js"
+    "firejs": "bin.js"
   },
   "bugs": {
     "url": "https://github.com/eAdded/firejs/issues"
   },
   "homepage": "https://github.com/eAdded/firejs#readme",
-  "scripts": {},
-  "files": [
-    "dist",
-    "web",
-    "components"
-  ]
+  "scripts": {
+    "js-auto-move": "nodemon --watch src/*.js --exec rsync -vr src/*.js ../FireJS-Deploy",
+    "publishScript": "sh ./publish_auto.sh",
+    "publishNitely": "yarn publishScript nitely",
+    "publishDev": "yarn publishScript dev"
+  }
 }
