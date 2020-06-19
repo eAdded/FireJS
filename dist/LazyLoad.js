@@ -11,25 +11,37 @@ export default (chunk, {ssr = true, script, delay = 0, placeHolder = <></>} = {}
     }
     let props = {};
     let setChild;
-    chunk.then(chunk =>
-        setTimeout(() => {
-            FireJS.lazyDone++;
-            if (!script) {
-                const el = React.createElement(chunk.default, props, props.children);
-                if (FireJS.isSSR && ssr)
-                    document.getElementById(id).outerHTML = window.ReactDOMServer.renderToString(el);
-                else
-                    setChild(el)
-            }
-            if (FireJS.lazyDone === FireJS.lazyCount && FireJS.isSSR)
-                FireJS.finishRender();
-        }, delay)
+
+    function load(chunk) {
+        FireJS.lazyDone++;
+        if (!script) {
+            if (FireJS.isSSR && ssr) {
+                document.getElementById(id).innerHTML = window.ReactDOMServer.renderToString(
+                    React.createElement(chunk.default, props, props.children)
+                );
+            } else
+                setChild(React.createElement(chunk.default, props, props.children))
+        }
+        if (FireJS.lazyDone === FireJS.lazyCount && FireJS.isSSR)
+            FireJS.finishRender();
+    }
+
+    chunk.then(chunk => {
+            if (!delay)
+                load(chunk);
+            else
+                setTimeout(() => load(chunk), delay);
+        }
     )
     if (!script)
         return function (_props) {
             props = _props;
             const [child, _setChild] = React.useState(placeHolder);
             setChild = _setChild;
-            return child;
+            return (
+                <div suppressHydrationWarning={true}>
+                    {child}
+                </div>
+            );
         }
 }
