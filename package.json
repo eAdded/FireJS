@@ -62,10 +62,9 @@
   "scripts": {
     "sync": "sh scripts/sync.sh",
     "watch" : "nodemon --watch src/components --watch src/web --exec rsync -vr src/web/ ../FireJS-Deploy/web && rsync -vr src/components/ ../FireJS-Deploy",
-    "kick": "yarn sync && yarn multi install && yarn watch",
+    "kick": "yarn sync && yarn watch",
     "autopublish": "sh scripts/autopublish.sh",
     "publishNitely": "yarn autopublish nitely",
-    "publishDev": "yarn autopublish dev",
-    "multi": "sh scripts/multi.sh"
+    "publishDev": "yarn autopublish dev"
   }
 }
