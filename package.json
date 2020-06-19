@@ -60,7 +60,7 @@
   },
   "homepage": "https://github.com/eAdded/firejs#readme",
   "scripts": {
-    "js-auto-move": "nodemon --watch src/*.js --exec rsync -vr src/*.js ../FireJS-Deploy",
+    "kick": "mkdir -p ../FireJS-Deploy && tsc && nodemon --watch src/*.js --exec rsync -vr src/*.js ../FireJS-Deploy",
     "autopublish": "sh autopublish.sh",
     "publishNitely": "yarn autopublish nitely",
     "publishDev": "yarn autopublish dev",
