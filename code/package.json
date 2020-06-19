@@ -61,8 +61,8 @@
   "homepage": "https://github.com/eAdded/firejs#readme",
   "scripts": {
     "sync": "sh scripts/sync.sh",
-    "watch": "nodemon --watch src/components --watch src/web --exec rsync -vr src/web/ ../dist/web && rsync -vr src/components/ ../dist",
-    "kick": "yarn sync && yarn watch",
+    "watch": "node scripts/watch.js",
+    "dev": "yarn sync && yarn watch",
     "autopublish": "sh scripts/autopublish.sh",
     "publishNitely": "yarn autopublish nitely",
     "publishDev": "yarn autopublish dev"

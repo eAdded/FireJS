@@ -4,6 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "node ../dist/bin.js"
+    "firejs": "node ../dist/bin.js"
+  },
+  "dependencies": {
+    "markdown-to-jsx": "^6.11.4"
   }
 }
