@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path_1 = require("path");
 const jsdom_1 = require("jsdom");
 const Require_1 = require("../utils/Require");
+const react_helmet_1 = require("react-helmet");
 class default_1 {
     constructor(param) {
         this.config = param;
@@ -118,6 +119,9 @@ class default_1 {
             //static render
             if ((global.FireJS.isSSR = this.config.ssr)) {
                 document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(global.window.React.createElement(global.window.__FIREJS_APP__.default, { content: global.FireJS.map.content }));
+                const helmet = react_helmet_1.Helmet.renderStatic();
+                for (let helmetKey in helmet)
+                    document.head.innerHTML += helmet[helmetKey].toString();
                 if (global.FireJS.lazyCount === 0)
                     global.FireJS.finishRender();
             }

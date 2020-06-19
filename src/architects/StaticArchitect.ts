@@ -5,6 +5,7 @@ import Page from "../classes/Page";
 import {JSDOM} from "jsdom"
 import GlobalPlugin from "../plugins/GlobalPlugin";
 import {requireUncached} from "../utils/Require";
+import {Helmet} from "react-helmet"
 
 export interface StaticConfig {
     rel: PathRelatives,
@@ -142,6 +143,9 @@ export default class {
                         {content: global.FireJS.map.content}
                     )
                 );
+                const helmet = Helmet.renderStatic();
+                for (let helmetKey in helmet)
+                    document.head.innerHTML += helmet[helmetKey].toString()
                 if (global.FireJS.lazyCount === 0)
                     global.FireJS.finishRender();
             } else
