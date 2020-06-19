@@ -1,4 +1,4 @@
-FOLDER=../dist
+FOLDER=dist
 
 clr_scr() {
   tput clear
@@ -26,7 +26,7 @@ error() {
 }
 sh scripts/sync.sh || error "Error Syncing to $FOLDER"
 clr_scr "Syncing package.json"
-rsync -v package.json $FOLDER || error "Error syncing package.json to $FOLDER"
+cp -v package.json $FOLDER/package.json || error "Error copying package.json to $FOLDER"
 clr_scr "Publishing"
 cd ../dist || error "Error moving to $FOLDER"
 if [ -z "$1" ]; then

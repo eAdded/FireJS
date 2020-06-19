@@ -1,4 +1,4 @@
-import LazyLoad from "dist/LazyLoad.js"
+import LazyLoad from "firejs-dist/LazyLoad.js"
 
 export default () => {
     const Markdown = LazyLoad(import("markdown-to-jsx"));
