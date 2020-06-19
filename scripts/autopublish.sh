@@ -22,17 +22,7 @@ error(){
   exit
 }
 
-
-clr_scr "Removing folder $FOLDER"
-rm -rf FOLDER || error "Error removing folder $FOLDER"
-clr_scr "Running TypeScript Compiler"
-tsc || error "Error compiling ts to js"
-clr_scr "Copying .js Files"
-rsync -vr src/*.js $FOLDER || error "Error syncing .js files to $FOLDER"
-clr_scr "Copying package.json"
-rsync -v package.json $FOLDER || error "Error syncing package.json files to $FOLDER"
-clr_scr "Copying README.md"
-rsync -v README.md $FOLDER || error "Error syncing README.md files to $FOLDER"
+sh sync.sh || error "Error Syncing to $FOLDER"
 clr_scr "Publishing"
 cd ../FireJS-Deploy || error "Error moving to $FOLDER"
 if [ -z "$1" ]; then

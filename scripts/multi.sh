@@ -34,10 +34,12 @@ yarnAdd() {
 
 if [ "$1" == "install" ]; then
   clr_scr "Installing packages to root"
+  rm -rf node_modules
   yarn install || error "Failed to install packages in root: $(pwd)"
   clr_scr "Moving to FireJS-Deploy"
   cd ../FireJS-Deploy || error "Failed to move to FireJS-Deploy"
   clr_scr "Installing packages to FireJS-Deploy"
+  rm -rf node_modules
   yarn install || error "Failed to install packages in root: $(pwd)"
 elif [ "$1" == "add" ]; then
   if [ -z "$2" ]; then
@@ -48,6 +50,7 @@ elif [ "$1" == "add" ]; then
   clr_scr "Moving to FireJS-Deploy" "$3"
   cd ../FireJS-Deploy || error "Failed to move to FireJS-Deploy"
   clr_scr "Installing $2 to FireJS-Deploy" "$3"
+  pwd
   yarnAdd "$2" "$3"
   clr_scr "     DONE (ﾉ◕ヮ◕)ﾉ*:・ﾟ✧"
 elif [ -z "$1" ]; then

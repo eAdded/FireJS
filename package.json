@@ -60,10 +60,11 @@
   },
   "homepage": "https://github.com/eAdded/firejs#readme",
   "scripts": {
-    "kick": "mkdir -p ../FireJS-Deploy && tsc && nodemon --watch src/*.js --exec rsync -vr src/*.js ../FireJS-Deploy",
-    "autopublish": "sh autopublish.sh",
+    "sync": "sh scripts/sync.sh",
+    "kick": "yarn sync && yarn multi install && nodemon --watch src/*.js --exec rsync -vr src/*.js ../FireJS-Deploy",
+    "autopublish": "sh scripts/autopublish.sh",
     "publishNitely": "yarn autopublish nitely",
     "publishDev": "yarn autopublish dev",
-    "multi": "sh multi.sh"
+    "multi": "sh scripts/multi.sh"
   }
 }
