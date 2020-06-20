@@ -7,7 +7,6 @@
     "test": "node --trace-warnings ../dist/bin.js"
   },
   "dependencies": {
-    "markdown-to-jsx": "^6.11.4",
-    "react-error-boundary": "^2.2.2"
+    "markdown-to-jsx": "^6.11.4"
   }
 }
