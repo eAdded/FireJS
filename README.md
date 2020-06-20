@@ -1,76 +1,34 @@
 # Fire JS 🔥
-A zero config, highly customizable, progressive react static site generator with blazingly fast SSR and on the fly builds.
 
-## Features
+**A zero-config, highly customizable, progressive react static site generator with blazingly fast SSR and on the fly builds.**
 
-+ Fast web pages with smart preloading
-+ Node interface for on the fly rendering (SSR)
-+ Dev friendly CLI interface
-+ Plugins for dynamic routes
-+ Highly customizable project structure and webpack 
-+ Supports LESS, JSX, SASS, CSS out of the box.
+Build professional quality static websites with no limitations whatsoever. FireJS sites are fully functional React apps, so you can create high-quality, dynamic web apps, from blogs to e-commerce sites to user dashboards.
 
-## Install
+FireJS handles page preloading, builds optimised chunks, grows with you using powerful plugin API, saves your sweet-sweet money because FireJS sites are very very efficient and cheap to host. Go Serverless, SSR or just dump your export to an S3 bucket. There is no limit to what you can do with FireJS. 
 
-install using **yarn** or **npm**
+Excited to learn more?
 
-**yarn**
+Visit the [quick start](https://github.com/eAdded/FireJS/wiki/Quick-Start) guide to get your site spinning within a minute.
 
-```bash
-$ yarn add @eadded/firejs react react-dom
-```
+# Features
 
-**npm**
++ **Fast WebPages** FireJS preloads external chunks such as react, react-dom and provides a Link Component which helps preload in-project pages beforehand for faster and snappier websites.
 
-```bash
-$ npm install @eadded/firejs react react-dom
-```
++ **Node interface for on the fly rendering (SSR)** FireJS provides an `export-fly` mechanism which extracts the min chunks required for SSR and bundles it into a single unit, which when combined with the CustomRenderer helps render FireJS pages on the fly. You can render them on a serverless function or on a full-fledged Server.
 
-## Quick Start
++ **Dev friendly CLI interface** FireJS provides a fast and dev friendly CLI interface.
 
-Make dir `src/pages` in project root. This dir will contain all the pages required for our brand-new hello world website.
++ **Plugins** FireJS provides a rich plugin API which helps users to develop or install required features as per their need. Customize webpack or your routes. Use plugins to load Data From Anywhere. FireJS pulls in data from any data source, whether it’s Markdown files, a headless CMS like Contentful or WordPress, or a REST or GraphQL API. Use plugins to load and pass on data to your pages as props.
 
-Make a file **404.js** in the dir. This file will be the 404 page of our website.
++ **Routes** FireJS allows any page to have multiple routes without rewriting the same code a thousand times. FireJS routes are similar to file-system dirs, so you never get a page conflict when pushing the site to a static host.
 
-```jsx
-export default () => {  
-  return (
-    <div>
-        <p>Welcome to 404</p>
-    </div>  
-  )
-}
-```
-
-Add the following **script(s)** to **package.json**
-
-```json 
-"scripts": {
-    "dev": "firejs",  
-}
-```
-
-Now run using **yarn** or **npm**
-
-**yarn**
-```bash
-$ yarn run dev
-```
-**npm**
-```bash
-$ npm run dev
-```
-Navigate to `http://localhost:5000` and there it says `Welcome to 404`.
-
-*To change server **PORT** set env variable **PORT** to the required value*
-
-**Note:** 404 page is mandatory
++ **Highly customizable project structure and webpack** FireJS don't bind you to a fixed thought. If you don't like something, then just change it.
 
 ## Documentation
 
 Documentation is available at the official [FireJS Github Wiki](https://github.com/eAdded/FireJS/wiki)
 
-**NOTE** `v0.18.0` is currently in `beta` testing and its docs are yet to be published. The release has been planned for `20th July 2020`.
+**NOTE** `v0.18.0` is currently in `beta` testing and its docs are yet to be published. The release previously planned for `20th July 2020` has been postponed to `24th July 2020`.
 This release brings a brand-new mechanism for SSR lazy loaded components using `FireJS.lazyLoad`. No more `FOUC`. Small bundle size with a full featured SS DOM.
 
 ## Code of conduct
