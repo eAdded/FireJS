@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PagePlugMinVer = void 0;
 const FireJSPlugin_1 = require("./FireJSPlugin");
 exports.PagePlugMinVer = 0.5;
 class default_1 extends FireJSPlugin_1.default {

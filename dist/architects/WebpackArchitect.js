@@ -7,16 +7,6 @@ const CleanObsoleteChunks = require("webpack-clean-obsolete-chunks");
 class default_1 {
     constructor($) {
         this.$ = $;
-        const cssLoaderUse = [MiniCssExtractPlugin.loader,
-            {
-                loader: 'css-loader',
-                options: {
-                    modules: {
-                        hashPrefix: 'hash',
-                    },
-                },
-            }
-        ];
         this.defaultConfig = {
             target: 'web',
             mode: process.env.NODE_ENV,
@@ -54,14 +44,16 @@ class default_1 {
                             }
                         },
                     }, {
-                        test: /\.sass$/i,
-                        loader: [...cssLoaderUse, 'sass-loader']
-                    }, {
-                        test: /\.less$/i,
-                        loader: [...cssLoaderUse, 'less-loader']
-                    }, {
                         test: /\.css$/i,
-                        use: cssLoaderUse
+                        use: [MiniCssExtractPlugin.loader,
+                            {
+                                loader: 'css-loader',
+                                options: {
+                                    modules: {
+                                        hashPrefix: 'hash',
+                                    },
+                                },
+                            }]
                     }]
             },
             externals: {

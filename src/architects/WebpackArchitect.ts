@@ -11,16 +11,6 @@ export default class {
 
     constructor($: $) {
         this.$ = $;
-        const cssLoaderUse = [MiniCssExtractPlugin.loader,
-            {
-                loader: 'css-loader',
-                options: {
-                    modules: {
-                        hashPrefix: 'hash',
-                    },
-                },
-            }
-        ];
         this.defaultConfig = {
             target: 'web',
             mode: process.env.NODE_ENV as "development" | "production" | "none",
@@ -58,14 +48,16 @@ export default class {
                         }
                     },
                 }, {
-                    test: /\.sass$/i,
-                    loader: [...cssLoaderUse, 'sass-loader']
-                }, {
-                    test: /\.less$/i,
-                    loader: [...cssLoaderUse, 'less-loader']
-                }, {
                     test: /\.css$/i,
-                    use: cssLoaderUse
+                    use: [MiniCssExtractPlugin.loader,
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: {
+                                    hashPrefix: 'hash',
+                                },
+                            },
+                        }]
                 }]
             },
             externals: {
