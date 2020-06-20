@@ -6,11 +6,12 @@ import "../style/main.css"
 export default () => {
     return (
         <div>
-            <Loader effect={React.useEffect} delay={5000}>
+            <Loader effect={React.useEffect} delay={500}>
                 <CustomLoader/>
             </Loader>
             <h1>This is the about page</h1>
-            <Link to={"/"}>Go Home</Link>
+            <br/>
+            <Link to={"/"}> 👻 Click Here To Go Home</Link>
         </div>
     )
 }

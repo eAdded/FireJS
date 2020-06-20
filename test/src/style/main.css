@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -5,6 +7,18 @@
 
 body {
     padding: 20px;
-    background-color: black;
+    background-color: #121212;
     color: white;
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+}
+
+a {
+    color: cyan;
+    text-decoration: none;
+}
+
+h1 {
+    font-size: 40px;
+    text-transform: uppercase;
 }
