@@ -1,11 +1,16 @@
-export default ({children, effect}) => {
+export default ({children, effect, delay}) => {
     const [loader, setLoader] = React.useState(children);
+    if (FireJS.isSSR)
+        delay = 0;
     FireJS.showLoader = () => {
         setLoader(children)
         FireJS.showLoader = undefined;
     };
     effect(() => {
-        setLoader(<></>)
+        if (delay)
+            setTimeout(() => setLoader(<></>), delay)
+        else
+            setLoader(<></>)
     }, [])
     return loader;
 }
