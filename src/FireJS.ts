@@ -107,37 +107,42 @@ export default class {
     buildPage(page: Page, resolve, reject) {
         this.$.pageArchitect.buildPage(page, () => {
             this.$.cli.ok(`Successfully built page ${page.toString()}`)
-            page.plugin.onBuild(async (path, content) => {
-                this.$.cli.log(`Rendering path ${path}`);
-                let done = 0;
-                this.$.renderer.render(page, path, content).then(html => {
-                    this.$.cli.ok(`Successfully rendered path ${path}`)
-                    writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                        html,
+            try {
+                page.plugin.onBuild(async (path, content) => {
+                    this.$.cli.log(`Rendering path ${path}`);
+                    let done = 0;
+                    this.$.renderer.render(page, path, content).then(html => {
+                        this.$.cli.ok(`Successfully rendered path ${path}`)
+                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                            html,
+                            this.$.outputFileSystem
+                        ).then(() => {
+                            if (++done == 2)
+                                resolve();
+                        }).catch(reject);
+                    }).catch(e => {
+                        this.$.cli.error(`Error while rendering path ${path}`);
+                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                            `Error while rendering path ${path}\n${e}`,
+                            this.$.outputFileSystem
+                        );
+                        reject(e);
+                    })
+                    writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
+                        `FireJS.map=${JSON.stringify({
+                            content,
+                            chunks: page.chunks
+                        })}`,
                         this.$.outputFileSystem
                     ).then(() => {
                         if (++done == 2)
                             resolve();
                     }).catch(reject);
-                }).catch(e => {
-                    this.$.cli.error(`Error while rendering path ${path}`);
-                    writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                        `Error while rendering path ${path}\n${e}`,
-                        this.$.outputFileSystem
-                    );
-                    reject(e);
-                })
-                writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
-                    `FireJS.map=${JSON.stringify({
-                        content,
-                        chunks: page.chunks
-                    })}`,
-                    this.$.outputFileSystem
-                ).then(() => {
-                    if (++done == 2)
-                        resolve();
-                }).catch(reject);
-            });
+                });
+            } catch (e) {
+                this.$.cli.error(`Error while calling onBuild() of pagePlugin for page ${page.toString()}\n\nFunc:`, page.plugin.onBuild.toString(), "\n\n");
+                reject(e);
+            }
         }, reject)
     }
 
@@ -146,7 +151,7 @@ export default class {
         this.$.pageMap.forEach(page => {
             promises.push(this.buildPage(page, () => {
             }, (e) => {
-                this.$.cli.error(`Error while building page ${page}`, e);
+                this.$.cli.error(`Error while building page ${page}\n`, e);
                 throw "";
             }));
         })
@@ -178,7 +183,7 @@ export default class {
                             }
                         })
                     }, (e) => {
-                        this.$.cli.error(`Error while building page ${page}`, e);
+                        this.$.cli.error(`Error while building page ${page}\n`, e);
                         throw "";
                     })
                 ))

@@ -33,7 +33,7 @@ class default_1 {
                 const page = this.$.pageMap.get(path) || new Page_1.default(path);
                 this.$.pageMap.set(page.toString(), page);
                 this.app.buildPage(page, () => {
-                }, (e) => this.$.cli.error(`Error while rendering page ${page.toString()}`, e));
+                }, (e) => this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e));
             })
                 .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));

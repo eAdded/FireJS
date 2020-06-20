@@ -28,7 +28,7 @@ export default class {
                 this.$.pageMap.set(page.toString(), page);
                 this.app.buildPage(page, () => {
                     }, (e) =>
-                        this.$.cli.error(`Error while rendering page ${page.toString()}`, e)
+                        this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e)
                 );
             })
             .on('unlink', path => {

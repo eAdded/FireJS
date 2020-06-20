@@ -1,7 +1,7 @@
-import PagePlugin from "../../dist/plugins/PagePlugin.js";
+const PagePlugin = require("../../dist/plugins/PagePlugin.js");
 
-export default class extends PagePlugin {
+exports.default = class extends PagePlugin.default {
     constructor() {
-        super();
+        super("index.js");
     }
 }

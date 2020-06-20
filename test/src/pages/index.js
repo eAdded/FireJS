@@ -6,7 +6,6 @@ import "../style/main.css"
 
 export default () => {
     const [s, setS] = React.useState(0)
-    WB360.ads = "ad"
     React.useEffect(() => {
         let t = 0;
         setInterval(() => setS(t++), 1000)
