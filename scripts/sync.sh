@@ -37,6 +37,9 @@ clr_scr "Syncing web/*.html Files"
 rsync -vr src/web/*.html $FOLDER/web || error "Error syncing web/*.html files to $FOLDER/web"
 
 clr_scr "Copying LICENSE"
-cp -v LICENSE $FOLDER/LICENSE || error "Error syncing LICENSE to $FOLDER"
+cp -v LICENSE $FOLDER/LICENSE || error "Error copying LICENSE to $FOLDER"
+
+clr_scr "Copying README"
+cp -v README.md $FOLDER/README.md || error "Error copying README to $FOLDER"
 
 clr_scr "     SYNC COMPLETE (ﾉ◕ヮ◕)ﾉ*:・ﾟ✧"
