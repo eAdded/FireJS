@@ -23,6 +23,14 @@ class default_1 {
         return __awaiter(this, void 0, void 0, function* () {
             //init server
             const server = express();
+            //turn off caching
+            server.use((req, res, next) => {
+                res.setHeader('Surrogate-Control', 'no-store');
+                res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+                res.setHeader('Pragma', 'no-cache');
+                res.setHeader('Expires', '0');
+                next();
+            });
             //init plugins
             this.$.globalPlugins.forEach(plugin => plugin.initServer(server));
             //watch changes
