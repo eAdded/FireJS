@@ -10,6 +10,8 @@ export default ({to, children, className, style}) => {
     }
 
     function apply(event) {
+        if (FireJS.showLoader)
+            FireJS.showLoader();
         event.preventDefault();
         if (!wasLoaded)//there is no muse enter in mobile devices
             preLoad(undefined, () => FireJS.linkApi.loadPage(to));
