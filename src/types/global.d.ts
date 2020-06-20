@@ -24,7 +24,8 @@ declare module NodeJS {
             lazyDone?: number,
             pages?: {
                 404: string
-            }
+            },
+            showLoader: () => void
         },
         __FIREJS_APP__?: {
             default: any

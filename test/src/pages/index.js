@@ -1,6 +1,7 @@
 import Link from "../../../src/components/Link.js";
 import Loader from "../../../src/components/Loader.js";
 import CustomLoader from "../components/CustomLoader/CustomLoader.js";
+import Head from "../../../src/components/Head.js";
 import "../style/main.css"
 
 export default () => {
@@ -11,7 +12,10 @@ export default () => {
     }, [])
     return (
         <div>
-            <Loader effect={React.useEffect} delay={500}>
+            <Head>
+                <title>Index</title>
+            </Head>
+            <Loader effect={React.useEffect} delay={400}>
                 <CustomLoader/>
             </Loader>
             <h1>Welcome to FireJS 👋</h1>
