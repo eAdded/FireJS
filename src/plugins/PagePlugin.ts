@@ -10,7 +10,7 @@ export default abstract class extends FireJSPlugin {
         this.page = page;
     }
 
-    async onBuild(renderPage: (path: string, content: any) => void, ...extra: any): Promise<void> {
+    onBuild(renderPage: (path: string, content: any) => void, ...extra: any) {
         renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
     }
 }

@@ -104,41 +104,51 @@ export default class {
         this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
     }
 
-    buildPage(page: Page): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            this.$.pageArchitect.buildPage(page, () => {
-                this.$.cli.ok(`Successfully built page ${page.toString()}`)
-                page.plugin.onBuild((path, content) => {
-                    this.$.cli.log(`Rendering path ${path}`)
-                    this.$.renderer.render(page, path, content).then(html => {
-                        this.$.cli.ok(`Successfully rendered path ${path}`)
-                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                            html,
-                            this.$.outputFileSystem
-                        ).catch(err => {
-                            throw err
-                        });
-                    })
-                    writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
-                        `FireJS.map=${JSON.stringify({
-                            content,
-                            chunks: page.chunks
-                        })}`,
+    buildPage(page: Page, resolve, reject) {
+        this.$.pageArchitect.buildPage(page, () => {
+            this.$.cli.ok(`Successfully built page ${page.toString()}`)
+            page.plugin.onBuild(async (path, content) => {
+                this.$.cli.log(`Rendering path ${path}`);
+                let done = 0;
+                this.$.renderer.render(page, path, content).then(html => {
+                    this.$.cli.ok(`Successfully rendered path ${path}`)
+                    writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                        html,
                         this.$.outputFileSystem
-                    ).catch(err => {
-                        throw err
-                    });
-                }).then(resolve).catch(err => {
-                    throw err
+                    ).then(() => {
+                        if (++done == 2)
+                            resolve();
+                    }).catch(reject);
+                }).catch(e => {
+                    this.$.cli.error(`Error while rendering path ${path}`);
+                    writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                        `Error while rendering path ${path}\n${e}`,
+                        this.$.outputFileSystem
+                    );
+                    reject(e);
                 })
-            }, reject)
-        })
+                writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
+                    `FireJS.map=${JSON.stringify({
+                        content,
+                        chunks: page.chunks
+                    })}`,
+                    this.$.outputFileSystem
+                ).then(() => {
+                    if (++done == 2)
+                        resolve();
+                }).catch(reject);
+            });
+        }, reject)
     }
 
     async export() {
         const promises = []
         this.$.pageMap.forEach(page => {
-            promises.push(this.buildPage(page));
+            promises.push(this.buildPage(page, () => {
+            }, (e) => {
+                this.$.cli.error(`Error while building page ${page}`, e);
+                throw "";
+            }));
         })
         return Promise.all(promises);
     }
@@ -154,8 +164,8 @@ export default class {
             }
             const promises = [];
             for (const page of this.$.pageMap.values()) {
-                promises.push(new Promise(resolve => {
-                    this.buildPage(page).then(() => {
+                promises.push(new Promise(resolve =>
+                    this.buildPage(page, () => {
                         map.pageMap[page.toString()] = page.chunks;
                         page.chunks.forEach(chunk => {
                             if (chunk.endsWith(".js")) {
@@ -167,8 +177,11 @@ export default class {
                                 });
                             }
                         })
-                    });
-                }))
+                    }, (e) => {
+                        this.$.cli.error(`Error while building page ${page}`, e);
+                        throw "";
+                    })
+                ))
             }
             const fullExternalName = map.staticConfig.externals[0].substr(map.staticConfig.externals[0].lastIndexOf("/") + 1);
             this.$.outputFileSystem.rename(join(this.$.config.paths.lib, map.staticConfig.externals[0]), join(this.$.config.paths.fly, fullExternalName), err => {

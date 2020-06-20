@@ -28,12 +28,13 @@ class default_1 {
             //watch changes
             this.$.cli.ok("Watching for file changes");
             chokidar_1.watch(this.$.config.paths.pages)
-                .on('add', (path) => __awaiter(this, void 0, void 0, function* () {
+                .on('add', path => {
                 path = path.replace(this.$.config.paths.pages + "/", "");
                 const page = this.$.pageMap.get(path) || new Page_1.default(path);
                 this.$.pageMap.set(page.toString(), page);
-                yield this.app.buildPage(page);
-            }))
+                this.app.buildPage(page, () => {
+                }, (e) => this.$.cli.error(`Error while rendering page ${page.toString()}`, e));
+            })
                 .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));
                 page.chunks.forEach(chunk => {

@@ -38,7 +38,7 @@ export default class {
     private constructParams;
     constructor(params?: Params);
     init(): Promise<void>;
-    buildPage(page: Page): Promise<void>;
+    buildPage(page: Page, resolve: any, reject: any): void;
     export(): Promise<any[]>;
     exportFly(): Promise<unknown>;
     getContext(): $;

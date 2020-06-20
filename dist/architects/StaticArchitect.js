@@ -64,6 +64,8 @@ class default_1 {
                 content,
                 chunks: page.chunks
             };
+            //isSSR
+            global.FireJS.isSSR = this.config.ssr;
             //reset lazy count
             global.FireJS.lazyCount = 0;
             global.FireJS.lazyDone = 0;
@@ -109,7 +111,12 @@ class default_1 {
                     global.FireJS.linkApi.preloadChunks([page.chunks[index]]);
                     global.FireJS.linkApi.loadChunks([page.chunks[index]]);
                     if (this.config.ssr)
-                        Require_1.requireUncached(path_1.join(this.config.pathToLib, page.chunks[index]));
+                        try {
+                            Require_1.requireUncached(path_1.join(this.config.pathToLib, page.chunks[index]));
+                        }
+                        catch (e) {
+                            throw new Error(`Error while running ${page.chunks[index]}\n${e}`);
+                        }
                 }
             }
             global.FireJS.finishRender = () => {
@@ -117,8 +124,8 @@ class default_1 {
                 resolve(dom.serialize()); //serialize i.e get html
             };
             //static render
-            if ((global.FireJS.isSSR = this.config.ssr)) {
-                document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(global.window.React.createElement(global.window.__FIREJS_APP__.default, { content: global.FireJS.map.content }));
+            if (this.config.ssr) {
+                document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(global.React.createElement(global.window.__FIREJS_APP__.default, { content: global.FireJS.map.content }));
                 const helmet = react_helmet_1.Helmet.renderStatic();
                 for (let helmetKey in helmet)
                     document.head.innerHTML += helmet[helmetKey].toString();

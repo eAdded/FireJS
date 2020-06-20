@@ -19,7 +19,7 @@ error() {
   echo ""
   echo "      $1      "
   echo ""
-  exit
+  exit 1
 }
 
 clr_scr "Removing folder $FOLDER"

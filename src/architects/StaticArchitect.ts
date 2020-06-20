@@ -84,6 +84,8 @@ export default class {
                 content,
                 chunks: page.chunks
             };
+            //isSSR
+            global.FireJS.isSSR = this.config.ssr
             //reset lazy count
             global.FireJS.lazyCount = 0;
             global.FireJS.lazyDone = 0;
@@ -128,7 +130,11 @@ export default class {
                     global.FireJS.linkApi.preloadChunks([page.chunks[index]]);
                     global.FireJS.linkApi.loadChunks([page.chunks[index]]);
                     if (this.config.ssr)
-                        requireUncached(join(this.config.pathToLib, page.chunks[index]));
+                        try {
+                            requireUncached(join(this.config.pathToLib, page.chunks[index]));
+                        } catch (e) {
+                            throw new Error(`Error while running ${page.chunks[index]}\n${e}`)
+                        }
                 }
             }
             global.FireJS.finishRender = () => {
@@ -136,9 +142,9 @@ export default class {
                 resolve(dom.serialize());//serialize i.e get html
             }
             //static render
-            if ((global.FireJS.isSSR = this.config.ssr)) {
+            if (this.config.ssr) {
                 document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(
-                    global.window.React.createElement(
+                    global.React.createElement(
                         global.window.__FIREJS_APP__.default,
                         {content: global.FireJS.map.content}
                     )

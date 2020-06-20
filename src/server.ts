@@ -22,11 +22,14 @@ export default class {
         //watch changes
         this.$.cli.ok("Watching for file changes")
         watch(this.$.config.paths.pages)
-            .on('add', async path => {
+            .on('add', path => {
                 path = path.replace(this.$.config.paths.pages + "/", "");
                 const page = this.$.pageMap.get(path) || new Page(path);
                 this.$.pageMap.set(page.toString(), page);
-                await this.app.buildPage(page);
+                this.app.buildPage(page, () => {
+                    }, (e) =>
+                        this.$.cli.error(`Error while rendering page ${page.toString()}`, e)
+                );
             })
             .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));

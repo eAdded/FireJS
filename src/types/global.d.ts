@@ -25,7 +25,7 @@ declare module NodeJS {
             pages?: {
                 404: string
             },
-            showLoader: () => void
+            showLoader?: () => void
         },
         __FIREJS_APP__?: {
             default: any
