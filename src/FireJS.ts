@@ -146,15 +146,16 @@ export default class {
         }, reject)
     }
 
-    async export() {
+    export() {
         const promises = []
-        this.$.pageMap.forEach(page => {
-            promises.push(this.buildPage(page, () => {
-            }, (e) => {
-                this.$.cli.error(`Error while building page ${page}\n`, e);
-                throw "";
-            }));
-        })
+        this.$.pageMap.forEach(page =>
+            promises.push(new Promise((resolve) => {
+                this.buildPage(page, resolve, (e) => {
+                    this.$.cli.error(`Error while building page ${page}\n`, e);
+                    throw "";
+                })
+            }))
+        )
         return Promise.all(promises);
     }
 

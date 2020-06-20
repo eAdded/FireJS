@@ -109,17 +109,14 @@ class default_1 {
         }, reject);
     }
     export() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const promises = [];
-            this.$.pageMap.forEach(page => {
-                promises.push(this.buildPage(page, () => {
-                }, (e) => {
-                    this.$.cli.error(`Error while building page ${page}\n`, e);
-                    throw "";
-                }));
+        const promises = [];
+        this.$.pageMap.forEach(page => promises.push(new Promise((resolve) => {
+            this.buildPage(page, resolve, (e) => {
+                this.$.cli.error(`Error while building page ${page}\n`, e);
+                throw "";
             });
-            return Promise.all(promises);
-        });
+        })));
+        return Promise.all(promises);
     }
     exportFly() {
         return new Promise((resolve) => {
