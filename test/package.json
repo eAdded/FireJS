@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "node ../dist/bin.js"
+    "test": "node --trace-warnings ../dist/bin.js"
   },
   "dependencies": {
     "markdown-to-jsx": "^6.11.4",

@@ -130,11 +130,7 @@ export default class {
                     global.FireJS.linkApi.preloadChunks([page.chunks[index]]);
                     global.FireJS.linkApi.loadChunks([page.chunks[index]]);
                     if (this.config.ssr)
-                        try {
-                            requireUncached(join(this.config.pathToLib, page.chunks[index]));
-                        } catch (e) {
-                            throw new Error(`Error while running ${page.chunks[index]}\n${e}`)
-                        }
+                        requireUncached(join(this.config.pathToLib, page.chunks[index]));
                 }
             }
             global.FireJS.finishRender = () => {
