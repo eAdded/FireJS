@@ -62,7 +62,7 @@ export default class {
     }
 
     renderGlobalPlugin(globalPlugin: GlobalPlugin) {
-        globalPlugin.onRender(this.config.template);
+        globalPlugin.initDom(this.config.template);
     }
 
     render(page: Page, path: string, content: any): Promise<string> {

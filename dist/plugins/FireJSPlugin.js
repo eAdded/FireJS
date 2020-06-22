@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PluginCode = void 0;
 var PluginCode;
 (function (PluginCode) {
     PluginCode[PluginCode["GlobalPlugin"] = 1] = "GlobalPlugin";
@@ -12,8 +11,6 @@ class FireJSPlugin {
         this.version = version;
     }
     initWebpack(webpackConfig) {
-    }
-    onRender(dom) {
     }
 }
 exports.default = FireJSPlugin;

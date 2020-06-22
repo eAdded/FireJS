@@ -43,7 +43,7 @@ class default_1 {
             require("../web/LinkApi");
     }
     renderGlobalPlugin(globalPlugin) {
-        globalPlugin.onRender(this.config.template);
+        globalPlugin.initDom(this.config.template);
     }
     render(page, path, content) {
         return new Promise(resolve => {

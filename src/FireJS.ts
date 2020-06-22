@@ -108,26 +108,27 @@ export default class {
         this.$.pageArchitect.buildPage(page, () => {
             this.$.cli.ok(`Successfully built page ${page.toString()}`)
             try {
-                page.plugin.onBuild(async (path, content) => {
+                page.plugin.onBuild(async (path, content = {}, render = true) => {
                     this.$.cli.log(`Rendering path ${path}`);
                     let done = 0;
-                    this.$.renderer.render(page, path, content).then(html => {
-                        this.$.cli.ok(`Successfully rendered path ${path}`)
-                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                            html,
-                            this.$.outputFileSystem
-                        ).then(() => {
-                            if (++done == 2)
-                                resolve();
-                        }).catch(reject);
-                    }).catch(e => {
-                        this.$.cli.error(`Error while rendering path ${path}`);
-                        writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
-                            `Error while rendering path ${path}\n${e}`,
-                            this.$.outputFileSystem
-                        );
-                        reject(e);
-                    })
+                    if (render || this.$.renderer.config.ssr)
+                        this.$.renderer.render(page, path, content).then(html => {
+                            this.$.cli.ok(`Successfully rendered path ${path}`)
+                            writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                                html,
+                                this.$.outputFileSystem
+                            ).then(() => {
+                                if (++done == 2)
+                                    resolve();
+                            }).catch(reject);
+                        }).catch(e => {
+                            this.$.cli.error(`Error while rendering path ${path}`);
+                            writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
+                                `Error while rendering path ${path}\n${e}`,
+                                this.$.outputFileSystem
+                            );
+                            reject(e);
+                        })
                     writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
                         `FireJS.map=${JSON.stringify({
                             content,

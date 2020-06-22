@@ -1,7 +1,9 @@
 /// <reference types="express-serve-static-core" />
 import FireJSPlugin from "./FireJSPlugin";
-export declare const GlobalPlugMinVer = 0.5;
+import { JSDOM } from "jsdom";
+export declare const GlobalPlugMinVer = 1;
 export default class extends FireJSPlugin {
     protected constructor();
     initServer(server: Express.Application): void;
+    initDom(dom: JSDOM): void;
 }

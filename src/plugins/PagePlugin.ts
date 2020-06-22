@@ -1,16 +1,20 @@
 import FireJSPlugin, {PluginCode} from "./FireJSPlugin";
+import {JSDOM} from "jsdom";
 
-export const PagePlugMinVer = 0.5;
+export const PagePlugMinVer = 1.0;
 
 export default abstract class extends FireJSPlugin {
     page: string;
 
     protected constructor(page: string) {
-        super(0.5, PluginCode.PagePlugin);
+        super(1.0, PluginCode.PagePlugin);
         this.page = page;
     }
 
-    onBuild(renderPage: (path: string, content: any) => void, ...extra: any) {
-        renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")), {})
+    onBuild(renderPage: (path: string, content?: any, render?: boolean) => void, ...extra: any) {
+        renderPage("/" + this.page.toString().substring(0, this.page.toString().lastIndexOf(".")))
+    }
+
+    onRender(dom: JSDOM) {
     }
 }
