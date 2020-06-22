@@ -101,7 +101,7 @@ function init(): { app: FireJS, args: Args, customConfig: boolean } {
                 $.cli.warn("Don't forget to copy the static folder to dist");
         } else {
             const server = new Server(app);
-            await server.init();
+            await server.init(args["--port"], args["--addr"]);
         }
     } catch (err) {
         $.cli.error(err)

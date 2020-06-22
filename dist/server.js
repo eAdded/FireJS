@@ -19,7 +19,7 @@ class default_1 {
         this.$ = app.getContext();
         this.$.pageArchitect.webpackArchitect.defaultConfig.watch = true;
     }
-    init() {
+    init(port = 5000, addr = "0.0.0.0") {
         return __awaiter(this, void 0, void 0, function* () {
             //init server
             const server = express();
@@ -57,7 +57,11 @@ class default_1 {
             server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this));
             server.get('*', this.getPage.bind(this));
             //listen
-            server.listen(process.env.PORT || 5000, () => this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`));
+            const listener = server.listen(port, addr, () => {
+                let address = listener.address();
+                // @ts-ignore
+                this.$.cli.ok(`listening on port ${address.port} at addr ${address.address}`);
+            });
         });
     }
     get(req, res) {

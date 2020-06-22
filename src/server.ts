@@ -14,7 +14,7 @@ export default class {
         this.$.pageArchitect.webpackArchitect.defaultConfig.watch = true;
     }
 
-    async init() {
+    async init(port: number = 5000, addr: string = "0.0.0.0") {
         //init server
         const server: express.Application = express();
         //turn off caching
@@ -53,7 +53,11 @@ export default class {
         server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this))
         server.get('*', this.getPage.bind(this));
         //listen
-        server.listen(process.env.PORT || 5000, () => this.$.cli.ok(`listening on port ${process.env.PORT || "5000"}`))
+        const listener = server.listen(port, addr, () => {
+            let address = listener.address();
+            // @ts-ignore
+            this.$.cli.ok(`listening on port ${address.port} at addr ${address.address}`)
+        })
     }
 
     private get(req: express.Request, res: express.Response) {

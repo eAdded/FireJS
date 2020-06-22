@@ -109,9 +109,9 @@ export default class {
             this.$.cli.ok(`Successfully built page ${page.toString()}`)
             try {
                 page.plugin.onBuild(async (path, content = {}, render = true) => {
-                    this.$.cli.log(`Rendering path ${path}`);
                     let done = 0;
-                    if (render || this.$.renderer.config.ssr)
+                    if (render || this.$.renderer.config.ssr) {
+                        this.$.cli.log(`Rendering path ${path}`);
                         this.$.renderer.render(page, path, content).then(html => {
                             this.$.cli.ok(`Successfully rendered path ${path}`)
                             writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
@@ -129,6 +129,7 @@ export default class {
                             );
                             reject(e);
                         })
+                    }
                     writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
                         `FireJS.map=${JSON.stringify({
                             content,

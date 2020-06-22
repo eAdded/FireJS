@@ -4,6 +4,8 @@ export interface Args {
     "--export-fly": boolean;
     "--disk": boolean;
     "--ssr": boolean;
+    "--port": number;
+    "--addr": string;
     "--conf": string;
     "--verbose": boolean;
     "--log-mode": "silent" | "plain";

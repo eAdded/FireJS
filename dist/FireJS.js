@@ -80,9 +80,9 @@ class default_1 {
             this.$.cli.ok(`Successfully built page ${page.toString()}`);
             try {
                 page.plugin.onBuild((path, content = {}, render = true) => __awaiter(this, void 0, void 0, function* () {
-                    this.$.cli.log(`Rendering path ${path}`);
                     let done = 0;
-                    if (render || this.$.renderer.config.ssr)
+                    if (render || this.$.renderer.config.ssr) {
+                        this.$.cli.log(`Rendering path ${path}`);
                         this.$.renderer.render(page, path, content).then(html => {
                             this.$.cli.ok(`Successfully rendered path ${path}`);
                             Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), html, this.$.outputFileSystem).then(() => {
@@ -94,6 +94,7 @@ class default_1 {
                             Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), `Error while rendering path ${path}\n${e}`, this.$.outputFileSystem);
                             reject(e);
                         });
+                    }
                     Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `FireJS.map=${JSON.stringify({
                         content,
                         chunks: page.chunks

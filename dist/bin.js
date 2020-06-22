@@ -109,7 +109,7 @@ function init() {
             }
             else {
                 const server = new server_1.default(app);
-                yield server.init();
+                yield server.init(args["--port"], args["--addr"]);
             }
         }
         catch (err) {

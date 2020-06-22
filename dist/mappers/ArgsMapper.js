@@ -13,6 +13,9 @@ function getArgs() {
         .option(["-d", "--disk"], Boolean, "store chunks to disk instead of memory while in dev server")
         .option(["-s", "--ssr"], Boolean, "Server Side Render. Available only with -d and -e")
         .option(["-E", "--export-fly"], Boolean, "export project for distribution and for fly build")
+        //dev server
+        .option(["--port"], Number, "port for dev server, default: 5000")
+        .option(["--addr"], String, "address for dev server, default: localhost")
         //conf
         .option(["-c", "--conf"], String, "path to code config file")
         //logging
