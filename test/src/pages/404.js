@@ -4,9 +4,8 @@ import CustomLoader from "../components/CustomLoader/CustomLoader.js";
 import Loader from "../../../src/components/Loader.js";
 import "../style/main.css"
 import Link from "../../../src/components/Link.js";
-import {hot} from "react-hot-loader/root.js";
 
-export default hot(() => {
+export default () => {
     const Markdown = LazyLoad(import("markdown-to-jsx"));
     return (
         <div>
@@ -26,4 +25,4 @@ export default hot(() => {
             <Link to={"/"}> 👻 Click Here To Go Home</Link>
         </div>
     )
-});
+}

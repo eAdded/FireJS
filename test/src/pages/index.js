@@ -3,9 +3,8 @@ import Loader from "../../../src/components/Loader.js";
 import CustomLoader from "../components/CustomLoader/CustomLoader.js";
 import Head from "../../../src/components/Head.js";
 import "../style/main.css"
-import {hot} from 'react-hot-loader/root';
 
-export default hot(() => {
+export default () => {
     const [s, setS] = React.useState(0)
     React.useEffect(() => {
         let t = 0;
@@ -21,10 +20,10 @@ export default hot(() => {
             </Loader>
             <h1>Welcome to FireJS 👋</h1>
             <br/>
-            You have been there for {s}s
+            You have been here for {s}s
             <br/>
             <br/>
             <Link to={"/about"}>🤠 Clickasd Here To Go To About Page</Link>
         </div>
     )
-})
+}
