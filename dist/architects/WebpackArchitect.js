@@ -44,7 +44,8 @@ class default_1 {
                         },
                     }, {
                         test: /\.css$/i,
-                        use: [MiniCssExtractPlugin.loader,
+                        use: [
+                            ...(this.$.config.pro ? [MiniCssExtractPlugin.loader] : ['style-loader']),
                             {
                                 loader: 'css-loader',
                                 options: {
@@ -52,7 +53,8 @@ class default_1 {
                                         hashPrefix: 'hash',
                                     },
                                 },
-                            }]
+                            }
+                        ]
                     }]
             },
             externals: {
@@ -60,17 +62,14 @@ class default_1 {
                 "react-dom": 'ReactDOM'
             },
             plugins: [
-                new MiniCssExtractPlugin({
-                    filename: "c[contentHash].css"
-                }),
+                ...(this.$.config.pro ? [new MiniCssExtractPlugin({
+                        filename: "c[contentHash].css"
+                    })] : [new webpack.HotModuleReplacementPlugin({
+                        multiStep: true
+                    })]),
                 new CleanObsoleteChunks()
             ]
         };
-        if (!this.$.config.pro) {
-            this.defaultConfig.plugins.push(new webpack.HotModuleReplacementPlugin({
-                multiStep: true
-            }));
-        }
     }
     forExternals() {
         const conf = {

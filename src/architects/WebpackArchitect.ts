@@ -48,7 +48,8 @@ export default class {
                     },
                 }, {
                     test: /\.css$/i,
-                    use: [MiniCssExtractPlugin.loader,
+                    use: [
+                        ...(this.$.config.pro ? [MiniCssExtractPlugin.loader] : ['style-loader']),
                         {
                             loader: 'css-loader',
                             options: {
@@ -64,16 +65,13 @@ export default class {
                 "react-dom": 'ReactDOM'
             },
             plugins: [
-                new MiniCssExtractPlugin({
+                ...(this.$.config.pro ? [new MiniCssExtractPlugin({
                     filename: "c[contentHash].css"
-                }),
+                })] : [new webpack.HotModuleReplacementPlugin({
+                    multiStep: true
+                })]),
                 new CleanObsoleteChunks()
             ]
-        }
-        if (!this.$.config.pro) {
-            this.defaultConfig.plugins.push(new webpack.HotModuleReplacementPlugin({
-                multiStep: true
-            }))
         }
     }
 
