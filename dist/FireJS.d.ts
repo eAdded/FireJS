@@ -1,19 +1,16 @@
 import GlobalPlugin from "./plugins/GlobalPlugin";
-import {Config} from "./mappers/ConfigMapper";
+import { Config } from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
-import {Configuration, Stats} from "webpack";
+import { Compiler, Configuration, Stats } from "webpack";
 import PageArchitect from "./architects/PageArchitect";
-import StaticArchitect, {StaticConfig} from "./architects/StaticArchitect";
-
+import StaticArchitect, { StaticConfig } from "./architects/StaticArchitect";
 export declare type WebpackConfig = Configuration;
 export declare type WebpackStat = Stats;
-
 export interface PathRelatives {
     libRel: string;
     mapRel: string;
 }
-
 export interface $ {
     config?: Config;
     pageMap?: Map<string, Page>;
@@ -41,7 +38,7 @@ export default class {
     private constructParams;
     constructor(params?: Params);
     init(): Promise<void>;
-    buildPage(page: Page, resolve: any, reject: any): void;
+    buildPage(page: Page, resolve: any, reject: any): Compiler;
     export(): Promise<any[]>;
     exportFly(): Promise<unknown>;
     getContext(): $;

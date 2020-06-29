@@ -4,7 +4,7 @@ import GlobalPlugin from "./plugins/GlobalPlugin";
 import ConfigMapper, {Config} from "./mappers/ConfigMapper";
 import Cli from "./utils/Cli";
 import Page from "./classes/Page";
-import {Configuration, Stats} from "webpack";
+import {Compiler, Configuration, Stats} from "webpack";
 import {join, relative} from "path";
 import {mapPlugin} from "./mappers/PluginMapper";
 import PageArchitect from "./architects/PageArchitect";
@@ -104,8 +104,8 @@ export default class {
         this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
     }
 
-    buildPage(page: Page, resolve, reject) {
-        this.$.pageArchitect.buildPage(page, () => {
+    buildPage(page: Page, resolve, reject): Compiler {
+        return this.$.pageArchitect.buildPage(page, () => {
             this.$.cli.ok(`Successfully built page ${page.toString()}`)
             try {
                 page.plugin.onBuild(async (path, content = {}, render = true) => {

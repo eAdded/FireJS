@@ -1,17 +1,13 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {value: true});
-exports.GlobalPlugMinVer = void 0;
+Object.defineProperty(exports, "__esModule", { value: true });
 const FireJSPlugin_1 = require("./FireJSPlugin");
 exports.GlobalPlugMinVer = 1.0;
-
 class default_1 extends FireJSPlugin_1.default {
     constructor() {
         super(1.0, FireJSPlugin_1.PluginCode.GlobalPlugin);
     }
-
     initServer(server) {
     }
-
     initDom(dom) {
     }
 }

@@ -1,9 +1,8 @@
-import {PathRelatives} from "../FireJS";
-import {ExplicitPages} from "../mappers/ConfigMapper";
+import { PathRelatives } from "../FireJS";
+import { ExplicitPages } from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
-import {JSDOM} from "jsdom";
+import { JSDOM } from "jsdom";
 import GlobalPlugin from "../plugins/GlobalPlugin";
-
 export interface StaticConfig {
     rel: PathRelatives;
     externals: string[];

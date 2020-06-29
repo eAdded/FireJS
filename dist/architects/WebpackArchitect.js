@@ -4,6 +4,7 @@ const lodash_1 = require("lodash");
 const path_1 = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CleanObsoleteChunks = require("webpack-clean-obsolete-chunks");
+const webpack = require("webpack");
 class default_1 {
     constructor($) {
         this.$ = $;
@@ -18,9 +19,9 @@ class default_1 {
                 usedExports: true,
                 minimize: true
             },
-            entry: {},
+            entry: [],
             output: {
-                filename: "m[contentHash].js",
+                filename: `m[${this.$.config.pro ? "chunkhash" : "hash"}].js`,
                 chunkFilename: "c[contentHash].js",
                 publicPath: `/${this.$.rel.libRel}/`,
                 path: this.$.config.paths.lib,
@@ -64,7 +65,8 @@ class default_1 {
                 new MiniCssExtractPlugin({
                     filename: "c[contentHash].css"
                 }),
-                new CleanObsoleteChunks()
+                new CleanObsoleteChunks(),
+                new webpack.HotModuleReplacementPlugin()
             ]
         };
     }
@@ -87,7 +89,7 @@ class default_1 {
     forPage(page) {
         const mergedConfig = lodash_1.cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString();
-        mergedConfig.entry = path_1.join(this.$.config.paths.pages, mergedConfig.name);
+        mergedConfig.entry = ['webpack-hot-middleware/client', path_1.join(this.$.config.paths.pages, mergedConfig.name)];
         page.plugin.initWebpack(mergedConfig);
         return mergedConfig;
     }

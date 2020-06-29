@@ -76,7 +76,7 @@ class default_1 {
         });
     }
     buildPage(page, resolve, reject) {
-        this.$.pageArchitect.buildPage(page, () => {
+        return this.$.pageArchitect.buildPage(page, () => {
             this.$.cli.ok(`Successfully built page ${page.toString()}`);
             try {
                 page.plugin.onBuild((path, content = {}, render = true) => __awaiter(this, void 0, void 0, function* () {

@@ -3,6 +3,7 @@ import {watch} from "chokidar"
 import FireJS, {$} from "./FireJS"
 import Page from "./classes/Page";
 import express = require("express");
+import webpackhot = require("webpack-hot-middleware");
 
 export default class {
     private readonly $: $
@@ -34,10 +35,11 @@ export default class {
                 path = path.replace(this.$.config.paths.pages + "/", "");
                 const page = this.$.pageMap.get(path) || new Page(path);
                 this.$.pageMap.set(page.toString(), page);
-                this.app.buildPage(page, () => {
+                const compiler = this.app.buildPage(page, () => {
                     }, (e) =>
                         this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e)
                 );
+                server.use(webpackhot(compiler, {}));
             })
             .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));

@@ -20,7 +20,7 @@ class default_1 {
         });
     }
     buildPage(page, resolve, reject) {
-        this.build(this.webpackArchitect.forPage(page), (stat) => {
+        return this.build(this.webpackArchitect.forPage(page), (stat) => {
             if (this.logStat(stat)) //true if errors
                 reject(undefined);
             else {
@@ -62,6 +62,7 @@ class default_1 {
                 else
                     resolve(stat);
             });
+        return compiler;
     }
     logStat(stat) {
         if (this.$.config.verbose) {

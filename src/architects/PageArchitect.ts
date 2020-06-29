@@ -2,6 +2,7 @@ import webpack = require("webpack");
 import WebpackArchitect from "./WebpackArchitect";
 import {$, WebpackConfig, WebpackStat} from "../FireJS";
 import Page from "../classes/Page";
+import {Compiler} from "webpack";
 
 export default class {
     private readonly $: $;
@@ -28,8 +29,8 @@ export default class {
         })
     }
 
-    buildPage(page: Page, resolve: () => void, reject: (err: any | undefined) => void) {
-        this.build(this.webpackArchitect.forPage(page), (stat) => {
+    buildPage(page: Page, resolve: () => void, reject: (err: any | undefined) => void): Compiler {
+        return this.build(this.webpackArchitect.forPage(page), (stat) => {
             if (this.logStat(stat))//true if errors
                 reject(undefined);
             else {
@@ -52,7 +53,7 @@ export default class {
         }, reject);
     }
 
-    build(config: WebpackConfig, resolve: (stat) => void, reject: (err) => void) {
+    build(config: WebpackConfig, resolve: (stat) => void, reject: (err) => void): Compiler {
         const compiler = webpack(config);
         if (this.isOutputCustom)
             compiler.outputFileSystem = this.$.outputFileSystem;
@@ -72,6 +73,7 @@ export default class {
                 else
                     resolve(stat);
             });
+        return compiler;
     }
 
     logStat(stat: WebpackStat) {

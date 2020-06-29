@@ -1,8 +1,6 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", {value: true});
-exports.getArgs = void 0;
+Object.defineProperty(exports, "__esModule", { value: true });
 const SmartArg_1 = require("smartarg/SmartArg");
-
 function getArgs() {
     return new SmartArg_1.default()
         .name("Fire JS")

@@ -1,9 +1,10 @@
 import {cloneDeep} from "lodash"
-import {$, WebpackConfig} from "../FireJS";
+import {$, WebpackConfig} from "../FireJS"
 import {join, relative} from "path"
-import Page from "../classes/Page";
-import MiniCssExtractPlugin = require('mini-css-extract-plugin');
-import CleanObsoleteChunks = require('webpack-clean-obsolete-chunks');
+import Page from "../classes/Page"
+import * as MiniCssExtractPlugin from 'mini-css-extract-plugin'
+import * as CleanObsoleteChunks from 'webpack-clean-obsolete-chunks'
+import * as webpack from "webpack";
 
 export default class {
     private readonly $: $;
@@ -22,9 +23,9 @@ export default class {
                 usedExports: true,
                 minimize: true
             },
-            entry: {},
+            entry: [],
             output: {
-                filename: "m[contentHash].js",
+                filename: `m[${this.$.config.pro ? "chunkhash" : "hash"}].js`,
                 chunkFilename: "c[contentHash].js",
                 publicPath: `/${this.$.rel.libRel}/`,
                 path: this.$.config.paths.lib,
@@ -68,7 +69,8 @@ export default class {
                 new MiniCssExtractPlugin({
                     filename: "c[contentHash].css"
                 }),
-                new CleanObsoleteChunks()
+                new CleanObsoleteChunks(),
+                new webpack.HotModuleReplacementPlugin()
             ]
         }
     }
@@ -93,7 +95,7 @@ export default class {
     forPage(page: Page): WebpackConfig {
         const mergedConfig = cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString()
-        mergedConfig.entry = join(this.$.config.paths.pages, mergedConfig.name);
+        mergedConfig.entry = ['webpack-hot-middleware/client', join(this.$.config.paths.pages, mergedConfig.name)];
         page.plugin.initWebpack(mergedConfig);
         return mergedConfig;
     }

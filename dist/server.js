@@ -13,6 +13,7 @@ const path_1 = require("path");
 const chokidar_1 = require("chokidar");
 const Page_1 = require("./classes/Page");
 const express = require("express");
+const webpackhot = require("webpack-hot-middleware");
 class default_1 {
     constructor(app) {
         this.app = app;
@@ -40,8 +41,9 @@ class default_1 {
                 path = path.replace(this.$.config.paths.pages + "/", "");
                 const page = this.$.pageMap.get(path) || new Page_1.default(path);
                 this.$.pageMap.set(page.toString(), page);
-                this.app.buildPage(page, () => {
+                const compiler = this.app.buildPage(page, () => {
                 }, (e) => this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e));
+                server.use(webpackhot(compiler, {}));
             })
                 .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));
