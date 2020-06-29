@@ -14,6 +14,7 @@ const chokidar_1 = require("chokidar");
 const Page_1 = require("./classes/Page");
 const express = require("express");
 const webpackhot = require("webpack-hot-middleware");
+const mime = require("mime-types");
 class default_1 {
     constructor(app) {
         this.app = app;
@@ -43,7 +44,9 @@ class default_1 {
                 this.$.pageMap.set(page.toString(), page);
                 const compiler = this.app.buildPage(page, () => {
                 }, (e) => this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e));
-                server.use(webpackhot(compiler, {}));
+                server.use(webpackhot(compiler, {
+                    path: '/__webpack_hmr',
+                }));
             })
                 .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));
@@ -69,6 +72,7 @@ class default_1 {
     get(req, res) {
         // @ts-ignore
         const pathname = path_1.join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
+        res.contentType(mime.lookup(pathname));
         if (this.$.outputFileSystem.existsSync(pathname))
             res.write(this.$.outputFileSystem.readFileSync(pathname));
         else
@@ -76,6 +80,8 @@ class default_1 {
         res.end();
     }
     getPage(req, res) {
+        if (req.url === "/__webpack_hmr")
+            return;
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
         try {

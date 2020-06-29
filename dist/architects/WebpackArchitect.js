@@ -24,9 +24,7 @@ class default_1 {
                 filename: `m[${this.$.config.pro ? "chunkhash" : "hash"}].js`,
                 chunkFilename: "c[contentHash].js",
                 publicPath: `/${this.$.rel.libRel}/`,
-                path: this.$.config.paths.lib,
-                library: "__FIREJS_APP__",
-                libraryTarget: "window"
+                path: this.$.config.paths.lib
             },
             module: {
                 rules: [{
@@ -66,7 +64,9 @@ class default_1 {
                     filename: "c[contentHash].css"
                 }),
                 new CleanObsoleteChunks(),
-                new webpack.HotModuleReplacementPlugin()
+                new webpack.HotModuleReplacementPlugin({
+                    multiStep: true
+                })
             ]
         };
     }
@@ -89,7 +89,10 @@ class default_1 {
     forPage(page) {
         const mergedConfig = lodash_1.cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString();
-        mergedConfig.entry = ['webpack-hot-middleware/client', path_1.join(this.$.config.paths.pages, mergedConfig.name)];
+        mergedConfig.entry = ['webpack-hot-middleware/client', path_1.join(__dirname, "../web/wrapper.js")];
+        mergedConfig.plugins.push(new webpack.ProvidePlugin({
+            APP: path_1.join(this.$.config.paths.pages, mergedConfig.name)
+        }));
         page.plugin.initWebpack(mergedConfig);
         return mergedConfig;
     }

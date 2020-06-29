@@ -4,6 +4,7 @@ import FireJS, {$} from "./FireJS"
 import Page from "./classes/Page";
 import express = require("express");
 import webpackhot = require("webpack-hot-middleware");
+import mime = require("mime-types");
 
 export default class {
     private readonly $: $
@@ -39,7 +40,9 @@ export default class {
                     }, (e) =>
                         this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e)
                 );
-                server.use(webpackhot(compiler, {}));
+                server.use(webpackhot(compiler, {
+                    path: '/__webpack_hmr',
+                }));
             })
             .on('unlink', path => {
                 const page = this.$.pageMap.get(path.replace(this.$.config.paths.pages + "/", ""));
@@ -65,6 +68,7 @@ export default class {
     private get(req: express.Request, res: express.Response) {
         // @ts-ignore
         const pathname = join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
+        res.contentType(mime.lookup(pathname))
         if (this.$.outputFileSystem.existsSync(pathname))
             res.write(this.$.outputFileSystem.readFileSync(pathname));
         else
@@ -73,6 +77,8 @@ export default class {
     }
 
     private getPage(req: express.Request, res: express.Response) {
+        if (req.url === "/__webpack_hmr")
+            return;
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
         try {

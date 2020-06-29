@@ -20,10 +20,17 @@ export default () => {
             </Loader>
             <h1>Welcome to FireJS 👋</h1>
             <br/>
-            You have been on this page for {s}s
+            You have been onsdasdasd this page for {s}s
             <br/>
             <br/>
             <Link to={"/about"}>🤠 Click Here To Go To About Page</Link>
         </div>
     )
+}
+
+if (module.hot) {
+    module.hot.accept(function () {
+        console.log('Accepting the updated printMe module!');
+        console.log("asdadsad")
+    })
 }

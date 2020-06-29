@@ -41,12 +41,13 @@ export default class {
                     chunk.files.forEach(file => {
                         if (file.endsWith(".css"))//prevent FOUC
                             css.push(file);
-                        else if (chunk.name === "main")
+                        else if (file.startsWith("m"))
                             mainChunk = file;
                         else
                             page.chunks.push(file)
                     })
                 });
+                console.log(page.chunks)
                 page.chunks.unshift(mainChunk, ...css);
                 resolve();
             }
