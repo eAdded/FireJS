@@ -120,7 +120,7 @@ class default_1 {
             };
             //static render
             if (this.config.ssr) {
-                document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(global.React.createElement(global.window.__FIREJS_APP__.default, { content: global.FireJS.map.content }));
+                document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(global.React.createElement(global.FireJS.app, { content: global.FireJS.map.content }));
                 const helmet = react_helmet_1.Helmet.renderStatic();
                 for (let helmetKey in helmet)
                     document.head.innerHTML += helmet[helmetKey].toString();

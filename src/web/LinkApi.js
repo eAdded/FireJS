@@ -32,7 +32,7 @@ FireJS.linkApi = {
             window.history.pushState(undefined, undefined, url);
     },
     runApp: function (func = ReactDOM.render) {
-        func(React.createElement(window.__FIREJS_APP__.default, {content: FireJS.map.content}),
+        func(React.createElement(FireJS.app, {content: FireJS.map.content}),
             document.getElementById("root")
         );
         FireJS.isHydrated = false;

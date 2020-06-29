@@ -2,6 +2,7 @@ declare module NodeJS {
     interface Global {
         window: Global,
         FireJS: {
+            app?: any,
             libRel?: string,
             mapRel?: string,
             map?: {
@@ -26,9 +27,6 @@ declare module NodeJS {
                 404: string
             },
             showLoader?: () => void
-        },
-        __FIREJS_APP__?: {
-            default: any
         },
         React?: any,
         ReactDOM?: any,

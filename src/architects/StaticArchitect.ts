@@ -141,7 +141,7 @@ export default class {
             if (this.config.ssr) {
                 document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(
                     global.React.createElement(
-                        global.window.__FIREJS_APP__.default,
+                        global.FireJS.app,
                         {content: global.FireJS.map.content}
                     )
                 );
