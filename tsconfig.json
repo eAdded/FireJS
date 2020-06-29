@@ -9,9 +9,6 @@
       "DOM"
     ]
   },
-  "files": [
-    "src/types/global.d.ts"
-  ],
   "include": [
     "src"
   ],

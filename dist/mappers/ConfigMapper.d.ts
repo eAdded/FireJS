@@ -1,5 +1,6 @@
 /// <reference types="node" />
 import * as fs from "fs";
+
 export interface Config {
     pro?: boolean;
     verbose?: boolean;

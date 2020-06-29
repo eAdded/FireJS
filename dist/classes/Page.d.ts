@@ -1,4 +1,5 @@
 import PagePlugin from "../plugins/PagePlugin";
+
 export default class {
     chunks: string[];
     plugin: PagePlugin;

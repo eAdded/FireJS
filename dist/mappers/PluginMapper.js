@@ -1,18 +1,19 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
+exports.mapPlugin = void 0;
 const PagePlugin_1 = require("../plugins/PagePlugin");
 const GlobalPlugin_1 = require("../plugins/GlobalPlugin");
 const FireJSPlugin_1 = require("../plugins/FireJSPlugin");
-function mapPlugin(pluginPath, { rootPath, pageMap, webpackArchitect, globalPlugins }) {
-    const rawPlugs = require(require.resolve(pluginPath, { paths: [rootPath] }));
+
+function mapPlugin(pluginPath, {rootPath, pageMap, webpackArchitect, globalPlugins}) {
+    const rawPlugs = require(require.resolve(pluginPath, {paths: [rootPath]}));
     for (const rawPlugKey in rawPlugs) {
         if (rawPlugs.hasOwnProperty(rawPlugKey)) {
             const rawPlug = new (rawPlugs[rawPlugKey])();
             if (rawPlug.plugCode === FireJSPlugin_1.PluginCode.PagePlugin) {
                 checkVer(rawPlug, PagePlugin_1.PagePlugMinVer, rawPlugKey, pluginPath);
                 managePagePlugin(rawPlug, pluginPath, pageMap);
-            }
-            else if (rawPlug.plugCode === FireJSPlugin_1.PluginCode.GlobalPlugin) {
+            } else if (rawPlug.plugCode === FireJSPlugin_1.PluginCode.GlobalPlugin) {
                 checkVer(rawPlug, GlobalPlugin_1.GlobalPlugMinVer, rawPlugKey, pluginPath);
                 manageGlobalPlugin(rawPlug, pluginPath, {
                     webpackArchitect,

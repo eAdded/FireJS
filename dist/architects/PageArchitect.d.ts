@@ -1,6 +1,7 @@
 import WebpackArchitect from "./WebpackArchitect";
-import { $, WebpackConfig, WebpackStat } from "../FireJS";
+import {$, WebpackConfig, WebpackStat} from "../FireJS";
 import Page from "../classes/Page";
+
 export default class {
     private readonly $;
     readonly webpackArchitect: WebpackArchitect;
