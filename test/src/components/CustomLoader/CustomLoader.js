@@ -19,7 +19,6 @@ export default () => {
                 <div className={Loader2.loaderLineWrap}>
                     <div className={Loader2.loaderLine}/>
                 </div>
-                asdasdasdasdasdasdasdasdasdasdasdads
             </div>
         </div>
     )

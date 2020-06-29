@@ -41,7 +41,6 @@ export default class {
                     }, (e) =>
                         this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e)
                 );
-                console.log("doing a get")
                 server.use(webpackhot(compiler, {
                     heartbeat: 200
                 }));
@@ -58,7 +57,7 @@ export default class {
             server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
         server.get(`/${this.$.rel.mapRel}/*`, this.get.bind(this))
         server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this))
-        server.use(this.getPage.bind(this));
+        server.use('*', this.getPage.bind(this));
         //listen
         const listener = server.listen(port, addr, () => {
             let address = listener.address();
@@ -79,12 +78,12 @@ export default class {
     }
 
     private getPage(req: express.Request, res: express.Response, next) {
-        if (req.url === "/__webpack_hmr") {
+        // @ts-ignore
+        const pathname = decodeURI(req._parsedUrl.pathname);
+        if (pathname === "/__webpack_hmr") {
             next();
             return;
         }
-        // @ts-ignore
-        const pathname = decodeURI(req._parsedUrl.pathname);
         try {
             let path = join(this.$.config.paths.dist, pathname);
             if (this.$.outputFileSystem.existsSync(join(path, "index.html")))

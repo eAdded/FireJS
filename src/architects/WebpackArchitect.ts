@@ -43,7 +43,7 @@ export default class {
                                     browsers: [`last 2 versions`, `not ie <= 11`, `not android 4.4.3`],
                                 },
                             }], "@babel/preset-react"],
-                            plugins: ["@babel/plugin-syntax-dynamic-import", "@babel/plugin-transform-runtime"]
+                            plugins: ["@babel/plugin-syntax-dynamic-import", "@babel/plugin-transform-runtime", "react-hot-loader/babel"]
                         }
                     },
                 }, {
@@ -69,6 +69,7 @@ export default class {
                 }),
                 new CleanObsoleteChunks(),
                 new webpack.HotModuleReplacementPlugin({
+                    multiStep: true
                 })
             ]
         }
@@ -82,6 +83,11 @@ export default class {
                 "e": join(__dirname, "../web/external_group_semi.js"),
                 "r": join(__dirname, "../web/renderer.js"),
             },
+            resolve: {
+                alias: {
+                    'react-dom': '@hot-loader/react-dom',
+                },
+            },
             output: {
                 path: this.$.config.paths.lib,
                 filename: "[name][contentHash].js"
@@ -94,7 +100,7 @@ export default class {
     forPage(page: Page): WebpackConfig {
         const mergedConfig = cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString()
-        mergedConfig.entry = ['webpack-hot-middleware/client?path=/__webpack_hmr', join(__dirname, "../web/wrapper.js")];
+        mergedConfig.entry = ['webpack-hot-middleware/client', join(__dirname, "../web/wrapper.js")];
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
             APP: join(this.$.config.paths.pages, mergedConfig.name)
         }))
