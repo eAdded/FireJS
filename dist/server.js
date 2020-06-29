@@ -83,7 +83,6 @@ class default_1 {
     getPage(req, res, next) {
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
-        console.log(pathname, pathname.startsWith("/__webpack_hmr"));
         if (pathname.startsWith("/__webpack_hmr")) {
             next();
             return;
