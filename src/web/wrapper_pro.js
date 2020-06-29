@@ -1,0 +1,1 @@
+FireJS.app = () => <__FIREJS_APP__.default/>
