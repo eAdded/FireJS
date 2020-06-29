@@ -1,0 +1,1 @@
+window.__FIREJS_APP__ = APP;

@@ -4,6 +4,7 @@ import FireJS, {$} from "./FireJS"
 import Page from "./classes/Page";
 import express = require("express");
 import webpackhot = require("webpack-hot-middleware");
+
 import mime = require("mime-types");
 
 export default class {
@@ -40,8 +41,9 @@ export default class {
                     }, (e) =>
                         this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e)
                 );
+                console.log("doing a get")
                 server.use(webpackhot(compiler, {
-                    path: '/__webpack_hmr',
+                    heartbeat: 200
                 }));
             })
             .on('unlink', path => {
@@ -56,7 +58,7 @@ export default class {
             server.use(`${this.$.config.paths.static.substring(this.$.config.paths.static.lastIndexOf("/"))}`, express.static(this.$.config.paths.static));
         server.get(`/${this.$.rel.mapRel}/*`, this.get.bind(this))
         server.get(`/${this.$.rel.libRel}/*`, this.get.bind(this))
-        server.get('*', this.getPage.bind(this));
+        server.use(this.getPage.bind(this));
         //listen
         const listener = server.listen(port, addr, () => {
             let address = listener.address();
@@ -76,9 +78,11 @@ export default class {
         res.end();
     }
 
-    private getPage(req: express.Request, res: express.Response) {
-        if (req.url === "/__webpack_hmr")
+    private getPage(req: express.Request, res: express.Response, next) {
+        if (req.url === "/__webpack_hmr") {
+            next();
             return;
+        }
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
         try {

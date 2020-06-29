@@ -37,9 +37,11 @@
     "mime-types": "^2.1.27",
     "mini-css-extract-plugin": "^0.9.0",
     "react-helmet": "^6.1.0",
+    "react-hot-loader": "^4.12.21",
     "smartarg": "^1.0.0",
     "webpack": "^4.43.0",
     "webpack-clean-obsolete-chunks": "^0.4.0",
+    "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0",
     "yaml": "^1.10.0"
   },

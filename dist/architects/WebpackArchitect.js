@@ -64,9 +64,7 @@ class default_1 {
                     filename: "c[contentHash].css"
                 }),
                 new CleanObsoleteChunks(),
-                new webpack.HotModuleReplacementPlugin({
-                    multiStep: true
-                })
+                new webpack.HotModuleReplacementPlugin({})
             ]
         };
     }
@@ -89,7 +87,7 @@ class default_1 {
     forPage(page) {
         const mergedConfig = lodash_1.cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString();
-        mergedConfig.entry = ['webpack-hot-middleware/client', path_1.join(__dirname, "../web/wrapper.js")];
+        mergedConfig.entry = ['webpack-hot-middleware/client?path=/__webpack_hmr', path_1.join(__dirname, "../web/wrapper.js")];
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
             APP: path_1.join(this.$.config.paths.pages, mergedConfig.name)
         }));
