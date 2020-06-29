@@ -42,7 +42,8 @@ export default class {
                         this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e)
                 );
                 server.use(webpackhot(compiler, {
-                    heartbeat: 200
+                    heartbeat: 200,
+                    path: `/__webpack_hmr_/${page.toString()}`
                 }));
             })
             .on('unlink', path => {
@@ -80,7 +81,8 @@ export default class {
     private getPage(req: express.Request, res: express.Response, next) {
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
-        if (pathname === "/__webpack_hmr") {
+        console.log(pathname, pathname.startsWith("/__webpack_hmr"))
+        if (pathname.startsWith("/__webpack_hmr")) {
             next();
             return;
         }

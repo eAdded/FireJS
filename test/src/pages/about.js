@@ -1,7 +1,7 @@
-import Link from "../../src/components/Link.js";
-import Loader from "../../src/components/Loader.js";
-import CustomLoader from "./components/CustomLoader/CustomLoader.js";
-import "./style/main.css"
+import Link from "../../../src/components/Link.js";
+import Loader from "../../../src/components/Loader.js";
+import CustomLoader from "../components/CustomLoader/CustomLoader.js";
+import "../style/main.css"
 import Head from "../../../src/components/Head.js";
 
 export default () => {

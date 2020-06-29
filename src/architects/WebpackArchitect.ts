@@ -90,7 +90,9 @@ export default class {
             },
             output: {
                 path: this.$.config.paths.lib,
-                filename: "[name][contentHash].js"
+                filename: "[name][contentHash].js",
+                hotUpdateChunkFilename: 'hot/hot-update[hash].js',
+                hotUpdateMainFilename: 'hot/hot-update[hash].json'
             }
         };
         conf.entry[join(relative(this.$.config.paths.lib, this.$.config.paths.cache), "f")] = join(__dirname, "../web/external_group_full.js");
@@ -100,7 +102,7 @@ export default class {
     forPage(page: Page): WebpackConfig {
         const mergedConfig = cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString()
-        mergedConfig.entry = ['webpack-hot-middleware/client', join(__dirname, "../web/wrapper.js")];
+        mergedConfig.entry = [`webpack-hot-middleware/client?path=/__webpack_hmr_/${mergedConfig.name}`, join(__dirname, "../web/wrapper.js")];
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
             APP: join(this.$.config.paths.pages, mergedConfig.name)
         }))
