@@ -1,5 +1,2 @@
-import {hot} from 'react-hot-loader/root';
-
-FireJS.app = hot(() => {
-    return <__FIREJS_APP__.default/>
-})
+const comp = () => <__FIREJS_APP__.default/>;
+FireJS.app = FireJS.isSSR ? comp : require('react-hot-loader/root').hot(comp);
