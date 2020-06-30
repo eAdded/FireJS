@@ -8,8 +8,11 @@ export default ({content: {emoji}}) => {
     const [s, setS] = React.useState(0)
     React.useEffect(() => {
         let t = 0;
-        setInterval(() => setS(t++), 1000)
-    }, [])
+        const interval = setInterval(() => setS(t++), 1000);
+        return () => {
+            clearInterval(interval);
+        }
+    }, []);
     return (
         <div>
             <Loader effect={React.useEffect}>
