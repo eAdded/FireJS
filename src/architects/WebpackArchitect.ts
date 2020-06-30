@@ -107,7 +107,7 @@ export default class {
         if (this.$.config.pro)
             mergedConfig.entry = join(__dirname, "../web/wrapper_pro.js");
         else
-            mergedConfig.entry = [`webpack-hot-middleware/client?path=/__webpack_hmr_/${mergedConfig.name}`, join(__dirname, "../web/wrapper.js")];
+            mergedConfig.entry = [`webpack-hot-middleware/client?path=/__webpack_hmr_/${mergedConfig.name}&reload=true&quiet=true&name=${mergedConfig.name}`, join(__dirname, "../web/wrapper.js")];
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
             __FIREJS_APP__: join(this.$.config.paths.pages, mergedConfig.name)
         }))
