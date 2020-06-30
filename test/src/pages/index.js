@@ -29,7 +29,7 @@ export default ({content: {emoji}}) => {
             You have been here for {s}s
             <br/>
             <br/>
-            <Link to={"/about"}>🤠 Click Here To Go To About Page</Link>
+            <Link to={"/about"}>🤠 Clicksasdasdasd Here To Go To About Page</Link>
             <br/>
             <br/>
             <Link to={"/this page does not exist"}>🤔 Click Here To Go Mock 404</Link>

@@ -99,9 +99,10 @@ class default_1 {
     forPage(page) {
         const mergedConfig = lodash_1.cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString();
-        mergedConfig.entry = [path_1.join(__dirname, "../web/wrapper.js")];
         if (this.$.config.pro)
-            mergedConfig.entry.push(`webpack-hot-middleware/client?path=/__webpack_hmr_/${mergedConfig.name}`);
+            mergedConfig.entry = [path_1.join(__dirname, "../web/wrapper_pro.js")];
+        else
+            mergedConfig.entry = [`webpack-hot-middleware/client?path=/__webpack_hmr_/${mergedConfig.name}`, path_1.join(__dirname, "../web/wrapper.js")];
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
             __FIREJS_APP__: path_1.join(this.$.config.paths.pages, mergedConfig.name)
         }));
