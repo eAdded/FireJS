@@ -85,6 +85,7 @@ export default class {
             next();
             return;
         }
+        res.contentType("text/html")
         try {
             let path = join(this.$.config.paths.dist, pathname);
             if (this.$.outputFileSystem.existsSync(join(path, "index.html")))

@@ -24,7 +24,8 @@ class default_1 {
                 filename: `m[${this.$.config.pro ? "chunkhash" : "hash"}].js`,
                 chunkFilename: "c[contentHash].js",
                 publicPath: `/${this.$.rel.libRel}/`,
-                path: this.$.config.paths.lib
+                path: this.$.config.paths.lib,
+                hotUpdateMainFilename: 'hot/[hash].hot.json'
             },
             module: {
                 rules: [{
@@ -86,9 +87,7 @@ class default_1 {
             },
             output: {
                 path: this.$.config.paths.lib,
-                filename: "[name][contentHash].js",
-                hotUpdateChunkFilename: 'hot/hot-update[hash].js',
-                hotUpdateMainFilename: 'hot/hot-update[hash].json'
+                filename: "[name][contentHash].js"
             }
         };
         conf.entry[path_1.join(path_1.relative(this.$.config.paths.lib, this.$.config.paths.cache), "f")] = path_1.join(__dirname, "../web/external_group_full.js");
