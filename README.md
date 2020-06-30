@@ -28,8 +28,7 @@ Visit the [quick start](https://github.com/eAdded/FireJS/wiki/Quick-Start) guide
 
 Documentation is available at the official [FireJS Github Wiki](https://github.com/eAdded/FireJS/wiki)
 
-**NOTE** `v0.18.0` is currently in `beta` testing and its docs are yet to be published. The release previously planned for `20th July 2020` has been postponed to `24th July 2020`.
-This release brings a brand-new mechanism for SSR lazy loaded components using `FireJS.lazyLoad`. No more `FOUC`. Small bundle size with a full featured SS DOM.
+**Note** Documentation is incomplete
 
 ## Code of conduct
 
@@ -47,5 +46,3 @@ Licensed under the [GNU GENERAL PUBLIC LICENSE](LICENSE)
 
 ## Contributors
  + [Aniket Prajapati](https://github.com/aniketfuryrocks) @ prajapati.ani306@gmail.com , [eAdded](http://www.eadded.com)
-
-**Note** Stable `beta` releases will be published to the `latest` channel. `nitely` channel shall be used for unstable builds.
