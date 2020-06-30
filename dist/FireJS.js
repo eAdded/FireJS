@@ -77,14 +77,16 @@ class default_1 {
     }
     buildPage(page, resolve, reject) {
         return this.$.pageArchitect.buildPage(page, () => {
-            this.$.cli.ok(`Successfully built page ${page.toString()}`);
+            if (this.$.config.verbose)
+                this.$.cli.ok(`Page : ${page.toString()}`);
             try {
                 page.plugin.onBuild((path, content = {}, render = true) => __awaiter(this, void 0, void 0, function* () {
                     let done = 0;
                     if (render || this.$.renderer.config.ssr) {
-                        this.$.cli.log(`Rendering path ${path}`);
+                        if (this.$.config.verbose)
+                            this.$.cli.log(`Rendering : ${path}`);
                         this.$.renderer.render(page, path, content).then(html => {
-                            this.$.cli.ok(`Successfully rendered path ${path}`);
+                            this.$.cli.ok(`Render : ${path} \n`);
                             Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.dist, `${path}.html`), html, this.$.outputFileSystem).then(() => {
                                 if (++done == 2)
                                     resolve();

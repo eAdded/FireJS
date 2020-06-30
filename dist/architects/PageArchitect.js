@@ -63,10 +63,6 @@ class default_1 {
         return compiler;
     }
     logStat(stat) {
-        if (this.$.config.verbose) {
-            this.$.cli.log("Stat");
-            this.$.cli.normal(stat);
-        }
         if (stat.hasWarnings()) {
             // @ts-ignore
             this.$.cli.warn(`Warning in page ${stat.compilation.name}\n`, ...stat.compilation.warnings);
