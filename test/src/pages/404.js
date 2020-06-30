@@ -6,7 +6,7 @@ import Link from "../../../src/components/Link.js";
 import Loader from "../../../src/components/Loader.js";
 
 export default () => {
-    const Markdown = LazyLoad(import("markdown-to-jsx"));
+    const Markdown = LazyLoad(() => import("markdown-to-jsx"));
     return (
         <div>
             <Head>
