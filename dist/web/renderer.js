@@ -1,10 +1,17 @@
 window.onpopstate = function () {
-    FireJS.linkApi.preloadPage(location.pathname, function () {
+    FireJS.linkApi.preloadPage(location.pathname, () =>
         FireJS.linkApi.loadPage(location.pathname, false)
-    })
-}
+    )
+};
 
-if (FireJS.isHydrated)
-    FireJS.linkApi.runApp(ReactDOM.hydrate)
-else
-    FireJS.linkApi.runApp()
+ReactDOM.render(React.createElement(require('react-hot-loader/root').hot(
+    (props) => {
+        const [app, setApp] = React.useState(React.createElement(FireJS.app, props));
+        FireJS.runApp = () => setApp(React.createElement(FireJS.app, {content: FireJS.map.content}));
+        FireJS.appEffect = React.useEffect;
+        return app;
+    }
+    ), {content: FireJS.map.content}),
+    document.getElementById("root")
+);
+FireJS.isHydrated = false;
