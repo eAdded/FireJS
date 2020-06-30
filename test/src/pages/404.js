@@ -18,7 +18,7 @@ export default () => {
             <h1>😿 OH NO aaa404</h1>
             <br/>
             <Markdown>
-                By the way, Iasd am a lazy loaded component 😺
+                By the way, I am a lazy loaded component 😺
             </Markdown>
             <br/>
             <br/>

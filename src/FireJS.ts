@@ -113,9 +113,9 @@ export default class {
                     let done = 0;
                     if (render || this.$.renderer.config.ssr) {
                         if (this.$.config.verbose)
-                            this.$.cli.log(`Rendering : ${path}`);
+                            this.$.cli.log(`Rendering Path : ${path}`);
                         this.$.renderer.render(page, path, content).then(html => {
-                            this.$.cli.ok(`Render : ${path} \n`)
+                            this.$.cli.ok(`Rendered Path : ${path}`)
                             writeFileRecursively(join(this.$.config.paths.dist, `${path}.html`),
                                 html,
                                 this.$.outputFileSystem
