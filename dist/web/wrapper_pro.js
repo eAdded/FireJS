@@ -1,1 +1,1 @@
-FireJS.app = () => <__FIREJS_APP__.default/>
+FireJS.app = (prop) => <__FIREJS_APP__.default {...prop}/>
