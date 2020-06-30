@@ -4,16 +4,21 @@ import "../style/main.css"
 import Loader from "../../../src/components/Loader.js";
 import LoadingBar from "../components/LoadingBar/LoadingBar.js";
 
+let interval;
 export default ({content: {emoji}}) => {
-    console.log(emoji)
     const [s, setS] = React.useState(0)
     React.useEffect(() => {
         let t = 0;
-        setInterval(() => setS(t++), 1000)
+        interval = setInterval(() => setS(t++), 1000)
     }, [])
+    React.useEffect(() => {
+        return () => {
+            clearInterval(interval)
+        };
+    }, []);
     return (
         <div>
-            <Loader effect={React.useEffect}>
+            <Loader>
                 <LoadingBar/>
             </Loader>
             <Head>

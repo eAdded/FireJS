@@ -26,16 +26,10 @@ FireJS.linkApi = {
         const script = document.createElement("script");
         script.src = `/${FireJS.libRel}/${FireJS.map.chunks.shift()}`
         this.loadChunks(FireJS.map.chunks);
-        script.onload = () => this.runApp()
+        script.onload = FireJS.runApp;
         document.body.appendChild(script);
         if (pushState)
             window.history.pushState(undefined, undefined, url);
-    },
-    runApp: function (func = ReactDOM.render) {
-        func(React.createElement(FireJS.app, {content: FireJS.map.content}),
-            document.getElementById("root")
-        );
-        FireJS.isHydrated = false;
     },
     preloadChunks: function (chunks, rel = "preload") {
         chunks.forEach(chunk => {

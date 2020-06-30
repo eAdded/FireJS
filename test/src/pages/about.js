@@ -10,7 +10,7 @@ export default () => {
             <Head>
                 <title>About</title>
             </Head>
-            <Loader effect={React.useEffect}>
+            <Loader>
                 <LoadingBar/>
             </Loader>
             <h1>This is the about page</h1>

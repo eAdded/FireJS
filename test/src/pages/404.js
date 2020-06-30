@@ -12,7 +12,7 @@ export default () => {
             <Head>
                 <title>404</title>
             </Head>
-            <Loader effect={React.useEffect} delay={800}>
+            <Loader delay={800}>
                 <LoadingCircle/>
             </Loader>
             <h1>😿 OH NO 404</h1>

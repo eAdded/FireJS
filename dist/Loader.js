@@ -1,12 +1,10 @@
-export default ({children, effect, delay}) => {
-    if (!effect)
-        throw new Error("You forgot to pass React.useEffect as effect to Loader");
+export default ({children, delay}) => {
     const [loader, setLoader] = React.useState(children);
     FireJS.showLoader = () => {
         FireJS.showLoader = undefined;
         setLoader(children)
     };
-    effect(() => {
+    FireJS.appEffect(() => {
         if (delay)
             setTimeout(() => setLoader(<></>), delay)
         else
