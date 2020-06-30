@@ -27,17 +27,14 @@ class default_1 {
                 page.chunks = []; //re-init chunks
                 const css = [];
                 let mainChunk;
-                stat.compilation.chunks.forEach(chunk => {
-                    chunk.files.forEach(file => {
-                        if (file.endsWith(".css")) //prevent FOUC
-                            css.push(file);
-                        else if (file.startsWith("m"))
-                            mainChunk = file;
-                        else
-                            page.chunks.push(file);
-                    });
-                });
-                console.log(page.chunks);
+                stat.compilation.chunks.forEach(chunk => chunk.files.forEach(file => {
+                    if (file.endsWith(".css")) //prevent FOUC
+                        css.push(file);
+                    else if (file.startsWith("m"))
+                        mainChunk = file;
+                    else
+                        page.chunks.push(file);
+                }));
                 page.chunks.unshift(mainChunk, ...css);
                 resolve();
             }

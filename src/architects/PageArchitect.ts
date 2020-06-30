@@ -37,7 +37,7 @@ export default class {
                 page.chunks = [];//re-init chunks
                 const css = [];
                 let mainChunk;
-                stat.compilation.chunks.forEach(chunk => {
+                stat.compilation.chunks.forEach(chunk =>
                     chunk.files.forEach(file => {
                         if (file.endsWith(".css"))//prevent FOUC
                             css.push(file);
@@ -46,8 +46,7 @@ export default class {
                         else
                             page.chunks.push(file)
                     })
-                });
-                console.log(page.chunks)
+                );
                 page.chunks.unshift(mainChunk, ...css);
                 resolve();
             }
