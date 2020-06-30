@@ -4,8 +4,8 @@ import FireJS, {$} from "./FireJS"
 import Page from "./classes/Page";
 import express = require("express");
 import webpackhot = require("webpack-hot-middleware");
-
 import mime = require("mime-types");
+
 
 export default class {
     private readonly $: $
@@ -17,7 +17,7 @@ export default class {
         this.$.pageArchitect.webpackArchitect.defaultConfig.watch = true;
     }
 
-    async init(port: number = 5000, addr: string = "0.0.0.0") {
+    async init(port: number = 5000, addr: string = "localhost") {
         //init server
         const server: express.Application = express();
         //turn off caching
@@ -61,9 +61,14 @@ export default class {
         server.use('*', this.getPage.bind(this));
         //listen
         const listener = server.listen(port, addr, () => {
-            let address = listener.address();
             // @ts-ignore
-            this.$.cli.ok(`listening on port ${address.port} at addr ${address.address}`)
+            let {port, address} = listener.address();
+            this.$.cli.normal(
+                " \n \x1b[32m┌─────────────────────────────────────────┐\n" +
+                " │                                         │\n" +
+                ` │   Listening at http://${address}:${port}    │\n` +
+                " │                                         │\n" +
+                " └─────────────────────────────────────────┘\x1b[0m\n")
         })
     }
 

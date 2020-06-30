@@ -21,7 +21,7 @@ class default_1 {
         this.$ = app.getContext();
         this.$.pageArchitect.webpackArchitect.defaultConfig.watch = true;
     }
-    init(port = 5000, addr = "0.0.0.0") {
+    init(port = 5000, addr = "localhost") {
         return __awaiter(this, void 0, void 0, function* () {
             //init server
             const server = express();
@@ -64,9 +64,13 @@ class default_1 {
             server.use('*', this.getPage.bind(this));
             //listen
             const listener = server.listen(port, addr, () => {
-                let address = listener.address();
                 // @ts-ignore
-                this.$.cli.ok(`listening on port ${address.port} at addr ${address.address}`);
+                let { port, address } = listener.address();
+                this.$.cli.normal(" \n \x1b[32m┌─────────────────────────────────────────┐\n" +
+                    " │                                         │\n" +
+                    ` │   Listening at http://${address}:${port}    │\n` +
+                    " │                                         │\n" +
+                    " └─────────────────────────────────────────┘\x1b[0m\n");
             });
         });
     }

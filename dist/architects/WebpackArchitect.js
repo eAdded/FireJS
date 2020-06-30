@@ -69,7 +69,9 @@ class default_1 {
                     })] : [new webpack.HotModuleReplacementPlugin({
                         multiStep: true
                     })]),
-                new CleanObsoleteChunks()
+                new CleanObsoleteChunks({
+                    verbose: this.$.config.verbose
+                })
             ]
         };
     }

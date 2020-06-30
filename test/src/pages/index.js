@@ -19,7 +19,7 @@ export default ({content: {emoji}}) => {
             <Head>
                 <title>Index</title>
             </Head>
-            <h1>Welcome to FireJS {emoji}</h1>
+            <h1>Welcome toas FireJS {emoji}</h1>
             <br/>
             You have been here for {s}s
             <br/>
