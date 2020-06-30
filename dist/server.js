@@ -14,7 +14,6 @@ const chokidar_1 = require("chokidar");
 const Page_1 = require("./classes/Page");
 const express = require("express");
 const webpackhot = require("webpack-hot-middleware");
-const mime = require("mime-types");
 class default_1 {
     constructor(app) {
         this.app = app;
@@ -80,7 +79,6 @@ class default_1 {
     get(req, res) {
         // @ts-ignore
         const pathname = path_1.join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
-        res.contentType(mime.lookup(pathname));
         if (this.$.outputFileSystem.existsSync(pathname))
             res.write(this.$.outputFileSystem.readFileSync(pathname));
         else
@@ -94,7 +92,6 @@ class default_1 {
             next();
             return;
         }
-        res.contentType("text/html");
         try {
             let path = path_1.join(this.$.config.paths.dist, pathname);
             if (this.$.outputFileSystem.existsSync(path_1.join(path, "index.html")))

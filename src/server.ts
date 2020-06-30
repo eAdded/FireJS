@@ -4,8 +4,6 @@ import FireJS, {$} from "./FireJS"
 import Page from "./classes/Page";
 import express = require("express");
 import webpackhot = require("webpack-hot-middleware");
-import mime = require("mime-types");
-
 
 export default class {
     private readonly $: $
@@ -78,7 +76,6 @@ export default class {
     private get(req: express.Request, res: express.Response) {
         // @ts-ignore
         const pathname = join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
-        res.contentType(mime.lookup(pathname))
         if (this.$.outputFileSystem.existsSync(pathname))
             res.write(this.$.outputFileSystem.readFileSync(pathname));
         else
@@ -93,7 +90,6 @@ export default class {
             next();
             return;
         }
-        res.contentType("text/html")
         try {
             let path = join(this.$.config.paths.dist, pathname);
             if (this.$.outputFileSystem.existsSync(join(path, "index.html")))
