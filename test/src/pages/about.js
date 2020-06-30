@@ -1,8 +1,8 @@
 import Link from "../../../src/components/Link.js";
-import Loader from "../../../src/components/Loader.js";
-import CustomLoader from "../components/CustomLoader/CustomLoader.js";
 import "../style/main.css"
 import Head from "../../../src/components/Head.js";
+import Loader from "../../../src/components/Loader.js";
+import LoadingBar from "../components/LoadingBar/LoadingBar.js";
 
 export default () => {
     return (
@@ -10,8 +10,8 @@ export default () => {
             <Head>
                 <title>About</title>
             </Head>
-            <Loader effect={React.useEffect} delay={400}>
-                <CustomLoader/>
+            <Loader effect={React.useEffect}>
+                <LoadingBar/>
             </Loader>
             <h1>This is the about page</h1>
             <br/>

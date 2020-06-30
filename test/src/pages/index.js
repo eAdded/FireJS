@@ -1,8 +1,8 @@
 import Link from "../../../src/components/Link.js";
-import Loader from "../../../src/components/Loader.js";
-import CustomLoader from "../components/CustomLoader/CustomLoader.js";
 import Head from "../../../src/components/Head.js";
 import "../style/main.css"
+import Loader from "../../../src/components/Loader.js";
+import LoadingBar from "../components/LoadingBar/LoadingBar.js";
 
 export default ({content: {emoji}}) => {
     console.log(emoji)
@@ -13,8 +13,8 @@ export default ({content: {emoji}}) => {
     }, [])
     return (
         <div>
-            <Loader effect={React.useEffect} delay={400}>
-                <CustomLoader/>
+            <Loader effect={React.useEffect}>
+                <LoadingBar/>
             </Loader>
             <Head>
                 <title>Index</title>
@@ -24,7 +24,10 @@ export default ({content: {emoji}}) => {
             You have been here for {s}s
             <br/>
             <br/>
-            <Link to={"/about"}>🤠 Clicked Here To Go To About Page</Link>
+            <Link to={"/about"}>🤠 Click Here To Go To About Page</Link>
+            <br/>
+            <br/>
+            <Link to={"/this page does not exist"}>🤔 Click Here To Go Mock 404</Link>
         </div>
     )
 }
