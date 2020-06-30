@@ -31,13 +31,17 @@ export default (chunk, {
             FireJS.finishRender();
     }
 
-    chunk.then(chunk => {
-            if (!delay)
-                load(chunk);
-            else
-                setTimeout(() => load(chunk), delay);
-        }
-    ).catch(onError)
+    if (!(FireJS.isSSR && script))
+        chunk().then(chunk => {
+                if (!delay)
+                    load(chunk);
+                else
+                    setTimeout(() => load(chunk), delay);
+            }
+        ).catch(onError)
+    else if ((++FireJS.lazyDone) === FireJS.lazyCount && FireJS.isSSR)
+        FireJS.finishRender();
+
     if (!script)
         return function (_props) {
             props = _props;
