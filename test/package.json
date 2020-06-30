@@ -7,8 +7,6 @@
     "test": "node --trace-warnings ../dist/bin.js"
   },
   "dependencies": {
-    "markdown-to-jsx": "^6.11.4",
-    "mime": "^2.4.6",
-    "webpack-dev-middleware": "^3.7.2"
+    "markdown-to-jsx": "^6.11.4"
   }
 }
