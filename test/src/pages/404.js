@@ -15,7 +15,7 @@ export default () => {
             <Loader effect={React.useEffect} delay={800}>
                 <LoadingCircle/>
             </Loader>
-            <h1>😿 OH NO aaa404</h1>
+            <h1>😿 OH NO 404</h1>
             <br/>
             <Markdown>
                 By the way, I am a lazy loaded component 😺
