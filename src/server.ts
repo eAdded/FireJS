@@ -42,7 +42,7 @@ export default class {
                         this.$.cli.error(`Error while rendering page ${page.toString()}\n`, e)
                 );
                 server.use(webpackhot(compiler, {
-                    heartbeat: 200,
+                    log: false,
                     path: `/__webpack_hmr_/${page.toString()}`
                 }));
             })
