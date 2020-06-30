@@ -5,7 +5,6 @@ import Loader from "../../../src/components/Loader.js";
 import LoadingBar from "../components/LoadingBar/LoadingBar.js";
 
 export default ({content: {emoji}}) => {
-    console.log(emoji)
     const [s, setS] = React.useState(0)
     React.useEffect(() => {
         let t = 0;
