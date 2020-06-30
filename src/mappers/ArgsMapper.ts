@@ -48,7 +48,7 @@ export function getArgs(): Args {
         //conf
         .option(["-c", "--conf"], String, "path to code config file")
         //logging
-        .option(["--verbose"], Boolean, "print webpack stats on error")
+        .option(["-V", "--verbose"], Boolean, "print webpack stats on error")
         .option(["-l", "--log-mode"], String, "Log Mode. silent (log errors only) | plain (Log without styling i.e colors and symbols)")
         //plugins
         .option(["--disable-plugins"], Boolean, "disable plugins")

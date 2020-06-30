@@ -66,11 +66,14 @@ class default_1 {
             const listener = server.listen(port, addr, () => {
                 // @ts-ignore
                 let { port, address } = listener.address();
-                this.$.cli.normal(" \n \x1b[32m┌─────────────────────────────────────────┐\n" +
-                    " │                                         │\n" +
-                    ` │   Listening at http://${address}:${port}    │\n` +
-                    " │                                         │\n" +
-                    " └─────────────────────────────────────────┘\x1b[0m\n");
+                if (this.$.config.logMode === "plain")
+                    this.$.cli.normal(`Listening at http://${address}:${port}`);
+                else
+                    this.$.cli.normal(" \n \x1b[32m┌─────────────────────────────────────────┐\n" +
+                        " │                                         │\n" +
+                        ` │   Listening at http://${address}:${port}    │\n` +
+                        " │                                         │\n" +
+                        " └─────────────────────────────────────────┘\x1b[0m\n");
             });
         });
     }

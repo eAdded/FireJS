@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getArgs = void 0;
 const SmartArg_1 = require("smartarg/SmartArg");
 function getArgs() {
     return new SmartArg_1.default()
@@ -20,7 +19,7 @@ function getArgs() {
         //conf
         .option(["-c", "--conf"], String, "path to code config file")
         //logging
-        .option(["--verbose"], Boolean, "print webpack stats on error")
+        .option(["-V", "--verbose"], Boolean, "print webpack stats on error")
         .option(["-l", "--log-mode"], String, "Log Mode. silent (log errors only) | plain (Log without styling i.e colors and symbols)")
         //plugins
         .option(["--disable-plugins"], Boolean, "disable plugins")
