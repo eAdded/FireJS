@@ -29,7 +29,8 @@ export default class {
                 chunkFilename: "c[contentHash].js",
                 publicPath: `/${this.$.rel.libRel}/`,
                 path: this.$.config.paths.lib,
-                hotUpdateMainFilename: 'hot/[hash].hot.json'
+                hotUpdateMainFilename: 'hot/[hash].hot.json',
+                hotUpdateChunkFilename: 'hot/[hash].hot.js'
             },
             module: {
                 rules: [{
