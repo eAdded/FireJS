@@ -22,8 +22,8 @@ error() {
   exit 1
 }
 
-clr_scr "Removing folder $FOLDER"
-rm -rf $FOLDER || error "Error removing folder $FOLDER"
+clr_scr "Removing contents of $FOLDER"
+rm -rf $FOLDER/* || error "Error removing contents of $FOLDER"
 
 clr_scr "Running TypeScript Compiler"
 tsc || error "Error compiling ts to js"
