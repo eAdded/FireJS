@@ -1,6 +1,6 @@
 import webpack = require("webpack");
 import WebpackArchitect from "./WebpackArchitect";
-import {$, WebpackConfig, WebpackStat} from "../FireJS";
+import {$, WebpackConfig, WebpackStat} from "../FireJSX";
 import Page from "../classes/Page";
 import {Compiler} from "webpack";
 

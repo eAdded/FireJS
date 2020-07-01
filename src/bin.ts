@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import FireJS from "./FireJS"
+import FireJS from "./FireJSX"
 import Server from "./server"
 import {join} from "path"
 import {Args, getArgs} from "./mappers/ArgsMapper";

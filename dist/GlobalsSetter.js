@@ -1,1 +1,0 @@
-global.__FIREJS_VERSION__ = "0.18.6-beta";

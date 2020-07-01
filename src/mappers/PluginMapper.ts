@@ -1,7 +1,7 @@
 import PagePlugin, {PagePlugMinVer} from "../plugins/PagePlugin";
 import GlobalPlugin, {GlobalPlugMinVer} from "../plugins/GlobalPlugin";
 import Page from "../classes/Page";
-import FireJSPlugin, {PluginCode} from "../plugins/FireJSPlugin";
+import FireJSXPlugin, {PluginCode} from "../plugins/FireJSXPlugin";
 import WebpackArchitect from "../architects/WebpackArchitect";
 
 interface gParam {
@@ -18,7 +18,7 @@ export function mapPlugin(pluginPath: string, {rootPath, pageMap, webpackArchite
     const rawPlugs = require(require.resolve(pluginPath, {paths: [rootPath]}));
     for (const rawPlugKey in rawPlugs) {
         if (rawPlugs.hasOwnProperty(rawPlugKey)) {
-            const rawPlug = new (rawPlugs[rawPlugKey])() as FireJSPlugin;
+            const rawPlug = new (rawPlugs[rawPlugKey])() as FireJSXPlugin;
             if (rawPlug.plugCode === PluginCode.PagePlugin) {
                 checkVer(rawPlug, PagePlugMinVer, rawPlugKey, pluginPath)
                 managePagePlugin(<PagePlugin>rawPlug, pluginPath, pageMap);
@@ -34,7 +34,7 @@ export function mapPlugin(pluginPath: string, {rootPath, pageMap, webpackArchite
     }
 }
 
-function checkVer(rawPlug: FireJSPlugin, minVer: number, name: string, path: string) {
+function checkVer(rawPlug: FireJSXPlugin, minVer: number, name: string, path: string) {
     if (rawPlug.version < minVer)
         throw new Error(`PagePlugin [${name}] in ${path} is outdated. Expected min version ${minVer} but found ${rawPlug.version}`)
 }

@@ -1,7 +1,7 @@
 declare module NodeJS {
     interface Global {
         window: Global,
-        FireJS: {
+        FireJSX: {
             app?: any,
             libRel?: string,
             mapRel?: string,
@@ -31,6 +31,6 @@ declare module NodeJS {
         React?: any,
         ReactDOM?: any,
         ReactDOMServer?: any,
-        __FIREJS_VERSION__: string;
+        __FIREJSX_VERSION__: string;
     }
 }

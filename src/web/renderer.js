@@ -1,10 +1,10 @@
 window.onpopstate = function () {
-    FireJS.linkApi.preloadPage(location.pathname, function () {
-        FireJS.linkApi.loadPage(location.pathname, false)
+    FireJSX.linkApi.preloadPage(location.pathname, function () {
+        FireJSX.linkApi.loadPage(location.pathname, false)
     })
 }
 
-if (FireJS.isHydrated)
-    FireJS.linkApi.runApp(ReactDOM.hydrate)
+if (FireJSX.isHydrated)
+    FireJSX.linkApi.runApp(ReactDOM.hydrate)
 else
-    FireJS.linkApi.runApp()
+    FireJSX.linkApi.runApp()

@@ -1,6 +1,6 @@
 import {join} from "path"
 import {watch} from "chokidar"
-import FireJS, {$} from "./FireJS"
+import FireJS, {$} from "./FireJSX"
 import Page from "./classes/Page";
 import express = require("express");
 import webpackhot = require("webpack-hot-middleware");

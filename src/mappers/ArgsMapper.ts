@@ -35,7 +35,7 @@ export function getArgs(): Args {
         .name("Fire JS")
         .description("A zero config, highly customizable, progressive react static site generator with blazingly fast SSR and on the fly builds.")
         // @ts-ignore
-        .version(global.__FIREJS_VERSION__)
+        .version(global.__FIREJSX_VERSION__)
         //mode
         .option(["-p", "--pro"], Boolean, "use production chunks. NODE_ENV : production")
         .option(["-e", "--export"], Boolean, "export project for distribution")
@@ -64,7 +64,7 @@ export function getArgs(): Args {
         .option(["--map"], String, "path to dir where chunk map and page data is exported, default : root/out/dist/lib/map")
         .option(["--static"], String, "path to dir where static assets are stored eg. images, default : root/src/static")
         .option(["--plugins"], String, "path to plugins dir, default : root/src/plugins")
-        .example("firejs -esp", "export server side rendered production build")
-        .example("firejs -dsp", "write to disk when using dev server with server side rendered production build")
+        .example("firejsx -esp", "export server side rendered production build")
+        .example("firejsx -dsp", "write to disk when using dev server with server side rendered production build")
         .smartParse()
 }

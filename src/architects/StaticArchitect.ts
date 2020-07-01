@@ -1,4 +1,4 @@
-import {PathRelatives} from "../FireJS";
+import {PathRelatives} from "../FireJSX";
 import {join} from "path"
 import {ExplicitPages} from "../mappers/ConfigMapper";
 import Page from "../classes/Page";
@@ -28,7 +28,7 @@ export default class {
         //global.window circular
         // @ts-ignore
         global.window = global;
-        global.FireJS = {
+        global.FireJSX = {
             isSSR: param.ssr,
             libRel: this.config.rel.libRel,
             mapRel: this.config.rel.mapRel
@@ -39,7 +39,7 @@ export default class {
         {
             const script = this.config.template.window.document.createElement("script");
             script.innerHTML =
-                `window.FireJS={` +
+                `window.FireJSX={` +
                 `libRel:"${this.config.rel.libRel}",` +
                 `mapRel:"${this.config.rel.mapRel}",` +
                 `pages:{404:"/${this.config.explicitPages["404"].substring(0, this.config.explicitPages["404"].lastIndexOf("."))}"}` +
@@ -49,7 +49,7 @@ export default class {
         }
         {
             const meta = this.config.template.window.document.createElement("meta");
-            meta.content = `@eadded/firejs v${global.__FIREJS_VERSION__}`;
+            meta.content = `FireJSX v${global.__FIREJSX_VERSION__}`;
             meta.name = "generator";
             this.config.template.window.document.head.appendChild(meta);
         }
@@ -74,15 +74,15 @@ export default class {
             for (const domKey of ["document", "location", "history", "navigator", "screen", "matchMedia", "getComputedStyle"])
                 global[domKey] = dom.window[domKey];
             //globals
-            global.FireJS.map = {
+            global.FireJSX.map = {
                 content,
                 chunks: page.chunks
             };
             //isSSR
-            global.FireJS.isSSR = this.config.ssr
+            global.FireJSX.isSSR = this.config.ssr
             //reset lazy count
-            global.FireJS.lazyCount = 0;
-            global.FireJS.lazyDone = 0;
+            global.FireJSX.lazyCount = 0;
+            global.FireJSX.lazyDone = 0;
             //chunks
             {
                 let index;
@@ -101,7 +101,7 @@ export default class {
                 {
                     const link = document.createElement("link");
                     const script = document.createElement("script");
-                    script.src = link.href = global.FireJS.linkApi.getMapUrl(path);
+                    script.src = link.href = global.FireJSX.linkApi.getMapUrl(path);
                     link.rel = "preload";
                     script.crossOrigin = link.crossOrigin = "anonymous";
                     link.setAttribute("as", "script");
@@ -109,25 +109,25 @@ export default class {
                     document.body.appendChild(script);
                 }
                 //React
-                global.FireJS.linkApi.preloadChunks([this.config.externals[1]]);
-                global.FireJS.linkApi.loadChunks([this.config.externals[1]]);
+                global.FireJSX.linkApi.preloadChunks([this.config.externals[1]]);
+                global.FireJSX.linkApi.loadChunks([this.config.externals[1]]);
                 //Main Chunk
-                global.FireJS.linkApi.preloadChunks([page.chunks[0]]);
-                global.FireJS.linkApi.loadChunks([page.chunks[0]]);
+                global.FireJSX.linkApi.preloadChunks([page.chunks[0]]);
+                global.FireJSX.linkApi.loadChunks([page.chunks[0]]);
                 if (this.config.ssr)
                     requireUncached(join(this.config.pathToLib, page.chunks[0]));
                 //Render Chunk
-                global.FireJS.linkApi.preloadChunks([this.config.externals[2]]);
-                global.FireJS.linkApi.loadChunks([this.config.externals[2]]);
+                global.FireJSX.linkApi.preloadChunks([this.config.externals[2]]);
+                global.FireJSX.linkApi.loadChunks([this.config.externals[2]]);
                 //add rest of the chunks
                 for (; index < page.chunks.length; index++) {
-                    global.FireJS.linkApi.preloadChunks([page.chunks[index]]);
-                    global.FireJS.linkApi.loadChunks([page.chunks[index]]);
+                    global.FireJSX.linkApi.preloadChunks([page.chunks[index]]);
+                    global.FireJSX.linkApi.loadChunks([page.chunks[index]]);
                     if (this.config.ssr)
                         requireUncached(join(this.config.pathToLib, page.chunks[index]));
                 }
             }
-            global.FireJS.finishRender = () => {
+            global.FireJSX.finishRender = () => {
                 page.plugin.onRender(dom);//call plugin
                 resolve(dom.serialize());//serialize i.e get html
             }
@@ -135,17 +135,17 @@ export default class {
             if (this.config.ssr) {
                 document.getElementById("root").innerHTML = global.window.ReactDOMServer.renderToString(
                     global.React.createElement(
-                        global.FireJS.app,
-                        {content: global.FireJS.map.content}
+                        global.FireJSX.app,
+                        {content: global.FireJSX.map.content}
                     )
                 );
                 const helmet = Helmet.renderStatic();
                 for (let helmetKey in helmet)
                     document.head.innerHTML += helmet[helmetKey].toString()
-                if (global.FireJS.lazyCount === 0)
-                    global.FireJS.finishRender();
+                if (global.FireJSX.lazyCount === 0)
+                    global.FireJSX.finishRender();
             } else
-                global.FireJS.finishRender();
+                global.FireJSX.finishRender();
         });
     }
 }

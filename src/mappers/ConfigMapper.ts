@@ -43,7 +43,7 @@ export default class {
             if (!isAbsolute(path))
                 path = resolve(process.cwd(), path);//create absolute path
         } else
-            path = resolve(process.cwd(), `firejs.yml`);
+            path = resolve(process.cwd(), `firejsx.yml`);
 
         if (this.inputFileSystem.existsSync(path))
             return parseYaml(this.inputFileSystem.readFileSync(path, "utf8").toString()) || {};

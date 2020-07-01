@@ -1,5 +1,5 @@
 import {cloneDeep} from "lodash"
-import {$, WebpackConfig} from "../FireJS"
+import {$, WebpackConfig} from "../FireJSX"
 import {join, relative} from "path"
 import Page from "../classes/Page"
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin'
@@ -109,7 +109,7 @@ export default class {
         else
             mergedConfig.entry = [`webpack-hot-middleware/client?path=/__webpack_hmr_/${mergedConfig.name}&reload=true&quiet=true&name=${mergedConfig.name}`, join(__dirname, "../web/wrapper.js")];
         mergedConfig.plugins.push(new webpack.ProvidePlugin({
-            __FIREJS_APP__: join(this.$.config.paths.pages, mergedConfig.name)
+            __FIREJSX_APP__: join(this.$.config.paths.pages, mergedConfig.name)
         }))
         page.plugin.initWebpack(mergedConfig);
         return mergedConfig;

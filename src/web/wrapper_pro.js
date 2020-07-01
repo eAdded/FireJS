@@ -1,1 +1,1 @@
-FireJS.app = __FIREJS_APP__.default
+FireJSX.app = __FIREJSX_APP__.default

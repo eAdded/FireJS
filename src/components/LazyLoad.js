@@ -1,37 +1,37 @@
-FireJS.lazyCount = 0;
-FireJS.lazyDone = 0;
+FireJSX.lazyCount = 0;
+FireJSX.lazyDone = 0;
 export default (chunk, {
     ssr = true, script, delay = 0, placeHolder = <></>, onError = (e) => {
         console.error("Error while lazy loading ");
         throw new Error(e);
     }
 } = {}) => {
-    FireJS.lazyCount++;
+    FireJSX.lazyCount++;
     if (script && ssr)
         throw new Error("Scripts can't be rendered. Set either script or ssr to false");
     let id;
-    if (FireJS.isSSR) {
+    if (FireJSX.isSSR) {
         delay = 0;
-        placeHolder = (<div id={id = `FireJS_LAZY_${FireJS.lazyCount}`}/>)
+        placeHolder = (<div id={id = `FireJSX_LAZY_${FireJSX.lazyCount}`}/>)
     }
     let props = {};
     let setChild;
 
     function load(chunk) {
-        FireJS.lazyDone++;
+        FireJSX.lazyDone++;
         if (!script) {
-            if (FireJS.isSSR && ssr) {
+            if (FireJSX.isSSR && ssr) {
                 document.getElementById(id).innerHTML = window.ReactDOMServer.renderToString(
                     React.createElement(chunk.default, props, props.children)
                 );
             } else
                 setChild(React.createElement(chunk.default, props, props.children))
         }
-        if (FireJS.lazyDone === FireJS.lazyCount && FireJS.isSSR)
-            FireJS.finishRender();
+        if (FireJSX.lazyDone === FireJSX.lazyCount && FireJSX.isSSR)
+            FireJSX.finishRender();
     }
 
-    if (!(FireJS.isSSR && script))
+    if (!(FireJSX.isSSR && script))
         chunk().then(chunk => {
                 if (!delay)
                     load(chunk);
@@ -39,8 +39,8 @@ export default (chunk, {
                     setTimeout(() => load(chunk), delay);
             }
         ).catch(onError)
-    else if ((++FireJS.lazyDone) === FireJS.lazyCount && FireJS.isSSR)
-        FireJS.finishRender();
+    else if ((++FireJSX.lazyDone) === FireJSX.lazyCount && FireJSX.isSSR)
+        FireJSX.finishRender();
 
     if (!script)
         return function (_props) {

@@ -1,9 +1,9 @@
-import FireJSPlugin, {PluginCode} from "./FireJSPlugin";
+import FireJSXPlugin, {PluginCode} from "./FireJSXPlugin";
 import {JSDOM} from "jsdom";
 
 export const PagePlugMinVer = 1.0;
 
-export default abstract class extends FireJSPlugin {
+export default abstract class extends FireJSXPlugin {
     page: string;
 
     protected constructor(page: string) {

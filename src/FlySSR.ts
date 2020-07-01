@@ -5,7 +5,7 @@ import Page from "./classes/Page";
 import StaticArchitect from "./architects/StaticArchitect";
 import {join} from "path";
 import {mapPlugin} from "./mappers/PluginMapper";
-import {FIREJS_MAP, PathRelatives} from "./FireJS";
+import {FIREJS_MAP, PathRelatives} from "./FireJSX";
 import * as fs from "fs"
 
 export default class {

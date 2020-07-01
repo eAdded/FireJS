@@ -1,3 +1,3 @@
-FireJS.app = FireJS.isSSR ? __FIREJS_APP__.default :
+FireJSX.app = FireJSX.isSSR ? __FIREJSX_APP__.default :
     require('react-hot-loader/root').hot(
-        (props) => React.createElement(__FIREJS_APP__.default, props))
+        (props) => React.createElement(__FIREJSX_APP__.default, props))

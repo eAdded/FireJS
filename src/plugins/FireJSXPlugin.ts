@@ -1,11 +1,11 @@
-import {WebpackConfig} from "../FireJS";
+import {WebpackConfig} from "../FireJSX";
 
 export enum PluginCode {
     GlobalPlugin = 1,
     PagePlugin
 }
 
-export default abstract class FireJSPlugin {
+export default abstract class FireJSXPlugin {
     public readonly version;
     public readonly plugCode;
 
