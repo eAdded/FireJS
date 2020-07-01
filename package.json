@@ -7,15 +7,17 @@
   "keywords": [
     "react",
     "react-static",
-    "firejs",
     "gatsby",
     "nextjs",
+    "firejsx",
+    "firejs",
+    "jsx",
     "SSR",
     "SSB"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/eAdded/firejs.git"
+    "url": "git+https://github.com/eAdded/firejsx.git"
   },
   "author": "Aniket Prajapati <prajapati.ani306@gmail.com>",
   "private": false,
@@ -56,12 +58,12 @@
     "react-dom": "npm:@hot-loader/react-dom"
   },
   "bin": {
-    "firejs": "bin.js"
+    "firejsx": "bin.js"
   },
   "bugs": {
-    "url": "https://github.com/eAdded/firejs/issues"
+    "url": "https://github.com/eAdded/firejsx/issues"
   },
-  "homepage": "https://github.com/eAdded/firejs#readme",
+  "homepage": "https://github.com/eAdded/firejsx#readme",
   "scripts": {
     "sync": "sh scripts/sync.sh",
     "watch": "node scripts/watch.js",
