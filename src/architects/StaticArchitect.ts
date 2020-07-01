@@ -24,9 +24,12 @@ export default class {
     config: StaticData
 
     constructor(param: StaticConfig) {
+        //global.window circular
+        // @ts-ignore
+        global.window = global;
         this.config = param;
         //init JSDOM
-        this.config.template = new JSDOM(param.template);
+        this.config.template = new JSDOM(param.template)
         //init template
         {
             const script = this.config.template.window.document.createElement("script");
@@ -71,13 +74,8 @@ export default class {
             const dom = new JSDOM(this.config.template.serialize(), {
                 url: "https://localhost:5000" + path,
             });
-            //transfer pointers loaded in constructor
-            dom.window.React = global.window.React;
-            dom.window.ReactDOM = global.window.ReactDOM;
-            dom.window.ReactDOMServer = global.window.ReactDOMServer;
-            dom.window.FireJS = global.window.FireJS;
             //load stuff from dom.window to global
-            for (const domKey of ["document", "window", "location", "React", "ReactDOM", "FireJS"])
+            for (const domKey of ["document", "location"])
                 global[domKey] = dom.window[domKey];
             //globals
             global.FireJS.map = {

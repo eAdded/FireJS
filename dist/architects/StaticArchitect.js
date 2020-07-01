@@ -6,6 +6,9 @@ const Require_1 = require("../utils/Require");
 const react_helmet_1 = require("react-helmet");
 class default_1 {
     constructor(param) {
+        //global.window circular
+        // @ts-ignore
+        global.window = global;
         this.config = param;
         //init JSDOM
         this.config.template = new jsdom_1.JSDOM(param.template);
@@ -51,13 +54,8 @@ class default_1 {
             const dom = new jsdom_1.JSDOM(this.config.template.serialize(), {
                 url: "https://localhost:5000" + path,
             });
-            //transfer pointers loaded in constructor
-            dom.window.React = global.window.React;
-            dom.window.ReactDOM = global.window.ReactDOM;
-            dom.window.ReactDOMServer = global.window.ReactDOMServer;
-            dom.window.FireJS = global.window.FireJS;
             //load stuff from dom.window to global
-            for (const domKey of ["document", "window", "location", "React", "ReactDOM", "FireJS"])
+            for (const domKey of ["document", "location"])
                 global[domKey] = dom.window[domKey];
             //globals
             global.FireJS.map = {
