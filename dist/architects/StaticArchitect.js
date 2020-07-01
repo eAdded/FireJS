@@ -6,10 +6,15 @@ const Require_1 = require("../utils/Require");
 const react_helmet_1 = require("react-helmet");
 class default_1 {
     constructor(param) {
+        this.config = param;
         //global.window circular
         // @ts-ignore
         global.window = global;
-        this.config = param;
+        global.FireJS = {
+            isSSR: param.ssr,
+            libRel: this.config.rel.libRel,
+            mapRel: this.config.rel.mapRel
+        };
         //init JSDOM
         this.config.template = new jsdom_1.JSDOM(param.template);
         //init template
@@ -30,15 +35,6 @@ class default_1 {
             meta.name = "generator";
             this.config.template.window.document.head.appendChild(meta);
         }
-        // @ts-ignore
-        global.window = {
-            FireJS: {
-                isSSR: param.ssr,
-                libRel: this.config.rel.libRel,
-                mapRel: this.config.rel.mapRel
-            }
-        };
-        global.FireJS = global.window.FireJS;
         //if ssr then load react,react dom,LinkApi,ReactDOMServer chunks
         if (param.ssr)
             require(path_1.join(this.config.pathToLib, this.config.externals[0]));
@@ -55,7 +51,7 @@ class default_1 {
                 url: "https://localhost:5000" + path,
             });
             //load stuff from dom.window to global
-            for (const domKey of ["document", "location"])
+            for (const domKey of ["document", "location", "history", "navigator", "screen", "matchMedia", "getComputedStyle"])
                 global[domKey] = dom.window[domKey];
             //globals
             global.FireJS.map = {

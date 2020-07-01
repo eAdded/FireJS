@@ -1,1 +1,1 @@
-global.__FIREJS_VERSION__ = "0.18.5";
+global.__FIREJS_VERSION__ = "0.18.6-beta";

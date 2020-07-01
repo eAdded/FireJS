@@ -24,10 +24,15 @@ export default class {
     config: StaticData
 
     constructor(param: StaticConfig) {
+        this.config = param;
         //global.window circular
         // @ts-ignore
         global.window = global;
-        this.config = param;
+        global.FireJS = {
+            isSSR: param.ssr,
+            libRel: this.config.rel.libRel,
+            mapRel: this.config.rel.mapRel
+        }
         //init JSDOM
         this.config.template = new JSDOM(param.template)
         //init template
@@ -48,15 +53,6 @@ export default class {
             meta.name = "generator";
             this.config.template.window.document.head.appendChild(meta);
         }
-        // @ts-ignore
-        global.window = {
-            FireJS: {
-                isSSR: param.ssr,
-                libRel: this.config.rel.libRel,
-                mapRel: this.config.rel.mapRel
-            }
-        };
-        global.FireJS = global.window.FireJS;
         //if ssr then load react,react dom,LinkApi,ReactDOMServer chunks
         if (param.ssr)
             require(join(this.config.pathToLib, this.config.externals[0]));
@@ -75,7 +71,7 @@ export default class {
                 url: "https://localhost:5000" + path,
             });
             //load stuff from dom.window to global
-            for (const domKey of ["document", "location"])
+            for (const domKey of ["document", "location", "history", "navigator", "screen", "matchMedia", "getComputedStyle"])
                 global[domKey] = dom.window[domKey];
             //globals
             global.FireJS.map = {
