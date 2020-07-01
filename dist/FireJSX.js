@@ -5,7 +5,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             resolve(value);
         });
     }
-
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) {
             try {
@@ -43,7 +42,6 @@ const fs = require("fs");
 const StaticArchitect_1 = require("./architects/StaticArchitect");
 const PathMapper_1 = require("./mappers/PathMapper");
 const WebpackArchitect_1 = require("./architects/WebpackArchitect");
-
 class default_1 {
     constructor(params = {}) {
         this.$ = {globalPlugins: []};
@@ -80,12 +78,10 @@ class default_1 {
             }));
         }
     }
-
     constructParams(params) {
         params.config = params.config || {};
         params.config.paths = params.config.paths || {};
     }
-
     init() {
         return __awaiter(this, void 0, void 0, function* () {
             this.$.cli.log("Building Externals");
@@ -100,7 +96,6 @@ class default_1 {
             this.$.globalPlugins.forEach(globalPlugin => this.$.renderer.renderGlobalPlugin(globalPlugin));
         });
     }
-
     buildPage(page, resolve, reject) {
         return this.$.pageArchitect.buildPage(page, () => {
             if (this.$.config.verbose)
@@ -123,7 +118,7 @@ class default_1 {
                             reject(e);
                         });
                     }
-                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `FireJS.map=${JSON.stringify({
+                    Fs_1.writeFileRecursively(path_1.join(this.$.config.paths.map, `${path}.map.js`), `FireJSX.map=${JSON.stringify({
                         content,
                         chunks: page.chunks
                     })}`, this.$.outputFileSystem).then(() => {
@@ -137,7 +132,6 @@ class default_1 {
             }
         }, reject);
     }
-
     export() {
         const promises = [];
         this.$.pageMap.forEach(page => promises.push(new Promise((resolve) => {
@@ -148,7 +142,6 @@ class default_1 {
         })));
         return Promise.all(promises);
     }
-
     exportFly() {
         return new Promise((resolve) => {
             const map = {
@@ -179,14 +172,12 @@ class default_1 {
                 if (err)
                     throw new Error(`Error while moving ${fullExternalName} to ${this.$.config.paths.fly}`);
                 map.staticConfig.externals[0] = fullExternalName;
-                Promise.all(promises).then(() => this.$.outputFileSystem.writeFile(path_1.join(this.$.config.paths.fly, "firejs.map.json"), JSON.stringify(map), resolve));
+                Promise.all(promises).then(() => this.$.outputFileSystem.writeFile(path_1.join(this.$.config.paths.fly, "firejsx.map.json"), JSON.stringify(map), resolve));
             });
         });
     }
-
     getContext() {
         return this.$;
     }
 }
-
 exports.default = default_1;

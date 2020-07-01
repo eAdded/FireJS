@@ -9,11 +9,8 @@ export default class {
     readonly rel: PathRelatives;
     readonly rootDir: string;
     readonly globalPlugins: GlobalPlugin[];
-
     constructor(pathToLibDir: string, rootDir?: string);
-
     loadPlugin(pluginPath: string): void;
-
     render(page: string, path: string, content?: any): Promise<{
         html: string;
         map: string;

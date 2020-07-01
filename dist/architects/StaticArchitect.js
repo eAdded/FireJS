@@ -4,7 +4,6 @@ const path_1 = require("path");
 const jsdom_1 = require("jsdom");
 const Require_1 = require("../utils/Require");
 const react_helmet_1 = require("react-helmet");
-
 class default_1 {
     constructor(param) {
         this.config = param;
@@ -42,11 +41,9 @@ class default_1 {
         else //just load LinkApi
             require("../web/LinkApi");
     }
-
     renderGlobalPlugin(globalPlugin) {
         globalPlugin.initDom(this.config.template);
     }
-
     render(page, path, content) {
         return new Promise(resolve => {
             //template serialize to prevent overwriting
@@ -127,5 +124,4 @@ class default_1 {
         });
     }
 }
-
 exports.default = default_1;

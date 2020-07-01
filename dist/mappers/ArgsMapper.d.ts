@@ -22,5 +22,4 @@ export interface Args {
     "--static": string;
     "--plugins": string;
 }
-
 export declare function getArgs(): Args;

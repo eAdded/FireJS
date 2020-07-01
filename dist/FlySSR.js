@@ -5,7 +5,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             resolve(value);
         });
     }
-
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) {
             try {
@@ -37,7 +36,6 @@ const StaticArchitect_1 = require("./architects/StaticArchitect");
 const path_1 = require("path");
 const PluginMapper_1 = require("./mappers/PluginMapper");
 const fs = require("fs");
-
 class default_1 {
     constructor(pathToLibDir, rootDir = process.cwd()) {
         this.pageMap = new Map();
@@ -52,14 +50,12 @@ class default_1 {
             this.pageMap.set(__page, page);
         }
     }
-
     loadPlugin(pluginPath) {
         const gp = [];
         PluginMapper_1.mapPlugin(pluginPath, {pageMap: this.pageMap, rootPath: this.rootDir, globalPlugins: gp});
         gp.forEach(plug => this.renderer.renderGlobalPlugin(plug));
         this.globalPlugins.push(...gp);
     }
-
     render(page, path, content = {}) {
         return __awaiter(this, void 0, void 0, function* () {
             const _page = this.pageMap.get(page);
@@ -73,5 +69,4 @@ class default_1 {
         });
     }
 }
-
 exports.default = default_1;

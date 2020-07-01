@@ -41,7 +41,7 @@ export interface Params {
     inputFileSystem?
 }
 
-export interface FIREJS_MAP {
+export interface FIREJSX_MAP {
     staticConfig: StaticConfig,
     pageMap: {
         [key: string]: string[]
@@ -133,7 +133,7 @@ export default class {
                         })
                     }
                     writeFileRecursively(join(this.$.config.paths.map, `${path}.map.js`),
-                        `FireJS.map=${JSON.stringify({
+                        `FireJSX.map=${JSON.stringify({
                             content,
                             chunks: page.chunks
                         })}`,
@@ -165,7 +165,7 @@ export default class {
 
     exportFly() {
         return new Promise((resolve) => {
-            const map: FIREJS_MAP = {
+            const map: FIREJSX_MAP = {
                 staticConfig: {
                     ...this.$.renderer.config,
                     template: this.$.inputFileSystem.readFileSync(join(__dirname, "./web/template.html")).toString()
@@ -199,7 +199,7 @@ export default class {
                     throw new Error(`Error while moving ${fullExternalName} to ${this.$.config.paths.fly}`);
                 map.staticConfig.externals[0] = fullExternalName;
                 Promise.all(promises).then(() =>
-                    this.$.outputFileSystem.writeFile(join(this.$.config.paths.fly, "firejs.map.json"),
+                    this.$.outputFileSystem.writeFile(join(this.$.config.paths.fly, "firejsx.map.json"),
                         JSON.stringify(map), resolve))
             })
         })

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", {value: true});
 const webpack = require("webpack");
-
 class default_1 {
     constructor(globalData, webpackArchitect, isOutputCustom, isInputCustom) {
         this.$ = globalData;
@@ -9,7 +8,6 @@ class default_1 {
         this.isOutputCustom = isOutputCustom;
         this.isInputCustom = isInputCustom;
     }
-
     buildExternals() {
         return new Promise((resolve, reject) => {
             this.build(this.webpackArchitect.forExternals(), stat => {
@@ -21,7 +19,6 @@ class default_1 {
             }, reject);
         });
     }
-
     buildPage(page, resolve, reject) {
         return this.build(this.webpackArchitect.forPage(page), (stat) => {
             if (this.logStat(stat)) //true if errors
@@ -43,7 +40,6 @@ class default_1 {
             }
         }, reject);
     }
-
     build(config, resolve, reject) {
         const compiler = webpack(config);
         if (this.isOutputCustom)
@@ -66,7 +62,6 @@ class default_1 {
             });
         return compiler;
     }
-
     logStat(stat) {
         if (stat.hasWarnings()) {
             // @ts-ignore
@@ -86,5 +81,4 @@ class default_1 {
         }
     }
 }
-
 exports.default = default_1;

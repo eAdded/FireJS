@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", {value: true});
+exports.getArgs = void 0;
 const SmartArg_1 = require("smartarg/SmartArg");
 
 function getArgs() {
@@ -40,5 +41,4 @@ function getArgs() {
         .example("firejsx -dsp", "write to disk when using dev server with server side rendered production build")
         .smartParse();
 }
-
 exports.getArgs = getArgs;

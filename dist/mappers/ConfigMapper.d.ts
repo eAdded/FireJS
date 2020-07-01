@@ -22,22 +22,21 @@ export interface Config {
     plugins?: [];
     pages?: ExplicitPages;
 }
-
 export interface ExplicitPages {
     "404"?: string;
 }
-
 export default class {
     inputFileSystem: any;
     outputFileSystem: any;
-    private makeAbsolute;
-    private throwIfNotFound;
-    private undefinedIfNotFound;
-    private makeDirIfNotFound;
 
     constructor(inputFileSystem?: typeof fs, outputFileSystem?: typeof fs);
 
     getUserConfig(path: string): Config | undefined | never;
 
     getConfig(config?: Config): Config;
+
+    private makeAbsolute;
+    private throwIfNotFound;
+    private undefinedIfNotFound;
+    private makeDirIfNotFound;
 }

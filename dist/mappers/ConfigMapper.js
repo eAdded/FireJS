@@ -3,13 +3,11 @@ Object.defineProperty(exports, "__esModule", {value: true});
 const path_1 = require("path");
 const yaml_1 = require("yaml");
 const fs = require("fs");
-
 class default_1 {
     constructor(inputFileSystem = fs, outputFileSystem = fs) {
         this.inputFileSystem = inputFileSystem;
         this.outputFileSystem = outputFileSystem;
     }
-
     getUserConfig(path) {
         const wasGiven = !!path;
         if (path) { //tweak conf path
@@ -22,7 +20,6 @@ class default_1 {
         else if (wasGiven)
             throw new Error(`Config not found at ${path}`);
     }
-
     getConfig(config = {}) {
         config.paths = config.paths || {};
         this.throwIfNotFound("root dir", config.paths.root = config.paths.root ? this.makeAbsolute(process.cwd(), config.paths.root) : process.cwd());
@@ -45,16 +42,13 @@ class default_1 {
         config.plugins = config.disablePlugins ? [] : config.plugins || [];
         return config;
     }
-
     makeAbsolute(root, pathTo) {
         return path_1.isAbsolute(pathTo) ? pathTo : path_1.resolve(root, pathTo);
     }
-
     throwIfNotFound(name, pathTo, extra = "") {
         if (!this.inputFileSystem.existsSync(pathTo))
             throw new Error(`${name} not found. ${pathTo}\n${extra}`);
     }
-
     undefinedIfNotFound(object, property, pathRoot, defaultRoot, msg) {
         if (object[property]) {
             object[property] = this.makeAbsolute(pathRoot, object[property]);
@@ -62,12 +56,10 @@ class default_1 {
         } else if (!this.inputFileSystem.existsSync(object[property] = path_1.resolve(defaultRoot, property)))
             object[property] = undefined;
     }
-
     makeDirIfNotFound(path) {
         if (!this.outputFileSystem.existsSync(path))
             this.outputFileSystem.mkdirp(path, () => {
             });
     }
 }
-
 exports.default = default_1;

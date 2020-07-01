@@ -12,17 +12,12 @@ export interface StaticConfig {
     template: string | any;
     ssr: boolean;
 }
-
 export interface StaticData extends StaticConfig {
     template: JSDOM;
 }
-
 export default class {
     config: StaticData;
-
     constructor(param: StaticConfig);
-
     renderGlobalPlugin(globalPlugin: GlobalPlugin): void;
-
     render(page: Page, path: string, content: any): Promise<string>;
 }

@@ -5,7 +5,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             resolve(value);
         });
     }
-
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) {
             try {
@@ -36,14 +35,12 @@ const chokidar_1 = require("chokidar");
 const Page_1 = require("./classes/Page");
 const express = require("express");
 const webpackhot = require("webpack-hot-middleware");
-
 class default_1 {
     constructor(app) {
         this.app = app;
         this.$ = app.getContext();
         this.$.pageArchitect.webpackArchitect.defaultConfig.watch = true;
     }
-
     init(port = 5000, addr = "localhost") {
         return __awaiter(this, void 0, void 0, function* () {
             //init server
@@ -100,7 +97,6 @@ class default_1 {
             });
         });
     }
-
     get(req, res) {
         // @ts-ignore
         const pathname = path_1.join(this.$.config.paths.dist, decodeURI(req._parsedUrl.pathname));
@@ -110,7 +106,6 @@ class default_1 {
             res.status(404);
         res.end();
     }
-
     getPage(req, res, next) {
         // @ts-ignore
         const pathname = decodeURI(req._parsedUrl.pathname);
@@ -134,5 +129,4 @@ class default_1 {
         }
     }
 }
-
 exports.default = default_1;

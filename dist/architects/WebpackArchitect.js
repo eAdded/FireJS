@@ -5,7 +5,6 @@ const path_1 = require("path");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CleanObsoleteChunks = require("webpack-clean-obsolete-chunks");
 const webpack = require("webpack");
-
 class default_1 {
     constructor($) {
         this.$ = $;
@@ -76,7 +75,6 @@ class default_1 {
             ]
         };
     }
-
     forExternals() {
         const conf = {
             target: 'web',
@@ -98,7 +96,6 @@ class default_1 {
         conf.entry[path_1.join(path_1.relative(this.$.config.paths.lib, this.$.config.paths.cache), "f")] = path_1.join(__dirname, "../web/external_group_full.js");
         return conf;
     }
-
     forPage(page) {
         const mergedConfig = lodash_1.cloneDeep(this.defaultConfig);
         mergedConfig.name = page.toString();
@@ -113,5 +110,4 @@ class default_1 {
         return mergedConfig;
     }
 }
-
 exports.default = default_1;

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", {value: true});
+exports.mapPlugin = void 0;
 const PagePlugin_1 = require("../plugins/PagePlugin");
 const GlobalPlugin_1 = require("../plugins/GlobalPlugin");
 const FireJSXPlugin_1 = require("../plugins/FireJSXPlugin");
@@ -23,9 +24,7 @@ function mapPlugin(pluginPath, {rootPath, pageMap, webpackArchitect, globalPlugi
         }
     }
 }
-
 exports.mapPlugin = mapPlugin;
-
 function checkVer(rawPlug, minVer, name, path) {
     if (rawPlug.version < minVer)
         throw new Error(`PagePlugin [${name}] in ${path} is outdated. Expected min version ${minVer} but found ${rawPlug.version}`);

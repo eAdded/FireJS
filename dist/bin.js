@@ -6,7 +6,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
             resolve(value);
         });
     }
-
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) {
             try {
@@ -38,7 +37,6 @@ const path_1 = require("path");
 const ArgsMapper_1 = require("./mappers/ArgsMapper");
 const ConfigMapper_1 = require("./mappers/ConfigMapper");
 const MemoryFS = require("memory-fs");
-
 function initConfig(args) {
     let userConfig = new ConfigMapper_1.default().getUserConfig(args["--conf"]);
     const customConfig = !!userConfig;
@@ -63,7 +61,6 @@ function initConfig(args) {
     userConfig.ssr = args["--ssr"] || userConfig.ssr;
     return [customConfig, userConfig];
 }
-
 function init() {
     const args = ArgsMapper_1.getArgs();
     //export fly
@@ -105,7 +102,6 @@ function init() {
         customConfig
     };
 }
-
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
         const {app, args, customConfig} = init();

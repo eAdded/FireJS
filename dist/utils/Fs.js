@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", {value: true});
+exports.readDirRecursively = exports.writeFileRecursively = void 0;
 
 function writeFileRecursively(path, data, outputFileSystem) {
     return new Promise((resolve, reject) => {
@@ -17,9 +18,7 @@ function writeFileRecursively(path, data, outputFileSystem) {
         });
     });
 }
-
 exports.writeFileRecursively = writeFileRecursively;
-
 function readDirRecursively(dir, inputFileSystem, callback) {
     const items = inputFileSystem.readdirSync(dir);
     items.forEach(itemName => {
@@ -30,5 +29,4 @@ function readDirRecursively(dir, inputFileSystem, callback) {
             callback(path);
     });
 }
-
 exports.readDirRecursively = readDirRecursively;
