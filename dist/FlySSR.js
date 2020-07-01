@@ -40,7 +40,7 @@ class default_1 {
     constructor(pathToLibDir, rootDir = process.cwd()) {
         this.pageMap = new Map();
         this.globalPlugins = [];
-        const firejs_map = JSON.parse(fs.readFileSync(path_1.join(this.rootDir = rootDir, pathToLibDir, "firejs.map.json")).toString());
+        const firejs_map = JSON.parse(fs.readFileSync(path_1.join(this.rootDir = rootDir, pathToLibDir, "firejsx.map.json")).toString());
         firejs_map.staticConfig.pathToLib = path_1.join(rootDir, pathToLibDir);
         this.rel = firejs_map.staticConfig.rel;
         this.renderer = new StaticArchitect_1.default(firejs_map.staticConfig);
@@ -61,7 +61,7 @@ class default_1 {
             const _page = this.pageMap.get(page);
             return {
                 html: yield this.renderer.render(_page, path, content),
-                map: `window.__MAP__=${JSON.stringify({
+                map: `FireJSX.map=${JSON.stringify({
                     content,
                     chunks: _page.chunks
                 })}`

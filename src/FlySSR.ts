@@ -5,7 +5,7 @@ import Page from "./classes/Page";
 import StaticArchitect from "./architects/StaticArchitect";
 import {join} from "path";
 import {mapPlugin} from "./mappers/PluginMapper";
-import {FIREJS_MAP, PathRelatives} from "./FireJSX";
+import {FIREJSX_MAP, PathRelatives} from "./FireJSX";
 import * as fs from "fs"
 
 export default class {
@@ -16,7 +16,7 @@ export default class {
     readonly globalPlugins: GlobalPlugin[] = [];
 
     constructor(pathToLibDir: string, rootDir: string = process.cwd()) {
-        const firejs_map: FIREJS_MAP = JSON.parse(fs.readFileSync(join(this.rootDir = rootDir, pathToLibDir, "firejs.map.json")).toString());
+        const firejs_map: FIREJSX_MAP = JSON.parse(fs.readFileSync(join(this.rootDir = rootDir, pathToLibDir, "firejsx.map.json")).toString());
         firejs_map.staticConfig.pathToLib = join(rootDir, pathToLibDir);
         this.rel = firejs_map.staticConfig.rel
         this.renderer = new StaticArchitect(firejs_map.staticConfig);
@@ -41,7 +41,7 @@ export default class {
         const _page = this.pageMap.get(page);
         return {
             html: await this.renderer.render(_page, path, content),
-            map: `window.__MAP__=${JSON.stringify({
+            map: `FireJSX.map=${JSON.stringify({
                 content,
                 chunks: _page.chunks
             })}`
