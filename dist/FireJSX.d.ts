@@ -28,7 +28,6 @@ export interface Params {
     outputFileSystem?: any;
     inputFileSystem?: any;
 }
-
 export interface FIREJSX_MAP {
     staticConfig: StaticConfig;
     pageMap: {

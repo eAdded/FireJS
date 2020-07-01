@@ -1,4 +1,4 @@
-# Fire JS 🔥
+# Fire JSX
 
 **A zero-config, highly customizable, progressive react static site generator with blazingly fast SSR and on the fly builds.**
 
